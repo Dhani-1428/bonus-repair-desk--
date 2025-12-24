@@ -207,7 +207,13 @@ export default function DeviceDetailPage() {
                   </div>
                   <div className="space-y-1">
                     <Label className="text-xs text-gray-400">{t("form.warranty")}</Label>
-                    <p className="text-sm text-white">{ticket.warranty || t("form.withoutWarranty")}</p>
+                    <p className="text-sm text-white">
+                      {ticket.warranty === "Warranty Until 30 days" || ticket.warranty === "Garantia até 30 dias" 
+                        ? t("form.warrantyUntil30Days")
+                        : ticket.warranty === "Without Warranty" || ticket.warranty === "Sem Garantia"
+                        ? t("form.withoutWarranty")
+                        : ticket.warranty || t("form.withoutWarranty")}
+                    </p>
             </div>
             </div>
           </div>
