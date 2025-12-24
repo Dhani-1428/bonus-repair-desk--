@@ -945,6 +945,26 @@ export function printReceiptForTickets(tickets: any[]) {
       return '<div>Error: Invalid ticket data</div>'
     }
     
+    // Extract all ticket properties upfront to avoid accessing ticket in template string
+    const ticketClientId = ticket.clientId || "N/A"
+    const ticketCustomerName = ticket.customerName || "N/A"
+    const ticketContact = ticket.contact || "N/A"
+    const ticketRepairNumber = ticket.repairNumber || "N/A"
+    const ticketImeiNo = ticket.imeiNo || "000000000000000"
+    const ticketBrand = ticket.brand || "N/A"
+    const ticketModel = ticket.model || "N/A"
+    const ticketSerialNo = ticket.serialNo || "-"
+    const ticketWarranty = ticket.warranty || "Without Warranty"
+    const ticketSimCard = ticket.simCard ? "Yes" : "No"
+    const ticketMemoryCard = ticket.memoryCard ? "Yes" : "No"
+    const ticketCharger = ticket.charger ? "Yes" : "No"
+    const ticketBattery = ticket.battery ? "Yes" : "No"
+    const ticketWaterDamaged = ticket.waterDamaged ? "Yes" : "No"
+    const ticketEquipmentObs = ticket.equipmentObs || "-"
+    const ticketRepairObs = ticket.repairObs || "-"
+    const ticketProblem = ticket.problem || "-"
+    const ticketPrice = Number.parseFloat(ticket.price || 0).toFixed(2)
+    
     // Parse selectedServices if it's a string (from database JSON)
     let servicesArray = ticket.selectedServices
     if (typeof servicesArray === 'string') {
@@ -981,9 +1001,9 @@ export function printReceiptForTickets(tickets: any[]) {
               <div style="margin: 0.5px 0; font-size: 6.5pt; color: #000;">VAT: ${companyVAT}</div>
             </div>
             <div style="display: table-cell; width: 50%; vertical-align: top; padding-left: 6px;">
-              <div style="font-weight: bold; font-size: 7pt; margin-bottom: 1px; color: #000;">Client's NIF: ${ticket.clientId || "N/A"}</div>
-              <div style="margin: 0.5px 0; font-size: 6.5pt; color: #000;"><strong>Name:</strong> ${ticket.customerName || "N/A"}</div>
-              <div style="margin: 0.5px 0; font-size: 6.5pt; color: #000;"><strong>Client Phone:</strong> ${ticket.contact || "N/A"}</div>
+              <div style="font-weight: bold; font-size: 7pt; margin-bottom: 1px; color: #000;">Client's NIF: ${ticketClientId}</div>
+              <div style="margin: 0.5px 0; font-size: 6.5pt; color: #000;"><strong>Name:</strong> ${ticketCustomerName}</div>
+              <div style="margin: 0.5px 0; font-size: 6.5pt; color: #000;"><strong>Client Phone:</strong> ${ticketContact}</div>
             </div>
           </div>
         </div>
@@ -995,23 +1015,23 @@ export function printReceiptForTickets(tickets: any[]) {
           </div>
           <div style="display: table; width: 100%; margin: 0.5px 0;">
             <div style="display: table-cell; width: 40%; font-weight: bold; font-size: 6.5pt;">Repair n:</div>
-            <div style="display: table-cell; width: 60%; font-size: 6.5pt;">${ticket.repairNumber || "N/A"}</div>
+            <div style="display: table-cell; width: 60%; font-size: 6.5pt;">${ticketRepairNumber}</div>
           </div>
           <div style="display: table; width: 100%; margin: 0.5px 0;">
             <div style="display: table-cell; width: 40%; font-weight: bold; font-size: 6.5pt;">IMEI:</div>
-            <div style="display: table-cell; width: 60%; font-size: 6.5pt;">${ticket.imeiNo || "000000000000000"}</div>
+            <div style="display: table-cell; width: 60%; font-size: 6.5pt;">${ticketImeiNo}</div>
           </div>
           <div style="display: table; width: 100%; margin: 0.5px 0;">
             <div style="display: table-cell; width: 40%; font-weight: bold; font-size: 6.5pt;">Brand-Model:</div>
-            <div style="display: table-cell; width: 60%; font-size: 6.5pt;">${ticket.brand || "N/A"} - ${ticket.model || "N/A"}</div>
+            <div style="display: table-cell; width: 60%; font-size: 6.5pt;">${ticketBrand} - ${ticketModel}</div>
           </div>
           <div style="display: table; width: 100%; margin: 0.5px 0;">
             <div style="display: table-cell; width: 40%; font-weight: bold; font-size: 6.5pt;">Laptop Serial N:</div>
-            <div style="display: table-cell; width: 60%; font-size: 6.5pt;">${ticket.serialNo || "-"}</div>
+            <div style="display: table-cell; width: 60%; font-size: 6.5pt;">${ticketSerialNo}</div>
           </div>
           <div style="display: table; width: 100%; margin: 0.5px 0;">
             <div style="display: table-cell; width: 40%; font-weight: bold; font-size: 6.5pt;">Warranty:</div>
-            <div style="display: table-cell; width: 60%; font-size: 6.5pt;">${ticket.warranty || "Without Warranty"}</div>
+            <div style="display: table-cell; width: 60%; font-size: 6.5pt;">${ticketWarranty}</div>
           </div>
         </div>
         
@@ -1019,34 +1039,34 @@ export function printReceiptForTickets(tickets: any[]) {
           <div style="font-weight: bold; margin-bottom: 1px; font-size: 6.5pt;">Equipment Check:</div>
           <div style="display: table; width: 100%; margin: 0.5px 0;">
             <div style="display: table-cell; width: 30%; font-weight: bold; font-size: 6.5pt;">SIM Card:</div>
-            <div style="display: table-cell; width: 70%; font-size: 6.5pt;">${ticket.simCard ? "Yes" : "No"}</div>
+            <div style="display: table-cell; width: 70%; font-size: 6.5pt;">${ticketSimCard}</div>
           </div>
           <div style="display: table; width: 100%; margin: 0.5px 0;">
             <div style="display: table-cell; width: 30%; font-weight: bold; font-size: 6.5pt;">Memory Card:</div>
-            <div style="display: table-cell; width: 70%; font-size: 6.5pt;">${ticket.memoryCard ? "Yes" : "No"}</div>
+            <div style="display: table-cell; width: 70%; font-size: 6.5pt;">${ticketMemoryCard}</div>
           </div>
           <div style="display: table; width: 100%; margin: 0.5px 0;">
             <div style="display: table-cell; width: 30%; font-weight: bold; font-size: 6.5pt;">Charger:</div>
-            <div style="display: table-cell; width: 70%; font-size: 6.5pt;">${ticket.charger ? "Yes" : "No"}</div>
+            <div style="display: table-cell; width: 70%; font-size: 6.5pt;">${ticketCharger}</div>
           </div>
           <div style="display: table; width: 100%; margin: 0.5px 0;">
             <div style="display: table-cell; width: 30%; font-weight: bold; font-size: 6.5pt;">Battery:</div>
-            <div style="display: table-cell; width: 70%; font-size: 6.5pt;">${ticket.battery ? "Yes" : "No"}</div>
+            <div style="display: table-cell; width: 70%; font-size: 6.5pt;">${ticketBattery}</div>
           </div>
           <div style="display: table; width: 100%; margin: 0.5px 0;">
             <div style="display: table-cell; width: 30%; font-weight: bold; font-size: 6.5pt;">Water Damaged:</div>
-            <div style="display: table-cell; width: 70%; font-size: 6.5pt;">${ticket.waterDamaged ? "Yes" : "No"}</div>
+            <div style="display: table-cell; width: 70%; font-size: 6.5pt;">${ticketWaterDamaged}</div>
           </div>
         </div>
         
         <div style="margin: 2px 0;">
           <div style="display: table; width: 100%; margin: 0.5px 0;">
             <div style="display: table-cell; width: 40%; font-weight: bold; font-size: 6.5pt;">Equipment Obs.:</div>
-            <div style="display: table-cell; width: 60%; font-size: 6.5pt;">${ticket.equipmentObs || "-"}</div>
+            <div style="display: table-cell; width: 60%; font-size: 6.5pt;">${ticketEquipmentObs}</div>
           </div>
           <div style="display: table; width: 100%; margin: 0.5px 0;">
             <div style="display: table-cell; width: 40%; font-weight: bold; font-size: 6.5pt;">Repair Obs.:</div>
-            <div style="display: table-cell; width: 60%; font-size: 6.5pt;">${ticket.repairObs || "-"}</div>
+            <div style="display: table-cell; width: 60%; font-size: 6.5pt;">${ticketRepairObs}</div>
           </div>
           <div style="display: table; width: 100%; margin: 0.5px 0;">
             <div style="display: table-cell; width: 40%; font-weight: bold; font-size: 6.5pt;">Services:</div>
@@ -1054,11 +1074,11 @@ export function printReceiptForTickets(tickets: any[]) {
           </div>
           <div style="display: table; width: 100%; margin: 0.5px 0;">
             <div style="display: table-cell; width: 40%; font-weight: bold; font-size: 6.5pt;">Problem:</div>
-            <div style="display: table-cell; width: 60%; font-size: 6.5pt;">${ticket.problem || "-"}</div>
+            <div style="display: table-cell; width: 60%; font-size: 6.5pt;">${ticketProblem}</div>
           </div>
           <div style="display: table; width: 100%; margin: 0.5px 0;">
             <div style="display: table-cell; width: 40%; font-weight: bold; font-size: 6.5pt;">Price:</div>
-            <div style="display: table-cell; width: 60%; font-size: 6.5pt;">€${Number.parseFloat(ticket.price || 0).toFixed(2)}</div>
+            <div style="display: table-cell; width: 60%; font-size: 6.5pt;">€${ticketPrice}</div>
           </div>
         </div>
         
@@ -1077,7 +1097,7 @@ export function printReceiptForTickets(tickets: any[]) {
           <div style="text-align: justify; margin-bottom: 2px;">
             Ao aceitar o presente documento, o cliente declara que leu, compreendeu e aceita os termos e condies de reparao.
           </div>
-          <div style="margin-top: 3px; font-weight: bold; font-size: 6.5pt;">Referncia da Reparao: ${ticket.repairNumber || "N/A"}</div>
+          <div style="margin-top: 3px; font-weight: bold; font-size: 6.5pt;">Referncia da Reparao: ${ticketRepairNumber}</div>
         </div>
       </div>
     `
