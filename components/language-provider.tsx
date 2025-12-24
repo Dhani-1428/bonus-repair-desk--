@@ -494,6 +494,7 @@ const translations: Record<Language, Record<string, string>> = {
     "form.addAnotherDevice": "Adicionar Outro Dispositivo",
     "form.createDeviceEntry": "Criar {count} Registo de Dispositivo",
     "form.createDeviceEntries": "Criar {count} Registos de Dispositivos",
+    "form.remove": "Remover",
 
     // Common
     "common.show": "Mostrar",
@@ -905,6 +906,7 @@ const translations: Record<Language, Record<string, string>> = {
     "form.addAnotherDevice": "Weiteres Gerät hinzufügen",
     "form.createDeviceEntry": "{count} Geräteeintrag erstellen",
     "form.createDeviceEntries": "{count} Geräteeinträge erstellen",
+    "form.remove": "Entfernen",
 
     // Common
     "common.show": "Anzeigen",
@@ -1097,6 +1099,7 @@ const translations: Record<Language, Record<string, string>> = {
     "form.addAnotherDevice": "Ajouter un autre appareil",
     "form.createDeviceEntry": "Créer {count} entrée d'appareil",
     "form.createDeviceEntries": "Créer {count} entrées d'appareils",
+    "form.remove": "Supprimer",
 
     // Common
     "common.show": "Afficher",
@@ -1289,6 +1292,7 @@ const translations: Record<Language, Record<string, string>> = {
     "form.addAnotherDevice": "ایک اور آلہ شامل کریں",
     "form.createDeviceEntry": "{count} آلہ انٹری بنائیں",
     "form.createDeviceEntries": "{count} آلات انٹری بنائیں",
+    "form.remove": "ہٹائیں",
 
     // Common
     "common.show": "دکھائیں",
