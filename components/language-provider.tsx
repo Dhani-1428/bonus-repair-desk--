@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState, useMemo } from "react"
 
-type Language = "en" | "pt" | "de" | "fr" | "ur" | "pa"
+type Language = "en" | "pt" | "de" | "fr" | "ur" | "pa" | "hi"
 
 type LanguageContextValue = {
   language: Language
@@ -20,6 +20,7 @@ const translations: Record<Language, Record<string, string>> = {
     "header.french": "French",
     "header.urdu": "Urdu",
     "header.punjabi": "Punjabi",
+    "header.hindi": "Hindi",
     "header.dashboard": "Dashboard",
     "header.newDevice": "New Device",
     "header.allDevices": "All Devices",
@@ -845,6 +846,7 @@ const translations: Record<Language, Record<string, string>> = {
     "header.french": "Französisch",
     "header.urdu": "Urdu",
     "header.punjabi": "Punjabi",
+    "header.hindi": "Hindi",
     "header.dashboard": "Dashboard",
     "header.newDevice": "Neues Gerät",
     "header.allDevices": "Alle Geräte",
@@ -1612,6 +1614,201 @@ const translations: Record<Language, Record<string, string>> = {
     "placeholder.technicianNotes": "ਡਿਵਾਈਸ ਦੀ ਸਮੱਸਿਆ ਦਾ ਵਰਣਨ ਕਰੋ...",
     "placeholder.condition": "ਉਦਾਹਰਣ: ਟੁੱਟੀ ਹੋਈ ਸਕ੍ਰੀਨ, ਡੂੰਘੇ ਖੁਰਾਚ, ਪਾਣੀ ਦੇ ਨੁਕਸਾਨ ਦੇ ਨਿਸ਼ਾਨ...",
   },
+  hi: {
+    // Header
+    "header.language": "भाषा",
+    "header.english": "अंग्रेजी",
+    "header.portuguese": "पुर्तगाली (पुर्तगाल)",
+    "header.german": "जर्मन",
+    "header.french": "फ्रेंच",
+    "header.urdu": "उर्दू",
+    "header.punjabi": "पंजाबी",
+    "header.hindi": "हिंदी",
+    "header.dashboard": "डैशबोर्ड",
+    "header.newDevice": "नया उपकरण",
+    "header.allDevices": "सभी उपकरण",
+    "header.analytics": "विश्लेषण",
+    "header.subscription": "सदस्यता",
+    "header.administration": "प्रशासन",
+    "header.subscriptions": "सदस्यताएं",
+    "header.team": "टीम",
+    "header.trash": "ट्रैश",
+    "header.logout": "लॉग आउट",
+
+    // New ticket page
+    "page.newTicket.title": "नया मरम्मत उपकरण",
+    "page.newTicket.subtitle": "ग्राहक और उपकरण जानकारी दर्ज करें",
+    "page.newTicket.customerDeviceInformation": "ग्राहक और उपकरण जानकारी",
+    "page.newTicket.print": "प्रिंट करें",
+    "page.newTicket.connectPrinter": "प्रिंटर कनेक्ट करें",
+    "page.newTicket.printerConnected": "प्रिंटर कनेक्ट हो गया",
+    "page.newTicket.selectPrinter": "प्रिंटर चुनें",
+    "page.newTicket.noPrinter": "कोई प्रिंटर उपलब्ध नहीं",
+    "page.newTicket.printing": "प्रिंट हो रहा है...",
+    "page.newTicket.printSuccess": "प्रिंट कार्य सफलतापूर्वक भेजा गया",
+    "page.newTicket.printError": "प्रिंट करने में त्रुटि। कृपया पुनः प्रयास करें।",
+
+    // Tickets page
+    "page.tickets.title": "उपकरण जानकारी",
+    "page.tickets.subtitle": "सभी उपकरण जानकारी खोजें और प्रबंधित करें",
+    "page.tickets.print": "प्रिंट करें",
+
+    // Trash page
+    "page.trash.title": "ट्रैश",
+    "page.trash.subtitle": "हटाए गए उपकरण - पुनर्स्थापित करें या स्थायी रूप से हटाएं",
+
+    // NewRepairTicketForm labels
+    "form.customerName": "ग्राहक का नाम",
+    "form.contactNumber": "संपर्क नंबर",
+    "form.model": "मॉडल",
+    "form.imei": "IMEI नंबर",
+    "form.serviceNames": "सेवा का नाम",
+    "form.price": "सेवा के लिए मूल्य",
+    "form.technicianNotes": "तकनीशियन नोट्स",
+    "form.condition": "मोबाइल की स्थिति (आगमन पर)",
+    "form.cancel": "रद्द करें",
+    "form.device": "उपकरण",
+    "form.laptopSerialNumber": "लैपटॉप सीरियल नंबर",
+    "form.laptopSerialNumberPlaceholder": "लैपटॉप सीरियल नंबर दर्ज करें",
+    "form.laptopSerialNumberHint": "लैपटॉप सीरियल नंबर दर्ज करें",
+    "form.warranty": "वारंटी",
+    "form.warrantyUntil30Days": "30 दिनों तक वारंटी",
+    "form.withoutWarranty": "वारंटी के बिना",
+    "form.repairNumber": "मरम्मत नंबर (स्वचालित रूप से बनाया गया)",
+    "form.repairNumberHint": "अद्वितीय मरम्मत नंबर सर्वर पर बनाया जाएगा",
+    "form.repairObservations": "मरम्मत रिपोर्ट",
+    "form.repairObservationsPlaceholder": "मरम्मत रिपोर्ट",
+    "form.clientId": "क्लाइंट आईडी (स्वचालित रूप से बनाया गया)",
+    "form.clientIdHint": "क्लाइंट आईडी स्वचालित रूप से बनाई जाती है",
+    "form.clientPhone": "क्लाइंट फोन",
+    "form.clientPhonePlaceholder": "क्लाइंट फोन नंबर दर्ज करें",
+    "form.brand": "ब्रांड",
+    "form.brandPlaceholder": "ब्रांड टाइप करें या चुनें",
+    "form.modelPlaceholder": "मॉडल टाइप करें या चुनें",
+    "form.selectBrandFirst": "पहले ब्रांड चुनें",
+    "form.equipmentObservations": "उपकरण रिपोर्ट",
+    "form.equipmentObservationsPlaceholder": "उपकरण रिपोर्ट",
+    "form.addAnotherDevice": "एक और उपकरण जोड़ें",
+    "form.createDeviceEntry": "{count} उपकरण प्रविष्टि बनाएं",
+    "form.createDeviceEntries": "{count} उपकरण प्रविष्टियां बनाएं",
+    "form.remove": "हटाएं",
+
+    // Common
+    "common.show": "दिखाएं",
+    "common.hide": "छुपाएं",
+    "common.save": "सहेजें",
+    "common.saveChanges": "परिवर्तन सहेजें",
+    "common.allDevices": "सभी उपकरण",
+    "common.notAvailable": "उपलब्ध नहीं",
+    "common.yes": "हाँ",
+    "common.no": "नहीं",
+    "common.loading": "लोड हो रहा है...",
+    "form.equipmentCheck": "उपकरण जांच",
+    "form.simCard": "SIM कार्ड",
+    "form.simTray": "SIM ट्रे",
+    "form.memoryCard": "मेमोरी कार्ड",
+    "form.charger": "चार्जर",
+    "form.battery": "बैटरी",
+    "form.waterDamaged": "पानी से क्षतिग्रस्त",
+
+    // Service names
+    "service.lcd": "LCD",
+    "service.battery": "बैटरी",
+    "service.chargingPort": "चार्जिंग पोर्ट",
+    "service.microphone": "माइक्रोफोन",
+    "service.earSpeaker": "कान का स्पीकर",
+    "service.backCover": "पीछे का कवर",
+    "service.wifiBluetooth": "वाई-फाई/ब्लूटूथ",
+    "service.network": "नेटवर्क",
+    "service.software": "सॉफ्टवेयर",
+    "service.shutOff": "बंद करें",
+
+    // Status filter
+    "status.all": "सभी स्थितियां",
+    "status.pending": "लंबित",
+    "status.in_progress": "प्रगति में",
+    "status.completed": "पूर्ण",
+    "status.delivered": "वापस",
+    "status.notOk": "(ठीक नहीं)",
+
+    // Ticket details
+    "ticket.contact": "संपर्क:",
+    "ticket.imei": "IMEI:",
+    "ticket.model": "मॉडल:",
+    "ticket.service": "सेवा:",
+    "ticket.technicianNotes": "तकनीशियन नोट्स:",
+    "ticket.condition": "मोबाइल की स्थिति (आगमन पर):",
+    "ticket.updateStatus": "स्थिति अपडेट करें:",
+    "ticket.deleteTitle": "उपकरण हटाएं",
+    "ticket.deleteDescription": "क्या आप वाकई उपकरण प्रविष्टि को हटाना चाहते हैं",
+    "ticket.deleteConfirm": "हटाएं",
+    "ticket.edit": "संपादित करें",
+    "ticket.repairNumber": "मरम्मत नंबर",
+    "ticket.clientNif": "क्लाइंट आईडी",
+    "ticket.brandModel": "ब्रांड - मॉडल",
+    "ticket.created": "बनाया गया",
+    "ticket.problem": "समस्या",
+    "ticket.customerInformation": "ग्राहक जानकारी",
+    "ticket.deviceInformation": "उपकरण जानकारी",
+    "ticket.repairDetails": "मरम्मत विवरण",
+    "ticket.equipmentCheck": "उपकरण जांच",
+    "ticket.observations": "रिपोर्ट",
+    "ticket.serialNumber": "सीरियल नंबर",
+    "ticket.softwareVersion": "सॉफ्टवेयर संस्करण",
+    "ticket.services": "सेवाएं",
+    "ticket.problemTechnicianNotes": "समस्या / तकनीशियन नोट्स",
+    "ticket.updated": "अपडेट किया गया",
+    "ticket.repair": "मरम्मत #",
+    "ticket.spu": "SPU",
+
+    // Table headers
+    "table.date": "तारीख",
+    "table.customer": "ग्राहक",
+    "table.contact": "संपर्क",
+    "table.model": "मॉडल",
+    "table.imei": "IMEI",
+    "table.service": "सेवा",
+    "table.status": "स्थिति",
+    "table.price": "मूल्य",
+    "table.action": "कार्रवाई",
+
+    // Receipt translations
+    "receipt.clientCopy": "क्लाइंट कॉपी",
+    "receipt.adminCopy": "एडमिन कॉपी",
+    "receipt.clientId": "क्लाइंट आईडी",
+    "receipt.name": "नाम",
+    "receipt.clientPhone": "क्लाइंट फोन",
+    "receipt.entryDate": "प्रविष्टि की तारीख",
+    "receipt.repairN": "मरम्मत नंबर",
+    "receipt.imei": "IMEI",
+    "receipt.brandModel": "ब्रांड-मॉडल",
+    "receipt.laptopSerialN": "लैपटॉप सीरियल नंबर",
+    "receipt.warranty": "वारंटी",
+    "receipt.equipmentCheck": "उपकरण जांच",
+    "receipt.equipmentObs": "उपकरण रिपोर्ट",
+    "receipt.repairObs": "मरम्मत रिपोर्ट",
+    "receipt.services": "सेवाएं",
+    "receipt.problem": "समस्या",
+    "receipt.price": "मूल्य",
+    "receipt.responsibleText": "हम वर्णित खराबियों की सहायता / मरम्मत के जिम्मेदार हैं।",
+    "receipt.storageTitle": "भंडारण और लेने की शर्तें",
+    "receipt.storageText1": "मरम्मत पूरी होने और",
+    "receipt.storageText2": "द्वारा संबंधित सूचना के बाद साठ (60) दिनों की अधिकतम अवधि के भीतर उपकरण लिया जाना चाहिए। इस अवधि के बीतने के बाद, 61वें दिन से शुरू होकर, एक सौ बीस (120) दिनों की अधिकतम सीमा तक, 0.95 यूरो प्रति दिन की भंडारण फीस लागू की जाएगी, चाहे मरम्मत की गई हो या अनुमान अस्वीकार कर दिया गया हो।",
+    "receipt.storageText3": "इस दस्तावेज को स्वीकार करने से, क्लाइंट घोषणा करता है कि उसने मरम्मत की शर्तों और नियमों को पढ़ा, समझा और स्वीकार किया है।",
+    "receipt.repairReference": "मरम्मत का संदर्भ",
+    "receipt.cutHere": "यहाँ काटें",
+    "receipt.selectLanguage": "रसीद की भाषा चुनें",
+    "receipt.selectLanguageDescription": "मुद्रित रसीद के लिए भाषा चुनें",
+
+    // NewRepairTicketForm placeholders
+    "placeholder.customerName": "राम कुमार",
+    "placeholder.contactNumber": "+91 98765 43210",
+    "placeholder.model": "iPhone 14 Pro",
+    "placeholder.imei": "123456789012345",
+    "placeholder.price": "99.99",
+    "placeholder.technicianNotes": "उपकरण की समस्या का वर्णन करें...",
+    "placeholder.condition": "उदाहरण: टूटी हुई स्क्रीन, गहरे खरोंच, पानी के नुकसान के संकेत...",
+  },
 }
 
 const LanguageContext = createContext<LanguageContextValue | undefined>(undefined)
@@ -1622,7 +1819,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (typeof window === "undefined") return
     const stored = window.localStorage.getItem("language")
-    if (stored === "en" || stored === "pt" || stored === "de" || stored === "fr" || stored === "ur" || stored === "pa") {
+    if (stored === "en" || stored === "pt" || stored === "de" || stored === "fr" || stored === "ur" || stored === "pa" || stored === "hi") {
       setLanguageState(stored as Language)
     }
   }, [])
