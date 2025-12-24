@@ -5,7 +5,7 @@ import { getTenantTableNames, tenantTablesExist, createTenantTables } from "@/li
 // GET single repair ticket by ID (tenant-specific)
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> | { id: string } }
 ) {
   try {
     const { searchParams } = new URL(request.url)
@@ -31,11 +31,15 @@ export async function GET(
       )
     }
 
+    // Handle async params (Next.js 15+)
+    const resolvedParams = await Promise.resolve(params)
+    const ticketId = resolvedParams.id
+
     const tables = getTenantTableNames(user.tenantId)
     const tableName = escapeId(tables.repairTickets)
     const ticket = await queryOne(
       `SELECT * FROM ${tableName} WHERE id = ? LIMIT 1`,
-      [params.id]
+      [ticketId]
     )
 
     if (!ticket) {
@@ -68,7 +72,7 @@ export async function GET(
 // PUT update repair ticket (tenant-specific)
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> | { id: string } }
 ) {
   try {
     const body = await request.json()
@@ -91,6 +95,17 @@ export async function PUT(
       return NextResponse.json(
         { error: "User not found" },
         { status: 404 }
+      )
+    }
+
+    // Handle async params (Next.js 15+)
+    const resolvedParams = await Promise.resolve(params)
+    const ticketId = resolvedParams.id
+
+    if (!ticketId) {
+      return NextResponse.json(
+        { error: "Ticket ID is required" },
+        { status: 400 }
       )
     }
 
@@ -118,7 +133,7 @@ export async function PUT(
       )
     }
 
-    updateValues.push(params.id)
+    updateValues.push(ticketId)
 
     await execute(
       `UPDATE ${tableName} SET ${updateFields.join(", ")} WHERE id = ?`,
@@ -128,8 +143,15 @@ export async function PUT(
     // Fetch updated ticket
     const ticket = await queryOne(
       `SELECT * FROM ${tableName} WHERE id = ?`,
-      [params.id]
+      [ticketId]
     )
+
+    if (!ticket) {
+      return NextResponse.json(
+        { error: "Ticket not found after update" },
+        { status: 404 }
+      )
+    }
 
     // Parse JSON fields
     if (ticket && ticket.selectedServices && typeof ticket.selectedServices === 'string') {
@@ -142,10 +164,16 @@ export async function PUT(
     }
 
     return NextResponse.json({ ticket })
-  } catch (error) {
+  } catch (error: any) {
     console.error("[API] Error updating repair ticket:", error)
+    console.error("[API] Error details:", {
+      message: error?.message,
+      code: error?.code,
+      sqlState: error?.sqlState,
+      sqlMessage: error?.sqlMessage,
+    })
     return NextResponse.json(
-      { error: "Failed to update repair ticket" },
+      { error: "Failed to update repair ticket", details: process.env.NODE_ENV === "development" ? error?.message : undefined },
       { status: 500 }
     )
   }
@@ -154,7 +182,7 @@ export async function PUT(
 // DELETE repair ticket (tenant-specific)
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> | { id: string } }
 ) {
   try {
     const { searchParams } = new URL(request.url)
@@ -180,6 +208,10 @@ export async function DELETE(
       )
     }
 
+    // Handle async params (Next.js 15+)
+    const resolvedParams = await Promise.resolve(params)
+    const ticketId = resolvedParams.id
+
     const tables = getTenantTableNames(user.tenantId)
     const repairTable = escapeId(tables.repairTickets)
     const deletedTable = escapeId(tables.deletedTickets)
@@ -187,7 +219,7 @@ export async function DELETE(
     // Move to deleted tickets before deleting
     const ticket = await queryOne(
       `SELECT * FROM ${repairTable} WHERE id = ?`,
-      [params.id]
+      [ticketId]
     )
 
     if (ticket) {
@@ -228,7 +260,7 @@ export async function DELETE(
 
     await execute(
       `DELETE FROM ${repairTable} WHERE id = ?`,
-      [params.id]
+      [ticketId]
     )
 
     return NextResponse.json({ message: "Ticket deleted successfully" })
