@@ -389,8 +389,8 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
 
   return (
     <div className="space-y-6">
-      <Card className="shadow-2xl border border-gray-300/50 bg-gradient-to-br from-gray-100/95 via-gray-50/95 to-gray-100/95 backdrop-blur-sm">
-        <CardHeader className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-b border-gray-300/50 rounded-t-xl p-6">
+      <Card className="shadow-2xl border border-gray-800/50 bg-gradient-to-br from-gray-900/95 via-black/95 to-gray-900/95 backdrop-blur-sm">
+        <CardHeader className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-b border-gray-800/50 rounded-t-lg p-6">
           <CardTitle className="text-2xl font-bold text-gray-900 flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center ring-2 ring-blue-500/50 shadow-lg">
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -400,10 +400,10 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
             {t("search.title")}
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-6 text-gray-900">
+        <CardContent className="p-6 text-white">
           <div className="grid gap-4 md:grid-cols-3">
             <div className="space-y-2">
-              <Label htmlFor="search" className="font-medium text-gray-700">{t("search.searchLabel")}</Label>
+              <Label htmlFor="search" className="font-medium text-gray-300">{t("search.searchLabel")}</Label>
               <div className="relative">
                 <svg className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -414,7 +414,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                     type="date"
                     value={dateFilter}
                     onChange={(e) => setDateFilter(e.target.value || "")}
-                    className="pl-10 bg-white/80 border-gray-300 text-gray-900 focus:border-blue-500"
+                    className="pl-10 bg-gray-800/80 border-gray-700 text-white focus:border-blue-500"
                   />
                 ) : (
                   <Input
@@ -427,22 +427,22 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                       if (suggestions.length > 0) setShowSuggestions(true)
                     }}
                     onBlur={() => setTimeout(() => { setSearchInputFocused(false); setShowSuggestions(false) }, 200)}
-                    className="pl-10 bg-white/80 border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-blue-500"
+                    className="pl-10 bg-gray-800/80 border-gray-700 text-white placeholder:text-gray-400 focus:border-blue-500"
                   />
                 )}
                 {showSuggestions && suggestions.length > 0 && (
-                  <div className="absolute z-50 w-full mt-1 bg-white border-2 border-gray-300 rounded-lg shadow-xl max-h-64 overflow-y-auto">
+                  <div className="absolute z-50 w-full mt-1 bg-gray-800 border-2 border-gray-700 rounded-lg shadow-xl max-h-64 overflow-y-auto">
                     {suggestions.map((suggestion, index) => (
                       <div
                         key={index}
                         onClick={() => handleSuggestionClick(suggestion)}
-                        className="px-4 py-3 hover:bg-gray-100 cursor-pointer border-b border-gray-200 last:border-b-0 transition-colors"
+                        className="px-4 py-3 hover:bg-gray-700 cursor-pointer border-b border-gray-700 last:border-b-0 transition-colors"
                       >
                         <div className="flex items-center gap-2">
-                          <svg className="w-4 h-4 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                           </svg>
-                          <span className="text-sm font-medium text-gray-900">{suggestion.display}</span>
+                          <span className="text-sm font-medium text-white">{suggestion.display}</span>
                         </div>
                       </div>
                     ))}
@@ -451,7 +451,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="searchType" className="font-medium text-gray-700">{t("search.searchBy")}</Label>
+              <Label htmlFor="searchType" className="font-medium text-gray-300">{t("search.searchBy")}</Label>
               <Select value={searchType} onValueChange={(value) => {
                 setSearchType(value)
                 if (value === "date") {
@@ -461,31 +461,31 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                   if (searchTerm.trim()) handleSearch(searchTerm, value)
                 }
               }}>
-                <SelectTrigger id="searchType" className="bg-white/80 border-gray-300 text-gray-900">
+                <SelectTrigger id="searchType" className="bg-gray-800/80 border-gray-700 text-white">
                   <SelectValue placeholder={t("search.field.all")} />
                 </SelectTrigger>
-                <SelectContent className="bg-white border-gray-300" side="bottom" sideOffset={4}>
-                  <SelectItem value="all" className="text-gray-900">{t("search.field.all")}</SelectItem>
-                  <SelectItem value="id" className="text-gray-900">ID</SelectItem>
-                  <SelectItem value="name" className="text-gray-900">{t("search.field.name")}</SelectItem>
-                  <SelectItem value="contact" className="text-gray-900">{t("search.field.contact")}</SelectItem>
-                  <SelectItem value="imei" className="text-gray-900">{t("search.field.imei")}</SelectItem>
-                  <SelectItem value="model" className="text-gray-900">{t("search.field.model")}</SelectItem>
+                <SelectContent className="bg-gray-800 border-gray-700" side="bottom" sideOffset={4}>
+                  <SelectItem value="all" className="text-white">{t("search.field.all")}</SelectItem>
+                  <SelectItem value="id" className="text-white">ID</SelectItem>
+                  <SelectItem value="name" className="text-white">{t("search.field.name")}</SelectItem>
+                  <SelectItem value="contact" className="text-white">{t("search.field.contact")}</SelectItem>
+                  <SelectItem value="imei" className="text-white">{t("search.field.imei")}</SelectItem>
+                  <SelectItem value="model" className="text-white">{t("search.field.model")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="statusFilter" className="font-medium text-gray-700">{t("search.filterByStatus")}</Label>
+              <Label htmlFor="statusFilter" className="font-medium text-gray-300">{t("search.filterByStatus")}</Label>
               <Select value={statusFilter} onValueChange={handleStatusFilter}>
-                <SelectTrigger id="statusFilter" className="bg-white/80 border-gray-300 text-gray-900">
+                <SelectTrigger id="statusFilter" className="bg-gray-800/80 border-gray-700 text-white">
                   <SelectValue placeholder={t("status.all")} />
                 </SelectTrigger>
-                <SelectContent className="bg-white border-gray-300" side="bottom" sideOffset={4}>
-                  <SelectItem value="all" className="text-gray-900">{t("status.all")}</SelectItem>
-                  <SelectItem value="pending" className="text-gray-900">{t("status.pending")}</SelectItem>
-                  <SelectItem value="in_progress" className="text-gray-900">{t("status.in_progress")}</SelectItem>
-                  <SelectItem value="completed" className="text-gray-900">{t("status.completed")}</SelectItem>
-                  <SelectItem value="delivered" className="text-gray-900">{t("status.delivered")}</SelectItem>
+                <SelectContent className="bg-gray-800 border-gray-700" side="bottom" sideOffset={4}>
+                  <SelectItem value="all" className="text-white">{t("status.all")}</SelectItem>
+                  <SelectItem value="pending" className="text-white">{t("status.pending")}</SelectItem>
+                  <SelectItem value="in_progress" className="text-white">{t("status.in_progress")}</SelectItem>
+                  <SelectItem value="completed" className="text-white">{t("status.completed")}</SelectItem>
+                  <SelectItem value="delivered" className="text-white">{t("status.delivered")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -504,15 +504,15 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
             {t("common.allDevices")} ({filteredTickets.length} {filteredTickets.length === 1 ? t("search.results.device") : t("search.results.devices")})
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-6 text-gray-900">
+        <CardContent className="p-6 text-white">
           {filteredTickets.length === 0 ? (
             <div className="text-center py-16">
-              <div className="w-20 h-20 mx-auto bg-gradient-to-br from-blue-600/20 to-purple-600/20 rounded-2xl flex items-center justify-center mb-6 border border-gray-300/50">
-                <svg className="w-10 h-10 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-20 h-20 mx-auto bg-gradient-to-br from-blue-600/20 to-purple-600/20 rounded-2xl flex items-center justify-center mb-6 border border-gray-800/50">
+                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
-              <p className="text-gray-700 text-lg font-medium">
+              <p className="text-gray-300 text-lg font-medium">
                 {tickets.length === 0 ? t("search.noDevicesYet") : t("search.noDevicesMatch")}
               </p>
             </div>
@@ -520,44 +520,44 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
             <div className="overflow-x-auto">
               <table className="w-full border-collapse">
                 <thead>
-                  <tr className="bg-gradient-to-r from-gray-200/80 to-gray-300/80 border-b-2 border-gray-400">
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-400">{t("table.date")}</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-400">{t("table.customer")}</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-400">{t("table.contact")}</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-400">{t("table.model")}</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-400">{t("table.imei")}</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-400">{t("table.service")}</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-400">{t("table.status")}</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-400">{t("table.price")}</th>
-                    <th className="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">{t("table.action")}</th>
+                  <tr className="bg-gradient-to-r from-gray-800/50 to-gray-900/50 border-b-2 border-gray-700">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider border-r border-gray-700">{t("table.date")}</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider border-r border-gray-700">{t("table.customer")}</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider border-r border-gray-700">{t("table.contact")}</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider border-r border-gray-700">{t("table.model")}</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider border-r border-gray-700">{t("table.imei")}</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider border-r border-gray-700">{t("table.service")}</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider border-r border-gray-700">{t("table.status")}</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider border-r border-gray-700">{t("table.price")}</th>
+                    <th className="px-4 py-3 text-center text-xs font-semibold text-gray-300 uppercase tracking-wider">{t("table.action")}</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-300/50">
+                <tbody className="divide-y divide-gray-800/50">
                   {filteredTickets.map((ticket) => (
                     <tr
                       key={ticket.id}
                       onClick={() => handleModelClick(ticket)}
-                      className="bg-gradient-to-r from-white/50 to-gray-50/50 hover:from-gray-100/70 hover:to-gray-200/70 transition-all cursor-pointer border-b border-gray-300/30"
+                      className="bg-gradient-to-r from-gray-900/30 to-black/30 hover:from-gray-800/50 hover:to-gray-900/50 transition-all cursor-pointer border-b border-gray-800/30"
                     >
-                      <td className="px-4 py-3 text-sm text-gray-700 border-r border-gray-300/30 whitespace-nowrap">
+                      <td className="px-4 py-3 text-sm text-gray-300 border-r border-gray-800/30 whitespace-nowrap">
                         {new Date(ticket.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                       </td>
-                      <td className="px-4 py-3 text-sm font-medium text-gray-900 border-r border-gray-300/30 whitespace-nowrap">
+                      <td className="px-4 py-3 text-sm font-medium text-white border-r border-gray-800/30 whitespace-nowrap">
                         {ticket.customerName}
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-700 border-r border-gray-300/30 whitespace-nowrap">
+                      <td className="px-4 py-3 text-sm text-gray-300 border-r border-gray-800/30 whitespace-nowrap">
                         {ticket.contact}
                       </td>
-                      <td className="px-4 py-3 text-sm font-semibold text-gray-900 border-r border-gray-300/30 whitespace-nowrap">
+                      <td className="px-4 py-3 text-sm font-semibold text-white border-r border-gray-800/30 whitespace-nowrap">
                         {ticket.model}
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-700 font-mono border-r border-gray-300/30 whitespace-nowrap">
+                      <td className="px-4 py-3 text-sm text-gray-300 font-mono border-r border-gray-800/30 whitespace-nowrap">
                         {ticket.imeiNo}
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-700 border-r border-gray-300/30 max-w-xs truncate">
-                        {ticket.serviceName || "N/A"}
+                      <td className="px-4 py-3 text-sm text-gray-300 border-r border-gray-800/30 max-w-xs truncate">
+                        {ticket.serviceName || t("common.notAvailable")}
                       </td>
-                      <td className="px-4 py-3 text-sm border-r border-gray-300/30 whitespace-nowrap">
+                      <td className="px-4 py-3 text-sm border-r border-gray-800/30 whitespace-nowrap">
                         <Badge className={`${getStatusColor(ticket.status)} text-xs px-2 py-1`}>
                           {ticket.status === "pending" || ticket.status === "PENDING" ? t("status.pending") :
                            ticket.status === "in_progress" || ticket.status === "IN_PROGRESS" ? t("status.in_progress") :
@@ -566,7 +566,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                            ticket.status.replace("_", " ")}
                         </Badge>
                       </td>
-                      <td className="px-4 py-3 text-sm font-bold text-gray-900 border-r border-gray-300/30 whitespace-nowrap">
+                      <td className="px-4 py-3 text-sm font-bold text-white border-r border-gray-800/30 whitespace-nowrap">
                         €{ticket.price}
                       </td>
                       <td className="px-4 py-3 text-center whitespace-nowrap">
