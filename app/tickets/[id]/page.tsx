@@ -109,7 +109,7 @@ export default function DeviceDetailPage() {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center min-h-[400px]">
-          <p className="text-gray-600">Loading...</p>
+          <p className="text-gray-600">{t("common.loading")}</p>
         </div>
       </DashboardLayout>
     )
@@ -221,7 +221,7 @@ export default function DeviceDetailPage() {
                     <p className="text-sm text-white font-semibold">{ticket.repairNumber || t("common.notAvailable")}</p>
                   </div>
                   <div className="space-y-1">
-                    <Label className="text-xs text-gray-400">SPU</Label>
+                    <Label className="text-xs text-gray-400">{t("ticket.spu") || "SPU"}</Label>
                     <p className="text-sm text-white font-semibold">{ticket.spu || t("common.notAvailable")}</p>
                   </div>
                   <div className="space-y-1 md:col-span-2">
