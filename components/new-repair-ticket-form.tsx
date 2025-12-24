@@ -1383,16 +1383,16 @@ export function printReceiptForTickets(tickets: any[], preferredPrinter: string 
           <style>
             @page {
               size: A4 portrait;
-              margin: 5mm 30px 5mm 30px;
+              margin: 3mm 0;
             }
             @media print {
               @page {
                 size: A4 portrait;
-                margin: 5mm 30px 5mm 30px;
+                margin: 3mm 0;
               }
               body {
                 margin: 0;
-                padding: 0;
+                padding: 0 30px;
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
                 overflow: hidden;
@@ -1449,7 +1449,7 @@ export function printReceiptForTickets(tickets: any[], preferredPrinter: string 
               font-size: 6.5pt;
               line-height: 1.1;
               margin: 0;
-              padding: 0;
+              padding: 0 30px;
               color: #000;
               width: 100%;
               height: 100vh;
