@@ -493,9 +493,9 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
         </CardContent>
       </Card>
 
-      <Card className="shadow-2xl border border-gray-300/50 bg-gradient-to-br from-gray-100/95 via-gray-50/95 to-gray-100/95 backdrop-blur-sm">
-        <CardHeader className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-b border-gray-300/50 rounded-t-xl p-6">
-          <CardTitle className="text-2xl font-bold text-gray-900 flex items-center gap-3">
+      <Card className="shadow-2xl border border-gray-800/50 bg-gradient-to-br from-gray-900/95 via-black/95 to-gray-900/95 backdrop-blur-sm">
+        <CardHeader className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-b border-gray-800/50 rounded-t-lg p-6">
+          <CardTitle className="text-2xl font-bold text-white flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center ring-2 ring-blue-500/50 shadow-lg">
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
