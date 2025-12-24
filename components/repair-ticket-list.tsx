@@ -2,10 +2,12 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useTranslation } from "@/components/language-provider"
 import { useAuth } from "@/hooks/use-auth"
+import { toast } from "sonner"
 
 export function RepairTicketList() {
   const router = useRouter()
@@ -37,17 +39,50 @@ export function RepairTicketList() {
   }, [user?.id])
 
   const getStatusColor = (status: string) => {
-    switch (status) {
+    switch (status?.toLowerCase()) {
       case "pending":
-        return "bg-yellow-100 text-yellow-800 border border-yellow-200"
+        return "bg-yellow-500/20 text-yellow-200 border border-yellow-500/50"
       case "in_progress":
-        return "bg-gray-700 text-white border border-gray-600"
+        return "bg-blue-500/20 text-blue-200 border border-blue-500/50"
       case "completed":
-        return "bg-gray-800 text-white border border-gray-700"
+        return "bg-green-500/20 text-green-200 border border-green-500/50"
       case "delivered":
-        return "bg-gray-900 text-white border border-gray-800"
+        return "bg-purple-500/20 text-purple-200 border border-purple-500/50"
       default:
-        return "bg-gray-100 text-gray-800 border border-gray-200"
+        return "bg-gray-500/20 text-gray-200 border border-gray-500/50"
+    }
+  }
+
+  const updateTicketStatus = async (ticketId: string, newStatus: string) => {
+    try {
+      if (!user?.id) {
+        toast.error(t("error.userNotFound"))
+        return
+      }
+
+      // Update via API
+      const response = await fetch(`/api/repairs/${ticketId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user.id, status: newStatus }),
+      })
+      
+      if (response.ok) {
+        // Reload tickets from API
+        const reloadResponse = await fetch(`/api/repairs?userId=${user.id}`)
+        if (reloadResponse.ok) {
+          const data = await reloadResponse.json()
+          const ticketsArray = Array.isArray(data.tickets) ? data.tickets : []
+          setTickets(ticketsArray.slice(0, 5))
+          toast.success(t("success.statusUpdated") || "Status updated successfully")
+        }
+      } else {
+        const errorData = await response.json()
+        throw new Error(errorData.error || t("error.ticketStatusUpdateFailed"))
+      }
+    } catch (error: any) {
+      console.error("[RepairTicketList] Error updating ticket status:", error)
+      toast.error(error.message || t("error.ticketStatusUpdateFailed"))
     }
   }
 
@@ -117,14 +152,27 @@ export function RepairTicketList() {
                     <td className="px-4 py-3 text-sm text-gray-300 border-r border-gray-800/30 max-w-xs truncate">
                       {ticket.serviceName || t("common.notAvailable")}
                     </td>
-                    <td className="px-4 py-3 text-sm border-r border-gray-800/30 whitespace-nowrap">
-                      <Badge className={`${getStatusColor(ticket.status)} text-xs px-2 py-1`}>
-                        {ticket.status === "pending" || ticket.status === "PENDING" ? t("status.pending") :
-                         ticket.status === "in_progress" || ticket.status === "IN_PROGRESS" ? t("status.in_progress") :
-                         ticket.status === "completed" || ticket.status === "COMPLETED" ? t("status.completed") :
-                         ticket.status === "delivered" || ticket.status === "DELIVERED" ? t("status.delivered") :
-                         ticket.status.replace("_", " ")}
-                      </Badge>
+                    <td className="px-4 py-3 text-sm border-r border-gray-800/30 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
+                      <Select
+                        value={ticket.status?.toLowerCase() || "pending"}
+                        onValueChange={(value) => updateTicketStatus(ticket.id, value)}
+                      >
+                        <SelectTrigger className={`${getStatusColor(ticket.status)} text-xs px-2 py-1 h-auto border w-auto min-w-[140px] cursor-pointer font-semibold`}>
+                          <SelectValue>
+                            {ticket.status === "pending" || ticket.status === "PENDING" ? t("status.pending") :
+                             ticket.status === "in_progress" || ticket.status === "IN_PROGRESS" ? t("status.in_progress") :
+                             ticket.status === "completed" || ticket.status === "COMPLETED" ? t("status.completed") :
+                             ticket.status === "delivered" || ticket.status === "DELIVERED" ? t("status.delivered") :
+                             ticket.status?.replace("_", " ") || t("status.pending")}
+                          </SelectValue>
+                        </SelectTrigger>
+                        <SelectContent className="bg-gray-900 border-gray-700">
+                          <SelectItem value="pending" className="text-white cursor-pointer hover:bg-gray-800">{t("status.pending")}</SelectItem>
+                          <SelectItem value="in_progress" className="text-white cursor-pointer hover:bg-gray-800">{t("status.in_progress")}</SelectItem>
+                          <SelectItem value="completed" className="text-white cursor-pointer hover:bg-gray-800">{t("status.completed")}</SelectItem>
+                          <SelectItem value="delivered" className="text-white cursor-pointer hover:bg-gray-800">{t("status.delivered")}</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </td>
                     <td className="px-4 py-3 text-sm font-bold text-white border-r border-gray-800/30 whitespace-nowrap">
                       €{ticket.price}

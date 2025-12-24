@@ -5,8 +5,10 @@ import { DashboardLayout } from "@/components/dashboard-layout"
 import { NewRepairTicketForm, printReceiptWithLanguageSelection } from "@/components/new-repair-ticket-form"
 import { useTranslation } from "@/components/language-provider"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useAuth } from "@/hooks/use-auth"
 import { Button } from "@/components/ui/button"
+import { toast } from "sonner"
 
 export default function NewTicketPage() {
   const { t } = useTranslation()
@@ -25,6 +27,49 @@ export default function NewTicketPage() {
       }
     } catch (error) {
       console.error("Error loading devices:", error)
+    }
+  }
+
+  const updateTicketStatus = async (ticketId: string, newStatus: string) => {
+    try {
+      if (!user?.id) {
+        toast.error(t("error.userNotFound"))
+        return
+      }
+
+      // Update via API
+      const response = await fetch(`/api/repairs/${ticketId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user.id, status: newStatus }),
+      })
+      
+      if (response.ok) {
+        // Reload devices
+        await loadDevices()
+        toast.success(t("success.statusUpdated") || "Status updated successfully")
+      } else {
+        const errorData = await response.json()
+        throw new Error(errorData.error || t("error.ticketStatusUpdateFailed"))
+      }
+    } catch (error: any) {
+      console.error("[NewTicketPage] Error updating ticket status:", error)
+      toast.error(error.message || t("error.ticketStatusUpdateFailed"))
+    }
+  }
+
+  const getStatusColor = (status: string) => {
+    switch (status?.toLowerCase()) {
+      case "pending":
+        return "text-yellow-200"
+      case "in_progress":
+        return "text-blue-200"
+      case "completed":
+        return "text-green-200"
+      case "delivered":
+        return "text-purple-200"
+      default:
+        return "text-gray-200"
     }
   }
 
@@ -148,18 +193,27 @@ export default function NewTicketPage() {
                           <p className="font-semibold">{device.imeiNo || t("common.notAvailable")}</p>
                         </div>
                         <div>
-                          <p className="text-sm text-gray-400">{t("table.status")}</p>
-                          <p className={`font-semibold ${
-                            device.status === "completed" ? "text-green-400" :
-                            device.status === "in-progress" ? "text-yellow-400" :
-                            "text-blue-400"
-                          }`}>
-                            {device.status === "pending" || device.status === "PENDING" ? t("status.pending") :
-                             device.status === "in_progress" || device.status === "IN_PROGRESS" || device.status === "in-progress" ? t("status.in_progress") :
-                             device.status === "completed" || device.status === "COMPLETED" ? t("status.completed") :
-                             device.status === "delivered" || device.status === "DELIVERED" ? t("status.delivered") :
-                             device.status || t("status.pending")}
-                          </p>
+                          <p className="text-sm text-gray-400 mb-2">{t("table.status")}</p>
+                          <Select
+                            value={device.status?.toLowerCase() || "pending"}
+                            onValueChange={(value) => updateTicketStatus(device.id, value)}
+                          >
+                            <SelectTrigger className={`${getStatusColor(device.status)} bg-gray-800/50 border-gray-700 w-full font-semibold`}>
+                              <SelectValue>
+                                {device.status === "pending" || device.status === "PENDING" ? t("status.pending") :
+                                 device.status === "in_progress" || device.status === "IN_PROGRESS" || device.status === "in-progress" ? t("status.in_progress") :
+                                 device.status === "completed" || device.status === "COMPLETED" ? t("status.completed") :
+                                 device.status === "delivered" || device.status === "DELIVERED" ? t("status.delivered") :
+                                 device.status || t("status.pending")}
+                              </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent className="bg-gray-900 border-gray-700">
+                              <SelectItem value="pending" className="text-white cursor-pointer hover:bg-gray-800">{t("status.pending")}</SelectItem>
+                              <SelectItem value="in_progress" className="text-white cursor-pointer hover:bg-gray-800">{t("status.in_progress")}</SelectItem>
+                              <SelectItem value="completed" className="text-white cursor-pointer hover:bg-gray-800">{t("status.completed")}</SelectItem>
+                              <SelectItem value="delivered" className="text-white cursor-pointer hover:bg-gray-800">{t("status.delivered")}</SelectItem>
+                            </SelectContent>
+                          </Select>
                         </div>
                         <div>
                           <p className="text-sm text-gray-400">{t("table.price")}</p>
