@@ -58,7 +58,6 @@ const translations: Record<Language, Record<string, string>> = {
     "form.price": "Price for Service",
     "form.technicianNotes": "Technician Notes",
     "form.condition": "Mobile Condition (On Arrival)",
-    "form.createDeviceEntry": "Create Device Entry",
     "form.cancel": "Cancel",
     "form.device": "Device",
     "form.laptopSerialNumber": "Laptop Serial Number",
@@ -436,7 +435,6 @@ const translations: Record<Language, Record<string, string>> = {
     "form.price": "Preço do serviço",
     "form.technicianNotes": "Notas do técnico",
     "form.condition": "Condição do telemóvel (à chegada)",
-    "form.createDeviceEntry": "Criar registo do dispositivo",
     "form.cancel": "Cancelar",
     "form.device": "Dispositivo",
     "form.laptopSerialNumber": "Número de Série do Portátil",
@@ -708,7 +706,6 @@ const translations: Record<Language, Record<string, string>> = {
     "subscription.paymentDeclined": "Pagamento Recusado",
     "subscription.paymentApproved": "Pagamento Aprovado",
     "subscription.duration": "Duração",
-    "subscription.months": "mês(es)",
     "subscription.scheduled": "(Agendado)",
     "subscription.scheduledMessage": "Esta subscrição começará em {date} (o dia após o término do seu período de teste gratuito).",
 
