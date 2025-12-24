@@ -1100,6 +1100,41 @@ const translations: Record<Language, Record<string, string>> = {
     "receipt.selectLanguage": "Sprache für den Beleg auswählen",
     "receipt.selectLanguageDescription": "Wählen Sie die Sprache für den gedruckten Beleg",
 
+    // Dashboard
+    "dashboard.welcome": "Willkommen zurück,",
+    "dashboard.welcomeBack": "Willkommen zurück,",
+    "dashboard.subtitle": "Hier ist, was heute in Ihrem Reparaturgeschäft passiert.",
+    "dashboard.whatsHappening": "Hier ist, was heute in Ihrem Reparaturgeschäft passiert.",
+    "dashboard.recentDevicesInformation": "Aktuelle Geräteinformationen",
+    "dashboard.noRepairDevicesYet": "Noch keine Reparaturgeräte. Erstellen Sie Ihr erstes Gerät!",
+    "dashboard.createFirstDevice": "Erstellen Sie Ihren ersten Geräteeintrag, um zu beginnen",
+    "dashboard.noDevicesRegistered": "Noch keine Geräte registriert.",
+    "dashboard.createNewTicketToStart": "Erstellen Sie oben ein neues Reparaturticket, um zu beginnen.",
+
+    // Stats cards
+    "stats.total.title": "Gesamtgeräte",
+    "stats.total.subtitle": "Alle Reparaturgeräte",
+    "stats.totalDevices": "Gesamtgeräte",
+    "stats.allRepairDevices": "Alle Reparaturgeräte",
+    "stats.pending.title": "Ausstehend",
+    "stats.pending.subtitle": "Warten auf Service",
+    "stats.awaitingService": "Warten auf Service",
+    "stats.inProgress.title": "In Bearbeitung",
+    "stats.inProgress.subtitle": "Wird derzeit bearbeitet",
+    "stats.currentlyBeingCompleted": "Wird derzeit bearbeitet",
+    "stats.completed.title": "Abgeschlossen",
+    "stats.completed.subtitle": "Reparaturen abgeschlossen",
+    "stats.repairsFinished": "Reparaturen abgeschlossen",
+    "stats.out.title": "Ausgeliefert",
+    "stats.out.subtitle": "An Kunden zurückgegeben",
+    "stats.returnedToCustomers": "An Kunden zurückgegeben",
+
+    // Recent devices list
+    "recent.title": "Aktuelle Geräteinformationen",
+    "recent.empty": "Noch keine Reparaturgeräte. Erstellen Sie Ihr erstes Gerät!",
+    "recent.conditionLabel": "Zustand:",
+    "recent.imei": "IMEI:",
+
     // Analytics
     "analytics.title": "Analysen",
     "analytics.subtitle": "Umfassende Einblicke in Ihr Reparaturgeschäft",
@@ -1439,6 +1474,41 @@ const translations: Record<Language, Record<string, string>> = {
     "receipt.cutHere": "COUPER ICI",
     "receipt.selectLanguage": "Sélectionner la langue du reçu",
     "receipt.selectLanguageDescription": "Choisissez la langue pour le reçu imprimé",
+
+    // Dashboard
+    "dashboard.welcome": "Bon retour,",
+    "dashboard.welcomeBack": "Bon retour,",
+    "dashboard.subtitle": "Voici ce qui se passe aujourd'hui dans votre atelier de réparation.",
+    "dashboard.whatsHappening": "Voici ce qui se passe aujourd'hui dans votre atelier de réparation.",
+    "dashboard.recentDevicesInformation": "Informations sur les Appareils Récents",
+    "dashboard.noRepairDevicesYet": "Aucun appareil de réparation pour le moment. Créez votre premier appareil!",
+    "dashboard.createFirstDevice": "Créez votre première entrée d'appareil pour commencer",
+    "dashboard.noDevicesRegistered": "Aucun appareil enregistré pour le moment.",
+    "dashboard.createNewTicketToStart": "Créez un nouveau ticket de réparation ci-dessus pour commencer.",
+
+    // Stats cards
+    "stats.total.title": "Total des Appareils",
+    "stats.total.subtitle": "Tous les appareils de réparation",
+    "stats.totalDevices": "Total des Appareils",
+    "stats.allRepairDevices": "Tous les appareils de réparation",
+    "stats.pending.title": "En Attente",
+    "stats.pending.subtitle": "En attente de service",
+    "stats.awaitingService": "En attente de service",
+    "stats.inProgress.title": "En Cours",
+    "stats.inProgress.subtitle": "Actuellement en cours de traitement",
+    "stats.currentlyBeingCompleted": "Actuellement en cours de traitement",
+    "stats.completed.title": "Terminé",
+    "stats.completed.subtitle": "Réparations terminées",
+    "stats.repairsFinished": "Réparations terminées",
+    "stats.out.title": "Livré",
+    "stats.out.subtitle": "Retourné aux clients",
+    "stats.returnedToCustomers": "Retourné aux clients",
+
+    // Recent devices list
+    "recent.title": "Informations sur les Appareils Récents",
+    "recent.empty": "Aucun appareil de réparation pour le moment. Créez votre premier appareil!",
+    "recent.conditionLabel": "État:",
+    "recent.imei": "IMEI:",
 
     // Analytics
     "analytics.title": "Analyses",
@@ -1780,6 +1850,41 @@ const translations: Record<Language, Record<string, string>> = {
     "receipt.selectLanguage": "رسید کی زبان منتخب کریں",
     "receipt.selectLanguageDescription": "پرنٹ شدہ رسید کے لیے زبان منتخب کریں",
 
+    // Dashboard
+    "dashboard.welcome": "خوش آمدید،",
+    "dashboard.welcomeBack": "خوش آمدید،",
+    "dashboard.subtitle": "یہاں آج آپ کی مرمت کی دکان میں کیا ہو رہا ہے۔",
+    "dashboard.whatsHappening": "یہاں آج آپ کی مرمت کی دکان میں کیا ہو رہا ہے۔",
+    "dashboard.recentDevicesInformation": "حالیہ آلات کی معلومات",
+    "dashboard.noRepairDevicesYet": "ابھی تک کوئی مرمت کا آلہ نہیں۔ اپنا پہلا آلہ بنائیں!",
+    "dashboard.createFirstDevice": "شروع کرنے کے لیے اپنی پہلی آلہ انٹری بنائیں",
+    "dashboard.noDevicesRegistered": "ابھی تک کوئی آلہ رجسٹرڈ نہیں۔",
+    "dashboard.createNewTicketToStart": "شروع کرنے کے لیے اوپر ایک نیا مرمت ٹکٹ بنائیں۔",
+
+    // Stats cards
+    "stats.total.title": "کل آلات",
+    "stats.total.subtitle": "تمام مرمت کے آلات",
+    "stats.totalDevices": "کل آلات",
+    "stats.allRepairDevices": "تمام مرمت کے آلات",
+    "stats.pending.title": "زیر التواء",
+    "stats.pending.subtitle": "سروس کا انتظار",
+    "stats.awaitingService": "سروس کا انتظار",
+    "stats.inProgress.title": "جاری",
+    "stats.inProgress.subtitle": "فی الحال مکمل ہو رہا ہے",
+    "stats.currentlyBeingCompleted": "فی الحال مکمل ہو رہا ہے",
+    "stats.completed.title": "مکمل",
+    "stats.completed.subtitle": "مرمتیں ختم ہو گئیں",
+    "stats.repairsFinished": "مرمتیں ختم ہو گئیں",
+    "stats.out.title": "واپس",
+    "stats.out.subtitle": "کسٹمرز کو واپس کیا گیا",
+    "stats.returnedToCustomers": "کسٹمرز کو واپس کیا گیا",
+
+    // Recent devices list
+    "recent.title": "حالیہ آلات کی معلومات",
+    "recent.empty": "ابھی تک کوئی مرمت کا آلہ نہیں۔ اپنا پہلا آلہ بنائیں!",
+    "recent.conditionLabel": "حالت:",
+    "recent.imei": "IMEI:",
+
     // Analytics
     "analytics.title": "تجزیات",
     "analytics.subtitle": "آپ کے مرمت کے کاروبار میں جامع بصیرت",
@@ -2110,6 +2215,41 @@ const translations: Record<Language, Record<string, string>> = {
     "receipt.cutHere": "ਇੱਥੇ ਕੱਟੋ",
     "receipt.selectLanguage": "ਰਸੀਦ ਦੀ ਭਾਸ਼ਾ ਚੁਣੋ",
     "receipt.selectLanguageDescription": "ਪ੍ਰਿੰਟ ਕੀਤੀ ਰਸੀਦ ਲਈ ਭਾਸ਼ਾ ਚੁਣੋ",
+
+    // Dashboard
+    "dashboard.welcome": "ਵਾਪਸੀ ਤੇ ਸਵਾਗਤ,",
+    "dashboard.welcomeBack": "ਵਾਪਸੀ ਤੇ ਸਵਾਗਤ,",
+    "dashboard.subtitle": "ਇੱਥੇ ਆਪਣੀ ਮੁਰੰਮਤ ਦੁਕਾਨ ਵਿੱਚ ਅੱਜ ਕੀ ਹੋ ਰਿਹਾ ਹੈ।",
+    "dashboard.whatsHappening": "ਇੱਥੇ ਆਪਣੀ ਮੁਰੰਮਤ ਦੁਕਾਨ ਵਿੱਚ ਅੱਜ ਕੀ ਹੋ ਰਿਹਾ ਹੈ।",
+    "dashboard.recentDevicesInformation": "ਹਾਲੀਆ ਡਿਵਾਈਸ ਜਾਣਕਾਰੀ",
+    "dashboard.noRepairDevicesYet": "ਅਜੇ ਤੱਕ ਕੋਈ ਮੁਰੰਮਤ ਡਿਵਾਈਸ ਨਹੀਂ। ਆਪਣਾ ਪਹਿਲਾ ਡਿਵਾਈਸ ਬਣਾਓ!",
+    "dashboard.createFirstDevice": "ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਆਪਣੀ ਪਹਿਲੀ ਡਿਵਾਈਸ ਐਂਟਰੀ ਬਣਾਓ",
+    "dashboard.noDevicesRegistered": "ਅਜੇ ਤੱਕ ਕੋਈ ਡਿਵਾਈਸ ਰਜਿਸਟਰਡ ਨਹੀਂ।",
+    "dashboard.createNewTicketToStart": "ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਉੱਪਰ ਇੱਕ ਨਵਾਂ ਮੁਰੰਮਤ ਟਿਕਟ ਬਣਾਓ।",
+
+    // Stats cards
+    "stats.total.title": "ਕੁੱਲ ਡਿਵਾਈਸ",
+    "stats.total.subtitle": "ਸਾਰੇ ਮੁਰੰਮਤ ਡਿਵਾਈਸ",
+    "stats.totalDevices": "ਕੁੱਲ ਡਿਵਾਈਸ",
+    "stats.allRepairDevices": "ਸਾਰੇ ਮੁਰੰਮਤ ਡਿਵਾਈਸ",
+    "stats.pending.title": "ਬਾਕੀ",
+    "stats.pending.subtitle": "ਸੇਵਾ ਦਾ ਇੰਤਜ਼ਾਰ",
+    "stats.awaitingService": "ਸੇਵਾ ਦਾ ਇੰਤਜ਼ਾਰ",
+    "stats.inProgress.title": "ਜਾਰੀ",
+    "stats.inProgress.subtitle": "ਇਸ ਸਮੇਂ ਪੂਰਾ ਹੋ ਰਿਹਾ ਹੈ",
+    "stats.currentlyBeingCompleted": "ਇਸ ਸਮੇਂ ਪੂਰਾ ਹੋ ਰਿਹਾ ਹੈ",
+    "stats.completed.title": "ਪੂਰਾ",
+    "stats.completed.subtitle": "ਮੁਰੰਮਤਾਂ ਖਤਮ ਹੋ ਗਈਆਂ",
+    "stats.repairsFinished": "ਮੁਰੰਮਤਾਂ ਖਤਮ ਹੋ ਗਈਆਂ",
+    "stats.out.title": "ਵਾਪਸ",
+    "stats.out.subtitle": "ਗ੍ਰਾਹਕਾਂ ਨੂੰ ਵਾਪਸ ਕੀਤਾ ਗਿਆ",
+    "stats.returnedToCustomers": "ਗ੍ਰਾਹਕਾਂ ਨੂੰ ਵਾਪਸ ਕੀਤਾ ਗਿਆ",
+
+    // Recent devices list
+    "recent.title": "ਹਾਲੀਆ ਡਿਵਾਈਸ ਜਾਣਕਾਰੀ",
+    "recent.empty": "ਅਜੇ ਤੱਕ ਕੋਈ ਮੁਰੰਮਤ ਡਿਵਾਈਸ ਨਹੀਂ। ਆਪਣਾ ਪਹਿਲਾ ਡਿਵਾਈਸ ਬਣਾਓ!",
+    "recent.conditionLabel": "ਹਾਲਤ:",
+    "recent.imei": "IMEI:",
 
     // Analytics
     "analytics.title": "ਵਿਸ਼ਲੇਸ਼ਣ",
@@ -2451,6 +2591,41 @@ const translations: Record<Language, Record<string, string>> = {
     "receipt.cutHere": "यहाँ काटें",
     "receipt.selectLanguage": "रसीद की भाषा चुनें",
     "receipt.selectLanguageDescription": "मुद्रित रसीद के लिए भाषा चुनें",
+
+    // Dashboard
+    "dashboard.welcome": "वापसी पर स्वागत है,",
+    "dashboard.welcomeBack": "वापसी पर स्वागत है,",
+    "dashboard.subtitle": "यहाँ आज आपकी मरम्मत की दुकान में क्या हो रहा है।",
+    "dashboard.whatsHappening": "यहाँ आज आपकी मरम्मत की दुकान में क्या हो रहा है।",
+    "dashboard.recentDevicesInformation": "हाल के उपकरण जानकारी",
+    "dashboard.noRepairDevicesYet": "अभी तक कोई मरम्मत उपकरण नहीं। अपना पहला उपकरण बनाएं!",
+    "dashboard.createFirstDevice": "शुरू करने के लिए अपनी पहली उपकरण प्रविष्टि बनाएं",
+    "dashboard.noDevicesRegistered": "अभी तक कोई उपकरण पंजीकृत नहीं।",
+    "dashboard.createNewTicketToStart": "शुरू करने के लिए ऊपर एक नया मरम्मत टिकट बनाएं।",
+
+    // Stats cards
+    "stats.total.title": "कुल उपकरण",
+    "stats.total.subtitle": "सभी मरम्मत उपकरण",
+    "stats.totalDevices": "कुल उपकरण",
+    "stats.allRepairDevices": "सभी मरम्मत उपकरण",
+    "stats.pending.title": "लंबित",
+    "stats.pending.subtitle": "सेवा की प्रतीक्षा",
+    "stats.awaitingService": "सेवा की प्रतीक्षा",
+    "stats.inProgress.title": "प्रगति में",
+    "stats.inProgress.subtitle": "वर्तमान में पूरा हो रहा है",
+    "stats.currentlyBeingCompleted": "वर्तमान में पूरा हो रहा है",
+    "stats.completed.title": "पूर्ण",
+    "stats.completed.subtitle": "मरम्मत समाप्त हो गई",
+    "stats.repairsFinished": "मरम्मत समाप्त हो गई",
+    "stats.out.title": "वापस",
+    "stats.out.subtitle": "ग्राहकों को वापस किया गया",
+    "stats.returnedToCustomers": "ग्राहकों को वापस किया गया",
+
+    // Recent devices list
+    "recent.title": "हाल के उपकरण जानकारी",
+    "recent.empty": "अभी तक कोई मरम्मत उपकरण नहीं। अपना पहला उपकरण बनाएं!",
+    "recent.conditionLabel": "स्थिति:",
+    "recent.imei": "IMEI:",
 
     // Analytics
     "analytics.title": "विश्लेषण",
