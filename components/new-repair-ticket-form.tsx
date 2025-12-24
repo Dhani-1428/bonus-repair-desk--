@@ -1347,7 +1347,7 @@ export function printReceiptForTickets(tickets: any[], preferredPrinter: string 
       const adminCopy = generateReceiptHTML(ticket, 'ADMIN')
     
     return `
-      <div class="ticket-container" style="page-break-inside: avoid !important; page-break-after: always !important; break-inside: avoid !important; break-after: always !important; margin: 5mm auto; padding: 0; width: 100%; max-width: 180mm; display: flex; flex-direction: column; box-sizing: border-box;">
+      <div class="ticket-container" style="page-break-inside: avoid !important; page-break-after: avoid !important; break-inside: avoid !important; break-after: avoid !important; margin: 0 auto; padding: 0; width: 100%; max-width: 180mm; display: flex; flex-direction: column; box-sizing: border-box; justify-content: center;">
         <!-- Client's Copy (Top) -->
         <div style="width: 100%; flex: 0 0 auto; margin-bottom: 0; padding-bottom: 0; page-break-inside: avoid !important; break-inside: avoid !important;">
           ${clientCopy}
@@ -1383,12 +1383,12 @@ export function printReceiptForTickets(tickets: any[], preferredPrinter: string 
           <style>
             @page {
               size: A4 portrait;
-              margin: 5mm 10mm 5mm 10mm;
+              margin: 10mm;
             }
             @media print {
               @page {
                 size: A4 portrait;
-                margin: 5mm 10mm 5mm 10mm;
+                margin: 10mm;
               }
               body {
                 margin: 0;
@@ -1396,6 +1396,10 @@ export function printReceiptForTickets(tickets: any[], preferredPrinter: string 
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
                 overflow: hidden;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 100vh;
               }
               .no-print {
                 display: none !important;
@@ -1427,7 +1431,8 @@ export function printReceiptForTickets(tickets: any[], preferredPrinter: string 
                 break-after: avoid !important;
                 display: flex !important;
                 flex-direction: column !important;
-                justify-content: flex-start !important;
+                justify-content: center !important;
+                margin: 0 auto !important;
               }
               /* Prevent any element from breaking across pages */
               div, table, tr, td {
@@ -1444,19 +1449,24 @@ export function printReceiptForTickets(tickets: any[], preferredPrinter: string 
               font-size: 6.5pt;
               line-height: 1.1;
               margin: 0;
-              padding: 3mm 3mm 5mm 3mm;
+              padding: 0;
               color: #000;
               width: 100%;
+              height: 100vh;
               box-sizing: border-box;
               display: flex;
               flex-direction: column;
+              align-items: center;
+              justify-content: center;
             }
             .ticket-container {
               width: 100%;
+              max-width: 180mm;
               box-sizing: border-box;
               display: flex;
               flex-direction: column;
-              justify-content: flex-start;
+              justify-content: center;
+              margin: 0 auto;
             }
             .print-button {
               position: fixed;
