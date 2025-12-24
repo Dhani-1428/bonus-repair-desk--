@@ -1445,7 +1445,7 @@ const translations: Record<Language, Record<string, string>> = {
     "table.service": "Service",
     "table.status": "Statut",
     "table.price": "Prix",
-    "table.action": "Action",
+    "table.action": "Actions",
 
     // Receipt translations
     "receipt.clientCopy": "COPIE CLIENT",
