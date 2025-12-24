@@ -245,41 +245,46 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
 
   const updateTicketStatus = async (ticketId: string, newStatus: string) => {
     try {
-      const ticketsArray = Array.isArray(tickets) ? tickets : []
-      const updatedTickets = ticketsArray.map((ticket) => (ticket.id === ticketId ? { ...ticket, status: newStatus } : ticket))
-      
-      // Update via API
-      const ticket = ticketsArray.find((t: any) => t.id === ticketId)
-      if (ticket) {
-        const userId = currentUser?.id
-        if (userId) {
-          const response = await fetch(`/api/repairs/${ticketId}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ userId, status: newStatus }),
-          })
-          
-          if (response.ok) {
-            // Reload tickets
-            const storedTickets = await getUserData<any[]>("repairTickets", [])
-            const reloadedTickets = Array.isArray(storedTickets) ? storedTickets : []
-            setTickets(reloadedTickets)
-            
-            // Update filtered tickets
-            setFilteredTickets(reloadedTickets.filter((t: any) => {
-              if (statusFilter !== "all" && t.status !== statusFilter) return false
-              if (searchTerm.trim()) {
-                const term = searchTerm.toLowerCase()
-                return t.customerName.toLowerCase().includes(term) || t.model.toLowerCase().includes(term) || t.imeiNo.toLowerCase().includes(term)
-              }
-              return true
-            }))
-          }
-        }
+      const userId = currentUser?.id
+      if (!userId) {
+        toast.error(t("error.userNotFound"))
+        return
       }
-    } catch (error) {
+
+      // Update via API
+      const response = await fetch(`/api/repairs/${ticketId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, status: newStatus }),
+      })
+      
+      if (response.ok) {
+        // Reload tickets from API
+        const reloadResponse = await fetch(`/api/repairs?userId=${userId}`)
+        if (reloadResponse.ok) {
+          const data = await reloadResponse.json()
+          const ticketsArray = Array.isArray(data.tickets) ? data.tickets : []
+          setTickets(ticketsArray)
+          
+          // Update filtered tickets
+          setFilteredTickets(ticketsArray.filter((t: any) => {
+            if (statusFilter !== "all" && t.status?.toLowerCase() !== statusFilter.toLowerCase()) return false
+            if (searchTerm.trim()) {
+              const term = searchTerm.toLowerCase()
+              return t.customerName?.toLowerCase().includes(term) || t.model?.toLowerCase().includes(term) || t.imeiNo?.toLowerCase().includes(term)
+            }
+            return true
+          }))
+          
+          toast.success(t("success.statusUpdated") || "Status updated successfully")
+        }
+      } else {
+        const errorData = await response.json()
+        throw new Error(errorData.error || t("error.ticketStatusUpdateFailed"))
+      }
+    } catch (error: any) {
       console.error("[SearchRepairTickets] Error updating ticket status:", error)
-      toast.error(t("error.ticketStatusUpdateFailed"))
+      toast.error(error.message || t("error.ticketStatusUpdateFailed"))
     }
   }
 
@@ -326,11 +331,24 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
       })
 
       if (response.ok) {
-        // Reload tickets
-        const storedTickets = await getUserData<any[]>("repairTickets", [])
-        const reloadedTickets = Array.isArray(storedTickets) ? storedTickets : []
-        setTickets(reloadedTickets)
-        toast.success(t("success.deviceUpdated"))
+        // Reload tickets from API
+        const reloadResponse = await fetch(`/api/repairs?userId=${userId}`)
+        if (reloadResponse.ok) {
+          const data = await reloadResponse.json()
+          const ticketsArray = Array.isArray(data.tickets) ? data.tickets : []
+          setTickets(ticketsArray)
+          
+          // Update filtered tickets
+          setFilteredTickets(ticketsArray.filter((t: any) => {
+            if (statusFilter !== "all" && t.status?.toLowerCase() !== statusFilter.toLowerCase()) return false
+            if (searchTerm.trim()) {
+              const term = searchTerm.toLowerCase()
+              return t.customerName?.toLowerCase().includes(term) || t.model?.toLowerCase().includes(term) || t.imeiNo?.toLowerCase().includes(term)
+            }
+            return true
+          }))
+        }
+        toast.success(t("success.deviceUpdated") || "Device updated successfully")
         setIsEditDialogOpen(false)
         setEditingTicket(null)
       } else {
@@ -557,20 +575,41 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                       <td className="px-4 py-3 text-sm text-gray-300 border-r border-gray-800/30 max-w-xs truncate">
                         {ticket.serviceName || t("common.notAvailable")}
                       </td>
-                      <td className="px-4 py-3 text-sm border-r border-gray-800/30 whitespace-nowrap">
-                        <Badge className={`${getStatusColor(ticket.status)} text-xs px-2 py-1`}>
-                          {ticket.status === "pending" || ticket.status === "PENDING" ? t("status.pending") :
-                           ticket.status === "in_progress" || ticket.status === "IN_PROGRESS" ? t("status.in_progress") :
-                           ticket.status === "completed" || ticket.status === "COMPLETED" ? t("status.completed") :
-                           ticket.status === "delivered" || ticket.status === "DELIVERED" ? t("status.delivered") :
-                           ticket.status.replace("_", " ")}
-                        </Badge>
+                      <td className="px-4 py-3 text-sm border-r border-gray-800/30 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
+                        <Select 
+                          value={ticket.status?.toLowerCase() || "pending"} 
+                          onValueChange={(value) => {
+                            updateTicketStatus(ticket.id, value)
+                          }}
+                        >
+                          <SelectTrigger className={`${getStatusColor(ticket.status)} text-xs px-2 py-1 h-auto border w-auto min-w-[120px] cursor-pointer`}>
+                            <SelectValue>
+                              {ticket.status === "pending" || ticket.status === "PENDING" ? t("status.pending") :
+                               ticket.status === "in_progress" || ticket.status === "IN_PROGRESS" ? t("status.in_progress") :
+                               ticket.status === "completed" || ticket.status === "COMPLETED" ? t("status.completed") :
+                               ticket.status === "delivered" || ticket.status === "DELIVERED" ? t("status.delivered") :
+                               ticket.status?.replace("_", " ") || t("status.pending")}
+                            </SelectValue>
+                          </SelectTrigger>
+                          <SelectContent className="bg-gray-800 border-gray-700 z-50">
+                            <SelectItem value="pending" className="text-white cursor-pointer">{t("status.pending")}</SelectItem>
+                            <SelectItem value="in_progress" className="text-white cursor-pointer">{t("status.in_progress")}</SelectItem>
+                            <SelectItem value="completed" className="text-white cursor-pointer">{t("status.completed")}</SelectItem>
+                            <SelectItem value="delivered" className="text-white cursor-pointer">{t("status.delivered")}</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </td>
                       <td className="px-4 py-3 text-sm font-bold text-white border-r border-gray-800/30 whitespace-nowrap">
                         €{ticket.price}
                       </td>
                       <td className="px-4 py-3 text-center whitespace-nowrap">
-                        <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center mx-auto hover:from-blue-700 hover:to-purple-700 transition-colors shadow-lg">
+                        <div 
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleEditClick(ticket)
+                          }}
+                          className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center mx-auto hover:from-blue-700 hover:to-purple-700 transition-colors shadow-lg cursor-pointer"
+                        >
                           <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
                           </svg>
@@ -586,43 +625,43 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
       </Card>
 
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-white border-gray-300 text-gray-900">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-gradient-to-br from-gray-900/95 via-black/95 to-gray-900/95 border-gray-800 text-white">
           <DialogHeader>
-            <DialogTitle className="text-gray-900">{t("ticket.edit")}</DialogTitle>
+            <DialogTitle className="text-white text-2xl font-bold">{t("ticket.edit")}</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleEditSubmit} className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="edit-customerName" className="text-gray-900">{t("form.customerName")} *</Label>
-                <Input id="edit-customerName" value={editFormData.customerName || ""} onChange={(e) => setEditFormData({ ...editFormData, customerName: e.target.value })} required className="bg-white border-gray-300 text-gray-900" />
+                <Label htmlFor="edit-customerName" className="text-gray-300">{t("form.customerName")} *</Label>
+                <Input id="edit-customerName" value={editFormData.customerName || ""} onChange={(e) => setEditFormData({ ...editFormData, customerName: e.target.value })} required className="bg-gray-800/80 border-gray-700 text-white placeholder:text-gray-400" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="edit-contact" className="text-gray-900">{t("table.contact")} *</Label>
-                <Input id="edit-contact" value={editFormData.contact || ""} onChange={(e) => setEditFormData({ ...editFormData, contact: e.target.value })} required className="bg-white border-gray-300 text-gray-900" />
+                <Label htmlFor="edit-contact" className="text-gray-300">{t("table.contact")} *</Label>
+                <Input id="edit-contact" value={editFormData.contact || ""} onChange={(e) => setEditFormData({ ...editFormData, contact: e.target.value })} required className="bg-gray-800/80 border-gray-700 text-white placeholder:text-gray-400" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="edit-imeiNo" className="text-gray-900">{t("form.imei")} *</Label>
-                <Input id="edit-imeiNo" value={editFormData.imeiNo || ""} onChange={(e) => setEditFormData({ ...editFormData, imeiNo: e.target.value })} required className="bg-white border-gray-300 text-gray-900" />
+                <Label htmlFor="edit-imeiNo" className="text-gray-300">{t("form.imei")} *</Label>
+                <Input id="edit-imeiNo" value={editFormData.imeiNo || ""} onChange={(e) => setEditFormData({ ...editFormData, imeiNo: e.target.value })} required className="bg-gray-800/80 border-gray-700 text-white placeholder:text-gray-400" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="edit-model" className="text-gray-900">{t("form.model")} *</Label>
-                <Input id="edit-model" value={editFormData.model || ""} onChange={(e) => setEditFormData({ ...editFormData, model: e.target.value })} required className="bg-white border-gray-300 text-gray-900" />
+                <Label htmlFor="edit-model" className="text-gray-300">{t("form.model")} *</Label>
+                <Input id="edit-model" value={editFormData.model || ""} onChange={(e) => setEditFormData({ ...editFormData, model: e.target.value })} required className="bg-gray-800/80 border-gray-700 text-white placeholder:text-gray-400" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="edit-price" className="text-gray-900">{t("form.price")} *</Label>
-                <Input id="edit-price" type="number" step="0.01" value={editFormData.price || ""} onChange={(e) => setEditFormData({ ...editFormData, price: e.target.value })} required className="bg-white border-gray-300 text-gray-900" />
+                <Label htmlFor="edit-price" className="text-gray-300">{t("form.price")} *</Label>
+                <Input id="edit-price" type="number" step="0.01" value={editFormData.price || ""} onChange={(e) => setEditFormData({ ...editFormData, price: e.target.value })} required className="bg-gray-800/80 border-gray-700 text-white placeholder:text-gray-400" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="edit-serviceName" className="text-gray-900">{t("form.serviceNames")} *</Label>
-                <Input id="edit-serviceName" value={editFormData.serviceName || ""} onChange={(e) => setEditFormData({ ...editFormData, serviceName: e.target.value })} required className="bg-white border-gray-300 text-gray-900" />
+                <Label htmlFor="edit-serviceName" className="text-gray-300">{t("form.serviceNames")} *</Label>
+                <Input id="edit-serviceName" value={editFormData.serviceName || ""} onChange={(e) => setEditFormData({ ...editFormData, serviceName: e.target.value })} required className="bg-gray-800/80 border-gray-700 text-white placeholder:text-gray-400" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="edit-status" className="text-gray-900">{t("table.status")} *</Label>
+                <Label htmlFor="edit-status" className="text-gray-300">{t("table.status")} *</Label>
                 <Select value={editFormData.status || "pending"} onValueChange={(value) => setEditFormData({ ...editFormData, status: value })}>
-                  <SelectTrigger id="edit-status" className="bg-white border-gray-300 text-gray-900">
+                  <SelectTrigger id="edit-status" className="bg-gray-800/80 border-gray-700 text-white">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-gray-900 border-gray-700" side="bottom" sideOffset={4}>
+                  <SelectContent className="bg-gray-800 border-gray-700" side="bottom" sideOffset={4}>
                     <SelectItem value="pending" className="text-white">{t("status.pending")}</SelectItem>
                     <SelectItem value="in_progress" className="text-white">{t("status.in_progress")}</SelectItem>
                     <SelectItem value="completed" className="text-white">{t("status.completed")}</SelectItem>
