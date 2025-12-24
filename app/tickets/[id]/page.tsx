@@ -267,9 +267,19 @@ export default function DeviceDetailPage() {
                     <span className="text-sm text-white">{ticket.simCard ? t("common.yes") : t("common.no")}</span>
                   </div>
                   <div className="flex items-center gap-2">
+                    <div className={`w-2 h-2 rounded-full ${ticket.simTray ? "bg-green-500" : "bg-gray-600"}`}></div>
+                    <span className="text-xs text-gray-400">{t("form.simTray")}:</span>
+                    <span className="text-sm text-white">{ticket.simTray ? t("common.yes") : t("common.no")}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
                     <div className={`w-2 h-2 rounded-full ${ticket.memoryCard ? "bg-green-500" : "bg-gray-600"}`}></div>
                     <span className="text-xs text-gray-400">{t("form.memoryCard")}:</span>
                     <span className="text-sm text-white">{ticket.memoryCard ? t("common.yes") : t("common.no")}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className={`w-2 h-2 rounded-full ${ticket.waterDamaged ? "bg-red-500" : "bg-gray-600"}`}></div>
+                    <span className="text-xs text-gray-400">{t("form.waterDamaged")}:</span>
+                    <span className="text-sm text-white">{ticket.waterDamaged ? t("common.yes") : t("common.no")}</span>
                   </div>
                 </div>
           </div>
