@@ -557,10 +557,10 @@ export function NewRepairTicketForm() {
               />
             </div>
             <div className="space-y-3">
-              <Label htmlFor="receivedBy" className="text-gray-200 text-base font-semibold">{t("form.receivedBy") || "Device Received by"} *</Label>
+              <Label htmlFor="receivedBy" className="text-gray-200 text-base font-semibold">Device Received By *</Label>
               <Input
                 id="receivedBy"
-                placeholder={t("placeholder.receivedBy") || "Enter your name"}
+                placeholder="Enter your name"
                 value={receivedBy}
                 onChange={(e) => setReceivedBy(e.target.value)}
                 required
