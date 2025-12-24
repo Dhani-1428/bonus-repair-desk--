@@ -307,8 +307,8 @@ export function NewRepairTicketForm() {
         }
 
         // Normalize ticket data - parse JSON fields if needed
-        const ticket = data.ticket
-        if (ticket) {
+        const ticket = data?.ticket || data
+        if (ticket && typeof ticket === 'object') {
           // Parse selectedServices if it's a string
           if (typeof ticket.selectedServices === 'string') {
             try {
@@ -348,6 +348,7 @@ export function NewRepairTicketForm() {
           
           createdTickets.push(normalizedTicket)
         } else {
+          console.error("[NewRepairTicketForm] No valid ticket data returned from server. Response data:", data)
           throw new Error("No ticket data returned from server")
         }
       }
@@ -938,6 +939,12 @@ export function printReceiptForTickets(tickets: any[]) {
 
   // Function to generate a single receipt HTML
   const generateReceiptHTML = (ticket: any, copyType: 'CLIENT' | 'ADMIN' = 'CLIENT') => {
+    // Validate ticket parameter
+    if (!ticket || typeof ticket !== 'object') {
+      console.error("[generateReceiptHTML] Invalid ticket parameter:", ticket)
+      return '<div>Error: Invalid ticket data</div>'
+    }
+    
     // Parse selectedServices if it's a string (from database JSON)
     let servicesArray = ticket.selectedServices
     if (typeof servicesArray === 'string') {
@@ -1077,9 +1084,16 @@ export function printReceiptForTickets(tickets: any[]) {
   }
 
   // Generate receipts with 2 copies stacked vertically (CLIENT on top, ADMIN below) - compact A4 portrait, single page
-  const ticketsHTML = tickets.map(ticket => {
-    const clientCopy = generateReceiptHTML(ticket, 'CLIENT')
-    const adminCopy = generateReceiptHTML(ticket, 'ADMIN')
+  const validTickets = tickets.filter(ticket => ticket != null && typeof ticket === 'object')
+  
+  if (validTickets.length === 0) {
+    console.error("[printReceiptForTickets] No valid tickets after filtering")
+    return
+  }
+  
+  const ticketsHTML = validTickets.map(ticket => {
+      const clientCopy = generateReceiptHTML(ticket, 'CLIENT')
+      const adminCopy = generateReceiptHTML(ticket, 'ADMIN')
     
     return `
       <div class="ticket-container" style="page-break-inside: avoid !important; page-break-after: avoid !important; break-inside: avoid !important; break-after: avoid !important; margin: 0; padding: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: space-between; min-height: 100vh; box-sizing: border-box;">
