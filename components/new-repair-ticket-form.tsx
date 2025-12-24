@@ -1351,6 +1351,7 @@ function getReceiptTranslations(lang: "en" | "pt" | "de" | "fr" | "ur" | "pa" | 
       "receipt.clientId": "Client ID",
       "receipt.name": "Name",
       "receipt.clientPhone": "Client Phone",
+      "receipt.receivedBy": "Device Received By",
       "receipt.entryDate": "Entry Date",
       "receipt.repairN": "Repair n",
       "receipt.imei": "IMEI",
@@ -1387,6 +1388,7 @@ function getReceiptTranslations(lang: "en" | "pt" | "de" | "fr" | "ur" | "pa" | 
       "receipt.clientId": "ID do Cliente",
       "receipt.name": "Nome",
       "receipt.clientPhone": "Telefone do Cliente",
+      "receipt.receivedBy": "Dispositivo Recebido Por",
       "receipt.entryDate": "Data de Entrada",
       "receipt.repairN": "Reparação n",
       "receipt.imei": "IMEI",
@@ -1423,6 +1425,7 @@ function getReceiptTranslations(lang: "en" | "pt" | "de" | "fr" | "ur" | "pa" | 
       "receipt.clientId": "Kunden-ID",
       "receipt.name": "Name",
       "receipt.clientPhone": "Kundentelefon",
+      "receipt.receivedBy": "Gerät erhalten von",
       "receipt.entryDate": "Eingangsdatum",
       "receipt.repairN": "Reparatur Nr.",
       "receipt.imei": "IMEI",
@@ -1459,6 +1462,7 @@ function getReceiptTranslations(lang: "en" | "pt" | "de" | "fr" | "ur" | "pa" | 
       "receipt.clientId": "ID Client",
       "receipt.name": "Nom",
       "receipt.clientPhone": "Téléphone client",
+      "receipt.receivedBy": "Appareil reçu par",
       "receipt.entryDate": "Date d'entrée",
       "receipt.repairN": "Réparation n",
       "receipt.imei": "IMEI",
@@ -1495,6 +1499,7 @@ function getReceiptTranslations(lang: "en" | "pt" | "de" | "fr" | "ur" | "pa" | 
       "receipt.clientId": "کلائنٹ آئی ڈی",
       "receipt.name": "نام",
       "receipt.clientPhone": "کلائنٹ فون",
+      "receipt.receivedBy": "ڈیوائس کس نے وصول کی",
       "receipt.entryDate": "داخلے کی تاریخ",
       "receipt.repairN": "مرمت نمبر",
       "receipt.imei": "IMEI",
@@ -1531,6 +1536,7 @@ function getReceiptTranslations(lang: "en" | "pt" | "de" | "fr" | "ur" | "pa" | 
       "receipt.clientId": "ਕਲਾਇੰਟ ਆਈਡੀ",
       "receipt.name": "ਨਾਮ",
       "receipt.clientPhone": "ਕਲਾਇੰਟ ਫੋਨ",
+      "receipt.receivedBy": "ਡਿਵਾਈਸ ਕਿਸਨੇ ਪ੍ਰਾਪਤ ਕੀਤੀ",
       "receipt.entryDate": "ਐਂਟਰੀ ਦੀ ਤਾਰੀਖ",
       "receipt.repairN": "ਮੁਰੰਮਤ ਨੰਬਰ",
       "receipt.imei": "IMEI",
@@ -1569,6 +1575,7 @@ function getReceiptTranslations(lang: "en" | "pt" | "de" | "fr" | "ur" | "pa" | 
       "receipt.clientId": "क्लाइंट आईडी",
       "receipt.name": "नाम",
       "receipt.clientPhone": "क्लाइंट फोन",
+      "receipt.receivedBy": "डिवाइस किसने प्राप्त किया",
       "receipt.entryDate": "प्रविष्टि की तारीख",
       "receipt.repairN": "मरम्मत नंबर",
       "receipt.imei": "IMEI",
@@ -1894,7 +1901,7 @@ export function printReceiptForTickets(
               <div style="font-weight: bold; font-size: 7pt; margin: 0 0 2px 0; padding: 0; color: #000; line-height: 1.6;">${t["receipt.clientId"]}: ${ticketClientId}</div>
               <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;"><strong>${t["receipt.name"]}:</strong> ${ticketCustomerName}</div>
               <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;"><strong>${t["receipt.clientPhone"]}:</strong> ${ticketContact}</div>
-              <div style="margin: 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;"><strong>${t["receipt.receivedBy"]}:</strong> ${ticketReceivedBy}</div>
+              <div style="margin: 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;"><strong>${t["receipt.receivedBy"] || "Device Received By"}:</strong> ${ticketReceivedBy}</div>
             </div>
           </div>
         </div>
