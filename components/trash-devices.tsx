@@ -7,8 +7,10 @@ import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { toast } from "sonner"
 import { getUserData, setUserData } from "@/lib/storage"
+import { useTranslation } from "@/components/language-provider"
 
 export function TrashDevices() {
+  const { t } = useTranslation()
   const [deletedTickets, setDeletedTickets] = useState<any[]>([])
   const [deletedMembers, setDeletedMembers] = useState<any[]>([])
   const [currentUser, setCurrentUser] = useState<any>(null)
@@ -97,10 +99,10 @@ export function TrashDevices() {
         setDeletedTickets(updatedDeleted)
       }
 
-      toast.success("Device restored successfully!")
+      toast.success(t("trash.deviceRestored"))
     } catch (error) {
       console.error("Error restoring device:", error)
-      toast.error("Failed to restore device. Please try again.")
+      toast.error(t("trash.deviceRestoreFailed"))
     }
   }
 
@@ -128,10 +130,10 @@ export function TrashDevices() {
         setDeletedMembers(updatedDeleted)
       }
 
-      toast.success("Member restored successfully!")
+      toast.success(t("trash.memberRestored"))
     } catch (error) {
       console.error("Error restoring member:", error)
-      toast.error("Failed to restore member. Please try again.")
+      toast.error(t("trash.memberRestoreFailed"))
     }
   }
 
@@ -139,7 +141,7 @@ export function TrashDevices() {
     if (typeof window === "undefined") return
     
     const confirmed = window.confirm(
-      `Are you sure you want to permanently delete the device entry for ${customerName}? This action cannot be undone.`
+      t("trash.confirmPermanentDelete").replace("{name}", customerName)
     )
     if (!confirmed) return
 
@@ -147,10 +149,10 @@ export function TrashDevices() {
       const updatedDeleted = deletedTickets.filter((t: any) => String(t.id) !== String(ticketId))
       localStorage.setItem("deletedTickets", JSON.stringify(updatedDeleted))
       setDeletedTickets(updatedDeleted)
-      toast.success("Device permanently deleted")
+      toast.success(t("trash.devicePermanentlyDeleted"))
     } catch (error) {
       console.error("Error deleting device:", error)
-      toast.error("Failed to delete device. Please try again.")
+      toast.error(t("trash.deviceDeleteFailed"))
     }
   }
 
@@ -185,10 +187,10 @@ export function TrashDevices() {
       <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "devices" | "members")}>
         <TabsList className="grid w-full max-w-md grid-cols-2 bg-gray-200">
           <TabsTrigger value="devices" className="data-[state=active]:bg-gray-900 data-[state=active]:text-white">
-            Deleted Devices ({deletedTickets.length})
+            {t("trash.deletedDevices")} ({deletedTickets.length})
           </TabsTrigger>
           <TabsTrigger value="members" className="data-[state=active]:bg-gray-900 data-[state=active]:text-white">
-            Deleted Members ({deletedMembers.length})
+            {t("trash.deletedMembers")} ({deletedMembers.length})
           </TabsTrigger>
         </TabsList>
 
@@ -200,7 +202,7 @@ export function TrashDevices() {
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                   </svg>
-                  Deleted Devices
+                  {t("trash.deletedDevices")}
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
@@ -228,34 +230,34 @@ export function TrashDevices() {
                               <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                               </svg>
-                              <span className="text-gray-600">Contact:</span>
+                              <span className="text-gray-600">{t("trash.contact")}</span>
                               <span className="font-medium text-gray-900">{ticket.contact}</span>
                             </div>
                             <div className="flex items-center gap-2">
                               <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
                               </svg>
-                              <span className="text-gray-600">IMEI:</span>
+                              <span className="text-gray-600">{t("trash.imei")}</span>
                               <span className="font-medium text-gray-900">{ticket.imeiNo}</span>
                             </div>
                             <div className="flex items-center gap-2">
                               <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                               </svg>
-                              <span className="text-gray-600">Model:</span>
+                              <span className="text-gray-600">{t("trash.model")}</span>
                               <span className="font-medium text-gray-900">{ticket.model}</span>
                             </div>
                             <div className="flex items-center gap-2">
                               <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                               </svg>
-                              <span className="text-gray-600">Service:</span>
+                              <span className="text-gray-600">{t("trash.service")}</span>
                               <span className="font-medium text-gray-900">{ticket.serviceName}</span>
                             </div>
                           </div>
                           <div className="mt-4 p-3 bg-gray-50 rounded-lg">
                             <p className="text-sm text-gray-700">
-                              <span className="text-gray-600 font-medium">Problem:</span>
+                              <span className="text-gray-600 font-medium">{t("trash.problem")}</span>
                               <span className="ml-2">{ticket.problem}</span>
                             </p>
                           </div>
@@ -263,7 +265,7 @@ export function TrashDevices() {
                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
-                            Deleted on: {ticket.deletedAt ? new Date(ticket.deletedAt).toLocaleString() : "Unknown"}
+                            {t("trash.deletedOn")} {ticket.deletedAt ? new Date(ticket.deletedAt).toLocaleString() : "Unknown"}
                           </p>
                         </div>
                         <div className="text-right ml-6">
@@ -289,7 +291,7 @@ export function TrashDevices() {
                           <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                           </svg>
-                          Restore
+                          {t("trash.restore")}
                         </Button>
                         <Button
                           variant="outline"
@@ -300,7 +302,7 @@ export function TrashDevices() {
                           <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                           </svg>
-                          Delete Permanently
+                          {t("trash.deletePermanently")}
                         </Button>
                       </div>
                     </div>
@@ -315,8 +317,8 @@ export function TrashDevices() {
                   <svg className="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
-                  <p className="text-gray-600 text-lg">No deleted devices</p>
-                  <p className="text-sm text-gray-500 mt-2">Deleted devices will appear here</p>
+                  <p className="text-gray-600 text-lg">{t("trash.noDeletedDevices")}</p>
+                  <p className="text-sm text-gray-500 mt-2">{t("trash.deletedDevicesWillAppear")}</p>
                 </div>
               </CardContent>
             </Card>
@@ -331,7 +333,7 @@ export function TrashDevices() {
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                   </svg>
-                  Deleted Team Members
+                  {t("trash.deletedMembers")}
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
@@ -350,7 +352,7 @@ export function TrashDevices() {
                             <div className="flex items-center gap-3 mb-1">
                               <h3 className="font-semibold text-lg text-gray-900">{member.name}</h3>
                               <Badge className={`${getRoleBadgeColor(member.role)} font-medium px-2.5 py-0.5`}>
-                                {member.role === "admin" ? "Admin" : "Team Member"}
+                                {member.role === "admin" ? t("team.member.role.admin") : t("trash.teamMember")}
                               </Badge>
                             </div>
                             <p className="text-sm text-gray-600 flex items-center gap-1">
@@ -381,7 +383,7 @@ export function TrashDevices() {
                               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                               </svg>
-                              Deleted on: {member.deletedAt ? new Date(member.deletedAt).toLocaleString() : "Unknown"}
+                              {t("trash.deletedOn")} {member.deletedAt ? new Date(member.deletedAt).toLocaleString() : "Unknown"}
                             </p>
                           </div>
                         </div>
@@ -397,7 +399,7 @@ export function TrashDevices() {
                           <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                           </svg>
-                          Restore
+                          {t("trash.restore")}
                         </Button>
                       </div>
                     </div>
@@ -412,8 +414,8 @@ export function TrashDevices() {
                   <svg className="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                   </svg>
-                  <p className="text-gray-600 text-lg">No deleted team members</p>
-                  <p className="text-sm text-gray-500 mt-2">Deleted team members will appear here</p>
+                  <p className="text-gray-600 text-lg">{t("trash.noDeletedMembers")}</p>
+                  <p className="text-sm text-gray-500 mt-2">{t("trash.deletedMembersWillAppear")}</p>
                 </div>
               </CardContent>
             </Card>
