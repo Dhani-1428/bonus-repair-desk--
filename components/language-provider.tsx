@@ -86,6 +86,7 @@ const translations: Record<Language, Record<string, string>> = {
     "form.addAnotherDevice": "Add Another Device",
     "form.createDeviceEntry": "Create {count} Device Entry",
     "form.createDeviceEntries": "Create {count} Devices Entry",
+    "form.remove": "Remove",
 
     // Common
     "common.show": "Show",
@@ -923,6 +924,15 @@ const translations: Record<Language, Record<string, string>> = {
     "form.battery": "Batterie",
     "form.waterDamaged": "Wasserschaden",
 
+    // NewRepairTicketForm placeholders
+    "placeholder.customerName": "Max Mustermann",
+    "placeholder.contactNumber": "+49 123 456 7890",
+    "placeholder.model": "iPhone 14 Pro",
+    "placeholder.imei": "123456789012345",
+    "placeholder.price": "99,99",
+    "placeholder.technicianNotes": "Beschreiben Sie das Problem mit dem Gerät...",
+    "placeholder.condition": "z.B. Rissiger Bildschirm, tiefe Kratzer, Wasserschaden...",
+
     // Service names
     "service.lcd": "LCD",
     "service.battery": "Batterie",
@@ -1106,6 +1116,15 @@ const translations: Record<Language, Record<string, string>> = {
     "form.battery": "Batterie",
     "form.waterDamaged": "Endommagé par l'eau",
 
+    // NewRepairTicketForm placeholders
+    "placeholder.customerName": "Jean Dupont",
+    "placeholder.contactNumber": "+33 1 23 45 67 89",
+    "placeholder.model": "iPhone 14 Pro",
+    "placeholder.imei": "123456789012345",
+    "placeholder.price": "99,99",
+    "placeholder.technicianNotes": "Décrivez le problème avec l'appareil...",
+    "placeholder.condition": "ex. Écran fissuré, rayures profondes, signes de dégâts d'eau...",
+
     // Service names
     "service.lcd": "LCD",
     "service.battery": "Batterie",
@@ -1288,6 +1307,15 @@ const translations: Record<Language, Record<string, string>> = {
     "form.charger": "چارجر",
     "form.battery": "بیٹری",
     "form.waterDamaged": "پانی سے خراب",
+
+    // NewRepairTicketForm placeholders
+    "placeholder.customerName": "احمد علی",
+    "placeholder.contactNumber": "+92 300 1234567",
+    "placeholder.model": "iPhone 14 Pro",
+    "placeholder.imei": "123456789012345",
+    "placeholder.price": "99.99",
+    "placeholder.technicianNotes": "آلہ کے مسئلے کی وضاحت کریں...",
+    "placeholder.condition": "مثال: ٹوٹی ہوئی اسکرین، گہرے خراش، پانی کے نقصان کے نشانات...",
 
     // Service names
     "service.lcd": "LCD",
