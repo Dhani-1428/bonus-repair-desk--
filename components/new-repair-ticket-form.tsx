@@ -1173,6 +1173,7 @@ export function NewRepairTicketForm() {
 }
 
 // Exported function to print receipts from anywhere
+// Updated: Uses "Client ID" instead of "Client NIF"
 export function printReceiptForTickets(tickets: any[], preferredPrinter: string | null = null) {
   // Validate tickets parameter
   if (!tickets || !Array.isArray(tickets) || tickets.length === 0) {
