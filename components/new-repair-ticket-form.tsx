@@ -888,6 +888,12 @@ export function NewRepairTicketForm() {
 
 // Exported function to print receipts from anywhere
 export function printReceiptForTickets(tickets: any[]) {
+  // Validate tickets parameter
+  if (!tickets || !Array.isArray(tickets) || tickets.length === 0) {
+    console.error("[printReceiptForTickets] Invalid tickets parameter:", tickets)
+    return
+  }
+  
   const user = getCurrentUser()
   const shopName = user?.shopName || user?.name || "TUDO4MOBILE IMP EXP LDA"
   const contactNumber = user?.contactNumber || "N/A"
@@ -1031,7 +1037,6 @@ export function printReceiptForTickets(tickets: any[]) {
             <div style="display: table-cell; width: 40%; font-weight: bold; font-size: 6.5pt;">Equipment Obs.:</div>
             <div style="display: table-cell; width: 60%; font-size: 6.5pt;">${ticket.equipmentObs || "-"}</div>
           </div>
-          <div style="display: table; width: 100%; margin: 0.5px 0;">
           <div style="display: table; width: 100%; margin: 0.5px 0;">
             <div style="display: table-cell; width: 40%; font-weight: bold; font-size: 6.5pt;">Repair Obs.:</div>
             <div style="display: table-cell; width: 60%; font-size: 6.5pt;">${ticket.repairObs || "-"}</div>
