@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { useTranslation } from "@/components/language-provider"
 import { useAuth } from "@/hooks/use-auth"
 import { getUserData } from "@/lib/storage"
-import { printReceiptForTickets } from "@/components/new-repair-ticket-form"
+import { printReceiptWithLanguageSelection } from "@/components/new-repair-ticket-form"
 
 export default function DeviceDetailPage() {
   const router = useRouter()
@@ -100,8 +100,8 @@ export default function DeviceDetailPage() {
         spu: ticket.spu || "N/A",
         createdAt: ticket.createdAt || new Date().toISOString(),
       }
-      // Use the same print function as New Repair Device page
-      printReceiptForTickets([normalizedTicket])
+      // Use the wrapper function that shows language selection dialog first
+      printReceiptWithLanguageSelection([normalizedTicket])
     }
   }
 
