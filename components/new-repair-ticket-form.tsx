@@ -1269,66 +1269,66 @@ export function printReceiptForTickets(tickets: any[], preferredPrinter: string 
     const formattedTime = entryDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
     
     return `
-      <div style="font-family: Arial, sans-serif; width: 100%; font-size: 6pt; line-height: 1.4; page-break-inside: avoid !important; margin: 0; padding: 0;">
-        <div style="text-align: center; font-weight: bold; font-size: 6.5pt; margin: 0 0 1px 0; padding: 1px; background-color: #e0e0e0; border: 1px solid #999;">
+      <div style="font-family: Arial, sans-serif; width: 100%; font-size: 6.5pt; line-height: 1.6; page-break-inside: avoid !important; margin: 0; padding: 0;">
+        <div style="text-align: center; font-weight: bold; font-size: 7pt; margin: 0 0 3px 0; padding: 2px; background-color: #e0e0e0; border: 1px solid #999;">
           ${copyLabel}
         </div>
-        <div style="display: table; width: 100%; margin: 0 0 2px 0; border-bottom: 1.5px solid #000; padding: 0 0 1px 0;">
+        <div style="display: table; width: 100%; margin: 0 0 4px 0; border-bottom: 1.5px solid #000; padding: 0 0 2px 0;">
           <div style="display: table-row;">
             <div style="display: table-cell; width: 50%; vertical-align: top; padding-right: 6px;">
-              <div style="font-weight: bold; font-size: 7pt; margin: 0; padding: 0; color: #000; line-height: 1.4;">${shopName}</div>
-              <div style="margin: 0; padding: 0; font-size: 6pt; color: #000; line-height: 1.4;">${companyAddress}</div>
-              <div style="margin: 0; padding: 0; font-size: 6pt; color: #000; line-height: 1.4;">${companyPhone1}${companyPhone2 ? `, ${companyPhone2}` : ""}</div>
-              <div style="margin: 0; padding: 0; font-size: 6pt; color: #000; line-height: 1.4;">${companyEmail}</div>
-              <div style="margin: 0; padding: 0; font-size: 6pt; color: #000; line-height: 1.4;">${companyWebsite}</div>
-              <div style="margin: 0; padding: 0; font-size: 6pt; color: #000; line-height: 1.4;">VAT: ${companyVAT}</div>
+              <div style="font-weight: bold; font-size: 8pt; margin: 0 0 2px 0; padding: 0; color: #000; line-height: 1.6;">${shopName}</div>
+              <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">${companyAddress}</div>
+              <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">${companyPhone1}${companyPhone2 ? `, ${companyPhone2}` : ""}</div>
+              <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">${companyEmail}</div>
+              <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">${companyWebsite}</div>
+              <div style="margin: 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">VAT: ${companyVAT}</div>
             </div>
             <div style="display: table-cell; width: 50%; vertical-align: top; padding-left: 6px;">
-              <div style="font-weight: bold; font-size: 6.5pt; margin: 0; padding: 0; color: #000; line-height: 1.4;">Client ID: ${ticketClientId}</div>
-              <div style="margin: 0; padding: 0; font-size: 6pt; color: #000; line-height: 1.4;"><strong>Name:</strong> ${ticketCustomerName}</div>
-              <div style="margin: 0; padding: 0; font-size: 6pt; color: #000; line-height: 1.4;"><strong>Client Phone:</strong> ${ticketContact}</div>
+              <div style="font-weight: bold; font-size: 7pt; margin: 0 0 2px 0; padding: 0; color: #000; line-height: 1.6;">Client ID: ${ticketClientId}</div>
+              <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;"><strong>Name:</strong> ${ticketCustomerName}</div>
+              <div style="margin: 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;"><strong>Client Phone:</strong> ${ticketContact}</div>
             </div>
           </div>
         </div>
         
-        <div style="margin: 1px 0;">
-          <div style="margin: 0; padding: 0; font-size: 6pt; line-height: 1.4;"><span style="font-weight: bold;">Entry Date:</span> ${formattedDate} ${formattedTime}</div>
-          <div style="margin: 0; padding: 0; font-size: 6pt; line-height: 1.4;"><span style="font-weight: bold;">Repair n:</span> ${ticketRepairNumber}</div>
-          <div style="margin: 0; padding: 0; font-size: 6pt; line-height: 1.4;"><span style="font-weight: bold;">IMEI:</span> ${ticketImeiNo}</div>
-          <div style="margin: 0; padding: 0; font-size: 6pt; line-height: 1.4;"><span style="font-weight: bold;">Brand-Model:</span> ${ticketBrand} - ${ticketModel}</div>
-          <div style="margin: 0; padding: 0; font-size: 6pt; line-height: 1.4;"><span style="font-weight: bold;">Laptop Serial N:</span> ${ticketSerialNo}</div>
-          <div style="margin: 0; padding: 0; font-size: 6pt; line-height: 1.4;"><span style="font-weight: bold;">Warranty:</span> ${ticketWarranty}</div>
+        <div style="margin: 3px 0;">
+          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">Entry Date:</span> ${formattedDate} ${formattedTime}</div>
+          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">Repair n:</span> ${ticketRepairNumber}</div>
+          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">IMEI:</span> ${ticketImeiNo}</div>
+          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">Brand-Model:</span> ${ticketBrand} - ${ticketModel}</div>
+          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">Laptop Serial N:</span> ${ticketSerialNo}</div>
+          <div style="margin: 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">Warranty:</span> ${ticketWarranty}</div>
         </div>
         
-        <div style="margin: 1px 0;">
-          <div style="font-weight: bold; margin: 0; padding: 0; font-size: 6pt; line-height: 1.4;">Equipment Check:</div>
-          <div style="margin: 0; padding: 0; font-size: 6pt; line-height: 1.4;"><span style="font-weight: bold;">SIM Card:</span> ${ticketSimCard} | <span style="font-weight: bold;">SIM Tray:</span> ${ticketSimTray} | <span style="font-weight: bold;">Memory Card:</span> ${ticketMemoryCard} | <span style="font-weight: bold;">Charger:</span> ${ticketCharger} | <span style="font-weight: bold;">Battery:</span> ${ticketBattery} | <span style="font-weight: bold;">Water Damaged:</span> ${ticketWaterDamaged}</div>
+        <div style="margin: 3px 0;">
+          <div style="font-weight: bold; margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;">Equipment Check:</div>
+          <div style="margin: 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">SIM Card:</span> ${ticketSimCard} | <span style="font-weight: bold;">SIM Tray:</span> ${ticketSimTray} | <span style="font-weight: bold;">Memory Card:</span> ${ticketMemoryCard} | <span style="font-weight: bold;">Charger:</span> ${ticketCharger} | <span style="font-weight: bold;">Battery:</span> ${ticketBattery} | <span style="font-weight: bold;">Water Damaged:</span> ${ticketWaterDamaged}</div>
         </div>
         
-        <div style="margin: 1px 0;">
-          <div style="margin: 0; padding: 0; font-size: 6pt; line-height: 1.4;"><span style="font-weight: bold;">Equipment Obs.:</span> ${ticketEquipmentObs}</div>
-          <div style="margin: 0; padding: 0; font-size: 6pt; line-height: 1.4;"><span style="font-weight: bold;">Repair Obs.:</span> ${ticketRepairObs}</div>
-          <div style="margin: 0; padding: 0; font-size: 6pt; line-height: 1.4;"><span style="font-weight: bold;">Services:</span> ${services}</div>
-          <div style="margin: 0; padding: 0; font-size: 6pt; line-height: 1.4;"><span style="font-weight: bold;">Problem:</span> ${ticketProblem}</div>
-          <div style="margin: 0; padding: 0; font-size: 6pt; line-height: 1.4;"><span style="font-weight: bold;">Price:</span> €${ticketPrice}</div>
+        <div style="margin: 3px 0;">
+          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">Equipment Obs.:</span> ${ticketEquipmentObs}</div>
+          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">Repair Obs.:</span> ${ticketRepairObs}</div>
+          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">Services:</span> ${services}</div>
+          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">Problem:</span> ${ticketProblem}</div>
+          <div style="margin: 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">Price:</span> €${ticketPrice}</div>
         </div>
         
-        <div style="margin: 2px 0; padding: 2px; background-color: #f0f0f0; text-align: center; font-weight: bold; font-size: 6pt; border: 1px solid #ddd;">
+        <div style="margin: 3px 0; padding: 3px; background-color: #f0f0f0; text-align: center; font-weight: bold; font-size: 6.5pt; border: 1px solid #ddd;">
           WE ARE RESPONSIBLE FOR THE ASSISTANCE / REPAIRING OF THE DESCRIBED ANOMALIES.
         </div>
         
-        <div style="margin-top: 2px; padding: 2px; background-color: #f9f9f9; font-size: 5.5pt; line-height: 1.2; border: 1px solid #ddd;">
-          <div style="font-weight: bold; margin-bottom: 1px; font-size: 6pt;">Condies de Armazenamento e Levantamento</div>
-          <div style="text-align: justify; margin-bottom: 1px; font-size: 5.5pt;">
+        <div style="margin-top: 3px; padding: 3px; background-color: #f9f9f9; font-size: 6pt; line-height: 1.3; border: 1px solid #ddd;">
+          <div style="font-weight: bold; margin-bottom: 2px; font-size: 6.5pt;">Condies de Armazenamento e Levantamento</div>
+          <div style="text-align: justify; margin-bottom: 2px; font-size: 6pt;">
             O equipamento dever ser levantado no prazo mximo de sessenta (60) dias aps a concluso da reparao e respetiva notificao por <strong>${shopName}</strong>.
           </div>
-          <div style="text-align: justify; margin-bottom: 1px; font-size: 5.5pt;">
+          <div style="text-align: justify; margin-bottom: 2px; font-size: 6pt;">
             Decorrido este prazo, ser aplicada uma taxa de armazenamento de 0,95  por dia, a partir do 61. dia, at ao limite mximo de cento e vinte (120) dias, aplicvel independentemente de a reparao ter sido realizada ou de o oramento ter sido recusado.
           </div>
-          <div style="text-align: justify; margin-bottom: 1px; font-size: 5.5pt;">
+          <div style="text-align: justify; margin-bottom: 2px; font-size: 6pt;">
             Ao aceitar o presente documento, o cliente declara que leu, compreendeu e aceita os termos e condies de reparao.
           </div>
-          <div style="margin-top: 1px; font-weight: bold; font-size: 6pt;">Referncia da Reparao: ${ticketRepairNumber}</div>
+          <div style="margin-top: 2px; font-weight: bold; font-size: 6.5pt;">Referncia da Reparao: ${ticketRepairNumber}</div>
         </div>
       </div>
     `
@@ -1347,14 +1347,14 @@ export function printReceiptForTickets(tickets: any[], preferredPrinter: string 
       const adminCopy = generateReceiptHTML(ticket, 'ADMIN')
     
     return `
-      <div class="ticket-container" style="page-break-inside: avoid !important; page-break-after: avoid !important; break-inside: avoid !important; break-after: avoid !important; margin: 0 auto; padding: 0; width: 100%; max-width: 180mm; display: flex; flex-direction: column; box-sizing: border-box; justify-content: center;">
+      <div class="ticket-container" style="page-break-inside: avoid !important; page-break-after: avoid !important; break-inside: avoid !important; break-after: avoid !important; margin: 0 auto; padding: 0; width: 100%; display: flex; flex-direction: column; box-sizing: border-box; justify-content: center;">
         <!-- Client's Copy (Top) -->
         <div style="width: 100%; flex: 0 0 auto; margin-bottom: 0; padding-bottom: 0; page-break-inside: avoid !important; break-inside: avoid !important;">
           ${clientCopy}
         </div>
         
         <!-- Tearing Line and Gap (Center) -->
-        <div style="width: 100%; flex: 0 0 auto; margin: 3mm 0; padding: 2mm 0; text-align: center; position: relative; page-break-inside: avoid !important; break-inside: avoid !important;">
+        <div style="width: 100%; flex: 0 0 auto; margin: 4mm 0; padding: 2mm 0; text-align: center; position: relative; page-break-inside: avoid !important; break-inside: avoid !important;">
           <!-- Cutting line with dotted pattern -->
           <div style="width: 100%; margin: 0; padding: 0.5mm 0; position: relative;">
             <!-- Dotted cutting line -->
@@ -1383,12 +1383,12 @@ export function printReceiptForTickets(tickets: any[], preferredPrinter: string 
           <style>
             @page {
               size: A4 portrait;
-              margin: 10mm;
+              margin: 5mm;
             }
             @media print {
               @page {
                 size: A4 portrait;
-                margin: 10mm;
+                margin: 5mm;
               }
               body {
                 margin: 0;
@@ -1461,7 +1461,6 @@ export function printReceiptForTickets(tickets: any[], preferredPrinter: string 
             }
             .ticket-container {
               width: 100%;
-              max-width: 180mm;
               box-sizing: border-box;
               display: flex;
               flex-direction: column;
