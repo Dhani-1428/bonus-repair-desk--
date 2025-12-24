@@ -1069,7 +1069,7 @@ export function printReceiptForTickets(tickets: any[]) {
   }
   
   const user = getCurrentUser()
-  const shopName = user?.shopName || user?.name || "TUDO4MOBILE IMP EXP LDA"
+  const shopName = user?.shopName || user?.name || "Your Company Name"
   const contactNumber = user?.contactNumber || "N/A"
   
   // Get company info from localStorage or use defaults
