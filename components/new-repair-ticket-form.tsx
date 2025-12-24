@@ -1169,7 +1169,7 @@ export function NewRepairTicketForm() {
 }
 
 // Helper function to get translations for receipt printing
-function getReceiptTranslations(lang: "en" | "pt" | "de" | "fr" | "ur" = "en") {
+function getReceiptTranslations(lang: "en" | "pt" | "de" | "fr" | "ur" | "pa" = "en") {
   const translations: Record<string, Record<string, string>> = {
     en: {
       "receipt.clientCopy": "CLIENT COPY",
@@ -1351,6 +1351,44 @@ function getReceiptTranslations(lang: "en" | "pt" | "de" | "fr" | "ur" = "en") {
       "form.battery": "بیٹری",
       "form.waterDamaged": "پانی سے خراب",
     },
+    pa: {
+      "receipt.clientCopy": "ਕਲਾਇੰਟ ਕਾਪੀ",
+      "receipt.adminCopy": "ਐਡਮਿਨ ਕਾਪੀ",
+      "receipt.clientId": "ਕਲਾਇੰਟ ਆਈਡੀ",
+      "receipt.name": "ਨਾਮ",
+      "receipt.clientPhone": "ਕਲਾਇੰਟ ਫੋਨ",
+      "receipt.entryDate": "ਐਂਟਰੀ ਦੀ ਤਾਰੀਖ",
+      "receipt.repairN": "ਮੁਰੰਮਤ ਨੰਬਰ",
+      "receipt.imei": "IMEI",
+      "receipt.brandModel": "ਬ੍ਰਾਂਡ-ਮਾਡਲ",
+      "receipt.laptopSerialN": "ਲੈਪਟਾਪ ਸੀਰੀਅਲ ਨੰਬਰ",
+      "receipt.warranty": "ਵਾਰੰਟੀ",
+      "receipt.equipmentCheck": "ਸਾਮਾਨ ਦੀ ਜਾਂਚ",
+      "receipt.equipmentObs": "ਸਾਮਾਨ ਰਿਪੋਰਟ",
+      "receipt.repairObs": "ਮੁਰੰਮਤ ਰਿਪੋਰਟ",
+      "receipt.services": "ਸੇਵਾਵਾਂ",
+      "receipt.problem": "ਸਮੱਸਿਆ",
+      "receipt.price": "ਕੀਮਤ",
+      "receipt.responsibleText": "ਅਸੀਂ ਦੱਸੀਆਂ ਗਈਆਂ ਖਰਾਬੀਆਂ ਦੀ ਸਹਾਇਤਾ / ਮੁਰੰਮਤ ਦੇ ਜ਼ਿੰਮੇਵਾਰ ਹਾਂ।",
+      "receipt.storageTitle": "ਸਟੋਰੇਜ ਅਤੇ ਲਿਆਉਣ ਦੀਆਂ ਸ਼ਰਤਾਂ",
+      "receipt.storageText1": "ਮੁਰੰਮਤ ਪੂਰੀ ਹੋਣ ਅਤੇ",
+      "receipt.storageText2": "ਦੁਆਰਾ ਸੰਬੰਧਿਤ ਸੂਚਨਾ ਤੋਂ ਬਾਅਦ ਸੱਠ (60) ਦਿਨਾਂ ਦੀ ਵੱਧ ਤੋਂ ਵੱਧ ਮਿਆਦ ਦੇ ਅੰਦਰ ਸਾਮਾਨ ਲਿਆਉਣਾ ਚਾਹੀਦਾ ਹੈ। ਇਸ ਮਿਆਦ ਦੇ ਬੀਤਣ ਤੋਂ ਬਾਅਦ, 61ਵੇਂ ਦਿਨ ਤੋਂ ਸ਼ੁਰੂ ਹੋ ਕੇ, ਇੱਕ ਸੌ ਵੀਹ (120) ਦਿਨਾਂ ਦੀ ਵੱਧ ਤੋਂ ਵੱਧ ਸੀਮਾ ਤੱਕ, 0.95 ਯੂਰੋ ਪ੍ਰਤੀ ਦਿਨ ਦੀ ਸਟੋਰੇਜ ਫੀਸ ਲਾਗੂ ਕੀਤੀ ਜਾਵੇਗੀ, ਭਾਵੇਂ ਮੁਰੰਮਤ ਕੀਤੀ ਗਈ ਹੋਵੇ ਜਾਂ ਅਨੁਮਾਨ ਰੱਦ ਕਰ ਦਿੱਤਾ ਗਿਆ ਹੋਵੇ।",
+      "receipt.storageText3": "ਇਸ ਦਸਤਾਵੇਜ਼ ਨੂੰ ਸਵੀਕਾਰ ਕਰਨ ਨਾਲ, ਕਲਾਇੰਟ ਐਲਾਨ ਕਰਦਾ ਹੈ ਕਿ ਉਸਨੇ ਮੁਰੰਮਤ ਦੀਆਂ ਸ਼ਰਤਾਂ ਅਤੇ ਸ਼ਰਤਾਂ ਪੜ੍ਹੀਆਂ, ਸਮਝੀਆਂ ਅਤੇ ਸਵੀਕਾਰ ਕੀਤੀਆਂ ਹਨ।",
+      "receipt.repairReference": "ਮੁਰੰਮਤ ਦਾ ਹਵਾਲਾ",
+      "receipt.cutHere": "ਇੱਥੇ ਕੱਟੋ",
+      "receipt.selectLanguage": "ਰਸੀਦ ਦੀ ਭਾਸ਼ਾ ਚੁਣੋ",
+      "receipt.selectLanguageDescription": "ਪ੍ਰਿੰਟ ਕੀਤੀ ਰਸੀਦ ਲਈ ਭਾਸ਼ਾ ਚੁਣੋ",
+      "common.yes": "ਹਾਂ",
+      "common.no": "ਨਹੀਂ",
+      "form.warrantyUntil30Days": "30 ਦਿਨਾਂ ਤੱਕ ਵਾਰੰਟੀ",
+      "form.withoutWarranty": "ਵਾਰੰਟੀ ਤੋਂ ਬਿਨਾਂ",
+      "form.simCard": "SIM ਕਾਰਡ",
+      "form.simTray": "SIM ਟਰੇ",
+      "form.memoryCard": "ਮੈਮੋਰੀ ਕਾਰਡ",
+      "form.charger": "ਚਾਰਜਰ",
+      "form.battery": "ਬੈਟਰੀ",
+      "form.waterDamaged": "ਪਾਣੀ ਨਾਲ ਖਰਾਬ",
+    },
   }
   return translations[lang] || translations.en
 }
@@ -1363,14 +1401,15 @@ function LanguageSelectionDialog({
 }: { 
   open: boolean
   onClose: () => void
-  onSelect: (lang: "en" | "pt" | "de" | "fr" | "ur") => void 
+  onSelect: (lang: "en" | "pt" | "de" | "fr" | "ur" | "pa") => void 
 }) {
   const languages = [
     { code: "en" as const, name: "English" },
     { code: "pt" as const, name: "Português" },
     { code: "de" as const, name: "Deutsch" },
     { code: "fr" as const, name: "Français" },
-    { code: "ur" as const, name: "اردو/پنجابی" },
+    { code: "ur" as const, name: "اردو" },
+    { code: "pa" as const, name: "ਪੰਜਾਬੀ" },
   ]
 
   return (
@@ -1460,7 +1499,8 @@ export function printReceiptWithLanguageSelection(
       <button data-lang="pt" style="padding: 12px 16px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer; text-align: left; font-size: 14px; color: #000; transition: background 0.2s;">Português</button>
       <button data-lang="de" style="padding: 12px 16px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer; text-align: left; font-size: 14px; color: #000; transition: background 0.2s;">Deutsch</button>
       <button data-lang="fr" style="padding: 12px 16px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer; text-align: left; font-size: 14px; color: #000; transition: background 0.2s;">Français</button>
-      <button data-lang="ur" style="padding: 12px 16px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer; text-align: left; font-size: 14px; color: #000; transition: background 0.2s;">اردو/پنجابی</button>
+      <button data-lang="ur" style="padding: 12px 16px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer; text-align: left; font-size: 14px; color: #000; transition: background 0.2s;">اردو</button>
+      <button data-lang="pa" style="padding: 12px 16px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer; text-align: left; font-size: 14px; color: #000; transition: background 0.2s;">ਪੰਜਾਬੀ</button>
       <button data-cancel style="padding: 12px 16px; border: 1px solid #ddd; border-radius: 4px; background: #f5f5f5; cursor: pointer; text-align: center; font-size: 14px; margin-top: 8px; color: #000; transition: background 0.2s;">Cancel</button>
     </div>
   `
@@ -1501,7 +1541,7 @@ export function printReceiptWithLanguageSelection(
   langButtons.forEach((btn) => {
     btn.addEventListener("click", (e) => {
       e.stopPropagation()
-      const lang = btn.getAttribute("data-lang") as "en" | "pt" | "de" | "fr" | "ur" | null
+      const lang = btn.getAttribute("data-lang") as "en" | "pt" | "de" | "fr" | "ur" | "pa" | null
       if (document.body.contains(dialog)) {
         document.body.removeChild(dialog)
       }
@@ -1517,7 +1557,7 @@ export function printReceiptWithLanguageSelection(
 export function printReceiptForTickets(
   tickets: any[], 
   preferredPrinter: string | null = null,
-  language: "en" | "pt" | "de" | "fr" | "ur" = "en"
+  language: "en" | "pt" | "de" | "fr" | "ur" | "pa" = "en"
 ) {
   // Validate tickets parameter
   if (!tickets || !Array.isArray(tickets) || tickets.length === 0) {
