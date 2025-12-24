@@ -88,7 +88,7 @@ export default function NewTicketPage() {
         </div>
 
         {/* Devices Information Section */}
-        <Card className="shadow-2xl border border-gray-800/50 bg-gradient-to-br from-gray-900/95 via-black/95 to-gray-900/95 backdrop-blur-sm">
+        <Card id="devices-information-section" className="shadow-2xl border border-gray-800/50 bg-gradient-to-br from-gray-900/95 via-black/95 to-gray-900/95 backdrop-blur-sm">
           <CardHeader className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-b border-gray-800/50 rounded-t-lg px-6 py-4">
             <div className="flex items-center justify-between">
               <CardTitle className="text-2xl flex items-center gap-2 text-white">
@@ -102,6 +102,7 @@ export default function NewTicketPage() {
                 size="sm"
                 onClick={() => setShowDevices(!showDevices)}
                 className="border-gray-700 bg-gray-900/50 text-white hover:bg-gray-800"
+                data-show-devices-button
               >
                 {showDevices ? t("common.hide") : t("common.show")} {t("page.tickets.title")} ({devices.length})
               </Button>

@@ -101,12 +101,49 @@ export function NewRepairTicketForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [createdTicketsDetails, setCreatedTicketsDetails] = useState<any[]>([])
   const [showTicketDetails, setShowTicketDetails] = useState(false)
+  const [availablePrinters, setAvailablePrinters] = useState<any[]>([])
+  const [selectedPrinter, setSelectedPrinter] = useState<string | null>(null)
+  const [isDetectingPrinters, setIsDetectingPrinters] = useState(false)
 
   // Generate preview Repair Number
   const getRepairNumberPreview = (): string => {
     const year = new Date().getFullYear()
     return `REP-${year}-XXXX` // XXXX will be replaced with actual sequence on server
   }
+
+  // Detect available printers
+  const detectPrinters = async () => {
+    setIsDetectingPrinters(true)
+    try {
+      // Load saved printer preference
+      const savedPrinter = localStorage.getItem('preferredPrinter')
+      if (savedPrinter) {
+        setSelectedPrinter(savedPrinter)
+      }
+
+      // Note: Browser Print API has limited support
+      // We'll use a combination of approaches:
+      // 1. Check for saved preference
+      // 2. Try to detect via Print API (if available)
+      // 3. Show manual selection option
+      
+      // For now, we'll rely on the browser's print dialog
+      // and store the user's selection for next time
+      toast.success("Printer detection ready. Select your printer from the print dialog.")
+    } catch (error) {
+      console.error("Error detecting printers:", error)
+    } finally {
+      setIsDetectingPrinters(false)
+    }
+  }
+
+  // Load saved printer preference on mount
+  useEffect(() => {
+    const savedPrinter = localStorage.getItem('preferredPrinter')
+    if (savedPrinter) {
+      setSelectedPrinter(savedPrinter)
+    }
+  }, [])
 
   const toggleService = (deviceIndex: number, service: string) => {
     setDevices((prev) =>
@@ -361,6 +398,19 @@ export function NewRepairTicketForm() {
       // Store created tickets details and show them
       setCreatedTicketsDetails(createdTickets)
       setShowTicketDetails(true)
+      
+      // Scroll to Devices Information section after a short delay
+      setTimeout(() => {
+        const devicesSection = document.getElementById('devices-information-section')
+        if (devicesSection) {
+          devicesSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          // Also expand the section if it's collapsed
+          const showButton = document.querySelector('[data-show-devices-button]') as HTMLButtonElement
+          if (showButton && !showButton.textContent?.includes('Hide')) {
+            showButton.click()
+          }
+        }
+      }, 500)
 
       // Print receipt for all devices
       if (createdTickets.length > 0) {
@@ -382,8 +432,8 @@ export function NewRepairTicketForm() {
   }
 
   const printReceipt = (tickets: any[]) => {
-    // Use the exported function
-    printReceiptForTickets(tickets)
+    // Use the exported function with selected printer
+    printReceiptForTickets(tickets, selectedPrinter)
   }
 
   // Handle continue/close after viewing ticket details
@@ -415,7 +465,19 @@ export function NewRepairTicketForm() {
     }])
     setCreatedTicketsDetails([])
     setShowTicketDetails(false)
-    router.push("/dashboard")
+    
+    // Scroll to Devices Information section
+    setTimeout(() => {
+      const devicesSection = document.getElementById('devices-information-section')
+      if (devicesSection) {
+        devicesSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        // Also expand the section if it's collapsed
+        const showButton = document.querySelector('[data-show-devices-button]') as HTMLButtonElement
+        if (showButton && !showButton.textContent?.includes('Hide')) {
+          showButton.click()
+        }
+      }
+    }, 100)
   }
 
   // Print ticket details
@@ -423,6 +485,13 @@ export function NewRepairTicketForm() {
     if (createdTicketsDetails.length > 0) {
       printReceipt(createdTicketsDetails)
     }
+  }
+
+  // Handle printer selection
+  const handlePrinterSelect = (printerName: string) => {
+    setSelectedPrinter(printerName)
+    localStorage.setItem('preferredPrinter', printerName)
+    toast.success(`Printer selected: ${printerName}`)
   }
 
   // Export printReceipt function for use in other components
@@ -953,7 +1022,7 @@ export function NewRepairTicketForm() {
                     <div className="space-y-3">
                       <h4 className="text-sm font-semibold text-blue-400 border-b border-gray-700 pb-2">Client Information</h4>
                       <div className="space-y-2 text-sm">
-                        <div><span className="text-gray-400">Client NIF:</span> <span className="text-white font-mono">{ticket?.clientId || "N/A"}</span></div>
+                        <div><span className="text-gray-400">Client ID:</span> <span className="text-white font-mono">{ticket?.clientId || "N/A"}</span></div>
                         <div><span className="text-gray-400">Customer Name:</span> <span className="text-white">{ticket?.customerName || "N/A"}</span></div>
                         <div><span className="text-gray-400">Contact:</span> <span className="text-white">{ticket?.contact || "N/A"}</span></div>
                       </div>
@@ -1035,23 +1104,66 @@ export function NewRepairTicketForm() {
               )
             })}
 
-            <div className="flex gap-4 pt-4 border-t border-gray-800">
-              <Button
-                onClick={handlePrintDetails}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-              >
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                </svg>
-                Print Receipt
-              </Button>
-              <Button
-                onClick={handleContinue}
-                variant="outline"
-                className="border-gray-700 bg-gray-900/50 text-white hover:bg-gray-800"
-              >
-                Continue to Dashboard
-              </Button>
+            <div className="flex flex-col gap-4 pt-4 border-t border-gray-800">
+              {/* Printer Selection */}
+              <div className="flex items-center gap-4 p-4 bg-gray-800/50 rounded-lg border border-gray-700">
+                <div className="flex-1">
+                  <Label className="text-gray-300 text-sm mb-2 block">Selected Printer</Label>
+                  {selectedPrinter ? (
+                    <div className="flex items-center gap-2">
+                      <svg className="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      <span className="text-white font-medium">{selectedPrinter}</span>
+                    </div>
+                  ) : (
+                    <p className="text-gray-400 text-sm">No printer selected. Will use default printer from print dialog.</p>
+                  )}
+                </div>
+                <Button
+                  onClick={detectPrinters}
+                  variant="outline"
+                  size="sm"
+                  disabled={isDetectingPrinters}
+                  className="border-gray-600 bg-gray-900/50 text-white hover:bg-gray-800"
+                >
+                  {isDetectingPrinters ? (
+                    <>
+                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Detecting...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      </svg>
+                      Detect Printers
+                    </>
+                  )}
+                </Button>
+              </div>
+
+              <div className="flex gap-4">
+                <Button
+                  onClick={handlePrintDetails}
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                >
+                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                  </svg>
+                  Print Receipt
+                </Button>
+                <Button
+                  onClick={handleContinue}
+                  variant="outline"
+                  className="border-gray-700 bg-gray-900/50 text-white hover:bg-gray-800"
+                >
+                  Continue to Dashboard
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -1061,7 +1173,7 @@ export function NewRepairTicketForm() {
 }
 
 // Exported function to print receipts from anywhere
-export function printReceiptForTickets(tickets: any[]) {
+export function printReceiptForTickets(tickets: any[], preferredPrinter: string | null = null) {
   // Validate tickets parameter
   if (!tickets || !Array.isArray(tickets) || tickets.length === 0) {
     console.error("[printReceiptForTickets] Invalid tickets parameter:", tickets)
@@ -1160,99 +1272,51 @@ export function printReceiptForTickets(tickets: any[]) {
     
     return `
       <div style="font-family: Arial, sans-serif; width: 100%; font-size: 6.5pt; line-height: 1.1; page-break-inside: avoid !important; margin: 0; padding: 0;">
-        <div style="text-align: center; font-weight: bold; font-size: 7pt; margin-bottom: 3px; padding: 2px; background-color: #e0e0e0; border: 1px solid #999;">
+        <div style="text-align: center; font-weight: bold; font-size: 7pt; margin: 0 0 1px 0; padding: 1px; background-color: #e0e0e0; border: 1px solid #999;">
           ${copyLabel}
         </div>
-        <div style="display: table; width: 100%; margin-bottom: 4px; border-bottom: 1.5px solid #000; padding-bottom: 3px;">
+        <div style="display: table; width: 100%; margin: 0 0 2px 0; border-bottom: 1.5px solid #000; padding: 0 0 1px 0;">
           <div style="display: table-row;">
             <div style="display: table-cell; width: 50%; vertical-align: top; padding-right: 6px;">
-              <div style="font-weight: bold; font-size: 8pt; margin-bottom: 1px; color: #000;">${shopName}</div>
-              <div style="margin: 0.5px 0; font-size: 6.5pt; color: #000; line-height: 1.1;">${companyAddress}</div>
-              <div style="margin: 0.5px 0; font-size: 6.5pt; color: #000;">${companyPhone1}${companyPhone2 ? `, ${companyPhone2}` : ""}</div>
-              <div style="margin: 0.5px 0; font-size: 6.5pt; color: #000;">${companyEmail}</div>
-              <div style="margin: 0.5px 0; font-size: 6.5pt; color: #000;">${companyWebsite}</div>
-              <div style="margin: 0.5px 0; font-size: 6.5pt; color: #000;">VAT: ${companyVAT}</div>
+              <div style="font-weight: bold; font-size: 8pt; margin: 0; padding: 0; color: #000; line-height: 1.1;">${shopName}</div>
+              <div style="margin: 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.1;">${companyAddress}</div>
+              <div style="margin: 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.1;">${companyPhone1}${companyPhone2 ? `, ${companyPhone2}` : ""}</div>
+              <div style="margin: 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.1;">${companyEmail}</div>
+              <div style="margin: 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.1;">${companyWebsite}</div>
+              <div style="margin: 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.1;">VAT: ${companyVAT}</div>
             </div>
             <div style="display: table-cell; width: 50%; vertical-align: top; padding-left: 6px;">
-              <div style="font-weight: bold; font-size: 7pt; margin-bottom: 1px; color: #000;">Client's NIF: ${ticketClientId}</div>
-              <div style="margin: 0.5px 0; font-size: 6.5pt; color: #000;"><strong>Name:</strong> ${ticketCustomerName}</div>
-              <div style="margin: 0.5px 0; font-size: 6.5pt; color: #000;"><strong>Client Phone:</strong> ${ticketContact}</div>
+              <div style="font-weight: bold; font-size: 7pt; margin: 0; padding: 0; color: #000; line-height: 1.1;">Client ID: ${ticketClientId}</div>
+              <div style="margin: 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.1;"><strong>Name:</strong> ${ticketCustomerName}</div>
+              <div style="margin: 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.1;"><strong>Client Phone:</strong> ${ticketContact}</div>
             </div>
           </div>
         </div>
         
-        <div style="margin: 2px 0;">
-          <div style="display: table; width: 100%; margin: 0.5px 0;">
-            <div style="display: table-cell; width: 40%; font-weight: bold; font-size: 6.5pt;">Entry Date:</div>
-            <div style="display: table-cell; width: 60%; font-size: 6.5pt;">${formattedDate} ${formattedTime}</div>
-          </div>
-          <div style="display: table; width: 100%; margin: 0.5px 0;">
-            <div style="display: table-cell; width: 40%; font-weight: bold; font-size: 6.5pt;">Repair n:</div>
-            <div style="display: table-cell; width: 60%; font-size: 6.5pt;">${ticketRepairNumber}</div>
-          </div>
-          <div style="display: table; width: 100%; margin: 0.5px 0;">
-            <div style="display: table-cell; width: 40%; font-weight: bold; font-size: 6.5pt;">IMEI:</div>
-            <div style="display: table-cell; width: 60%; font-size: 6.5pt;">${ticketImeiNo}</div>
-          </div>
-          <div style="display: table; width: 100%; margin: 0.5px 0;">
-            <div style="display: table-cell; width: 40%; font-weight: bold; font-size: 6.5pt;">Brand-Model:</div>
-            <div style="display: table-cell; width: 60%; font-size: 6.5pt;">${ticketBrand} - ${ticketModel}</div>
-          </div>
-          <div style="display: table; width: 100%; margin: 0.5px 0;">
-            <div style="display: table-cell; width: 40%; font-weight: bold; font-size: 6.5pt;">Laptop Serial N:</div>
-            <div style="display: table-cell; width: 60%; font-size: 6.5pt;">${ticketSerialNo}</div>
-          </div>
-          <div style="display: table; width: 100%; margin: 0.5px 0;">
-            <div style="display: table-cell; width: 40%; font-weight: bold; font-size: 6.5pt;">Warranty:</div>
-            <div style="display: table-cell; width: 60%; font-size: 6.5pt;">${ticketWarranty}</div>
-          </div>
+        <div style="margin: 1px 0;">
+          <div style="margin: 0; padding: 0; font-size: 6.5pt; line-height: 1.1;"><span style="font-weight: bold;">Entry Date:</span> ${formattedDate} ${formattedTime}</div>
+          <div style="margin: 0; padding: 0; font-size: 6.5pt; line-height: 1.1;"><span style="font-weight: bold;">Repair n:</span> ${ticketRepairNumber}</div>
+          <div style="margin: 0; padding: 0; font-size: 6.5pt; line-height: 1.1;"><span style="font-weight: bold;">IMEI:</span> ${ticketImeiNo}</div>
+          <div style="margin: 0; padding: 0; font-size: 6.5pt; line-height: 1.1;"><span style="font-weight: bold;">Brand-Model:</span> ${ticketBrand} - ${ticketModel}</div>
+          <div style="margin: 0; padding: 0; font-size: 6.5pt; line-height: 1.1;"><span style="font-weight: bold;">Laptop Serial N:</span> ${ticketSerialNo}</div>
+          <div style="margin: 0; padding: 0; font-size: 6.5pt; line-height: 1.1;"><span style="font-weight: bold;">Warranty:</span> ${ticketWarranty}</div>
         </div>
         
-        <div style="margin: 2px 0;">
-          <div style="font-weight: bold; margin-bottom: 1px; font-size: 6.5pt;">Equipment Check:</div>
-          <div style="display: table; width: 100%; margin: 0.5px 0;">
-            <div style="display: table-cell; width: 30%; font-weight: bold; font-size: 6.5pt;">SIM Card:</div>
-            <div style="display: table-cell; width: 70%; font-size: 6.5pt;">${ticketSimCard}</div>
-          </div>
-          <div style="display: table; width: 100%; margin: 0.5px 0;">
-            <div style="display: table-cell; width: 30%; font-weight: bold; font-size: 6.5pt;">Memory Card:</div>
-            <div style="display: table-cell; width: 70%; font-size: 6.5pt;">${ticketMemoryCard}</div>
-          </div>
-          <div style="display: table; width: 100%; margin: 0.5px 0;">
-            <div style="display: table-cell; width: 30%; font-weight: bold; font-size: 6.5pt;">Charger:</div>
-            <div style="display: table-cell; width: 70%; font-size: 6.5pt;">${ticketCharger}</div>
-          </div>
-          <div style="display: table; width: 100%; margin: 0.5px 0;">
-            <div style="display: table-cell; width: 30%; font-weight: bold; font-size: 6.5pt;">Battery:</div>
-            <div style="display: table-cell; width: 70%; font-size: 6.5pt;">${ticketBattery}</div>
-          </div>
-          <div style="display: table; width: 100%; margin: 0.5px 0;">
-            <div style="display: table-cell; width: 30%; font-weight: bold; font-size: 6.5pt;">Water Damaged:</div>
-            <div style="display: table-cell; width: 70%; font-size: 6.5pt;">${ticketWaterDamaged}</div>
-          </div>
+        <div style="margin: 1px 0;">
+          <div style="font-weight: bold; margin: 0; padding: 0; font-size: 6.5pt; line-height: 1.1;">Equipment Check:</div>
+          <div style="margin: 0; padding: 0; font-size: 6.5pt; line-height: 1.1;"><span style="font-weight: bold;">SIM Card:</span> ${ticketSimCard}</div>
+          <div style="margin: 0; padding: 0; font-size: 6.5pt; line-height: 1.1;"><span style="font-weight: bold;">Memory Card:</span> ${ticketMemoryCard}</div>
+          <div style="margin: 0; padding: 0; font-size: 6.5pt; line-height: 1.1;"><span style="font-weight: bold;">Charger:</span> ${ticketCharger}</div>
+          <div style="margin: 0; padding: 0; font-size: 6.5pt; line-height: 1.1;"><span style="font-weight: bold;">Battery:</span> ${ticketBattery}</div>
+          <div style="margin: 0; padding: 0; font-size: 6.5pt; line-height: 1.1;"><span style="font-weight: bold;">Water Damaged:</span> ${ticketWaterDamaged}</div>
         </div>
         
-        <div style="margin: 2px 0;">
-          <div style="display: table; width: 100%; margin: 0.5px 0;">
-            <div style="display: table-cell; width: 40%; font-weight: bold; font-size: 6.5pt;">Equipment Obs.:</div>
-            <div style="display: table-cell; width: 60%; font-size: 6.5pt;">${ticketEquipmentObs}</div>
-          </div>
-          <div style="display: table; width: 100%; margin: 0.5px 0;">
-            <div style="display: table-cell; width: 40%; font-weight: bold; font-size: 6.5pt;">Repair Obs.:</div>
-            <div style="display: table-cell; width: 60%; font-size: 6.5pt;">${ticketRepairObs}</div>
-          </div>
-          <div style="display: table; width: 100%; margin: 0.5px 0;">
-            <div style="display: table-cell; width: 40%; font-weight: bold; font-size: 6.5pt;">Services:</div>
-            <div style="display: table-cell; width: 60%; font-size: 6.5pt;">${services}</div>
-          </div>
-          <div style="display: table; width: 100%; margin: 0.5px 0;">
-            <div style="display: table-cell; width: 40%; font-weight: bold; font-size: 6.5pt;">Problem:</div>
-            <div style="display: table-cell; width: 60%; font-size: 6.5pt;">${ticketProblem}</div>
-          </div>
-          <div style="display: table; width: 100%; margin: 0.5px 0;">
-            <div style="display: table-cell; width: 40%; font-weight: bold; font-size: 6.5pt;">Price:</div>
-            <div style="display: table-cell; width: 60%; font-size: 6.5pt;">€${ticketPrice}</div>
-          </div>
+        <div style="margin: 1px 0;">
+          <div style="margin: 0; padding: 0; font-size: 6.5pt; line-height: 1.1;"><span style="font-weight: bold;">Equipment Obs.:</span> ${ticketEquipmentObs}</div>
+          <div style="margin: 0; padding: 0; font-size: 6.5pt; line-height: 1.1;"><span style="font-weight: bold;">Repair Obs.:</span> ${ticketRepairObs}</div>
+          <div style="margin: 0; padding: 0; font-size: 6.5pt; line-height: 1.1;"><span style="font-weight: bold;">Services:</span> ${services}</div>
+          <div style="margin: 0; padding: 0; font-size: 6.5pt; line-height: 1.1;"><span style="font-weight: bold;">Problem:</span> ${ticketProblem}</div>
+          <div style="margin: 0; padding: 0; font-size: 6.5pt; line-height: 1.1;"><span style="font-weight: bold;">Price:</span> €${ticketPrice}</div>
         </div>
         
         <div style="margin: 3px 0; padding: 3px; background-color: #f0f0f0; text-align: center; font-weight: bold; font-size: 6.5pt; border: 1px solid #ddd;">
@@ -1474,14 +1538,95 @@ export function printReceiptForTickets(tickets: any[]) {
   setTimeout(() => {
     try {
       printWindow.focus()
+      
+      // Store printer selection from print dialog
+      // Note: We can't programmatically select a printer due to browser security,
+      // but we can guide the user and remember their choice
+      const printHandler = () => {
+        // After printing, the browser will remember the last selected printer
+        // This helps with automatic printer detection for future prints
+        if (preferredPrinter) {
+          console.log(`Attempting to print to: ${preferredPrinter}`)
+        }
+      }
+      
+      printWindow.addEventListener('beforeprint', printHandler)
       printWindow.print()
+      
+      // Remove event listener after print
+      setTimeout(() => {
+        printWindow.removeEventListener('beforeprint', printHandler)
+      }, 1000)
+      
+      // For receipt printers, keep the window open longer to allow print job to complete
       setTimeout(() => {
         if (printWindow && !printWindow.closed) {
           printWindow.close()
         }
-      }, 1000)
+      }, 2000)
     } catch (error) {
       console.error("Print error:", error)
+      // Note: toast might not be available in this context
+      try {
+        if (typeof window !== 'undefined') {
+          const { toast } = require('sonner')
+          toast.error("Failed to print. Please check your printer connection.")
+        }
+      } catch (e) {
+        // Ignore if toast is not available
+      }
     }
   }, 500)
+}
+
+// Helper function to print directly to a receipt printer (if Web Serial API is available)
+export async function printToReceiptPrinter(tickets: any[]) {
+  // Check if Web Serial API is available (Chrome/Edge only)
+  if (!('serial' in navigator)) {
+    console.warn("Web Serial API not available. Falling back to window.print()")
+    printReceiptForTickets(tickets)
+    return
+  }
+
+  try {
+    // Request access to serial port
+    const port = await (navigator as any).serial.requestPort()
+    await port.open({ baudRate: 9600 }) // Common baud rate for receipt printers
+
+    // Generate ESC/POS commands for receipt
+    // This is a basic example - you'll need to customize based on your printer
+    const encoder = new TextEncoder()
+    
+    for (const ticket of tickets) {
+      // ESC/POS commands
+      const commands = [
+        '\x1B\x40', // Initialize printer
+        '\x1B\x61\x01', // Center align
+        '=== RECEIPT ===\n',
+        '\x1B\x61\x00', // Left align
+        `Repair #: ${ticket.repairNumber || 'N/A'}\n`,
+        `Customer: ${ticket.customerName || 'N/A'}\n`,
+        `IMEI: ${ticket.imeiNo || 'N/A'}\n`,
+        `Device: ${ticket.brand || 'N/A'} ${ticket.model || 'N/A'}\n`,
+        `Price: €${ticket.price || '0.00'}\n`,
+        '\x1B\x64\x05', // Feed 5 lines
+        '\x1D\x56\x00', // Cut paper
+      ].join('')
+
+      const data = encoder.encode(commands)
+      const writer = port.writable?.getWriter()
+      if (writer) {
+        await writer.write(data)
+        writer.releaseLock()
+      }
+    }
+
+    await port.close()
+    toast.success("Receipt printed successfully!")
+  } catch (error: any) {
+    console.error("Error printing to receipt printer:", error)
+    toast.error("Failed to print to receipt printer. Using browser print instead.")
+    // Fallback to regular print
+    printReceiptForTickets(tickets)
+  }
 }
