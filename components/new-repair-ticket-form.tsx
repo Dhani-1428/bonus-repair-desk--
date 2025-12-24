@@ -1116,27 +1116,27 @@ export function printReceiptForTickets(tickets: any[]) {
       const adminCopy = generateReceiptHTML(ticket, 'ADMIN')
     
     return `
-      <div class="ticket-container" style="page-break-inside: avoid !important; page-break-after: avoid !important; break-inside: avoid !important; break-after: avoid !important; margin: 0; padding: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: space-between; min-height: 100vh; box-sizing: border-box;">
+      <div class="ticket-container" style="page-break-inside: avoid !important; page-break-after: avoid !important; break-inside: avoid !important; break-after: avoid !important; margin: 0; padding: 0; width: 100%; display: flex; flex-direction: column; box-sizing: border-box;">
         <!-- Client's Copy (Top) -->
         <div style="width: 100%; flex: 0 0 auto; margin-bottom: 0; padding-bottom: 0; page-break-inside: avoid !important; break-inside: avoid !important;">
           ${clientCopy}
         </div>
         
         <!-- Tearing Line and Gap (Center) -->
-        <div style="width: 100%; flex: 0 0 auto; margin: 15mm 0; padding: 5mm 0; text-align: center; position: relative; page-break-inside: avoid !important; break-inside: avoid !important;">
+        <div style="width: 100%; flex: 0 0 auto; margin: 8mm 0; padding: 3mm 0; text-align: center; position: relative; page-break-inside: avoid !important; break-inside: avoid !important;">
           <!-- Cutting line with dotted pattern -->
-          <div style="width: 100%; margin: 0; padding: 2mm 0; position: relative;">
+          <div style="width: 100%; margin: 0; padding: 1mm 0; position: relative;">
             <!-- Dotted cutting line -->
-            <div style="border-top: 2px dotted #000; border-bottom: 2px dotted #000; margin: 0 auto; padding: 2mm 0; width: 100%; position: relative;">
-              <div style="text-align: center; font-size: 7pt; color: #000; margin: 1mm 0; font-weight: bold; letter-spacing: 3px;"> CUT HERE </div>
+            <div style="border-top: 2px dotted #000; border-bottom: 2px dotted #000; margin: 0 auto; padding: 1.5mm 0; width: 100%; position: relative;">
+              <div style="text-align: center; font-size: 7pt; color: #000; margin: 0.5mm 0; font-weight: bold; letter-spacing: 3px;"> CUT HERE </div>
             </div>
             <!-- Additional dotted line for better visibility -->
-            <div style="border-top: 1px dotted #666; margin: 1mm auto 0; width: 100%;"></div>
+            <div style="border-top: 1px dotted #666; margin: 0.5mm auto 0; width: 100%;"></div>
           </div>
         </div>
         
         <!-- Admin's Copy (Bottom) -->
-        <div style="width: 100%; flex: 1 1 auto; margin-top: 0; padding-top: 0; margin-bottom: 3mm; page-break-inside: avoid !important; break-inside: avoid !important; display: flex; flex-direction: column; justify-content: flex-end;">
+        <div style="width: 100%; flex: 0 0 auto; margin-top: 0; padding-top: 0; margin-bottom: 0; page-break-inside: avoid !important; break-inside: avoid !important;">
           ${adminCopy}
         </div>
       </div>
@@ -1152,19 +1152,18 @@ export function printReceiptForTickets(tickets: any[]) {
           <style>
             @page {
               size: A4 portrait;
-              margin: 2mm 3mm 3mm 3mm;
+              margin: 3mm 3mm 5mm 3mm;
             }
             @media print {
               @page {
                 size: A4 portrait;
-                margin: 2mm 3mm 3mm 3mm;
+                margin: 3mm 3mm 5mm 3mm;
               }
               body {
                 margin: 0;
                 padding: 0;
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
-                height: 100vh;
                 overflow: hidden;
               }
               .no-print {
@@ -1175,7 +1174,6 @@ export function printReceiptForTickets(tickets: any[]) {
                 print-color-adjust: exact;
               }
               html, body {
-                height: 100vh;
                 overflow: hidden;
                 page-break-after: avoid;
               }
@@ -1196,11 +1194,9 @@ export function printReceiptForTickets(tickets: any[]) {
                 page-break-after: avoid !important;
                 break-inside: avoid !important;
                 break-after: avoid !important;
-                height: 100vh !important;
-                max-height: 100vh !important;
                 display: flex !important;
                 flex-direction: column !important;
-                justify-content: space-between !important;
+                justify-content: flex-start !important;
               }
               /* Prevent any element from breaking across pages */
               div, table, tr, td {
@@ -1217,21 +1213,19 @@ export function printReceiptForTickets(tickets: any[]) {
               font-size: 6.5pt;
               line-height: 1.1;
               margin: 0;
-              padding: 2mm 3mm 3mm 3mm;
+              padding: 3mm 3mm 5mm 3mm;
               color: #000;
               width: 100%;
               box-sizing: border-box;
-              height: 100vh;
               display: flex;
               flex-direction: column;
             }
             .ticket-container {
               width: 100%;
               box-sizing: border-box;
-              height: 100%;
               display: flex;
               flex-direction: column;
-              justify-content: space-between;
+              justify-content: flex-start;
             }
             .print-button {
               position: fixed;
