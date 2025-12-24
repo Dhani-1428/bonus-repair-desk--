@@ -420,15 +420,6 @@ const translations: Record<Language, Record<string, string>> = {
     "feature.whiteLabelOptions": "White Label Options",
     "feature.advancedSecurity": "Advanced Security",
 
-    // Plan names
-    "plan.monthly": "Monthly",
-    "plan.starter": "Starter",
-    "plan.professional": "Professional",
-    "plan.enterprise": "Enterprise",
-    "plan.threeMonths": "3 Months",
-    "plan.sixMonths": "6 Months",
-    "plan.twelveMonths": "12 Months",
-
     // Analytics
     "analytics.title": "Analytics",
     "analytics.subtitle": "Comprehensive insights into your repair business",
@@ -863,15 +854,6 @@ const translations: Record<Language, Record<string, string>> = {
     "feature.customIntegrations": "Integrações Personalizadas",
     "feature.whiteLabelOptions": "Opções de Marca Branca",
     "feature.advancedSecurity": "Segurança Avançada",
-
-    // Plan names
-    "plan.monthly": "Mensal",
-    "plan.starter": "Inicial",
-    "plan.professional": "Profissional",
-    "plan.enterprise": "Empresarial",
-    "plan.threeMonths": "3 Meses",
-    "plan.sixMonths": "6 Meses",
-    "plan.twelveMonths": "12 Meses",
 
     // Analytics
     "analytics.title": "Análises",
