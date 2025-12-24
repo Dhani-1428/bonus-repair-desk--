@@ -45,6 +45,7 @@ export async function createTenantTables(tenantId: string): Promise<void> {
       clientId VARCHAR(255),
       customerName VARCHAR(255) NOT NULL,
       contact VARCHAR(255) NOT NULL,
+      receivedBy VARCHAR(255) DEFAULT NULL,
       imeiNo VARCHAR(15) UNIQUE NOT NULL,
       brand VARCHAR(100) NOT NULL,
       model VARCHAR(100) NOT NULL,
@@ -96,6 +97,7 @@ export async function createTenantTables(tenantId: string): Promise<void> {
       clientId VARCHAR(255),
       customerName VARCHAR(255) NOT NULL,
       contact VARCHAR(255) NOT NULL,
+      receivedBy VARCHAR(255) DEFAULT NULL,
       imeiNo VARCHAR(15) NOT NULL,
       brand VARCHAR(100) NOT NULL,
       model VARCHAR(100) NOT NULL,
@@ -301,6 +303,40 @@ export async function migrateTenantTables(tenantId: string): Promise<void> {
           ADD COLUMN waterDamaged BOOLEAN DEFAULT NULL AFTER battery
         `)
         console.log(`[Migration] ✅ Added waterDamaged column to ${tables.deletedTickets}`)
+      } else {
+        throw error
+      }
+    }
+
+    // Check if receivedBy column exists in repair_tickets table
+    try {
+      await query(`SELECT receivedBy FROM ${repairTicketsTable} LIMIT 1`)
+    } catch (error: any) {
+      // Column doesn't exist, add it
+      if (error.code === "ER_BAD_FIELD_ERROR" || error.message?.includes("Unknown column")) {
+        console.log(`[Migration] Adding receivedBy column to ${tables.repairTickets}`)
+        await execute(`
+          ALTER TABLE ${repairTicketsTable} 
+          ADD COLUMN receivedBy VARCHAR(255) DEFAULT NULL AFTER contact
+        `)
+        console.log(`[Migration] ✅ Added receivedBy column to ${tables.repairTickets}`)
+      } else {
+        throw error
+      }
+    }
+
+    // Check if receivedBy column exists in deleted_tickets table
+    try {
+      await query(`SELECT receivedBy FROM ${deletedTicketsTable} LIMIT 1`)
+    } catch (error: any) {
+      // Column doesn't exist, add it
+      if (error.code === "ER_BAD_FIELD_ERROR" || error.message?.includes("Unknown column")) {
+        console.log(`[Migration] Adding receivedBy column to ${tables.deletedTickets}`)
+        await execute(`
+          ALTER TABLE ${deletedTicketsTable} 
+          ADD COLUMN receivedBy VARCHAR(255) DEFAULT NULL AFTER contact
+        `)
+        console.log(`[Migration] ✅ Added receivedBy column to ${tables.deletedTickets}`)
       } else {
         throw error
       }

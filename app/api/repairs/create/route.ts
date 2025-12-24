@@ -92,6 +92,7 @@ export async function POST(request: NextRequest) {
       clientId,
       customerName,
       contact,
+      receivedBy,
       imeiNo,
       brand,
       model,
@@ -114,9 +115,9 @@ export async function POST(request: NextRequest) {
 
     // Validate required fields (clientId is now required, not auto-generated)
     // Note: problem (technician notes), equipmentObs, and repairObs are optional
-    if (!userId || !customerName || !contact || !imeiNo || !brand || !model || price === undefined || !clientId || clientId.trim() === "") {
+    if (!userId || !customerName || !contact || !receivedBy || !imeiNo || !brand || !model || price === undefined || !clientId || clientId.trim() === "") {
       return NextResponse.json(
-        { error: "Missing required fields. Client NIF, Customer Name, Contact, IMEI, Brand, Model, and Price are required." },
+        { error: "Missing required fields. Client NIF, Customer Name, Contact, Device Received by, IMEI, Brand, Model, and Price are required." },
         { status: 400 }
       )
     }
@@ -197,17 +198,18 @@ export async function POST(request: NextRequest) {
       const connection = await getConnection()
       try {
         const [insertResult] = await connection.execute(
-          `INSERT INTO ${tableName} (id, userId, clientId, customerName, contact, imeiNo,
+          `INSERT INTO ${tableName} (id, userId, clientId, customerName, contact, receivedBy, imeiNo,
             brand, model, serialNo, softwareVersion, warranty, simCard, memoryCard,
             charger, battery, waterDamaged, loanEquipment, equipmentObs, repairObs,
             selectedServices, \`condition\`, problem, price, status)
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
           [
             ticketId,
             userId,
             finalClientId || null,
             customerName,
             contact,
+            receivedBy?.trim() || null,
             imeiNo,
             brand,
             model,

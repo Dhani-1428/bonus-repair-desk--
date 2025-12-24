@@ -89,6 +89,7 @@ export default function NewTicketPage() {
       clientId: ticket.clientId || null,
       customerName: ticket.customerName || "N/A",
       contact: ticket.contact || "N/A",
+      receivedBy: ticket.receivedBy || "N/A",
       imeiNo: ticket.imeiNo || "000000000000000",
       brand: ticket.brand || "N/A",
       model: ticket.model || "N/A",

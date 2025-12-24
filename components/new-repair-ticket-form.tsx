@@ -77,6 +77,7 @@ export function NewRepairTicketForm() {
   const [customerName, setCustomerName] = useState("")
   const [clientId, setClientId] = useState(generateClientId())
   const [contact, setContact] = useState("")
+  const [receivedBy, setReceivedBy] = useState("")
   const [devices, setDevices] = useState<DeviceFormData[]>([
     {
       model: "",
@@ -284,6 +285,7 @@ export function NewRepairTicketForm() {
             clientId: clientId.trim(),
             customerName,
             contact,
+            receivedBy: receivedBy.trim(),
             imeiNo: device.imeiNo,
             brand: device.brand || device.model.split(" ")[0] || "N/A",
             model: device.model,
@@ -447,6 +449,7 @@ export function NewRepairTicketForm() {
     setCustomerName("")
     setClientId(generateClientId())
     setContact("")
+    setReceivedBy("")
     setDevices([{
       model: "",
       brand: "",
@@ -516,8 +519,8 @@ export function NewRepairTicketForm() {
       </CardHeader>
       <CardContent className="p-6 text-white">
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Customer Information - All three fields in one line */}
-          <div className="grid gap-6 grid-cols-3 border-b border-gray-800 pb-6">
+          {/* Customer Information - All four fields in one line */}
+          <div className="grid gap-6 grid-cols-4 border-b border-gray-800 pb-6">
             <div className="space-y-3">
               <Label htmlFor="clientId" className="text-gray-200 text-base font-semibold">{t("form.clientId")}</Label>
               <Input
@@ -549,6 +552,17 @@ export function NewRepairTicketForm() {
                 placeholder={t("form.clientPhonePlaceholder")}
                 value={contact}
                 onChange={(e) => setContact(e.target.value)}
+                required
+                className="bg-gray-800/50 border-gray-700 text-white placeholder:text-gray-500 focus:border-blue-500 h-12 text-lg"
+              />
+            </div>
+            <div className="space-y-3">
+              <Label htmlFor="receivedBy" className="text-gray-200 text-base font-semibold">{t("form.receivedBy") || "Device Received by"} *</Label>
+              <Input
+                id="receivedBy"
+                placeholder={t("placeholder.receivedBy") || "Enter your name"}
+                value={receivedBy}
+                onChange={(e) => setReceivedBy(e.target.value)}
                 required
                 className="bg-gray-800/50 border-gray-700 text-white placeholder:text-gray-500 focus:border-blue-500 h-12 text-lg"
               />
@@ -1662,6 +1676,7 @@ export function printReceiptForTickets(
     const ticketClientId = ticket.clientId || "N/A"
     const ticketCustomerName = ticket.customerName || "N/A"
     const ticketContact = ticket.contact || "N/A"
+    const ticketReceivedBy = ticket.receivedBy || "N/A"
     const ticketRepairNumber = ticket.repairNumber || "N/A"
     const ticketImeiNo = ticket.imeiNo || "000000000000000"
     const ticketBrand = ticket.brand || "N/A"
@@ -1719,7 +1734,8 @@ export function printReceiptForTickets(
             <div style="display: table-cell; width: 50%; vertical-align: top; padding-left: 6px;">
               <div style="font-weight: bold; font-size: 7pt; margin: 0 0 2px 0; padding: 0; color: #000; line-height: 1.6;">${t["receipt.clientId"]}: ${ticketClientId}</div>
               <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;"><strong>${t["receipt.name"]}:</strong> ${ticketCustomerName}</div>
-              <div style="margin: 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;"><strong>${t["receipt.clientPhone"]}:</strong> ${ticketContact}</div>
+              <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;"><strong>${t["receipt.clientPhone"]}:</strong> ${ticketContact}</div>
+              <div style="margin: 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;"><strong>${t["receipt.receivedBy"] || "Device Received by"}:</strong> ${ticketReceivedBy}</div>
             </div>
           </div>
         </div>
