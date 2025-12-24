@@ -190,7 +190,7 @@ const translations: Record<Language, Record<string, string>> = {
     "ticket.deleteConfirm": "Delete",
     "ticket.edit": "Edit",
     "ticket.repairNumber": "Repair Number",
-    "ticket.clientNif": "Client ID",
+    "ticket.clientNif": "Client ID", // Updated from "Client's NIF"
     "ticket.brandModel": "Brand - Model",
     "ticket.created": "Created",
     "ticket.problem": "Problem",
