@@ -1182,6 +1182,166 @@ export function NewRepairTicketForm() {
   )
 }
 
+// Helper function to translate warranty value to selected language
+function translateWarrantyValue(storedValue: string | null | undefined, targetLang: "en" | "pt" | "de" | "fr" | "ur" | "pa" | "hi"): string {
+  if (!storedValue) return "Without Warranty"
+  
+  // All possible warranty translations across all languages
+  const warrantyTranslations: Record<string, Record<string, string>> = {
+    "Warranty Until 30 days": {
+      en: "Warranty Until 30 days",
+      pt: "Garantia até 30 dias",
+      de: "Garantie bis 30 Tage",
+      fr: "Garantie jusqu'à 30 jours",
+      ur: "30 دن تک گارنٹی",
+      pa: "30 ਦਿਨਾਂ ਤੱਕ ਵਾਰੰਟੀ",
+      hi: "30 दिनों तक वारंटी"
+    },
+    "Without Warranty": {
+      en: "Without Warranty",
+      pt: "Sem Garantia",
+      de: "Ohne Garantie",
+      fr: "Sans garantie",
+      ur: "بغیر گارنٹی",
+      pa: "ਵਾਰੰਟੀ ਤੋਂ ਬਿਨਾਂ",
+      hi: "वारंटी के बिना"
+    },
+    // Portuguese
+    "Garantia até 30 dias": {
+      en: "Warranty Until 30 days",
+      pt: "Garantia até 30 dias",
+      de: "Garantie bis 30 Tage",
+      fr: "Garantie jusqu'à 30 jours",
+      ur: "30 دن تک گارنٹی",
+      pa: "30 ਦਿਨਾਂ ਤੱਕ ਵਾਰੰਟੀ",
+      hi: "30 दिनों तक वारंटी"
+    },
+    "Sem Garantia": {
+      en: "Without Warranty",
+      pt: "Sem Garantia",
+      de: "Ohne Garantie",
+      fr: "Sans garantie",
+      ur: "بغیر گارنٹی",
+      pa: "ਵਾਰੰਟੀ ਤੋਂ ਬਿਨਾਂ",
+      hi: "वारंटी के बिना"
+    },
+    // German
+    "Garantie bis 30 Tage": {
+      en: "Warranty Until 30 days",
+      pt: "Garantia até 30 dias",
+      de: "Garantie bis 30 Tage",
+      fr: "Garantie jusqu'à 30 jours",
+      ur: "30 دن تک گارنٹی",
+      pa: "30 ਦਿਨਾਂ ਤੱਕ ਵਾਰੰਟੀ",
+      hi: "30 दिनों तक वारंटी"
+    },
+    "Ohne Garantie": {
+      en: "Without Warranty",
+      pt: "Sem Garantia",
+      de: "Ohne Garantie",
+      fr: "Sans garantie",
+      ur: "بغیر گارنٹی",
+      pa: "ਵਾਰੰਟੀ ਤੋਂ ਬਿਨਾਂ",
+      hi: "वारंटी के बिना"
+    },
+    // French
+    "Garantie jusqu'à 30 jours": {
+      en: "Warranty Until 30 days",
+      pt: "Garantia até 30 dias",
+      de: "Garantie bis 30 Tage",
+      fr: "Garantie jusqu'à 30 jours",
+      ur: "30 دن تک گارنٹی",
+      pa: "30 ਦਿਨਾਂ ਤੱਕ ਵਾਰੰਟੀ",
+      hi: "30 दिनों तक वारंटी"
+    },
+    "Sans garantie": {
+      en: "Without Warranty",
+      pt: "Sem Garantia",
+      de: "Ohne Garantie",
+      fr: "Sans garantie",
+      ur: "بغیر گارنٹی",
+      pa: "ਵਾਰੰਟੀ ਤੋਂ ਬਿਨਾਂ",
+      hi: "वारंटी के बिना"
+    },
+    // Urdu
+    "30 دن تک گارنٹی": {
+      en: "Warranty Until 30 days",
+      pt: "Garantia até 30 dias",
+      de: "Garantie bis 30 Tage",
+      fr: "Garantie jusqu'à 30 jours",
+      ur: "30 دن تک گارنٹی",
+      pa: "30 ਦਿਨਾਂ ਤੱਕ ਵਾਰੰਟੀ",
+      hi: "30 दिनों तक वारंटी"
+    },
+    "بغیر گارنٹی": {
+      en: "Without Warranty",
+      pt: "Sem Garantia",
+      de: "Ohne Garantie",
+      fr: "Sans garantie",
+      ur: "بغیر گارنٹی",
+      pa: "ਵਾਰੰਟੀ ਤੋਂ ਬਿਨਾਂ",
+      hi: "वारंटी के बिना"
+    },
+    // Punjabi
+    "30 ਦਿਨਾਂ ਤੱਕ ਵਾਰੰਟੀ": {
+      en: "Warranty Until 30 days",
+      pt: "Garantia até 30 dias",
+      de: "Garantie bis 30 Tage",
+      fr: "Garantie jusqu'à 30 jours",
+      ur: "30 دن تک گارنٹی",
+      pa: "30 ਦਿਨਾਂ ਤੱਕ ਵਾਰੰਟੀ",
+      hi: "30 दिनों तक वारंटी"
+    },
+    "ਵਾਰੰਟੀ ਤੋਂ ਬਿਨਾਂ": {
+      en: "Without Warranty",
+      pt: "Sem Garantia",
+      de: "Ohne Garantie",
+      fr: "Sans garantie",
+      ur: "بغیر گارنٹی",
+      pa: "ਵਾਰੰਟੀ ਤੋਂ ਬਿਨਾਂ",
+      hi: "वारंटी के बिना"
+    },
+    // Hindi
+    "30 दिनों तक वारंटी": {
+      en: "Warranty Until 30 days",
+      pt: "Garantia até 30 dias",
+      de: "Garantie bis 30 Tage",
+      fr: "Garantie jusqu'à 30 jours",
+      ur: "30 دن تک گارنٹی",
+      pa: "30 ਦਿਨਾਂ ਤੱਕ ਵਾਰੰਟੀ",
+      hi: "30 दिनों तक वारंटी"
+    },
+    "वारंटी के बिना": {
+      en: "Without Warranty",
+      pt: "Sem Garantia",
+      de: "Ohne Garantie",
+      fr: "Sans garantie",
+      ur: "بغیر گارنٹی",
+      pa: "ਵਾਰੰਟੀ ਤੋਂ ਬਿਨਾਂ",
+      hi: "वारंटी के बिना"
+    }
+  }
+  
+  // Check if stored value matches any known warranty translation
+  const normalizedValue = storedValue.trim()
+  if (warrantyTranslations[normalizedValue]) {
+    return warrantyTranslations[normalizedValue][targetLang] || warrantyTranslations[normalizedValue].en
+  }
+  
+  // If no match found, return default based on target language
+  const defaults: Record<string, string> = {
+    en: "Without Warranty",
+    pt: "Sem Garantia",
+    de: "Ohne Garantie",
+    fr: "Sans garantie",
+    ur: "بغیر گارنٹی",
+    pa: "ਵਾਰੰਟੀ ਤੋਂ ਬਿਨਾਂ",
+    hi: "वारंटी के बिना"
+  }
+  
+  return defaults[targetLang] || defaults.en
+}
+
 // Helper function to get translations for receipt printing
 function getReceiptTranslations(lang: "en" | "pt" | "de" | "fr" | "ur" | "pa" | "hi" = "en") {
   const translations: Record<string, Record<string, string>> = {
@@ -1682,9 +1842,8 @@ export function printReceiptForTickets(
     const ticketBrand = ticket.brand || "N/A"
     const ticketModel = ticket.model || "N/A"
     const ticketSerialNo = ticket.serialNo || "-"
-    const ticketWarrantyText = ticket.warranty === "Warranty Until 30 days" 
-      ? t["form.warrantyUntil30Days"] 
-      : (ticket.warranty === "Without Warranty" ? t["form.withoutWarranty"] : (ticket.warranty || t["form.withoutWarranty"]))
+    // Translate warranty value to selected print language
+    const ticketWarrantyText = translateWarrantyValue(ticket.warranty, language)
     const ticketSimCard = ticket.simCard ? t["common.yes"] : t["common.no"]
     const ticketSimTray = ticket.simTray ? t["common.yes"] : t["common.no"]
     const ticketMemoryCard = ticket.memoryCard ? t["common.yes"] : t["common.no"]
