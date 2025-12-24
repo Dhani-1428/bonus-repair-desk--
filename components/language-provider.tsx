@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react"
 
-type Language = "en" | "pt"
+type Language = "en" | "pt" | "de" | "fr" | "ur"
 
 type LanguageContextValue = {
   language: Language
@@ -16,6 +16,9 @@ const translations: Record<Language, Record<string, string>> = {
     "header.language": "Language",
     "header.english": "English",
     "header.portuguese": "Portuguese (Portugal)",
+    "header.german": "German",
+    "header.french": "French",
+    "header.urdu": "Urdu/Punjabi",
     "header.dashboard": "Dashboard",
     "header.newDevice": "New Device",
     "header.allDevices": "All Devices",
@@ -101,6 +104,34 @@ const translations: Record<Language, Record<string, string>> = {
     "form.charger": "Charger",
     "form.battery": "Battery",
     "form.waterDamaged": "Water Damaged",
+
+    // Receipt translations
+    "receipt.clientCopy": "CLIENT COPY",
+    "receipt.adminCopy": "ADMIN COPY",
+    "receipt.clientId": "Client ID",
+    "receipt.name": "Name",
+    "receipt.clientPhone": "Client Phone",
+    "receipt.entryDate": "Entry Date",
+    "receipt.repairN": "Repair n",
+    "receipt.imei": "IMEI",
+    "receipt.brandModel": "Brand-Model",
+    "receipt.laptopSerialN": "Laptop Serial N",
+    "receipt.warranty": "Warranty",
+    "receipt.equipmentCheck": "Equipment Check",
+    "receipt.equipmentObs": "Equipment Obs.",
+    "receipt.repairObs": "Repair Obs.",
+    "receipt.services": "Services",
+    "receipt.problem": "Problem",
+    "receipt.price": "Price",
+    "receipt.responsibleText": "WE ARE RESPONSIBLE FOR THE ASSISTANCE / REPAIRING OF THE DESCRIBED ANOMALIES.",
+    "receipt.storageTitle": "Condies de Armazenamento e Levantamento",
+    "receipt.storageText1": "O equipamento dever ser levantado no prazo mximo de sessenta (60) dias aps a concluso da reparao e respetiva notificao por",
+    "receipt.storageText2": "Decorrido este prazo, ser aplicada uma taxa de armazenamento de 0,95  por dia, a partir do 61. dia, at ao limite mximo de cento e vinte (120) dias, aplicvel independentemente de a reparao ter sido realizada ou de o oramento ter sido recusado.",
+    "receipt.storageText3": "Ao aceitar o presente documento, o cliente declara que leu, compreendeu e aceita os termos e condies de reparao.",
+    "receipt.repairReference": "Referncia da Reparao",
+    "receipt.cutHere": "CUT HERE",
+    "receipt.selectLanguage": "Select Receipt Language",
+    "receipt.selectLanguageDescription": "Choose the language for the printed receipt",
 
     // Service names
     "service.lcd": "LCD",
@@ -478,6 +509,35 @@ const translations: Record<Language, Record<string, string>> = {
     "form.charger": "Carregador",
     "form.battery": "Bateria",
     "form.waterDamaged": "Danificado por Água",
+    "form.simTray": "Tabuleiro SIM",
+
+    // Receipt translations
+    "receipt.clientCopy": "CÓPIA DO CLIENTE",
+    "receipt.adminCopy": "CÓPIA DO ADMINISTRADOR",
+    "receipt.clientId": "ID do Cliente",
+    "receipt.name": "Nome",
+    "receipt.clientPhone": "Telefone do Cliente",
+    "receipt.entryDate": "Data de Entrada",
+    "receipt.repairN": "Reparação n",
+    "receipt.imei": "IMEI",
+    "receipt.brandModel": "Marca-Modelo",
+    "receipt.laptopSerialN": "Número de Série do Portátil",
+    "receipt.warranty": "Garantia",
+    "receipt.equipmentCheck": "Verificação de Equipamento",
+    "receipt.equipmentObs": "Obs. de Equipamento",
+    "receipt.repairObs": "Obs. de Reparação",
+    "receipt.services": "Serviços",
+    "receipt.problem": "Problema",
+    "receipt.price": "Preço",
+    "receipt.responsibleText": "SOMOS RESPONSÁVEIS PELA ASSISTÊNCIA / REPARAÇÃO DAS ANOMALIAS DESCRITAS.",
+    "receipt.storageTitle": "Condições de Armazenamento e Levantamento",
+    "receipt.storageText1": "O equipamento deverá ser levantado no prazo máximo de sessenta (60) dias após a conclusão da reparação e respetiva notificação por",
+    "receipt.storageText2": "Decorrido este prazo, será aplicada uma taxa de armazenamento de 0,95 € por dia, a partir do 61.º dia, até ao limite máximo de cento e vinte (120) dias, aplicável independentemente de a reparação ter sido realizada ou de o orçamento ter sido recusado.",
+    "receipt.storageText3": "Ao aceitar o presente documento, o cliente declara que leu, compreendeu e aceita os termos e condições de reparação.",
+    "receipt.repairReference": "Referência da Reparação",
+    "receipt.cutHere": "CORTAR AQUI",
+    "receipt.selectLanguage": "Selecionar Idioma do Recibo",
+    "receipt.selectLanguageDescription": "Escolha o idioma para o recibo impresso",
 
     // Service names
     "service.lcd": "LCD",
@@ -767,6 +827,195 @@ const translations: Record<Language, Record<string, string>> = {
     "table.price": "Preço",
     "table.action": "Ação",
   },
+  de: {
+    // Header
+    "header.language": "Sprache",
+    "header.english": "Englisch",
+    "header.portuguese": "Portugiesisch (Portugal)",
+    "header.german": "Deutsch",
+    "header.french": "Französisch",
+    "header.urdu": "Urdu/Punjabi",
+    "header.dashboard": "Dashboard",
+    "header.newDevice": "Neues Gerät",
+    "header.allDevices": "Alle Geräte",
+    "header.analytics": "Analysen",
+    "header.subscription": "Abonnement",
+    "header.administration": "Verwaltung",
+    "header.subscriptions": "Abonnements",
+    "header.team": "Team",
+    "header.trash": "Papierkorb",
+    "header.logout": "Abmelden",
+
+    // Common
+    "common.yes": "Ja",
+    "common.no": "Nein",
+    "common.notAvailable": "N/V",
+
+    // Form
+    "form.equipmentCheck": "Geräteprüfung",
+    "form.simCard": "SIM-Karte",
+    "form.simTray": "SIM-Schublade",
+    "form.memoryCard": "Speicherkarte",
+    "form.charger": "Ladegerät",
+    "form.battery": "Batterie",
+    "form.waterDamaged": "Wasserschaden",
+    "form.warrantyUntil30Days": "Garantie bis 30 Tage",
+    "form.withoutWarranty": "Ohne Garantie",
+
+    // Receipt translations
+    "receipt.clientCopy": "KUNDENKOPIE",
+    "receipt.adminCopy": "ADMIN-KOPIE",
+    "receipt.clientId": "Kunden-ID",
+    "receipt.name": "Name",
+    "receipt.clientPhone": "Kundentelefon",
+    "receipt.entryDate": "Eingangsdatum",
+    "receipt.repairN": "Reparatur Nr.",
+    "receipt.imei": "IMEI",
+    "receipt.brandModel": "Marke-Modell",
+    "receipt.laptopSerialN": "Laptop-Seriennummer",
+    "receipt.warranty": "Garantie",
+    "receipt.equipmentCheck": "Geräteprüfung",
+    "receipt.equipmentObs": "Gerätebeobachtung",
+    "receipt.repairObs": "Reparaturbeobachtung",
+    "receipt.services": "Dienstleistungen",
+    "receipt.problem": "Problem",
+    "receipt.price": "Preis",
+    "receipt.responsibleText": "WIR SIND VERANTWORTLICH FÜR DIE ASSISTENZ / REPARATUR DER BESCHRIEBENEN ANOMALIEN.",
+    "receipt.storageTitle": "Lagerungs- und Abholbedingungen",
+    "receipt.storageText1": "Das Gerät muss innerhalb von sechzig (60) Tagen nach Abschluss der Reparatur und entsprechender Benachrichtigung durch",
+    "receipt.storageText2": "abgeholt werden. Nach Ablauf dieser Frist wird ab dem 61. Tag eine Lagergebühr von 0,95 € pro Tag bis zum Höchstlimit von einhundertzwanzig (120) Tagen erhoben, unabhängig davon, ob die Reparatur durchgeführt wurde oder das Angebot abgelehnt wurde.",
+    "receipt.storageText3": "Durch die Annahme dieses Dokuments erklärt der Kunde, dass er die Reparaturbedingungen gelesen, verstanden und akzeptiert hat.",
+    "receipt.repairReference": "Reparaturreferenz",
+    "receipt.cutHere": "HIER SCHNEIDEN",
+    "receipt.selectLanguage": "Sprache für den Beleg auswählen",
+    "receipt.selectLanguageDescription": "Wählen Sie die Sprache für den gedruckten Beleg",
+  },
+  fr: {
+    // Header
+    "header.language": "Langue",
+    "header.english": "Anglais",
+    "header.portuguese": "Portugais (Portugal)",
+    "header.german": "Allemand",
+    "header.french": "Français",
+    "header.urdu": "Ourdou/Pendjabi",
+    "header.dashboard": "Tableau de bord",
+    "header.newDevice": "Nouvel appareil",
+    "header.allDevices": "Tous les appareils",
+    "header.analytics": "Analyses",
+    "header.subscription": "Abonnement",
+    "header.administration": "Administration",
+    "header.subscriptions": "Abonnements",
+    "header.team": "Équipe",
+    "header.trash": "Corbeille",
+    "header.logout": "Déconnexion",
+
+    // Common
+    "common.yes": "Oui",
+    "common.no": "Non",
+    "common.notAvailable": "N/D",
+
+    // Form
+    "form.equipmentCheck": "Vérification de l'équipement",
+    "form.simCard": "Carte SIM",
+    "form.simTray": "Tiroir SIM",
+    "form.memoryCard": "Carte mémoire",
+    "form.charger": "Chargeur",
+    "form.battery": "Batterie",
+    "form.waterDamaged": "Endommagé par l'eau",
+    "form.warrantyUntil30Days": "Garantie jusqu'à 30 jours",
+    "form.withoutWarranty": "Sans garantie",
+
+    // Receipt translations
+    "receipt.clientCopy": "COPIE CLIENT",
+    "receipt.adminCopy": "COPIE ADMIN",
+    "receipt.clientId": "ID Client",
+    "receipt.name": "Nom",
+    "receipt.clientPhone": "Téléphone client",
+    "receipt.entryDate": "Date d'entrée",
+    "receipt.repairN": "Réparation n",
+    "receipt.imei": "IMEI",
+    "receipt.brandModel": "Marque-Modèle",
+    "receipt.laptopSerialN": "Numéro de série ordinateur",
+    "receipt.warranty": "Garantie",
+    "receipt.equipmentCheck": "Vérification de l'équipement",
+    "receipt.equipmentObs": "Obs. équipement",
+    "receipt.repairObs": "Obs. réparation",
+    "receipt.services": "Services",
+    "receipt.problem": "Problème",
+    "receipt.price": "Prix",
+    "receipt.responsibleText": "NOUS SOMMES RESPONSABLES DE L'ASSISTANCE / RÉPARATION DES ANOMALIES DÉCRITES.",
+    "receipt.storageTitle": "Conditions de stockage et de retrait",
+    "receipt.storageText1": "L'équipement doit être retiré dans un délai maximum de soixante (60) jours après l'achèvement de la réparation et la notification correspondante par",
+    "receipt.storageText2": "Après ce délai, des frais de stockage de 0,95 € par jour seront appliqués à partir du 61e jour, jusqu'à la limite maximale de cent vingt (120) jours, applicables indépendamment du fait que la réparation ait été effectuée ou que le devis ait été refusé.",
+    "receipt.storageText3": "En acceptant ce document, le client déclare avoir lu, compris et accepté les termes et conditions de réparation.",
+    "receipt.repairReference": "Référence de la réparation",
+    "receipt.cutHere": "COUPER ICI",
+    "receipt.selectLanguage": "Sélectionner la langue du reçu",
+    "receipt.selectLanguageDescription": "Choisissez la langue pour le reçu imprimé",
+  },
+  ur: {
+    // Header
+    "header.language": "زبان",
+    "header.english": "انگریزی",
+    "header.portuguese": "پرتگالی (پرتگال)",
+    "header.german": "جرمن",
+    "header.french": "فرانسیسی",
+    "header.urdu": "اردو/پنجابی",
+    "header.dashboard": "ڈیش بورڈ",
+    "header.newDevice": "نیا آلہ",
+    "header.allDevices": "تمام آلات",
+    "header.analytics": "تجزیات",
+    "header.subscription": "سبسکرپشن",
+    "header.administration": "انتظامیہ",
+    "header.subscriptions": "سبسکرپشنز",
+    "header.team": "ٹیم",
+    "header.trash": "ٹوکری",
+    "header.logout": "لاگ آؤٹ",
+
+    // Common
+    "common.yes": "ہاں",
+    "common.no": "نہیں",
+    "common.notAvailable": "دستیاب نہیں",
+
+    // Form
+    "form.equipmentCheck": "سامان کی جانچ",
+    "form.simCard": "سیم کارڈ",
+    "form.simTray": "سیم ٹرے",
+    "form.memoryCard": "میموری کارڈ",
+    "form.charger": "چارجر",
+    "form.battery": "بیٹری",
+    "form.waterDamaged": "پانی سے خراب",
+    "form.warrantyUntil30Days": "30 دن تک گارنٹی",
+    "form.withoutWarranty": "بغیر گارنٹی",
+
+    // Receipt translations
+    "receipt.clientCopy": "کلائنٹ کاپی",
+    "receipt.adminCopy": "ایڈمن کاپی",
+    "receipt.clientId": "کلائنٹ آئی ڈی",
+    "receipt.name": "نام",
+    "receipt.clientPhone": "کلائنٹ فون",
+    "receipt.entryDate": "داخلے کی تاریخ",
+    "receipt.repairN": "مرمت نمبر",
+    "receipt.imei": "IMEI",
+    "receipt.brandModel": "برانڈ-ماڈل",
+    "receipt.laptopSerialN": "لیپ ٹاپ سیریل نمبر",
+    "receipt.warranty": "گارنٹی",
+    "receipt.equipmentCheck": "سامان کی جانچ",
+    "receipt.equipmentObs": "سامان کی رپورٹ",
+    "receipt.repairObs": "مرمت کی رپورٹ",
+    "receipt.services": "خدمات",
+    "receipt.problem": "مسئلہ",
+    "receipt.price": "قیمت",
+    "receipt.responsibleText": "ہم بیان کردہ خرابیوں کی مدد / مرمت کے ذمہ دار ہیں۔",
+    "receipt.storageTitle": "ذخیرہ کرنے اور اٹھانے کی شرائط",
+    "receipt.storageText1": "مرمت مکمل ہونے اور",
+    "receipt.storageText2": "کی طرف سے متعلقہ اطلاع کے بعد ساٹھ (60) دنوں کی زیادہ سے زیادہ مدت کے اندر سامان اٹھایا جانا چاہیے۔ اس مدت کے گزرنے کے بعد، 61ویں دن سے شروع ہو کر، ایک سو بیس (120) دنوں کی زیادہ سے زیادہ حد تک، 0.95 یورو فی دن کی ذخیرہ کرنے کی فیس لاگو کی جائے گی، چاہے مرمت کی گئی ہو یا تخمینہ مسترد کر دیا گیا ہو۔",
+    "receipt.storageText3": "اس دستاویز کو قبول کرنے سے، کلائنٹ اعلان کرتا ہے کہ اس نے مرمت کی شرائط و ضوابط پڑھے، سمجھے اور قبول کیے ہیں۔",
+    "receipt.repairReference": "مرمت کا حوالہ",
+    "receipt.cutHere": "یہاں کاٹیں",
+    "receipt.selectLanguage": "رسید کی زبان منتخب کریں",
+    "receipt.selectLanguageDescription": "پرنٹ شدہ رسید کے لیے زبان منتخب کریں",
+  },
 }
 
 const LanguageContext = createContext<LanguageContextValue | undefined>(undefined)
@@ -777,8 +1026,8 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (typeof window === "undefined") return
     const stored = window.localStorage.getItem("language")
-    if (stored === "en" || stored === "pt") {
-      setLanguageState(stored)
+    if (stored === "en" || stored === "pt" || stored === "de" || stored === "fr" || stored === "ur") {
+      setLanguageState(stored as Language)
     }
   }, [])
 

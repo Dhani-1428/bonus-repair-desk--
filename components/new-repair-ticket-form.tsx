@@ -437,8 +437,8 @@ export function NewRepairTicketForm() {
   }
 
   const printReceipt = (tickets: any[]) => {
-    // Use the exported function with selected printer
-    printReceiptForTickets(tickets, selectedPrinter)
+    // Use the wrapper function that shows language selection dialog first
+    printReceiptWithLanguageSelection(tickets, selectedPrinter)
   }
 
   // Handle continue/close after viewing ticket details
@@ -1168,9 +1168,286 @@ export function NewRepairTicketForm() {
   )
 }
 
+// Helper function to get translations for receipt printing
+function getReceiptTranslations(lang: "en" | "pt" | "de" | "fr" | "ur" = "en") {
+  const translations: Record<string, Record<string, string>> = {
+    en: {
+      "receipt.clientCopy": "CLIENT COPY",
+      "receipt.adminCopy": "ADMIN COPY",
+      "receipt.clientId": "Client ID",
+      "receipt.name": "Name",
+      "receipt.clientPhone": "Client Phone",
+      "receipt.entryDate": "Entry Date",
+      "receipt.repairN": "Repair n",
+      "receipt.imei": "IMEI",
+      "receipt.brandModel": "Brand-Model",
+      "receipt.laptopSerialN": "Laptop Serial N",
+      "receipt.warranty": "Warranty",
+      "receipt.equipmentCheck": "Equipment Check",
+      "receipt.equipmentObs": "Equipment Obs.",
+      "receipt.repairObs": "Repair Obs.",
+      "receipt.services": "Services",
+      "receipt.problem": "Problem",
+      "receipt.price": "Price",
+      "receipt.responsibleText": "WE ARE RESPONSIBLE FOR THE ASSISTANCE / REPAIRING OF THE DESCRIBED ANOMALIES.",
+      "receipt.storageTitle": "Condies de Armazenamento e Levantamento",
+      "receipt.storageText1": "O equipamento dever ser levantado no prazo mximo de sessenta (60) dias aps a concluso da reparao e respetiva notificao por",
+      "receipt.storageText2": "Decorrido este prazo, ser aplicada uma taxa de armazenamento de 0,95  por dia, a partir do 61. dia, at ao limite mximo de cento e vinte (120) dias, aplicvel independentemente de a reparao ter sido realizada ou de o oramento ter sido recusado.",
+      "receipt.storageText3": "Ao aceitar o presente documento, o cliente declara que leu, compreendeu e aceita os termos e condies de reparao.",
+      "receipt.repairReference": "Referncia da Reparao",
+      "receipt.cutHere": "CUT HERE",
+      "common.yes": "Yes",
+      "common.no": "No",
+      "form.warrantyUntil30Days": "Warranty Until 30 days",
+      "form.withoutWarranty": "Without Warranty",
+      "form.simCard": "SIM Card",
+      "form.simTray": "SIM Tray",
+      "form.memoryCard": "Memory Card",
+      "form.charger": "Charger",
+      "form.battery": "Battery",
+      "form.waterDamaged": "Water Damaged",
+    },
+    pt: {
+      "receipt.clientCopy": "CÓPIA DO CLIENTE",
+      "receipt.adminCopy": "CÓPIA DO ADMINISTRADOR",
+      "receipt.clientId": "ID do Cliente",
+      "receipt.name": "Nome",
+      "receipt.clientPhone": "Telefone do Cliente",
+      "receipt.entryDate": "Data de Entrada",
+      "receipt.repairN": "Reparação n",
+      "receipt.imei": "IMEI",
+      "receipt.brandModel": "Marca-Modelo",
+      "receipt.laptopSerialN": "Número de Série do Portátil",
+      "receipt.warranty": "Garantia",
+      "receipt.equipmentCheck": "Verificação de Equipamento",
+      "receipt.equipmentObs": "Obs. de Equipamento",
+      "receipt.repairObs": "Obs. de Reparação",
+      "receipt.services": "Serviços",
+      "receipt.problem": "Problema",
+      "receipt.price": "Preço",
+      "receipt.responsibleText": "SOMOS RESPONSÁVEIS PELA ASSISTÊNCIA / REPARAÇÃO DAS ANOMALIAS DESCRITAS.",
+      "receipt.storageTitle": "Condições de Armazenamento e Levantamento",
+      "receipt.storageText1": "O equipamento deverá ser levantado no prazo máximo de sessenta (60) dias após a conclusão da reparação e respetiva notificação por",
+      "receipt.storageText2": "Decorrido este prazo, será aplicada uma taxa de armazenamento de 0,95 € por dia, a partir do 61.º dia, até ao limite máximo de cento e vinte (120) dias, aplicável independentemente de a reparação ter sido realizada ou de o orçamento ter sido recusado.",
+      "receipt.storageText3": "Ao aceitar o presente documento, o cliente declara que leu, compreendeu e aceita os termos e condições de reparação.",
+      "receipt.repairReference": "Referência da Reparação",
+      "receipt.cutHere": "CORTAR AQUI",
+      "common.yes": "Sim",
+      "common.no": "Não",
+      "form.warrantyUntil30Days": "Garantia até 30 dias",
+      "form.withoutWarranty": "Sem Garantia",
+      "form.simCard": "Cartão SIM",
+      "form.simTray": "Tabuleiro SIM",
+      "form.memoryCard": "Cartão de Memória",
+      "form.charger": "Carregador",
+      "form.battery": "Bateria",
+      "form.waterDamaged": "Danificado por Água",
+    },
+    de: {
+      "receipt.clientCopy": "KUNDENKOPIE",
+      "receipt.adminCopy": "ADMIN-KOPIE",
+      "receipt.clientId": "Kunden-ID",
+      "receipt.name": "Name",
+      "receipt.clientPhone": "Kundentelefon",
+      "receipt.entryDate": "Eingangsdatum",
+      "receipt.repairN": "Reparatur Nr.",
+      "receipt.imei": "IMEI",
+      "receipt.brandModel": "Marke-Modell",
+      "receipt.laptopSerialN": "Laptop-Seriennummer",
+      "receipt.warranty": "Garantie",
+      "receipt.equipmentCheck": "Geräteprüfung",
+      "receipt.equipmentObs": "Gerätebeobachtung",
+      "receipt.repairObs": "Reparaturbeobachtung",
+      "receipt.services": "Dienstleistungen",
+      "receipt.problem": "Problem",
+      "receipt.price": "Preis",
+      "receipt.responsibleText": "WIR SIND VERANTWORTLICH FÜR DIE ASSISTENZ / REPARATUR DER BESCHRIEBENEN ANOMALIEN.",
+      "receipt.storageTitle": "Lagerungs- und Abholbedingungen",
+      "receipt.storageText1": "Das Gerät muss innerhalb von sechzig (60) Tagen nach Abschluss der Reparatur und entsprechender Benachrichtigung durch",
+      "receipt.storageText2": "abgeholt werden. Nach Ablauf dieser Frist wird ab dem 61. Tag eine Lagergebühr von 0,95 € pro Tag bis zum Höchstlimit von einhundertzwanzig (120) Tagen erhoben, unabhängig davon, ob die Reparatur durchgeführt wurde oder das Angebot abgelehnt wurde.",
+      "receipt.storageText3": "Durch die Annahme dieses Dokuments erklärt der Kunde, dass er die Reparaturbedingungen gelesen, verstanden und akzeptiert hat.",
+      "receipt.repairReference": "Reparaturreferenz",
+      "receipt.cutHere": "HIER SCHNEIDEN",
+      "common.yes": "Ja",
+      "common.no": "Nein",
+      "form.warrantyUntil30Days": "Garantie bis 30 Tage",
+      "form.withoutWarranty": "Ohne Garantie",
+      "form.simCard": "SIM-Karte",
+      "form.simTray": "SIM-Schublade",
+      "form.memoryCard": "Speicherkarte",
+      "form.charger": "Ladegerät",
+      "form.battery": "Batterie",
+      "form.waterDamaged": "Wasserschaden",
+    },
+    fr: {
+      "receipt.clientCopy": "COPIE CLIENT",
+      "receipt.adminCopy": "COPIE ADMIN",
+      "receipt.clientId": "ID Client",
+      "receipt.name": "Nom",
+      "receipt.clientPhone": "Téléphone client",
+      "receipt.entryDate": "Date d'entrée",
+      "receipt.repairN": "Réparation n",
+      "receipt.imei": "IMEI",
+      "receipt.brandModel": "Marque-Modèle",
+      "receipt.laptopSerialN": "Numéro de série ordinateur",
+      "receipt.warranty": "Garantie",
+      "receipt.equipmentCheck": "Vérification de l'équipement",
+      "receipt.equipmentObs": "Obs. équipement",
+      "receipt.repairObs": "Obs. réparation",
+      "receipt.services": "Services",
+      "receipt.problem": "Problème",
+      "receipt.price": "Prix",
+      "receipt.responsibleText": "NOUS SOMMES RESPONSABLES DE L'ASSISTANCE / RÉPARATION DES ANOMALIES DÉCRITES.",
+      "receipt.storageTitle": "Conditions de stockage et de retrait",
+      "receipt.storageText1": "L'équipement doit être retiré dans un délai maximum de soixante (60) jours après l'achèvement de la réparation et la notification correspondante par",
+      "receipt.storageText2": "Après ce délai, des frais de stockage de 0,95 € par jour seront appliqués à partir du 61e jour, jusqu'à la limite maximale de cent vingt (120) jours, applicables indépendamment du fait que la réparation ait été effectuée ou que le devis ait été refusé.",
+      "receipt.storageText3": "En acceptant ce document, le client déclare avoir lu, compris et accepté les termes et conditions de réparation.",
+      "receipt.repairReference": "Référence de la réparation",
+      "receipt.cutHere": "COUPER ICI",
+      "common.yes": "Oui",
+      "common.no": "Non",
+      "form.warrantyUntil30Days": "Garantie jusqu'à 30 jours",
+      "form.withoutWarranty": "Sans garantie",
+      "form.simCard": "Carte SIM",
+      "form.simTray": "Tiroir SIM",
+      "form.memoryCard": "Carte mémoire",
+      "form.charger": "Chargeur",
+      "form.battery": "Batterie",
+      "form.waterDamaged": "Endommagé par l'eau",
+    },
+    ur: {
+      "receipt.clientCopy": "کلائنٹ کاپی",
+      "receipt.adminCopy": "ایڈمن کاپی",
+      "receipt.clientId": "کلائنٹ آئی ڈی",
+      "receipt.name": "نام",
+      "receipt.clientPhone": "کلائنٹ فون",
+      "receipt.entryDate": "داخلے کی تاریخ",
+      "receipt.repairN": "مرمت نمبر",
+      "receipt.imei": "IMEI",
+      "receipt.brandModel": "برانڈ-ماڈل",
+      "receipt.laptopSerialN": "لیپ ٹاپ سیریل نمبر",
+      "receipt.warranty": "گارنٹی",
+      "receipt.equipmentCheck": "سامان کی جانچ",
+      "receipt.equipmentObs": "سامان کی رپورٹ",
+      "receipt.repairObs": "مرمت کی رپورٹ",
+      "receipt.services": "خدمات",
+      "receipt.problem": "مسئلہ",
+      "receipt.price": "قیمت",
+      "receipt.responsibleText": "ہم بیان کردہ خرابیوں کی مدد / مرمت کے ذمہ دار ہیں۔",
+      "receipt.storageTitle": "ذخیرہ کرنے اور اٹھانے کی شرائط",
+      "receipt.storageText1": "مرمت مکمل ہونے اور",
+      "receipt.storageText2": "کی طرف سے متعلقہ اطلاع کے بعد ساٹھ (60) دنوں کی زیادہ سے زیادہ مدت کے اندر سامان اٹھایا جانا چاہیے۔ اس مدت کے گزرنے کے بعد، 61ویں دن سے شروع ہو کر، ایک سو بیس (120) دنوں کی زیادہ سے زیادہ حد تک، 0.95 یورو فی دن کی ذخیرہ کرنے کی فیس لاگو کی جائے گی، چاہے مرمت کی گئی ہو یا تخمینہ مسترد کر دیا گیا ہو۔",
+      "receipt.storageText3": "اس دستاویز کو قبول کرنے سے، کلائنٹ اعلان کرتا ہے کہ اس نے مرمت کی شرائط و ضوابط پڑھے، سمجھے اور قبول کیے ہیں۔",
+      "receipt.repairReference": "مرمت کا حوالہ",
+      "receipt.cutHere": "یہاں کاٹیں",
+      "common.yes": "ہاں",
+      "common.no": "نہیں",
+      "form.warrantyUntil30Days": "30 دن تک گارنٹی",
+      "form.withoutWarranty": "بغیر گارنٹی",
+      "form.simCard": "سیم کارڈ",
+      "form.simTray": "سیم ٹرے",
+      "form.memoryCard": "میموری کارڈ",
+      "form.charger": "چارجر",
+      "form.battery": "بیٹری",
+      "form.waterDamaged": "پانی سے خراب",
+    },
+  }
+  return translations[lang] || translations.en
+}
+
+// Language selection dialog component
+function LanguageSelectionDialog({ 
+  open, 
+  onClose, 
+  onSelect 
+}: { 
+  open: boolean
+  onClose: () => void
+  onSelect: (lang: "en" | "pt" | "de" | "fr" | "ur") => void 
+}) {
+  const languages = [
+    { code: "en" as const, name: "English" },
+    { code: "pt" as const, name: "Português" },
+    { code: "de" as const, name: "Deutsch" },
+    { code: "fr" as const, name: "Français" },
+    { code: "ur" as const, name: "اردو/پنجابی" },
+  ]
+
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Select Receipt Language</DialogTitle>
+          <DialogDescription>
+            Choose the language for the printed receipt
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-2 py-4">
+          {languages.map((lang) => (
+            <Button
+              key={lang.code}
+              variant="outline"
+              className="w-full justify-start h-auto py-3"
+              onClick={() => {
+                onSelect(lang.code)
+                onClose()
+              }}
+            >
+              <span className="text-lg">{lang.name}</span>
+            </Button>
+          ))}
+        </div>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+// Wrapper function that shows language selection dialog first
+export function printReceiptWithLanguageSelection(
+  tickets: any[], 
+  preferredPrinter: string | null = null
+) {
+  // Create a temporary dialog element
+  const dialogId = "receipt-language-dialog-" + Date.now()
+  const dialog = document.createElement("div")
+  dialog.id = dialogId
+  dialog.innerHTML = `
+    <div style="position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;">
+      <div style="background: white; padding: 24px; border-radius: 8px; max-width: 400px; width: 90%; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">Select Receipt Language</h2>
+        <p style="font-size: 14px; color: #666; margin-bottom: 16px;">Choose the language for the printed receipt</p>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <button data-lang="en" style="padding: 12px 16px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer; text-align: left; font-size: 14px;">English</button>
+          <button data-lang="pt" style="padding: 12px 16px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer; text-align: left; font-size: 14px;">Português</button>
+          <button data-lang="de" style="padding: 12px 16px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer; text-align: left; font-size: 14px;">Deutsch</button>
+          <button data-lang="fr" style="padding: 12px 16px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer; text-align: left; font-size: 14px;">Français</button>
+          <button data-lang="ur" style="padding: 12px 16px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer; text-align: left; font-size: 14px;">اردو/پنجابی</button>
+          <button data-cancel style="padding: 12px 16px; border: 1px solid #ddd; border-radius: 4px; background: #f5f5f5; cursor: pointer; text-align: center; font-size: 14px; margin-top: 8px;">Cancel</button>
+        </div>
+      </div>
+    </div>
+  `
+  document.body.appendChild(dialog)
+
+  const buttons = dialog.querySelectorAll("button[data-lang], button[data-cancel]")
+  buttons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const lang = btn.getAttribute("data-lang") as "en" | "pt" | "de" | "fr" | "ur" | null
+      document.body.removeChild(dialog)
+      if (lang) {
+        printReceiptForTickets(tickets, preferredPrinter, lang)
+      }
+    })
+  })
+}
+
 // Exported function to print receipts from anywhere
-// Updated: Uses "Client ID" instead of "Client NIF"
-export function printReceiptForTickets(tickets: any[], preferredPrinter: string | null = null) {
+// Updated: Uses "Client ID" instead of "Client NIF" and supports multiple languages
+export function printReceiptForTickets(
+  tickets: any[], 
+  preferredPrinter: string | null = null,
+  language: "en" | "pt" | "de" | "fr" | "ur" = "en"
+) {
   // Validate tickets parameter
   if (!tickets || !Array.isArray(tickets) || tickets.length === 0) {
     console.error("[printReceiptForTickets] Invalid tickets parameter:", tickets)
@@ -1219,6 +1496,9 @@ export function printReceiptForTickets(tickets: any[], preferredPrinter: string 
     return
   }
 
+  // Get translations for the selected language
+  const t = getReceiptTranslations(language)
+  
   // Function to generate a single receipt HTML
   const generateReceiptHTML = (ticket: any, copyType: 'CLIENT' | 'ADMIN' = 'CLIENT') => {
     // Validate ticket parameter
@@ -1236,13 +1516,15 @@ export function printReceiptForTickets(tickets: any[], preferredPrinter: string 
     const ticketBrand = ticket.brand || "N/A"
     const ticketModel = ticket.model || "N/A"
     const ticketSerialNo = ticket.serialNo || "-"
-    const ticketWarranty = ticket.warranty || "Without Warranty"
-    const ticketSimCard = ticket.simCard ? "Yes" : "No"
-    const ticketSimTray = ticket.simTray ? "Yes" : "No"
-    const ticketMemoryCard = ticket.memoryCard ? "Yes" : "No"
-    const ticketCharger = ticket.charger ? "Yes" : "No"
-    const ticketBattery = ticket.battery ? "Yes" : "No"
-    const ticketWaterDamaged = ticket.waterDamaged ? "Yes" : "No"
+    const ticketWarrantyText = ticket.warranty === "Warranty Until 30 days" 
+      ? t["form.warrantyUntil30Days"] 
+      : (ticket.warranty === "Without Warranty" ? t["form.withoutWarranty"] : (ticket.warranty || t["form.withoutWarranty"]))
+    const ticketSimCard = ticket.simCard ? t["common.yes"] : t["common.no"]
+    const ticketSimTray = ticket.simTray ? t["common.yes"] : t["common.no"]
+    const ticketMemoryCard = ticket.memoryCard ? t["common.yes"] : t["common.no"]
+    const ticketCharger = ticket.charger ? t["common.yes"] : t["common.no"]
+    const ticketBattery = ticket.battery ? t["common.yes"] : t["common.no"]
+    const ticketWaterDamaged = ticket.waterDamaged ? t["common.yes"] : t["common.no"]
     const ticketEquipmentObs = ticket.equipmentObs || "-"
     const ticketRepairObs = ticket.repairObs || "-"
     const ticketProblem = ticket.problem || "-"
@@ -1261,9 +1543,9 @@ export function printReceiptForTickets(tickets: any[], preferredPrinter: string 
     
     const services = Array.isArray(servicesArray) 
       ? servicesArray.join(", ") 
-      : (servicesArray || ticket.serviceName || "N/A")
+      : (servicesArray || ticket.serviceName || t["common.notAvailable"] || "N/A")
     
-    const copyLabel = copyType === 'CLIENT' ? 'CLIENT COPY' : 'ADMIN COPY'
+    const copyLabel = copyType === 'CLIENT' ? t["receipt.clientCopy"] : t["receipt.adminCopy"]
     const entryDate = new Date(ticket?.createdAt || Date.now())
     const formattedDate = entryDate.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })
     const formattedTime = entryDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
@@ -1284,51 +1566,51 @@ export function printReceiptForTickets(tickets: any[], preferredPrinter: string 
               <div style="margin: 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">VAT: ${companyVAT}</div>
             </div>
             <div style="display: table-cell; width: 50%; vertical-align: top; padding-left: 6px;">
-              <div style="font-weight: bold; font-size: 7pt; margin: 0 0 2px 0; padding: 0; color: #000; line-height: 1.6;">Client ID: ${ticketClientId}</div>
-              <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;"><strong>Name:</strong> ${ticketCustomerName}</div>
-              <div style="margin: 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;"><strong>Client Phone:</strong> ${ticketContact}</div>
+              <div style="font-weight: bold; font-size: 7pt; margin: 0 0 2px 0; padding: 0; color: #000; line-height: 1.6;">${t["receipt.clientId"]}: ${ticketClientId}</div>
+              <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;"><strong>${t["receipt.name"]}:</strong> ${ticketCustomerName}</div>
+              <div style="margin: 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;"><strong>${t["receipt.clientPhone"]}:</strong> ${ticketContact}</div>
             </div>
           </div>
         </div>
         
         <div style="margin: 3px 0;">
-          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">Entry Date:</span> ${formattedDate} ${formattedTime}</div>
-          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">Repair n:</span> ${ticketRepairNumber}</div>
-          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">IMEI:</span> ${ticketImeiNo}</div>
-          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">Brand-Model:</span> ${ticketBrand} - ${ticketModel}</div>
-          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">Laptop Serial N:</span> ${ticketSerialNo}</div>
-          <div style="margin: 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">Warranty:</span> ${ticketWarranty}</div>
+          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.entryDate"]}:</span> ${formattedDate} ${formattedTime}</div>
+          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.repairN"]}:</span> ${ticketRepairNumber}</div>
+          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.imei"]}:</span> ${ticketImeiNo}</div>
+          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.brandModel"]}:</span> ${ticketBrand} - ${ticketModel}</div>
+          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.laptopSerialN"]}:</span> ${ticketSerialNo}</div>
+          <div style="margin: 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.warranty"]}:</span> ${ticketWarrantyText}</div>
         </div>
         
         <div style="margin: 3px 0;">
-          <div style="font-weight: bold; margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;">Equipment Check:</div>
-          <div style="margin: 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">SIM Card:</span> ${ticketSimCard} | <span style="font-weight: bold;">SIM Tray:</span> ${ticketSimTray} | <span style="font-weight: bold;">Memory Card:</span> ${ticketMemoryCard} | <span style="font-weight: bold;">Charger:</span> ${ticketCharger} | <span style="font-weight: bold;">Battery:</span> ${ticketBattery} | <span style="font-weight: bold;">Water Damaged:</span> ${ticketWaterDamaged}</div>
+          <div style="font-weight: bold; margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;">${t["receipt.equipmentCheck"]}:</div>
+          <div style="margin: 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["form.simCard"]}:</span> ${ticketSimCard} | <span style="font-weight: bold;">${t["form.simTray"]}:</span> ${ticketSimTray} | <span style="font-weight: bold;">${t["form.memoryCard"]}:</span> ${ticketMemoryCard} | <span style="font-weight: bold;">${t["form.charger"]}:</span> ${ticketCharger} | <span style="font-weight: bold;">${t["form.battery"]}:</span> ${ticketBattery} | <span style="font-weight: bold;">${t["form.waterDamaged"]}:</span> ${ticketWaterDamaged}</div>
         </div>
         
         <div style="margin: 3px 0;">
-          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">Equipment Obs.:</span> ${ticketEquipmentObs}</div>
-          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">Repair Obs.:</span> ${ticketRepairObs}</div>
-          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">Services:</span> ${services}</div>
-          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">Problem:</span> ${ticketProblem}</div>
-          <div style="margin: 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">Price:</span> €${ticketPrice}</div>
+          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.equipmentObs"]}:</span> ${ticketEquipmentObs}</div>
+          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.repairObs"]}:</span> ${ticketRepairObs}</div>
+          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.services"]}:</span> ${services}</div>
+          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.problem"]}:</span> ${ticketProblem}</div>
+          <div style="margin: 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.price"]}:</span> €${ticketPrice}</div>
         </div>
         
         <div style="margin: 3px 0; padding: 3px; background-color: #f0f0f0; text-align: center; font-weight: bold; font-size: 6.5pt; border: 1px solid #ddd;">
-          WE ARE RESPONSIBLE FOR THE ASSISTANCE / REPAIRING OF THE DESCRIBED ANOMALIES.
+          ${t["receipt.responsibleText"]}
         </div>
         
         <div style="margin-top: 3px; padding: 3px; background-color: #f9f9f9; font-size: 6pt; line-height: 1.3; border: 1px solid #ddd;">
-          <div style="font-weight: bold; margin-bottom: 2px; font-size: 6.5pt;">Condies de Armazenamento e Levantamento</div>
+          <div style="font-weight: bold; margin-bottom: 2px; font-size: 6.5pt;">${t["receipt.storageTitle"]}</div>
           <div style="text-align: justify; margin-bottom: 2px; font-size: 6pt;">
-            O equipamento dever ser levantado no prazo mximo de sessenta (60) dias aps a concluso da reparao e respetiva notificao por <strong>${shopName}</strong>.
+            ${t["receipt.storageText1"]} <strong>${shopName}</strong>.
           </div>
           <div style="text-align: justify; margin-bottom: 2px; font-size: 6pt;">
-            Decorrido este prazo, ser aplicada uma taxa de armazenamento de 0,95  por dia, a partir do 61. dia, at ao limite mximo de cento e vinte (120) dias, aplicvel independentemente de a reparao ter sido realizada ou de o oramento ter sido recusado.
+            ${t["receipt.storageText2"]}
           </div>
           <div style="text-align: justify; margin-bottom: 2px; font-size: 6pt;">
-            Ao aceitar o presente documento, o cliente declara que leu, compreendeu e aceita os termos e condies de reparao.
+            ${t["receipt.storageText3"]}
           </div>
-          <div style="margin-top: 2px; font-weight: bold; font-size: 6.5pt;">Referncia da Reparao: ${ticketRepairNumber}</div>
+          <div style="margin-top: 2px; font-weight: bold; font-size: 6.5pt;">${t["receipt.repairReference"]}: ${ticketRepairNumber}</div>
         </div>
       </div>
     `
@@ -1359,7 +1641,7 @@ export function printReceiptForTickets(tickets: any[], preferredPrinter: string 
           <div style="width: 100%; margin: 0; padding: 0.5mm 0; position: relative;">
             <!-- Dotted cutting line -->
             <div style="border-top: 2px dotted #000; border-bottom: 2px dotted #000; margin: 0 auto; padding: 1mm 0; width: 100%; position: relative;">
-              <div style="text-align: center; font-size: 6pt; color: #000; margin: 0.3mm 0; font-weight: bold; letter-spacing: 2px;"> CUT HERE </div>
+              <div style="text-align: center; font-size: 6pt; color: #000; margin: 0.3mm 0; font-weight: bold; letter-spacing: 2px;"> ${t["receipt.cutHere"]} </div>
             </div>
             <!-- Additional dotted line for better visibility -->
             <div style="border-top: 1px dotted #666; margin: 0.3mm auto 0; width: 100%;"></div>
@@ -1587,7 +1869,7 @@ export async function printToReceiptPrinter(tickets: any[]) {
   // Check if Web Serial API is available (Chrome/Edge only)
   if (!('serial' in navigator)) {
     console.warn("Web Serial API not available. Falling back to window.print()")
-    printReceiptForTickets(tickets)
+    printReceiptWithLanguageSelection(tickets)
     return
   }
 
@@ -1629,7 +1911,7 @@ export async function printToReceiptPrinter(tickets: any[]) {
   } catch (error: any) {
     console.error("Error printing to receipt printer:", error)
     toast.error("Failed to print to receipt printer. Using browser print instead.")
-    // Fallback to regular print
-    printReceiptForTickets(tickets)
+    // Fallback to regular print with language selection
+    printReceiptWithLanguageSelection(tickets)
   }
 }

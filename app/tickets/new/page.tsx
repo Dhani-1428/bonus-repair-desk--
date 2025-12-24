@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { DashboardLayout } from "@/components/dashboard-layout"
-import { NewRepairTicketForm, printReceiptForTickets } from "@/components/new-repair-ticket-form"
+import { NewRepairTicketForm, printReceiptWithLanguageSelection } from "@/components/new-repair-ticket-form"
 import { useTranslation } from "@/components/language-provider"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useAuth } from "@/hooks/use-auth"
@@ -65,8 +65,8 @@ export default function NewTicketPage() {
       spu: ticket.spu || "N/A",
       createdAt: ticket.createdAt || new Date().toISOString(),
     }
-    // Use the exported print function
-    printReceiptForTickets([normalizedTicket])
+    // Use the wrapper function that shows language selection dialog first
+    printReceiptWithLanguageSelection([normalizedTicket])
   }
 
   return (
