@@ -1411,29 +1411,44 @@ export function printReceiptWithLanguageSelection(
   const dialogId = "receipt-language-dialog-" + Date.now()
   const dialog = document.createElement("div")
   dialog.id = dialogId
+  dialog.style.position = "fixed"
+  dialog.style.inset = "0"
+  dialog.style.zIndex = "99999"
+  dialog.style.backgroundColor = "rgba(0, 0, 0, 0.5)"
+  dialog.style.display = "flex"
+  dialog.style.alignItems = "center"
+  dialog.style.justifyContent = "center"
   dialog.innerHTML = `
-    <div style="position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;">
-      <div style="background: white; padding: 24px; border-radius: 8px; max-width: 400px; width: 90%; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-        <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">Select Receipt Language</h2>
-        <p style="font-size: 14px; color: #666; margin-bottom: 16px;">Choose the language for the printed receipt</p>
-        <div style="display: flex; flex-direction: column; gap: 8px;">
-          <button data-lang="en" style="padding: 12px 16px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer; text-align: left; font-size: 14px;">English</button>
-          <button data-lang="pt" style="padding: 12px 16px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer; text-align: left; font-size: 14px;">Português</button>
-          <button data-lang="de" style="padding: 12px 16px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer; text-align: left; font-size: 14px;">Deutsch</button>
-          <button data-lang="fr" style="padding: 12px 16px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer; text-align: left; font-size: 14px;">Français</button>
-          <button data-lang="ur" style="padding: 12px 16px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer; text-align: left; font-size: 14px;">اردو/پنجابی</button>
-          <button data-cancel style="padding: 12px 16px; border: 1px solid #ddd; border-radius: 4px; background: #f5f5f5; cursor: pointer; text-align: center; font-size: 14px; margin-top: 8px;">Cancel</button>
-        </div>
+    <div style="background: white; padding: 24px; border-radius: 8px; max-width: 400px; width: 90%; box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: relative;">
+      <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 8px; color: #000;">Select Receipt Language</h2>
+      <p style="font-size: 14px; color: #666; margin-bottom: 16px;">Choose the language for the printed receipt</p>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <button data-lang="en" style="padding: 12px 16px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer; text-align: left; font-size: 14px; color: #000; transition: background 0.2s;" onmouseover="this.style.background='#f5f5f5'" onmouseout="this.style.background='white'">English</button>
+        <button data-lang="pt" style="padding: 12px 16px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer; text-align: left; font-size: 14px; color: #000; transition: background 0.2s;" onmouseover="this.style.background='#f5f5f5'" onmouseout="this.style.background='white'">Português</button>
+        <button data-lang="de" style="padding: 12px 16px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer; text-align: left; font-size: 14px; color: #000; transition: background 0.2s;" onmouseover="this.style.background='#f5f5f5'" onmouseout="this.style.background='white'">Deutsch</button>
+        <button data-lang="fr" style="padding: 12px 16px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer; text-align: left; font-size: 14px; color: #000; transition: background 0.2s;" onmouseover="this.style.background='#f5f5f5'" onmouseout="this.style.background='white'">Français</button>
+        <button data-lang="ur" style="padding: 12px 16px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer; text-align: left; font-size: 14px; color: #000; transition: background 0.2s;" onmouseover="this.style.background='#f5f5f5'" onmouseout="this.style.background='white'">اردو/پنجابی</button>
+        <button data-cancel style="padding: 12px 16px; border: 1px solid #ddd; border-radius: 4px; background: #f5f5f5; cursor: pointer; text-align: center; font-size: 14px; margin-top: 8px; color: #000; transition: background 0.2s;" onmouseover="this.style.background='#e5e5e5'" onmouseout="this.style.background='#f5f5f5'">Cancel</button>
       </div>
     </div>
   `
   document.body.appendChild(dialog)
 
+  // Close dialog when clicking outside
+  dialog.addEventListener("click", (e) => {
+    if (e.target === dialog) {
+      document.body.removeChild(dialog)
+    }
+  })
+
   const buttons = dialog.querySelectorAll("button[data-lang], button[data-cancel]")
   buttons.forEach((btn) => {
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation()
       const lang = btn.getAttribute("data-lang") as "en" | "pt" | "de" | "fr" | "ur" | null
-      document.body.removeChild(dialog)
+      if (document.body.contains(dialog)) {
+        document.body.removeChild(dialog)
+      }
       if (lang) {
         printReceiptForTickets(tickets, preferredPrinter, lang)
       }

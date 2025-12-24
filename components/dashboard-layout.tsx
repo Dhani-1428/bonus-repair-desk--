@@ -216,11 +216,14 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                 <span>{t("header.language")}:</span>
                 <select
                   value={language}
-                  onChange={(e) => setLanguage(e.target.value as "en" | "pt")}
+                  onChange={(e) => setLanguage(e.target.value as "en" | "pt" | "de" | "fr" | "ur")}
                   className="border border-gray-700 rounded-lg text-sm px-3 py-1.5 bg-gray-900 text-white hover:border-gray-600 focus:border-gray-600 focus:ring-2 focus:ring-gray-700 transition-all font-medium"
                 >
                   <option value="en">{t("header.english")}</option>
                   <option value="pt">{t("header.portuguese")}</option>
+                  <option value="de">{t("header.german")}</option>
+                  <option value="fr">{t("header.french")}</option>
+                  <option value="ur">{t("header.urdu")}</option>
                 </select>
               </label>
             </div>
