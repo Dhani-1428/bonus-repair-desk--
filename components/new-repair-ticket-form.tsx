@@ -557,10 +557,10 @@ export function NewRepairTicketForm() {
               />
             </div>
             <div className="space-y-3">
-              <Label htmlFor="receivedBy" className="text-gray-200 text-base font-semibold">Device Received By *</Label>
+              <Label htmlFor="receivedBy" className="text-gray-200 text-base font-semibold">{t("form.receivedBy")} *</Label>
               <Input
                 id="receivedBy"
-                placeholder="Enter your name"
+                placeholder={t("placeholder.receivedBy") || "Enter your name"}
                 value={receivedBy}
                 onChange={(e) => setReceivedBy(e.target.value)}
                 required
@@ -1735,7 +1735,7 @@ export function printReceiptForTickets(
               <div style="font-weight: bold; font-size: 7pt; margin: 0 0 2px 0; padding: 0; color: #000; line-height: 1.6;">${t["receipt.clientId"]}: ${ticketClientId}</div>
               <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;"><strong>${t["receipt.name"]}:</strong> ${ticketCustomerName}</div>
               <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;"><strong>${t["receipt.clientPhone"]}:</strong> ${ticketContact}</div>
-              <div style="margin: 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;"><strong>${t["receipt.receivedBy"] || "Device Received by"}:</strong> ${ticketReceivedBy}</div>
+              <div style="margin: 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;"><strong>${t["receipt.receivedBy"]}:</strong> ${ticketReceivedBy}</div>
             </div>
           </div>
         </div>

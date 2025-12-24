@@ -101,6 +101,7 @@ const translations: Record<Language, Record<string, string>> = {
     "form.clientIdHint": "Client ID is automatically generated",
     "form.clientPhone": "Client Phone",
     "form.clientPhonePlaceholder": "Enter Client Phone Number",
+    "form.receivedBy": "Device Received By",
     "form.brand": "Brand",
     "form.brandPlaceholder": "Type or select brand",
     "form.modelPlaceholder": "Type or select model",
@@ -136,6 +137,7 @@ const translations: Record<Language, Record<string, string>> = {
     "receipt.clientId": "Client ID",
     "receipt.name": "Name",
     "receipt.clientPhone": "Client Phone",
+    "receipt.receivedBy": "Device Received By",
     "receipt.entryDate": "Entry Date",
     "receipt.repairN": "Repair n",
     "receipt.imei": "IMEI",
@@ -172,6 +174,7 @@ const translations: Record<Language, Record<string, string>> = {
 
     // NewRepairTicketForm placeholders
     "placeholder.customerName": "John Doe",
+    "placeholder.receivedBy": "Enter your name",
     "placeholder.contactNumber": "+1 234 567 8900",
     "placeholder.model": "iPhone 14 Pro",
     "placeholder.imei": "123456789012345",
@@ -538,6 +541,7 @@ const translations: Record<Language, Record<string, string>> = {
     "form.clientIdHint": "O ID do cliente é gerado automaticamente",
     "form.clientPhone": "Telefone do Cliente",
     "form.clientPhonePlaceholder": "Introduza o número de telefone do cliente",
+    "form.receivedBy": "Dispositivo Recebido Por",
     "form.brand": "Marca",
     "form.brandPlaceholder": "Digite ou selecione a marca",
     "form.modelPlaceholder": "Digite ou selecione o modelo",
@@ -573,6 +577,7 @@ const translations: Record<Language, Record<string, string>> = {
     "receipt.clientId": "ID do Cliente",
     "receipt.name": "Nome",
     "receipt.clientPhone": "Telefone do Cliente",
+    "receipt.receivedBy": "Dispositivo Recebido Por",
     "receipt.entryDate": "Data de Entrada",
     "receipt.repairN": "Reparação n",
     "receipt.imei": "IMEI",
@@ -609,6 +614,7 @@ const translations: Record<Language, Record<string, string>> = {
 
     // NewRepairTicketForm placeholders
     "placeholder.customerName": "João Silva",
+    "placeholder.receivedBy": "Digite seu nome",
     "placeholder.contactNumber": "+351 912 345 678",
     "placeholder.model": "iPhone 14 Pro",
     "placeholder.imei": "123456789012345",
@@ -975,6 +981,7 @@ const translations: Record<Language, Record<string, string>> = {
     "form.clientIdHint": "Kunden-ID wird automatisch generiert",
     "form.clientPhone": "Kundentelefon",
     "form.clientPhonePlaceholder": "Kundentelefonnummer eingeben",
+    "form.receivedBy": "Gerät erhalten von",
     "form.brand": "Marke",
     "form.brandPlaceholder": "Marke eingeben oder auswählen",
     "form.modelPlaceholder": "Modell eingeben oder auswählen",
@@ -1006,6 +1013,7 @@ const translations: Record<Language, Record<string, string>> = {
 
     // NewRepairTicketForm placeholders
     "placeholder.customerName": "Max Mustermann",
+    "placeholder.receivedBy": "Geben Sie Ihren Namen ein",
     "placeholder.contactNumber": "+49 123 456 7890",
     "placeholder.model": "iPhone 14 Pro",
     "placeholder.imei": "123456789012345",
@@ -1080,6 +1088,7 @@ const translations: Record<Language, Record<string, string>> = {
     "receipt.clientId": "Kunden-ID",
     "receipt.name": "Name",
     "receipt.clientPhone": "Kundentelefon",
+    "receipt.receivedBy": "Gerät erhalten von",
     "receipt.entryDate": "Eingangsdatum",
     "receipt.repairN": "Reparatur Nr.",
     "receipt.imei": "IMEI",
@@ -1350,6 +1359,7 @@ const translations: Record<Language, Record<string, string>> = {
     "form.clientIdHint": "L'ID client est généré automatiquement",
     "form.clientPhone": "Téléphone client",
     "form.clientPhonePlaceholder": "Entrer le numéro de téléphone du client",
+    "form.receivedBy": "Appareil reçu par",
     "form.brand": "Marque",
     "form.brandPlaceholder": "Taper ou sélectionner la marque",
     "form.modelPlaceholder": "Taper ou sélectionner le modèle",
@@ -1381,6 +1391,7 @@ const translations: Record<Language, Record<string, string>> = {
 
     // NewRepairTicketForm placeholders
     "placeholder.customerName": "Jean Dupont",
+    "placeholder.receivedBy": "Entrez votre nom",
     "placeholder.contactNumber": "+33 1 23 45 67 89",
     "placeholder.model": "iPhone 14 Pro",
     "placeholder.imei": "123456789012345",
@@ -1455,6 +1466,7 @@ const translations: Record<Language, Record<string, string>> = {
     "receipt.clientId": "ID Client",
     "receipt.name": "Nom",
     "receipt.clientPhone": "Téléphone client",
+    "receipt.receivedBy": "Appareil reçu par",
     "receipt.entryDate": "Date d'entrée",
     "receipt.repairN": "Réparation n",
     "receipt.imei": "IMEI",
@@ -1725,6 +1737,7 @@ const translations: Record<Language, Record<string, string>> = {
     "form.clientIdHint": "کلائنٹ آئی ڈی خودکار طور پر بنایا جاتا ہے",
     "form.clientPhone": "کلائنٹ فون",
     "form.clientPhonePlaceholder": "کلائنٹ فون نمبر درج کریں",
+    "form.receivedBy": "ڈیوائس کس نے وصول کی",
     "form.brand": "برانڈ",
     "form.brandPlaceholder": "برانڈ ٹائپ کریں یا منتخب کریں",
     "form.modelPlaceholder": "ماڈل ٹائپ کریں یا منتخب کریں",
@@ -1756,6 +1769,7 @@ const translations: Record<Language, Record<string, string>> = {
 
     // NewRepairTicketForm placeholders
     "placeholder.customerName": "احمد علی",
+    "placeholder.receivedBy": "اپنا نام درج کریں",
     "placeholder.contactNumber": "+92 300 1234567",
     "placeholder.model": "iPhone 14 Pro",
     "placeholder.imei": "123456789012345",
@@ -1830,6 +1844,7 @@ const translations: Record<Language, Record<string, string>> = {
     "receipt.clientId": "کلائنٹ آئی ڈی",
     "receipt.name": "نام",
     "receipt.clientPhone": "کلائنٹ فون",
+    "receipt.receivedBy": "ڈیوائس کس نے وصول کی",
     "receipt.entryDate": "داخلے کی تاریخ",
     "receipt.repairN": "مرمت نمبر",
     "receipt.imei": "IMEI",
@@ -2100,6 +2115,7 @@ const translations: Record<Language, Record<string, string>> = {
     "form.clientIdHint": "ਕਲਾਇੰਟ ਆਈਡੀ ਸਵੈ-ਚਾਲਿਤ ਬਣਾਇਆ ਜਾਂਦਾ ਹੈ",
     "form.clientPhone": "ਕਲਾਇੰਟ ਫੋਨ",
     "form.clientPhonePlaceholder": "ਕਲਾਇੰਟ ਫੋਨ ਨੰਬਰ ਦਰਜ ਕਰੋ",
+    "form.receivedBy": "ਡਿਵਾਈਸ ਕਿਸਨੇ ਪ੍ਰਾਪਤ ਕੀਤੀ",
     "form.brand": "ਬ੍ਰਾਂਡ",
     "form.brandPlaceholder": "ਬ੍ਰਾਂਡ ਟਾਈਪ ਕਰੋ ਜਾਂ ਚੁਣੋ",
     "form.modelPlaceholder": "ਮਾਡਲ ਟਾਈਪ ਕਰੋ ਜਾਂ ਚੁਣੋ",
@@ -2196,6 +2212,7 @@ const translations: Record<Language, Record<string, string>> = {
     "receipt.clientId": "ਕਲਾਇੰਟ ਆਈਡੀ",
     "receipt.name": "ਨਾਮ",
     "receipt.clientPhone": "ਕਲਾਇੰਟ ਫੋਨ",
+    "receipt.receivedBy": "ਡਿਵਾਈਸ ਕਿਸਨੇ ਪ੍ਰਾਪਤ ਕੀਤੀ",
     "receipt.entryDate": "ਐਂਟਰੀ ਦੀ ਤਾਰੀਖ",
     "receipt.repairN": "ਮੁਰੰਮਤ ਨੰਬਰ",
     "receipt.imei": "IMEI",
@@ -2379,6 +2396,7 @@ const translations: Record<Language, Record<string, string>> = {
 
     // NewRepairTicketForm placeholders
     "placeholder.customerName": "ਅਹਿਮਦ ਅਲੀ",
+    "placeholder.receivedBy": "ਆਪਣਾ ਨਾਮ ਦਰਜ ਕਰੋ",
     "placeholder.contactNumber": "+91 98765 43210",
     "placeholder.model": "iPhone 14 Pro",
     "placeholder.imei": "123456789012345",
@@ -2476,6 +2494,7 @@ const translations: Record<Language, Record<string, string>> = {
     "form.clientIdHint": "क्लाइंट आईडी स्वचालित रूप से बनाई जाती है",
     "form.clientPhone": "क्लाइंट फोन",
     "form.clientPhonePlaceholder": "क्लाइंट फोन नंबर दर्ज करें",
+    "form.receivedBy": "डिवाइस किसने प्राप्त किया",
     "form.brand": "ब्रांड",
     "form.brandPlaceholder": "ब्रांड टाइप करें या चुनें",
     "form.modelPlaceholder": "मॉडल टाइप करें या चुनें",
@@ -2572,6 +2591,7 @@ const translations: Record<Language, Record<string, string>> = {
     "receipt.clientId": "क्लाइंट आईडी",
     "receipt.name": "नाम",
     "receipt.clientPhone": "क्लाइंट फोन",
+    "receipt.receivedBy": "डिवाइस किसने प्राप्त किया",
     "receipt.entryDate": "प्रविष्टि की तारीख",
     "receipt.repairN": "मरम्मत नंबर",
     "receipt.imei": "IMEI",
@@ -2755,6 +2775,7 @@ const translations: Record<Language, Record<string, string>> = {
 
     // NewRepairTicketForm placeholders
     "placeholder.customerName": "राम कुमार",
+    "placeholder.receivedBy": "अपना नाम दर्ज करें",
     "placeholder.contactNumber": "+91 98765 43210",
     "placeholder.model": "iPhone 14 Pro",
     "placeholder.imei": "123456789012345",
