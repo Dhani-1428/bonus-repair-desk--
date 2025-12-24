@@ -24,6 +24,7 @@ interface DeviceFormData {
   serialNo: string
   warrantyUntil30Days: boolean
   simCard: boolean
+  simTray: boolean
   memoryCard: boolean
   charger: boolean
   battery: boolean
@@ -84,6 +85,7 @@ export function NewRepairTicketForm() {
       serialNo: "",
       warrantyUntil30Days: false,
       simCard: false,
+      simTray: false,
       memoryCard: false,
       charger: false,
       battery: false,
@@ -170,6 +172,7 @@ export function NewRepairTicketForm() {
         serialNo: "",
         warrantyUntil30Days: false,
         simCard: false,
+        simTray: false,
         memoryCard: false,
         charger: false,
         battery: false,
@@ -287,6 +290,7 @@ export function NewRepairTicketForm() {
             serialNo: device.serialNo?.trim() || null,
             warranty: device.warrantyUntil30Days ? t("form.warrantyUntil30Days") : t("form.withoutWarranty"),
             simCard: device.simCard,
+            simTray: device.simTray,
             memoryCard: device.memoryCard,
             charger: device.charger,
             battery: device.battery,
@@ -371,6 +375,7 @@ export function NewRepairTicketForm() {
             serialNo: ticket.serialNo || null,
             warranty: ticket.warranty || t("form.withoutWarranty"),
             simCard: ticket.simCard ?? false,
+            simTray: ticket.simTray ?? false,
             memoryCard: ticket.memoryCard ?? false,
             charger: ticket.charger ?? false,
             battery: ticket.battery ?? false,
@@ -449,6 +454,7 @@ export function NewRepairTicketForm() {
       serialNo: "",
       warrantyUntil30Days: false,
       simCard: false,
+      simTray: false,
       memoryCard: false,
       charger: false,
       battery: false,
@@ -748,127 +754,117 @@ export function NewRepairTicketForm() {
                     />
                   </div>
 
-                  {/* Equipment Check - All 5 blocks in one line */}
+                  {/* Equipment Check - All 6 blocks in one line */}
                   <div className="space-y-2 md:col-span-2">
-                    <Label className="text-gray-200 text-lg font-semibold mb-3 block">{t("form.equipmentCheck")}</Label>
-                    <div className="grid grid-cols-5 gap-4">
+                    <Label className="text-gray-200 text-sm font-semibold mb-2 block">{t("form.equipmentCheck")}</Label>
+                    <div className="grid grid-cols-6 gap-2">
                       {/* 1. SIM Card */}
-                      <label className="flex items-center gap-3 p-4 bg-gray-800/50 rounded-lg border-2 border-gray-700 hover:border-blue-500 hover:bg-gray-800 cursor-pointer transition-all">
+                      <label className="flex items-center gap-1.5 p-2 bg-gray-800/50 rounded border border-gray-700 hover:border-blue-500 hover:bg-gray-800 cursor-pointer transition-all">
                         <input
                           type="checkbox"
-                          className="h-6 w-6 accent-blue-600 cursor-pointer"
+                          className="h-4 w-4 accent-blue-600 cursor-pointer"
                           checked={device.simCard}
                           onChange={(e) => updateDevice(deviceIndex, "simCard", e.target.checked)}
                         />
-                        <div className="flex items-center gap-2">
-                          <svg className="w-6 h-6 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
-                            {/* SIM Card - rectangular with cut corner */}
+                        <div className="flex items-center gap-1">
+                          <svg className="w-4 h-4 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M4 4h16v16H4V4zm2 2v12h12V6H6z" fill="currentColor"/>
-                            {/* Cut corner */}
                             <path d="M4 4l3-3v3H4z" fill="currentColor" opacity="0.6"/>
-                            {/* SIM card contacts/gold pads */}
                             <rect x="8" y="9" width="2" height="1.5" fill="white" opacity="0.9"/>
                             <rect x="11" y="9" width="2" height="1.5" fill="white" opacity="0.9"/>
                             <rect x="14" y="9" width="2" height="1.5" fill="white" opacity="0.9"/>
-                            <rect x="8" y="11.5" width="2" height="1.5" fill="white" opacity="0.9"/>
-                            <rect x="11" y="11.5" width="2" height="1.5" fill="white" opacity="0.9"/>
-                            <rect x="14" y="11.5" width="2" height="1.5" fill="white" opacity="0.9"/>
-                            <rect x="8" y="14" width="2" height="1.5" fill="white" opacity="0.9"/>
-                            <rect x="11" y="14" width="2" height="1.5" fill="white" opacity="0.9"/>
                           </svg>
-                          <span className="text-base font-medium text-white">{t("form.simCard")}</span>
+                          <span className="text-xs font-medium text-white">{t("form.simCard")}</span>
                         </div>
                       </label>
                       
-                      {/* 2. Memory Card */}
-                      <label className="flex items-center gap-3 p-4 bg-gray-800/50 rounded-lg border-2 border-gray-700 hover:border-blue-500 hover:bg-gray-800 cursor-pointer transition-all">
+                      {/* 2. SIM Tray */}
+                      <label className="flex items-center gap-1.5 p-2 bg-gray-800/50 rounded border border-gray-700 hover:border-blue-500 hover:bg-gray-800 cursor-pointer transition-all">
                         <input
                           type="checkbox"
-                          className="h-6 w-6 accent-blue-600 cursor-pointer"
+                          className="h-4 w-4 accent-blue-600 cursor-pointer"
+                          checked={device.simTray}
+                          onChange={(e) => updateDevice(deviceIndex, "simTray", e.target.checked)}
+                        />
+                        <div className="flex items-center gap-1">
+                          <svg className="w-4 h-4 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
+                            <rect x="6" y="8" width="12" height="8" rx="1" fill="currentColor"/>
+                            <rect x="7" y="10" width="10" height="4" fill="white" opacity="0.3"/>
+                            <rect x="9" y="11" width="6" height="2" fill="white" opacity="0.5"/>
+                          </svg>
+                          <span className="text-xs font-medium text-white">{t("form.simTray")}</span>
+                        </div>
+                      </label>
+                      
+                      {/* 3. Memory Card */}
+                      <label className="flex items-center gap-1.5 p-2 bg-gray-800/50 rounded border border-gray-700 hover:border-blue-500 hover:bg-gray-800 cursor-pointer transition-all">
+                        <input
+                          type="checkbox"
+                          className="h-4 w-4 accent-blue-600 cursor-pointer"
                           checked={device.memoryCard}
                           onChange={(e) => updateDevice(deviceIndex, "memoryCard", e.target.checked)}
                         />
-                        <div className="flex items-center gap-2">
-                          <svg className="w-6 h-6 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
-                            {/* SD/Memory Card - rectangular with lock tab */}
+                        <div className="flex items-center gap-1">
+                          <svg className="w-4 h-4 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M4 4h16v16H4V4zm2 2v12h12V6H6z" fill="currentColor"/>
-                            {/* Lock tab on left */}
                             <path d="M4 4h3v3H4V4z" fill="currentColor" opacity="0.7"/>
-                            {/* Card label area */}
                             <rect x="8" y="7" width="8" height="10" fill="white" opacity="0.2"/>
-                            {/* Text lines on card */}
-                            <rect x="9" y="9" width="6" height="0.8" fill="white" opacity="0.6"/>
-                            <rect x="9" y="11" width="4" height="0.8" fill="white" opacity="0.6"/>
-                            <rect x="9" y="13" width="5" height="0.8" fill="white" opacity="0.6"/>
                           </svg>
-                          <span className="text-base font-medium text-white">{t("form.memoryCard")}</span>
+                          <span className="text-xs font-medium text-white">{t("form.memoryCard")}</span>
                         </div>
                       </label>
                       
-                      {/* 3. Charger */}
-                      <label className="flex items-center gap-3 p-4 bg-gray-800/50 rounded-lg border-2 border-gray-700 hover:border-blue-500 hover:bg-gray-800 cursor-pointer transition-all">
+                      {/* 4. Charger */}
+                      <label className="flex items-center gap-1.5 p-2 bg-gray-800/50 rounded border border-gray-700 hover:border-blue-500 hover:bg-gray-800 cursor-pointer transition-all">
                         <input
                           type="checkbox"
-                          className="h-6 w-6 accent-blue-600 cursor-pointer"
+                          className="h-4 w-4 accent-blue-600 cursor-pointer"
                           checked={device.charger}
                           onChange={(e) => updateDevice(deviceIndex, "charger", e.target.checked)}
                         />
-                        <div className="flex items-center gap-2">
-                          <svg className="w-6 h-6 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
-                            {/* Charger plug - rectangular with prongs */}
+                        <div className="flex items-center gap-1">
+                          <svg className="w-4 h-4 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
                             <rect x="9" y="2" width="6" height="8" rx="1" fill="currentColor"/>
-                            {/* Plug prongs */}
                             <rect x="8" y="6" width="1.5" height="4" rx="0.3" fill="currentColor"/>
                             <rect x="14.5" y="6" width="1.5" height="4" rx="0.3" fill="currentColor"/>
-                            {/* Cable */}
-                            <path d="M12 10v10M10 12h4M10 14h4M10 16h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                            {/* Charging indicator light */}
-                            <circle cx="12" cy="8" r="1" fill="white" opacity="0.9"/>
+                            <path d="M12 10v10M10 12h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
                           </svg>
-                          <span className="text-base font-medium text-white">{t("form.charger")}</span>
+                          <span className="text-xs font-medium text-white">{t("form.charger")}</span>
                         </div>
                       </label>
                       
-                      {/* 4. Battery */}
-                      <label className="flex items-center gap-3 p-4 bg-gray-800/50 rounded-lg border-2 border-gray-700 hover:border-blue-500 hover:bg-gray-800 cursor-pointer transition-all">
+                      {/* 5. Battery */}
+                      <label className="flex items-center gap-1.5 p-2 bg-gray-800/50 rounded border border-gray-700 hover:border-blue-500 hover:bg-gray-800 cursor-pointer transition-all">
                         <input
                           type="checkbox"
-                          className="h-6 w-6 accent-blue-600 cursor-pointer"
+                          className="h-4 w-4 accent-blue-600 cursor-pointer"
                           checked={device.battery}
                           onChange={(e) => updateDevice(deviceIndex, "battery", e.target.checked)}
                         />
-                        <div className="flex items-center gap-2">
-                          <svg className="w-6 h-6 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
-                            {/* Battery body */}
+                        <div className="flex items-center gap-1">
+                          <svg className="w-4 h-4 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
                             <rect x="4" y="7" width="14" height="10" rx="1" fill="currentColor"/>
-                            {/* Battery positive terminal */}
                             <rect x="18" y="10" width="2" height="4" rx="0.5" fill="currentColor"/>
-                            {/* Battery level indicator */}
                             <rect x="6" y="9" width="10" height="6" rx="0.5" fill="white" opacity="0.9"/>
                           </svg>
-                          <span className="text-base font-medium text-white">{t("form.battery")}</span>
+                          <span className="text-xs font-medium text-white">{t("form.battery")}</span>
                         </div>
                       </label>
                       
-                      {/* 5. Water Damaged */}
-                      <label className="flex items-center gap-3 p-4 bg-gray-800/50 rounded-lg border-2 border-gray-700 hover:border-red-500 hover:bg-gray-800 cursor-pointer transition-all">
+                      {/* 6. Water Damaged */}
+                      <label className="flex items-center gap-1.5 p-2 bg-gray-800/50 rounded border border-gray-700 hover:border-red-500 hover:bg-gray-800 cursor-pointer transition-all">
                         <input
                           type="checkbox"
-                          className="h-6 w-6 accent-red-600 cursor-pointer"
+                          className="h-4 w-4 accent-red-600 cursor-pointer"
                           checked={device.waterDamaged}
                           onChange={(e) => updateDevice(deviceIndex, "waterDamaged", e.target.checked)}
                         />
-                        <div className="flex items-center gap-2">
-                          <svg className="w-6 h-6 text-red-400" fill="currentColor" viewBox="0 0 24 24">
-                            {/* Cloud */}
+                        <div className="flex items-center gap-1">
+                          <svg className="w-4 h-4 text-red-400" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M19.36 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.64-4.96z"/>
-                            {/* Rain drops */}
-                            <path d="M7 16l1 2h2l-1-2M11 16l1 2h2l-1-2M15 16l1 2h2l-1-2" stroke="white" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
-                            <path d="M7 19l1 2h2l-1-2M11 19l1 2h2l-1-2M15 19l1 2h2l-1-2" stroke="white" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
-                            {/* Additional rain drops for better visibility */}
-                            <path d="M9 18l0.5 1h1l-0.5-1M13 18l0.5 1h1l-0.5-1M17 18l0.5 1h1l-0.5-1" stroke="white" strokeWidth="1.2" strokeLinecap="round" fill="none"/>
+                            <path d="M7 16l1 2h2l-1-2M11 16l1 2h2l-1-2" stroke="white" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
                           </svg>
-                          <span className="text-base font-medium text-white">{t("form.waterDamaged")}</span>
+                          <span className="text-xs font-medium text-white">{t("form.waterDamaged")}</span>
                         </div>
                       </label>
                     </div>
@@ -986,11 +982,11 @@ export function NewRepairTicketForm() {
           <CardContent className="p-6 text-white space-y-6">
             {createdTicketsDetails.map((ticket: any, index: number) => {
               const servicesArray = Array.isArray(ticket?.selectedServices) 
-                ? ticket.selectedServices 
+                ? ticket?.selectedServices 
                 : (typeof ticket?.selectedServices === 'string' 
                   ? (() => {
                       try {
-                        return JSON.parse(ticket.selectedServices)
+                        return JSON.parse(ticket?.selectedServices || '[]')
                       } catch {
                         return []
                       }
@@ -1045,13 +1041,13 @@ export function NewRepairTicketForm() {
                       <h4 className="text-sm font-semibold text-blue-400 border-b border-gray-700 pb-2">Warranty & Equipment</h4>
                       <div className="space-y-2 text-sm">
                         <div><span className="text-gray-400">Warranty:</span> <span className="text-white">{ticket?.warranty || "Without Warranty"}</span></div>
-                        <div className="grid grid-cols-2 gap-2 mt-2">
+                        <div className="flex flex-wrap gap-3 mt-2 text-xs">
                           <div><span className="text-gray-400">SIM Card:</span> <span className="text-white">{ticket?.simCard ? "Yes" : "No"}</span></div>
+                          <div><span className="text-gray-400">SIM Tray:</span> <span className="text-white">{ticket?.simTray ? "Yes" : "No"}</span></div>
                           <div><span className="text-gray-400">Memory Card:</span> <span className="text-white">{ticket?.memoryCard ? "Yes" : "No"}</span></div>
                           <div><span className="text-gray-400">Charger:</span> <span className="text-white">{ticket?.charger ? "Yes" : "No"}</span></div>
                           <div><span className="text-gray-400">Battery:</span> <span className="text-white">{ticket?.battery ? "Yes" : "No"}</span></div>
                           <div><span className="text-gray-400">Water Damaged:</span> <span className="text-white">{ticket?.waterDamaged ? "Yes" : "No"}</span></div>
-                          <div><span className="text-gray-400">Loan Equipment:</span> <span className="text-white">{ticket?.loanEquipment ? "Yes" : "No"}</span></div>
                         </div>
                       </div>
                     </div>
@@ -1242,6 +1238,7 @@ export function printReceiptForTickets(tickets: any[], preferredPrinter: string 
     const ticketSerialNo = ticket.serialNo || "-"
     const ticketWarranty = ticket.warranty || "Without Warranty"
     const ticketSimCard = ticket.simCard ? "Yes" : "No"
+    const ticketSimTray = ticket.simTray ? "Yes" : "No"
     const ticketMemoryCard = ticket.memoryCard ? "Yes" : "No"
     const ticketCharger = ticket.charger ? "Yes" : "No"
     const ticketBattery = ticket.battery ? "Yes" : "No"
@@ -1305,11 +1302,7 @@ export function printReceiptForTickets(tickets: any[], preferredPrinter: string 
         
         <div style="margin: 1px 0;">
           <div style="font-weight: bold; margin: 0; padding: 0; font-size: 6.5pt; line-height: 1.1;">Equipment Check:</div>
-          <div style="margin: 0; padding: 0; font-size: 6.5pt; line-height: 1.1;"><span style="font-weight: bold;">SIM Card:</span> ${ticketSimCard}</div>
-          <div style="margin: 0; padding: 0; font-size: 6.5pt; line-height: 1.1;"><span style="font-weight: bold;">Memory Card:</span> ${ticketMemoryCard}</div>
-          <div style="margin: 0; padding: 0; font-size: 6.5pt; line-height: 1.1;"><span style="font-weight: bold;">Charger:</span> ${ticketCharger}</div>
-          <div style="margin: 0; padding: 0; font-size: 6.5pt; line-height: 1.1;"><span style="font-weight: bold;">Battery:</span> ${ticketBattery}</div>
-          <div style="margin: 0; padding: 0; font-size: 6.5pt; line-height: 1.1;"><span style="font-weight: bold;">Water Damaged:</span> ${ticketWaterDamaged}</div>
+          <div style="margin: 0; padding: 0; font-size: 6.5pt; line-height: 1.1;"><span style="font-weight: bold;">SIM Card:</span> ${ticketSimCard} | <span style="font-weight: bold;">SIM Tray:</span> ${ticketSimTray} | <span style="font-weight: bold;">Memory Card:</span> ${ticketMemoryCard} | <span style="font-weight: bold;">Charger:</span> ${ticketCharger} | <span style="font-weight: bold;">Battery:</span> ${ticketBattery} | <span style="font-weight: bold;">Water Damaged:</span> ${ticketWaterDamaged}</div>
         </div>
         
         <div style="margin: 1px 0;">

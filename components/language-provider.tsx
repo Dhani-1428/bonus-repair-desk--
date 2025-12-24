@@ -96,6 +96,7 @@ const translations: Record<Language, Record<string, string>> = {
     "common.loading": "Loading...",
     "form.equipmentCheck": "Equipment Check",
     "form.simCard": "SIM Card",
+    "form.simTray": "SIM Tray",
     "form.memoryCard": "Memory Card",
     "form.charger": "Charger",
     "form.battery": "Battery",
