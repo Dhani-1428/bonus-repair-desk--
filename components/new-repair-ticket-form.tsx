@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
@@ -98,6 +99,8 @@ export function NewRepairTicketForm() {
     },
   ])
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [createdTicketsDetails, setCreatedTicketsDetails] = useState<any[]>([])
+  const [showTicketDetails, setShowTicketDetails] = useState(false)
 
   // Generate preview Repair Number
   const getRepairNumberPreview = (): string => {
@@ -355,6 +358,10 @@ export function NewRepairTicketForm() {
 
       toast.success(`${createdTickets.length} device${createdTickets.length > 1 ? "s" : ""} entry created successfully!`)
 
+      // Store created tickets details and show them
+      setCreatedTicketsDetails(createdTickets)
+      setShowTicketDetails(true)
+
       // Print receipt for all devices
       if (createdTickets.length > 0) {
         try {
@@ -367,34 +374,6 @@ export function NewRepairTicketForm() {
         console.error("[NewRepairTicketForm] No tickets created to print")
         toast.error("Device entry created, but no receipt data available.")
       }
-
-      // Reset form
-      setCustomerName("")
-      setClientId(generateClientId())
-      setContact("")
-      setDevices([{
-        model: "",
-        brand: "",
-        imeiNo: "",
-        serialNo: "",
-        warrantyUntil30Days: false,
-        simCard: false,
-        memoryCard: false,
-        charger: false,
-        battery: false,
-        waterDamaged: false,
-        loanEquipment: false,
-        equipmentObs: "",
-        repairObs: "",
-        selectedServices: [],
-        condition: "",
-        customCondition: "",
-        problem: "",
-        price: "",
-        imeiError: null,
-      }])
-
-      router.push("/dashboard")
     } catch (error: any) {
       toast.error(error.message || "Failed to create repair ticket")
     } finally {
@@ -407,10 +386,51 @@ export function NewRepairTicketForm() {
     printReceiptForTickets(tickets)
   }
 
+  // Handle continue/close after viewing ticket details
+  const handleContinue = () => {
+    // Reset form
+    setCustomerName("")
+    setClientId(generateClientId())
+    setContact("")
+    setDevices([{
+      model: "",
+      brand: "",
+      imeiNo: "",
+      serialNo: "",
+      warrantyUntil30Days: false,
+      simCard: false,
+      memoryCard: false,
+      charger: false,
+      battery: false,
+      waterDamaged: false,
+      loanEquipment: false,
+      equipmentObs: "",
+      repairObs: "",
+      selectedServices: [],
+      condition: "",
+      customCondition: "",
+      problem: "",
+      price: "",
+      imeiError: null,
+    }])
+    setCreatedTicketsDetails([])
+    setShowTicketDetails(false)
+    router.push("/dashboard")
+  }
+
+  // Print ticket details
+  const handlePrintDetails = () => {
+    if (createdTicketsDetails.length > 0) {
+      printReceipt(createdTicketsDetails)
+    }
+  }
+
   // Export printReceipt function for use in other components
   // This will be available via the component's ref or we can create a separate export
   return (
-    <Card className="shadow-2xl border border-gray-800/50 bg-gradient-to-br from-gray-900/95 via-black/95 to-gray-900/95 backdrop-blur-sm">
+    <div className="space-y-6">
+      {!showTicketDetails ? (
+        <Card className="shadow-2xl border border-gray-800/50 bg-gradient-to-br from-gray-900/95 via-black/95 to-gray-900/95 backdrop-blur-sm">
       <CardHeader className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-b border-gray-800/50 rounded-t-lg px-6 py-4">
         <CardTitle className="text-2xl flex items-center gap-2 text-white">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -884,6 +904,159 @@ export function NewRepairTicketForm() {
         </form>
       </CardContent>
     </Card>
+      ) : (
+        <Card className="shadow-2xl border border-gray-800/50 bg-gradient-to-br from-gray-900/95 via-black/95 to-gray-900/95 backdrop-blur-sm">
+          <CardHeader className="bg-gradient-to-r from-green-600/20 to-blue-600/20 border-b border-gray-800/50 rounded-t-lg px-6 py-4">
+            <CardTitle className="text-2xl flex items-center gap-2 text-white">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Ticket Details - {createdTicketsDetails.length} Device{createdTicketsDetails.length > 1 ? "s" : ""} Created
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-6 text-white space-y-6">
+            {createdTicketsDetails.map((ticket: any, index: number) => {
+              const servicesArray = Array.isArray(ticket?.selectedServices) 
+                ? ticket.selectedServices 
+                : (typeof ticket?.selectedServices === 'string' 
+                  ? (() => {
+                      try {
+                        return JSON.parse(ticket.selectedServices)
+                      } catch {
+                        return []
+                      }
+                    })()
+                  : [])
+              const services = servicesArray.length > 0 ? servicesArray.join(", ") : "N/A"
+              
+              return (
+                <div key={ticket?.id || index} className="border-2 border-gray-800/50 rounded-xl p-6 bg-gradient-to-br from-gray-900/50 to-black/50 space-y-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold text-white">Device {index + 1}</h3>
+                    <Badge className="bg-green-600/20 text-green-400 border-green-600/50">
+                      {ticket?.status || "PENDING"}
+                    </Badge>
+                  </div>
+
+                  <div className="grid gap-4 md:grid-cols-2">
+                    {/* Repair Information */}
+                    <div className="space-y-3">
+                      <h4 className="text-sm font-semibold text-blue-400 border-b border-gray-700 pb-2">Repair Information</h4>
+                      <div className="space-y-2 text-sm">
+                        <div><span className="text-gray-400">Repair Number:</span> <span className="text-white font-mono">{ticket?.repairNumber || "N/A"}</span></div>
+                        {ticket?.spu && <div><span className="text-gray-400">SPU:</span> <span className="text-white">{ticket.spu}</span></div>}
+                        <div><span className="text-gray-400">Entry Date:</span> <span className="text-white">{ticket?.createdAt ? new Date(ticket.createdAt).toLocaleString() : "N/A"}</span></div>
+                      </div>
+                    </div>
+
+                    {/* Client Information */}
+                    <div className="space-y-3">
+                      <h4 className="text-sm font-semibold text-blue-400 border-b border-gray-700 pb-2">Client Information</h4>
+                      <div className="space-y-2 text-sm">
+                        <div><span className="text-gray-400">Client NIF:</span> <span className="text-white font-mono">{ticket?.clientId || "N/A"}</span></div>
+                        <div><span className="text-gray-400">Customer Name:</span> <span className="text-white">{ticket?.customerName || "N/A"}</span></div>
+                        <div><span className="text-gray-400">Contact:</span> <span className="text-white">{ticket?.contact || "N/A"}</span></div>
+                      </div>
+                    </div>
+
+                    {/* Device Information */}
+                    <div className="space-y-3">
+                      <h4 className="text-sm font-semibold text-blue-400 border-b border-gray-700 pb-2">Device Information</h4>
+                      <div className="space-y-2 text-sm">
+                        <div><span className="text-gray-400">IMEI:</span> <span className="text-white font-mono">{ticket?.imeiNo || "N/A"}</span></div>
+                        <div><span className="text-gray-400">Brand:</span> <span className="text-white">{ticket?.brand || "N/A"}</span></div>
+                        <div><span className="text-gray-400">Model:</span> <span className="text-white">{ticket?.model || "N/A"}</span></div>
+                        {ticket?.serialNo && <div><span className="text-gray-400">Serial Number:</span> <span className="text-white">{ticket.serialNo}</span></div>}
+                        {ticket?.softwareVersion && <div><span className="text-gray-400">Software Version:</span> <span className="text-white">{ticket.softwareVersion}</span></div>}
+                      </div>
+                    </div>
+
+                    {/* Warranty & Equipment Check */}
+                    <div className="space-y-3">
+                      <h4 className="text-sm font-semibold text-blue-400 border-b border-gray-700 pb-2">Warranty & Equipment</h4>
+                      <div className="space-y-2 text-sm">
+                        <div><span className="text-gray-400">Warranty:</span> <span className="text-white">{ticket?.warranty || "Without Warranty"}</span></div>
+                        <div className="grid grid-cols-2 gap-2 mt-2">
+                          <div><span className="text-gray-400">SIM Card:</span> <span className="text-white">{ticket?.simCard ? "Yes" : "No"}</span></div>
+                          <div><span className="text-gray-400">Memory Card:</span> <span className="text-white">{ticket?.memoryCard ? "Yes" : "No"}</span></div>
+                          <div><span className="text-gray-400">Charger:</span> <span className="text-white">{ticket?.charger ? "Yes" : "No"}</span></div>
+                          <div><span className="text-gray-400">Battery:</span> <span className="text-white">{ticket?.battery ? "Yes" : "No"}</span></div>
+                          <div><span className="text-gray-400">Water Damaged:</span> <span className="text-white">{ticket?.waterDamaged ? "Yes" : "No"}</span></div>
+                          <div><span className="text-gray-400">Loan Equipment:</span> <span className="text-white">{ticket?.loanEquipment ? "Yes" : "No"}</span></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Services & Problem */}
+                    <div className="space-y-3 md:col-span-2">
+                      <h4 className="text-sm font-semibold text-blue-400 border-b border-gray-700 pb-2">Services & Problem</h4>
+                      <div className="space-y-2 text-sm">
+                        <div><span className="text-gray-400">Selected Services:</span> <span className="text-white">{services}</span></div>
+                        {ticket?.condition && <div><span className="text-gray-400">Condition:</span> <span className="text-white">{ticket.condition}</span></div>}
+                        {ticket?.problem && (
+                          <div className="mt-2">
+                            <span className="text-gray-400 block mb-1">Problem Description:</span>
+                            <div className="text-white bg-gray-800/50 p-3 rounded border border-gray-700">{ticket.problem}</div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Observations */}
+                    {(ticket?.equipmentObs || ticket?.repairObs) && (
+                      <div className="space-y-3 md:col-span-2">
+                        <h4 className="text-sm font-semibold text-blue-400 border-b border-gray-700 pb-2">Observations</h4>
+                        <div className="space-y-2 text-sm">
+                          {ticket?.equipmentObs && (
+                            <div>
+                              <span className="text-gray-400 block mb-1">Equipment Observations:</span>
+                              <div className="text-white bg-gray-800/50 p-3 rounded border border-gray-700">{ticket.equipmentObs}</div>
+                            </div>
+                          )}
+                          {ticket?.repairObs && (
+                            <div>
+                              <span className="text-gray-400 block mb-1">Repair Observations:</span>
+                              <div className="text-white bg-gray-800/50 p-3 rounded border border-gray-700">{ticket.repairObs}</div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Price */}
+                    <div className="space-y-3 md:col-span-2">
+                      <h4 className="text-sm font-semibold text-blue-400 border-b border-gray-700 pb-2">Pricing</h4>
+                      <div className="text-lg font-bold text-green-400">
+                        Price: €{ticket?.price ? Number.parseFloat(ticket.price).toFixed(2) : "0.00"}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+
+            <div className="flex gap-4 pt-4 border-t border-gray-800">
+              <Button
+                onClick={handlePrintDetails}
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                </svg>
+                Print Receipt
+              </Button>
+              <Button
+                onClick={handleContinue}
+                variant="outline"
+                className="border-gray-700 bg-gray-900/50 text-white hover:bg-gray-800"
+              >
+                Continue to Dashboard
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </div>
   )
 }
 
