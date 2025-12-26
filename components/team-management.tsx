@@ -298,11 +298,11 @@ export function TeamManagement() {
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
       case "admin":
-        return "bg-gray-900 text-white border border-gray-800"
+        return "bg-blue-100 text-blue-700 border border-blue-300"
       case "member":
-        return "bg-gray-800 text-white border border-gray-700"
+        return "bg-blue-50 text-blue-700 border border-blue-200"
       default:
-        return "bg-gray-100 text-gray-800 border border-gray-200"
+        return "bg-blue-100 text-blue-700 border border-blue-300"
     }
   }
 
@@ -433,7 +433,7 @@ export function TeamManagement() {
             {teamMembers.map((member) => (
               <div
                 key={member.id}
-                className="flex items-center justify-between p-5 border-2 border-gray-800/50 rounded-xl hover:bg-gray-800/30 transition-all shadow-lg hover:shadow-xl bg-gradient-to-r from-gray-900/50 to-black/50 backdrop-blur-sm"
+                className="flex items-center justify-between p-5 border-2 border-blue-200 rounded-xl hover:bg-blue-50 transition-all shadow-lg hover:shadow-xl bg-white"
               >
                 <div className="flex items-center gap-4 flex-1">
                   <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
@@ -441,12 +441,12 @@ export function TeamManagement() {
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-1">
-                      <h3 className="font-semibold text-lg text-white">{member.name}</h3>
+                      <h3 className="font-semibold text-lg text-black">{member.name}</h3>
                       <Badge className={`${getRoleBadgeColor(member.role)} font-medium px-2.5 py-0.5`}>
                         {member.role === "admin" ? t("team.member.role.admin") : t("team.member.role.member")}
                       </Badge>
                     </div>
-                    <p className="text-sm text-gray-300 flex items-center gap-1">
+                    <p className="text-sm text-black flex items-center gap-1">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                       </svg>
@@ -454,18 +454,18 @@ export function TeamManagement() {
                     </p>
                     {member.username && (
                       <div className="mt-2 space-y-1">
-                        <p className="text-xs text-gray-400 flex items-center gap-1">
+                        <p className="text-xs text-black flex items-center gap-1">
                           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                           </svg>
-                          Username: <code className="font-mono text-xs font-semibold text-gray-300">{member.username}</code>
+                          Username: <code className="font-mono text-xs font-semibold text-black">{member.username}</code>
                         </p>
                         {member.password && (
-                          <p className="text-xs text-gray-400 flex items-center gap-1">
+                          <p className="text-xs text-black flex items-center gap-1">
                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                             </svg>
-                            Password: <code className="font-mono text-xs font-semibold text-gray-300">{member.password}</code>
+                            Password: <code className="font-mono text-xs font-semibold text-black">{member.password}</code>
                           </p>
                         )}
                       </div>
@@ -476,12 +476,12 @@ export function TeamManagement() {
                 <div className="flex gap-2 items-center">
                   {member.role !== "admin" && (
                     <Select value={member.role} onValueChange={(value) => updateMemberRole(member.id, value)}>
-                      <SelectTrigger className="w-48 bg-gray-800/50 border-gray-700 text-white">
+                      <SelectTrigger className="w-48 bg-white border-blue-300 text-black">
                         <SelectValue placeholder={t("team.member.changeRole")} />
                       </SelectTrigger>
-                      <SelectContent className="bg-gray-900 border-gray-700" side="bottom" sideOffset={4}>
-                        <SelectItem value="member" className="text-white">{t("team.member.role.member")}</SelectItem>
-                        <SelectItem value="admin" className="text-white">{t("team.member.role.admin")}</SelectItem>
+                      <SelectContent className="bg-white border-blue-200" side="bottom" sideOffset={4}>
+                        <SelectItem value="member" className="text-black">{t("team.member.role.member")}</SelectItem>
+                        <SelectItem value="admin" className="text-black">{t("team.member.role.admin")}</SelectItem>
                       </SelectContent>
                     </Select>
                   )}
@@ -489,7 +489,7 @@ export function TeamManagement() {
                     variant="outline"
                     size="sm"
                     onClick={() => handleEditClick(member)}
-                    className="hover:bg-gray-800 border-gray-700 text-white"
+                    className="hover:bg-blue-50 border-blue-300 text-black"
                   >
                     <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
