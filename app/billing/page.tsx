@@ -487,13 +487,13 @@ export default function BillingPage() {
             {selectedPlan && (
               <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
                 <p className="text-sm text-black mb-1">Amount to Pay</p>
-                <p className="text-2xl font-bold text-white">€{PLAN_PRICING[selectedPlan].price}</p>
-                <p className="text-xs text-gray-500 mt-1">{PLAN_PRICING[selectedPlan].name}</p>
+                <p className="text-2xl font-bold text-black">€{PLAN_PRICING[selectedPlan].price}</p>
+                <p className="text-xs text-black mt-1">{PLAN_PRICING[selectedPlan].name}</p>
               </div>
             )}
 
-            <div className="p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
-              <p className="text-sm text-yellow-300">
+            <div className="p-3 bg-yellow-50 border border-yellow-300 rounded-lg">
+              <p className="text-sm text-yellow-700">
                 ⚠️ After sending the payment, click "Confirm Payment" below. Your subscription will be activated after admin approval.
               </p>
             </div>
@@ -503,7 +503,7 @@ export default function BillingPage() {
             <Button
               variant="outline"
               onClick={() => setShowMbwayModal(false)}
-              className="flex-1 border-gray-700 text-gray-300 hover:text-white"
+              className="flex-1 border-blue-300 bg-white text-black hover:bg-blue-50"
             >
               Cancel
             </Button>
