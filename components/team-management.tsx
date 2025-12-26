@@ -323,24 +323,24 @@ export function TeamManagement() {
             {showForm ? t("team.member.edit.cancel") : t("team.members.addButton")}
           </Button>
         </CardHeader>
-        <CardContent className="p-6 text-white">
+        <CardContent className="p-6 text-black">
           {showForm && (
-            <form onSubmit={handleSubmit} className="mb-6 p-6 border-2 border-dashed border-gray-700 rounded-xl bg-gray-800/30 space-y-4">
-              <h3 className="text-lg font-semibold text-white mb-4">{t("team.add.title")}</h3>
+            <form onSubmit={handleSubmit} className="mb-6 p-6 border-2 border-dashed border-blue-200 rounded-xl bg-white space-y-4">
+              <h3 className="text-lg font-semibold text-black mb-4">{t("team.add.title")}</h3>
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="name" className="font-medium text-gray-200">{t("team.add.fullName")}</Label>
+                  <Label htmlFor="name" className="font-medium text-black">{t("team.add.fullName")}</Label>
                   <Input
                     id="name"
                     placeholder={t("placeholder.customerName")}
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     required
-                    className="bg-gray-800/50 border-gray-700 text-white placeholder:text-gray-500 focus:border-blue-500"
+                    className="bg-white border-blue-300 text-black placeholder:text-gray-400 focus:border-blue-500"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="font-medium text-gray-200">{t("team.add.email")}</Label>
+                  <Label htmlFor="email" className="font-medium text-black">{t("team.add.email")}</Label>
                   <Input
                     id="email"
                     type="email"
@@ -348,20 +348,20 @@ export function TeamManagement() {
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     required
-                    className="bg-gray-800/50 border-gray-700 text-white placeholder:text-gray-500 focus:border-blue-500"
+                    className="bg-white border-blue-300 text-black placeholder:text-gray-400 focus:border-blue-500"
                   />
-                  <p className="text-xs text-gray-400">{t("team.add.emailHint")}</p>
+                  <p className="text-xs text-black">{t("team.add.emailHint")}</p>
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="role" className="font-medium text-gray-200">{t("team.add.role")}</Label>
+                <Label htmlFor="role" className="font-medium text-black">{t("team.add.role")}</Label>
                 <Select value={formData.role} onValueChange={(value) => setFormData({ ...formData, role: value })}>
-                  <SelectTrigger id="role" className="bg-gray-800/50 border-gray-700 text-white">
+                  <SelectTrigger id="role" className="bg-white border-blue-300 text-black">
                     <SelectValue placeholder={t("team.add.role")} />
                   </SelectTrigger>
-                  <SelectContent className="bg-gray-900 border-gray-700" side="bottom" sideOffset={4}>
-                    <SelectItem value="member" className="text-white">{t("team.add.role.member")}</SelectItem>
-                    <SelectItem value="admin" className="text-white">{t("team.add.role.admin")}</SelectItem>
+                  <SelectContent className="bg-white border-blue-200" side="bottom" sideOffset={4}>
+                    <SelectItem value="member" className="text-black">{t("team.add.role.member")}</SelectItem>
+                    <SelectItem value="admin" className="text-black">{t("team.add.role.admin")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -372,28 +372,28 @@ export function TeamManagement() {
           )}
 
           {generatedCredentials && (
-            <div className="mb-6 p-6 border-2 border-blue-500/50 rounded-xl bg-gradient-to-br from-blue-600/10 to-purple-600/10 backdrop-blur-sm">
+            <div className="mb-6 p-6 border-2 border-blue-500/50 rounded-xl bg-blue-50">
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h3 className="text-lg font-semibold text-white mb-1">{t("team.credentials.title")}</h3>
-                  <p className="text-sm text-gray-300">
-                    {t("team.credentials.subtitle")} <strong className="text-white">{generatedCredentials.name}</strong>
+                  <h3 className="text-lg font-semibold text-black mb-1">{t("team.credentials.title")}</h3>
+                  <p className="text-sm text-black">
+                    {t("team.credentials.subtitle")} <strong className="text-black">{generatedCredentials.name}</strong>
                   </p>
                 </div>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setGeneratedCredentials(null)}
-                  className="hover:bg-gray-800 border-gray-700 text-white"
+                  className="hover:bg-blue-100 border-blue-300 text-black"
                 >
                   ×
                 </Button>
               </div>
               <div className="space-y-3">
-                <div className="bg-gray-800/50 p-4 rounded-lg border border-gray-700">
-                  <Label className="text-xs text-gray-300 mb-1 block">{t("team.credentials.username")}</Label>
+                <div className="bg-white p-4 rounded-lg border border-blue-200">
+                  <Label className="text-xs text-black mb-1 block">{t("team.credentials.username")}</Label>
                   <div className="flex items-center justify-between">
-                    <code className="text-lg font-mono font-bold text-white">{generatedCredentials.username}</code>
+                    <code className="text-lg font-mono font-bold text-black">{generatedCredentials.username}</code>
                     <Button
                       variant="ghost"
                       size="sm"
@@ -401,16 +401,16 @@ export function TeamManagement() {
                         navigator.clipboard.writeText(generatedCredentials.username)
                         toast.success(t("team.copied.username"))
                       }}
-                      className="h-8 text-white hover:bg-gray-700"
+                      className="h-8 text-black hover:bg-blue-50"
                     >
                       {t("team.credentials.copy")}
                     </Button>
                   </div>
                 </div>
-                <div className="bg-gray-800/50 p-4 rounded-lg border border-gray-700">
-                  <Label className="text-xs text-gray-300 mb-1 block">{t("team.credentials.password")}</Label>
+                <div className="bg-white p-4 rounded-lg border border-blue-200">
+                  <Label className="text-xs text-black mb-1 block">{t("team.credentials.password")}</Label>
                   <div className="flex items-center justify-between">
-                    <code className="text-lg font-mono font-bold text-white">{generatedCredentials.password}</code>
+                    <code className="text-lg font-mono font-bold text-black">{generatedCredentials.password}</code>
                     <Button
                       variant="ghost"
                       size="sm"
@@ -418,13 +418,13 @@ export function TeamManagement() {
                         navigator.clipboard.writeText(generatedCredentials.password)
                         toast.success(t("team.copied.password"))
                       }}
-                      className="h-8 text-white hover:bg-gray-700"
+                      className="h-8 text-black hover:bg-blue-50"
                     >
                       {t("team.credentials.copy")}
                     </Button>
                   </div>
                 </div>
-                <p className="text-xs text-gray-400 mt-2">{t("team.credentials.warning")}</p>
+                <p className="text-xs text-black mt-2">{t("team.credentials.warning")}</p>
               </div>
             </div>
           )}
