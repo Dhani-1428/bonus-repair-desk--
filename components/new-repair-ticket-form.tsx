@@ -705,7 +705,7 @@ export function NewRepairTicketForm() {
                     <label className="flex items-center gap-2 text-sm text-gray-700 hover:text-gray-900 cursor-pointer">
                       <input
                         type="checkbox"
-                        className="h-4 w-4 accent-blue-600"
+                        className="h-4 w-4 cursor-pointer bg-white border-gray-300 text-blue-600 focus:ring-blue-500 rounded"
                         checked={device.warrantyUntil30Days}
                         onChange={(e) => updateDevice(deviceIndex, "warrantyUntil30Days", e.target.checked)}
                       />
@@ -733,7 +733,7 @@ export function NewRepairTicketForm() {
                       <label className="flex items-center gap-1.5 p-2 bg-white rounded border border-gray-300 hover:border-blue-500 hover:bg-gray-50 cursor-pointer transition-all">
                         <input
                           type="checkbox"
-                          className="h-4 w-4 accent-blue-600 cursor-pointer"
+                          className="h-4 w-4 cursor-pointer bg-white border-gray-300 text-blue-600 focus:ring-blue-500 rounded"
                           checked={device.simCard}
                           onChange={(e) => updateDevice(deviceIndex, "simCard", e.target.checked)}
                         />
@@ -753,7 +753,7 @@ export function NewRepairTicketForm() {
                       <label className="flex items-center gap-1.5 p-2 bg-white rounded border border-gray-300 hover:border-blue-500 hover:bg-gray-50 cursor-pointer transition-all">
                         <input
                           type="checkbox"
-                          className="h-4 w-4 accent-blue-600 cursor-pointer"
+                          className="h-4 w-4 cursor-pointer bg-white border-gray-300 text-blue-600 focus:ring-blue-500 rounded"
                           checked={device.simTray}
                           onChange={(e) => updateDevice(deviceIndex, "simTray", e.target.checked)}
                         />
@@ -771,7 +771,7 @@ export function NewRepairTicketForm() {
                       <label className="flex items-center gap-1.5 p-2 bg-white rounded border border-gray-300 hover:border-blue-500 hover:bg-gray-50 cursor-pointer transition-all">
                         <input
                           type="checkbox"
-                          className="h-4 w-4 accent-blue-600 cursor-pointer"
+                          className="h-4 w-4 cursor-pointer bg-white border-gray-300 text-blue-600 focus:ring-blue-500 rounded"
                           checked={device.memoryCard}
                           onChange={(e) => updateDevice(deviceIndex, "memoryCard", e.target.checked)}
                         />
@@ -789,7 +789,7 @@ export function NewRepairTicketForm() {
                       <label className="flex items-center gap-1.5 p-2 bg-white rounded border border-gray-300 hover:border-blue-500 hover:bg-gray-50 cursor-pointer transition-all">
                         <input
                           type="checkbox"
-                          className="h-4 w-4 accent-blue-600 cursor-pointer"
+                          className="h-4 w-4 cursor-pointer bg-white border-gray-300 text-blue-600 focus:ring-blue-500 rounded"
                           checked={device.charger}
                           onChange={(e) => updateDevice(deviceIndex, "charger", e.target.checked)}
                         />
@@ -808,7 +808,7 @@ export function NewRepairTicketForm() {
                       <label className="flex items-center gap-1.5 p-2 bg-white rounded border border-gray-300 hover:border-blue-500 hover:bg-gray-50 cursor-pointer transition-all">
                         <input
                           type="checkbox"
-                          className="h-4 w-4 accent-blue-600 cursor-pointer"
+                          className="h-4 w-4 cursor-pointer bg-white border-gray-300 text-blue-600 focus:ring-blue-500 rounded"
                           checked={device.battery}
                           onChange={(e) => updateDevice(deviceIndex, "battery", e.target.checked)}
                         />
@@ -826,7 +826,7 @@ export function NewRepairTicketForm() {
                       <label className="flex items-center gap-1.5 p-2 bg-white rounded border border-gray-300 hover:border-red-500 hover:bg-gray-50 cursor-pointer transition-all">
                         <input
                           type="checkbox"
-                          className="h-4 w-4 accent-red-600 cursor-pointer"
+                          className="h-4 w-4 cursor-pointer bg-white border-gray-300 text-red-600 focus:ring-red-500 rounded"
                           checked={device.waterDamaged}
                           onChange={(e) => updateDevice(deviceIndex, "waterDamaged", e.target.checked)}
                         />

@@ -272,7 +272,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                   </p>
                 </div>
                 <Link href="/super-admin">
-                  <Button variant="ghost" className="w-full justify-start hover:bg-blue-600 hover:text-white text-white font-medium h-12 transition-all duration-300 group relative overflow-hidden">
+                  <Button variant="ghost" className="w-full justify-start hover:bg-blue-100 hover:text-black text-white font-medium h-12 transition-all duration-300 group relative overflow-hidden">
                     <div className="absolute inset-0 bg-blue-50/0 group-hover:bg-blue-50 transition-all duration-300"></div>
                     <div className="relative w-9 h-9 bg-blue-400 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-700 transition-all duration-300 shadow-md group-hover:shadow-blue-300 group-hover:scale-110">
                       <svg className="w-5 h-5 text-white group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -283,7 +283,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                   </Button>
                 </Link>
                 <Link href="/super-admin/users">
-                  <Button variant="ghost" className="w-full justify-start hover:bg-blue-600 hover:text-white text-white font-medium h-12 transition-all duration-300 group relative overflow-hidden">
+                  <Button variant="ghost" className="w-full justify-start hover:bg-blue-100 hover:text-black text-white font-medium h-12 transition-all duration-300 group relative overflow-hidden">
                     <div className="absolute inset-0 bg-blue-50/0 group-hover:bg-blue-50 transition-all duration-300"></div>
                     <div className="relative w-9 h-9 bg-blue-400 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-700 transition-all duration-300 shadow-md group-hover:shadow-blue-300 group-hover:scale-110">
                       <svg className="w-5 h-5 text-white group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -294,7 +294,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                   </Button>
                 </Link>
                 <Link href="/super-admin/subscriptions">
-                  <Button variant="ghost" className="w-full justify-start hover:bg-blue-600 hover:text-white text-white font-medium h-12 transition-all duration-300 group relative overflow-hidden">
+                  <Button variant="ghost" className="w-full justify-start hover:bg-blue-100 hover:text-black text-white font-medium h-12 transition-all duration-300 group relative overflow-hidden">
                     <div className="absolute inset-0 bg-blue-50/0 group-hover:bg-blue-50 transition-all duration-300"></div>
                     <div className="relative w-9 h-9 bg-blue-400 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-700 transition-all duration-300 shadow-md group-hover:shadow-blue-300 group-hover:scale-110">
                       <svg className="w-5 h-5 text-white group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -305,7 +305,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                   </Button>
                 </Link>
                 <Link href="/super-admin/payments">
-                  <Button variant="ghost" className="w-full justify-start hover:bg-blue-600 hover:text-white text-white font-medium h-12 transition-all duration-300 group relative overflow-hidden">
+                  <Button variant="ghost" className="w-full justify-start hover:bg-blue-100 hover:text-black text-white font-medium h-12 transition-all duration-300 group relative overflow-hidden">
                     <div className="absolute inset-0 bg-blue-50/0 group-hover:bg-blue-50 transition-all duration-300"></div>
                     <div className="relative w-9 h-9 bg-blue-400 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-700 transition-all duration-300 shadow-md group-hover:shadow-blue-300 group-hover:scale-110">
                       <svg className="w-5 h-5 text-white group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -319,7 +319,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             ) : (
               <>
                 <Link href="/dashboard">
-                  <Button variant="ghost" className="w-full justify-start hover:bg-blue-600 hover:text-white text-white font-medium h-12 transition-all duration-300 group relative overflow-hidden">
+                  <Button variant="ghost" className="w-full justify-start hover:bg-blue-100 hover:text-black text-white font-medium h-12 transition-all duration-300 group relative overflow-hidden">
                     <div className="absolute inset-0 bg-blue-50/0 group-hover:bg-blue-50 transition-all duration-300"></div>
                     <div className="relative w-9 h-9 bg-blue-400 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-700 transition-all duration-300 shadow-md group-hover:shadow-blue-300 group-hover:scale-110">
                       <svg className="w-5 h-5 text-white group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -335,7 +335,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                   </Button>
                 </Link>
                 <Link href="/tickets/new">
-                  <Button variant="ghost" className="w-full justify-start hover:bg-blue-600 hover:text-white text-white font-medium h-12 transition-all duration-300 group relative overflow-hidden">
+                  <Button variant="ghost" className="w-full justify-start hover:bg-blue-100 hover:text-black text-white font-medium h-12 transition-all duration-300 group relative overflow-hidden">
                     <div className="absolute inset-0 bg-blue-50/0 group-hover:bg-blue-50 transition-all duration-300"></div>
                     <div className="relative w-9 h-9 bg-blue-400 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-700 transition-all duration-300 shadow-md group-hover:shadow-blue-300 group-hover:scale-110">
                       <svg className="w-5 h-5 text-white group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -346,7 +346,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                   </Button>
                 </Link>
                 <Link href="/tickets">
-                  <Button variant="ghost" className="w-full justify-start hover:bg-blue-600 hover:text-white text-white font-medium h-12 transition-all duration-300 group relative overflow-hidden">
+                  <Button variant="ghost" className="w-full justify-start hover:bg-blue-100 hover:text-black text-white font-medium h-12 transition-all duration-300 group relative overflow-hidden">
                     <div className="absolute inset-0 bg-blue-50/0 group-hover:bg-blue-50 transition-all duration-300"></div>
                     <div className="relative w-9 h-9 bg-blue-400 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-700 transition-all duration-300 shadow-md group-hover:shadow-blue-300 group-hover:scale-110">
                       <svg className="w-5 h-5 text-white group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -362,7 +362,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                   </Button>
                 </Link>
                 <Link href="/analytics">
-                  <Button variant="ghost" className="w-full justify-start hover:bg-blue-600 hover:text-white text-white font-medium h-12 transition-all duration-300 group relative overflow-hidden">
+                  <Button variant="ghost" className="w-full justify-start hover:bg-blue-100 hover:text-black text-white font-medium h-12 transition-all duration-300 group relative overflow-hidden">
                     <div className="absolute inset-0 bg-blue-50/0 group-hover:bg-blue-50 transition-all duration-300"></div>
                     <div className="relative w-9 h-9 bg-blue-400 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-700 transition-all duration-300 shadow-md group-hover:shadow-blue-300 group-hover:scale-110">
                       <svg className="w-5 h-5 text-white group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -378,7 +378,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                   </Button>
                 </Link>
                 <Link href="/subscription">
-                  <Button variant="ghost" className="w-full justify-start hover:bg-blue-600 hover:text-white text-white font-medium h-12 transition-all duration-300 group relative overflow-hidden">
+                  <Button variant="ghost" className="w-full justify-start hover:bg-blue-100 hover:text-black text-white font-medium h-12 transition-all duration-300 group relative overflow-hidden">
                     <div className="absolute inset-0 bg-blue-50/0 group-hover:bg-blue-50 transition-all duration-300"></div>
                     <div className="relative w-9 h-9 bg-blue-400 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-700 transition-all duration-300 shadow-md group-hover:shadow-blue-300 group-hover:scale-110">
                       <svg className="w-5 h-5 text-white group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -400,7 +400,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                   </p>
                 </div>
                 <Link href="/trash">
-                  <Button variant="ghost" className="w-full justify-start hover:bg-blue-600 hover:text-white text-white font-medium h-12 transition-all duration-300 group relative overflow-hidden">
+                  <Button variant="ghost" className="w-full justify-start hover:bg-blue-100 hover:text-black text-white font-medium h-12 transition-all duration-300 group relative overflow-hidden">
                     <div className="absolute inset-0 bg-blue-50/0 group-hover:bg-blue-50 transition-all duration-300"></div>
                     <div className="relative w-9 h-9 bg-blue-400 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-700 transition-all duration-300 shadow-md group-hover:shadow-blue-300 group-hover:scale-110">
                       <svg className="w-5 h-5 text-white group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
