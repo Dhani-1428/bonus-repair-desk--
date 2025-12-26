@@ -250,22 +250,22 @@ export default function SubscriptionsPage() {
 
         {/* Edit Plan Dialog */}
         <Dialog open={isPlanEditDialogOpen} onOpenChange={setIsPlanEditDialogOpen}>
-          <DialogContent className="max-w-2xl bg-gray-900 border-gray-700">
+          <DialogContent className="max-w-2xl bg-white border-blue-200 text-black">
             <DialogHeader>
-              <DialogTitle className="text-white">Edit Subscription Plan</DialogTitle>
+              <DialogTitle className="text-black">Edit Subscription Plan</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="plan-name" className="text-gray-300">Plan Name</Label>
+                <Label htmlFor="plan-name" className="text-black">Plan Name</Label>
                 <Input
                   id="plan-name"
                   value={planEditFormData.name || ""}
                   onChange={(e) => setPlanEditFormData({ ...planEditFormData, name: e.target.value })}
-                  className="bg-gray-800 border-gray-700 text-white"
+                  className="bg-white border-blue-300 text-black"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="plan-price" className="text-gray-300">Price (€)</Label>
+                <Label htmlFor="plan-price" className="text-black">Price (€)</Label>
                 <Input
                   id="plan-price"
                   type="number"
@@ -274,11 +274,11 @@ export default function SubscriptionsPage() {
                   onChange={(e) =>
                     setPlanEditFormData({ ...planEditFormData, price: e.target.value })
                   }
-                  className="bg-gray-800 border-gray-700 text-white"
+                  className="bg-white border-blue-300 text-black"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="plan-months" className="text-gray-300">Duration (Months)</Label>
+                <Label htmlFor="plan-months" className="text-black">Duration (Months)</Label>
                 <Input
                   id="plan-months"
                   type="number"
@@ -286,18 +286,18 @@ export default function SubscriptionsPage() {
                   onChange={(e) =>
                     setPlanEditFormData({ ...planEditFormData, months: e.target.value })
                   }
-                  className="bg-gray-800 border-gray-700 text-white"
+                  className="bg-white border-blue-300 text-black"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="plan-features" className="text-gray-300">Features (one per line)</Label>
+                <Label htmlFor="plan-features" className="text-black">Features (one per line)</Label>
                 <Textarea
                   id="plan-features"
                   value={planEditFormData.features || ""}
                   onChange={(e) =>
                     setPlanEditFormData({ ...planEditFormData, features: e.target.value })
                   }
-                  className="bg-gray-800 border-gray-700 text-white min-h-[120px]"
+                  className="bg-white border-blue-300 text-black min-h-[120px]"
                   placeholder="Feature 1&#10;Feature 2&#10;Feature 3"
                 />
               </div>
@@ -305,7 +305,7 @@ export default function SubscriptionsPage() {
                 <Button
                   variant="outline"
                   onClick={() => setIsPlanEditDialogOpen(false)}
-                  className="border-gray-600 bg-gray-800 text-white hover:bg-gray-700"
+                  className="border-blue-300 bg-white text-black hover:bg-blue-50"
                 >
                   Cancel
                 </Button>
@@ -319,32 +319,32 @@ export default function SubscriptionsPage() {
 
         {/* Add Plan Dialog - Similar structure but for adding new plans */}
         <Dialog open={isPlanAddDialogOpen} onOpenChange={setIsPlanAddDialogOpen}>
-          <DialogContent className="max-w-2xl bg-gray-900 border-gray-700">
+          <DialogContent className="max-w-2xl bg-white border-blue-200 text-black">
             <DialogHeader>
-              <DialogTitle className="text-white">Add New Subscription Plan</DialogTitle>
+              <DialogTitle className="text-black">Add New Subscription Plan</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="new-plan-key" className="text-gray-300">Plan Key (e.g., SIX_MONTH)</Label>
+                <Label htmlFor="new-plan-key" className="text-black">Plan Key (e.g., SIX_MONTH)</Label>
                 <Input
                   id="new-plan-key"
                   value={planEditFormData.key || ""}
                   onChange={(e) => setPlanEditFormData({ ...planEditFormData, key: e.target.value.toUpperCase().replace(/\s+/g, "_") })}
-                  className="bg-gray-800 border-gray-700 text-white"
+                  className="bg-white border-blue-300 text-black"
                   placeholder="SIX_MONTH"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="new-plan-name" className="text-gray-300">Plan Name</Label>
+                <Label htmlFor="new-plan-name" className="text-black">Plan Name</Label>
                 <Input
                   id="new-plan-name"
                   value={planEditFormData.name || ""}
                   onChange={(e) => setPlanEditFormData({ ...planEditFormData, name: e.target.value })}
-                  className="bg-gray-800 border-gray-700 text-white"
+                  className="bg-white border-blue-300 text-black"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="new-plan-price" className="text-gray-300">Price (€)</Label>
+                <Label htmlFor="new-plan-price" className="text-black">Price (€)</Label>
                 <Input
                   id="new-plan-price"
                   type="number"
@@ -353,11 +353,11 @@ export default function SubscriptionsPage() {
                   onChange={(e) =>
                     setPlanEditFormData({ ...planEditFormData, price: e.target.value })
                   }
-                  className="bg-gray-800 border-gray-700 text-white"
+                  className="bg-white border-blue-300 text-black"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="new-plan-months" className="text-gray-300">Duration (Months)</Label>
+                <Label htmlFor="new-plan-months" className="text-black">Duration (Months)</Label>
                 <Input
                   id="new-plan-months"
                   type="number"
@@ -365,18 +365,18 @@ export default function SubscriptionsPage() {
                   onChange={(e) =>
                     setPlanEditFormData({ ...planEditFormData, months: e.target.value })
                   }
-                  className="bg-gray-800 border-gray-700 text-white"
+                  className="bg-white border-blue-300 text-black"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="new-plan-features" className="text-gray-300">Features (one per line)</Label>
+                <Label htmlFor="new-plan-features" className="text-black">Features (one per line)</Label>
                 <Textarea
                   id="new-plan-features"
                   value={planEditFormData.features || ""}
                   onChange={(e) =>
                     setPlanEditFormData({ ...planEditFormData, features: e.target.value })
                   }
-                  className="bg-gray-800 border-gray-700 text-white min-h-[120px]"
+                  className="bg-white border-blue-300 text-black min-h-[120px]"
                   placeholder="Feature 1&#10;Feature 2&#10;Feature 3"
                 />
               </div>
@@ -384,7 +384,7 @@ export default function SubscriptionsPage() {
                 <Button
                   variant="outline"
                   onClick={() => setIsPlanAddDialogOpen(false)}
-                  className="border-gray-600 bg-gray-800 text-white hover:bg-gray-700"
+                  className="border-blue-300 bg-white text-black hover:bg-blue-50"
                 >
                   Cancel
                 </Button>

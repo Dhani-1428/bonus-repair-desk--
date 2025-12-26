@@ -442,42 +442,42 @@ export default function BillingPage() {
 
       {/* MBWay Payment Modal */}
       <Dialog open={showMbwayModal} onOpenChange={setShowMbwayModal}>
-        <DialogContent className="bg-gradient-to-br from-gray-900/95 via-black/95 to-gray-900/95 border-gray-800/50 text-white max-w-md">
+        <DialogContent className="bg-white border-blue-200 text-black max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-white flex items-center gap-2">
-              <Smartphone className="w-6 h-6 text-green-400" />
+            <DialogTitle className="text-2xl font-bold text-black flex items-center gap-2">
+              <Smartphone className="w-6 h-6 text-green-600" />
               MBWay Payment
             </DialogTitle>
-            <DialogDescription className="text-gray-400">
+            <DialogDescription className="text-black">
               Please send the payment via MBWay using the details below
             </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4 py-4">
-            <div className="p-4 bg-gradient-to-r from-green-600/20 to-emerald-600/20 border border-green-500/30 rounded-lg">
-              <p className="text-sm text-gray-400 mb-2">MBWay Number</p>
+            <div className="p-4 bg-green-50 border border-green-300 rounded-lg">
+              <p className="text-sm text-black mb-2">MBWay Number</p>
               <div className="flex items-center justify-between">
-                <p className="text-xl font-bold text-white">+351920306889</p>
+                <p className="text-xl font-bold text-black">+351920306889</p>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => copyToClipboard("+351920306889")}
-                  className="text-green-400 hover:text-green-300"
+                  className="text-green-600 hover:text-green-700"
                 >
                   {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                 </Button>
               </div>
             </div>
 
-            <div className="p-4 bg-gradient-to-r from-blue-600/20 to-purple-600/20 border border-blue-500/30 rounded-lg">
-              <p className="text-sm text-gray-400 mb-2">Recipient Name</p>
+            <div className="p-4 bg-blue-50 border border-blue-300 rounded-lg">
+              <p className="text-sm text-black mb-2">Recipient Name</p>
               <div className="flex items-center justify-between">
-                <p className="text-xl font-bold text-white">Sheetal Sheetal</p>
+                <p className="text-xl font-bold text-black">Sheetal Sheetal</p>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => copyToClipboard("Sheetal Sheetal")}
-                  className="text-blue-400 hover:text-blue-300"
+                  className="text-blue-600 hover:text-blue-700"
                 >
                   {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                 </Button>
@@ -485,8 +485,8 @@ export default function BillingPage() {
             </div>
 
             {selectedPlan && (
-              <div className="p-4 bg-gray-800/50 border border-gray-700 rounded-lg">
-                <p className="text-sm text-gray-400 mb-1">Amount to Pay</p>
+              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-sm text-black mb-1">Amount to Pay</p>
                 <p className="text-2xl font-bold text-white">€{PLAN_PRICING[selectedPlan].price}</p>
                 <p className="text-xs text-gray-500 mt-1">{PLAN_PRICING[selectedPlan].name}</p>
               </div>

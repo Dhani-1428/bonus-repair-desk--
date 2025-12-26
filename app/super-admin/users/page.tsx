@@ -514,9 +514,9 @@ export default function UsersInformationPage() {
 
         {/* User Subscription Dialog */}
         <Dialog open={isSubscriptionDialogOpen} onOpenChange={setIsSubscriptionDialogOpen}>
-          <DialogContent className="max-w-3xl bg-gray-900 border-gray-700 max-h-[90vh] overflow-y-auto">
+          <DialogContent className="max-w-3xl bg-white border-blue-200 max-h-[90vh] overflow-y-auto text-black">
             <DialogHeader>
-              <DialogTitle className="text-white">
+              <DialogTitle className="text-black">
                 Subscription Details - {selectedUserForSubscription?.userName}
               </DialogTitle>
             </DialogHeader>
@@ -530,47 +530,47 @@ export default function UsersInformationPage() {
                     <>
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-1">
-                          <p className="text-xs font-semibold text-gray-400">Plan</p>
-                          <p className="text-sm text-white">{selectedUserForSubscription.subscriptionPlan}</p>
+                          <p className="text-xs font-semibold text-black">Plan</p>
+                          <p className="text-sm text-black">{selectedUserForSubscription.subscriptionPlan}</p>
                         </div>
                         <div className="space-y-1">
-                          <p className="text-xs font-semibold text-gray-400">Status</p>
+                          <p className="text-xs font-semibold text-black">Status</p>
                           <Badge
                             className={
                               selectedUserForSubscription.subscriptionStatus === "Active"
-                                ? "bg-green-500/20 text-green-400 border-green-500/50"
+                                ? "bg-green-100 text-green-700 border-green-300"
                                 : selectedUserForSubscription.subscriptionStatus === "Expired"
-                                ? "bg-red-500/20 text-red-400 border-red-500/50"
-                                : "bg-gray-500/20 text-gray-400 border-gray-500/50"
+                                ? "bg-red-100 text-red-700 border-red-300"
+                                : "bg-gray-100 text-gray-700 border-gray-300"
                             }
                           >
                             {selectedUserForSubscription.subscriptionStatus}
                           </Badge>
                         </div>
                         <div className="space-y-1">
-                          <p className="text-xs font-semibold text-gray-400">Start Date</p>
-                          <p className="text-sm text-white">
+                          <p className="text-xs font-semibold text-black">Start Date</p>
+                          <p className="text-sm text-black">
                             {new Date(userSub.startDate).toLocaleDateString()}
                           </p>
                         </div>
                         <div className="space-y-1">
-                          <p className="text-xs font-semibold text-gray-400">End Date</p>
-                          <p className="text-sm text-white">
+                          <p className="text-xs font-semibold text-black">End Date</p>
+                          <p className="text-sm text-black">
                             {getSubscriptionEndDate(userSub).toLocaleDateString()}
                           </p>
                         </div>
                         <div className="space-y-1">
-                          <p className="text-xs font-semibold text-gray-400">Price</p>
-                          <p className="text-sm text-white font-semibold">€{PLAN_PRICING[userSub.plan]?.price || 0}</p>
+                          <p className="text-xs font-semibold text-black">Price</p>
+                          <p className="text-sm text-black font-semibold">€{PLAN_PRICING[userSub.plan]?.price || 0}</p>
                         </div>
                         <div className="space-y-1">
-                          <p className="text-xs font-semibold text-gray-400">Days Left</p>
+                          <p className="text-xs font-semibold text-black">Days Left</p>
                           <p className={`text-sm font-semibold ${
                             selectedUserForSubscription.daysUntilExpiration >= 0
                               ? selectedUserForSubscription.daysUntilExpiration <= 7
-                                ? "text-yellow-400"
-                                : "text-white"
-                              : "text-red-400"
+                                ? "text-yellow-700"
+                                : "text-black"
+                              : "text-red-700"
                           }`}>
                             {selectedUserForSubscription.daysUntilExpiration >= 0
                               ? selectedUserForSubscription.daysUntilExpiration
@@ -578,7 +578,7 @@ export default function UsersInformationPage() {
                           </p>
                         </div>
                       </div>
-                      <div className="flex gap-2 pt-4 border-t border-gray-700">
+                      <div className="flex gap-2 pt-4 border-t border-blue-200">
                         <Button
                           variant="outline"
                           onClick={() => {
@@ -602,7 +602,7 @@ export default function UsersInformationPage() {
                             setIsSubscriptionDialogOpen(false)
                             loadUsers()
                           }}
-                          className="flex-1 border-gray-600 bg-gray-800 text-white hover:bg-gray-700"
+                          className="flex-1 border-blue-300 bg-white text-black hover:bg-blue-50"
                         >
                           Extend 1 Month
                         </Button>
@@ -629,7 +629,7 @@ export default function UsersInformationPage() {
                             setIsSubscriptionDialogOpen(false)
                             loadUsers()
                           }}
-                          className="flex-1 border-gray-600 bg-gray-800 text-white hover:bg-gray-700"
+                          className="flex-1 border-blue-300 bg-white text-black hover:bg-blue-50"
                         >
                           Extend 3 Months
                         </Button>
@@ -653,7 +653,7 @@ export default function UsersInformationPage() {
                             setIsSubscriptionDialogOpen(false)
                             loadUsers()
                           }}
-                          className="border-red-600/50 bg-red-900/20 text-red-400 hover:bg-red-900/40"
+                          className="border-red-300 bg-red-50 text-red-700 hover:bg-red-100"
                         >
                           Cancel Subscription
                         </Button>
@@ -661,7 +661,7 @@ export default function UsersInformationPage() {
                     </>
                   ) : (
                     <div className="text-center py-8">
-                      <p className="text-gray-400">No subscription found for this user.</p>
+                      <p className="text-black">No subscription found for this user.</p>
                     </div>
                   )}
                 </div>
@@ -680,67 +680,67 @@ export default function UsersInformationPage() {
 
         {/* Edit User Dialog */}
         <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-          <DialogContent className="max-w-2xl bg-gray-900 border-gray-700">
+          <DialogContent className="max-w-2xl bg-white border-blue-200 text-black">
             <DialogHeader>
-              <DialogTitle className="text-white text-2xl">
+              <DialogTitle className="text-black text-2xl">
                 Edit User - {selectedUserForEdit?.userName}
               </DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="edit-name" className="text-gray-200">
-                    Full Name <span className="text-red-400">*</span>
+                  <Label htmlFor="edit-name" className="text-black">
+                    Full Name <span className="text-red-600">*</span>
                   </Label>
                   <Input
                     id="edit-name"
                     value={editFormData.name}
                     onChange={(e) => setEditFormData(prev => ({ ...prev, name: e.target.value }))}
-                    className="bg-gray-800 border-gray-700 text-white"
+                    className="bg-white border-blue-300 text-black"
                     required
                   />
                         </div>
                 <div className="space-y-2">
-                  <Label htmlFor="edit-email" className="text-gray-200">
-                    Email <span className="text-red-400">*</span>
+                  <Label htmlFor="edit-email" className="text-black">
+                    Email <span className="text-red-600">*</span>
                   </Label>
                   <Input
                     id="edit-email"
                     type="email"
                     value={editFormData.email}
                     onChange={(e) => setEditFormData(prev => ({ ...prev, email: e.target.value }))}
-                    className="bg-gray-800 border-gray-700 text-white"
+                    className="bg-white border-blue-300 text-black"
                     required
                   />
                         </div>
                 <div className="space-y-2">
-                  <Label htmlFor="edit-shopName" className="text-gray-200">
+                  <Label htmlFor="edit-shopName" className="text-black">
                     Shop/Company Name
                   </Label>
                   <Input
                     id="edit-shopName"
                     value={editFormData.shopName}
                     onChange={(e) => setEditFormData(prev => ({ ...prev, shopName: e.target.value }))}
-                    className="bg-gray-800 border-gray-700 text-white"
+                    className="bg-white border-blue-300 text-black"
                   />
                         </div>
                 <div className="space-y-2">
-                  <Label htmlFor="edit-contactNumber" className="text-gray-200">
+                  <Label htmlFor="edit-contactNumber" className="text-black">
                     Contact Number
                   </Label>
                   <Input
                     id="edit-contactNumber"
                     value={editFormData.contactNumber}
                     onChange={(e) => setEditFormData(prev => ({ ...prev, contactNumber: e.target.value }))}
-                    className="bg-gray-800 border-gray-700 text-white"
+                    className="bg-white border-blue-300 text-black"
                   />
                         </div>
                       </div>
-              <div className="flex gap-2 pt-4 border-t border-gray-700">
+              <div className="flex gap-2 pt-4 border-t border-blue-200">
                 <Button
                   variant="outline"
                   onClick={() => setIsEditDialogOpen(false)}
-                  className="flex-1 border-gray-600 bg-gray-800 text-white hover:bg-gray-700"
+                  className="flex-1 border-blue-300 bg-white text-black hover:bg-blue-50"
                 >
                   Cancel
                 </Button>
