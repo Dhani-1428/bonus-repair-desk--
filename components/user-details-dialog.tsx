@@ -82,70 +82,70 @@ export function UserDetailsDialog({ open, onOpenChange, userDetails, users }: Us
 
         {isLoading ? (
           <div className="flex items-center justify-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
           </div>
         ) : (
           <div className="space-y-6">
             {/* User Information */}
-            <Card className="border-gray-700 bg-gray-800/50">
+            <Card className="border-blue-200 bg-white">
               <CardHeader>
-                <CardTitle className="text-white">User Information</CardTitle>
+                <CardTitle className="text-black">User Information</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-xs text-gray-400">Full Name</p>
-                    <p className="text-sm text-white font-semibold">{userDetails.userName}</p>
+                    <p className="text-xs text-black">Full Name</p>
+                    <p className="text-sm text-black font-semibold">{userDetails.userName}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-400">Email</p>
-                    <p className="text-sm text-white font-semibold">{userDetails.userEmail}</p>
+                    <p className="text-xs text-black">Email</p>
+                    <p className="text-sm text-black font-semibold">{userDetails.userEmail}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-400">Shop Name</p>
-                    <p className="text-sm text-white">{userDetails.shopName}</p>
+                    <p className="text-xs text-black">Shop Name</p>
+                    <p className="text-sm text-black">{userDetails.shopName}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-400">Signup Date</p>
-                    <p className="text-sm text-white">{new Date(userDetails.signupDate).toLocaleString()}</p>
+                    <p className="text-xs text-black">Signup Date</p>
+                    <p className="text-sm text-black">{new Date(userDetails.signupDate).toLocaleString()}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-400">Last Login</p>
-                    <p className="text-sm text-white">{userDetails.lastLogin ? new Date(userDetails.lastLogin).toLocaleString() : "Never"}</p>
+                    <p className="text-xs text-black">Last Login</p>
+                    <p className="text-sm text-black">{userDetails.lastLogin ? new Date(userDetails.lastLogin).toLocaleString() : "Never"}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-400">Total Logins</p>
-                    <p className="text-sm text-white font-semibold">{userDetails.totalLogins}</p>
+                    <p className="text-xs text-black">Total Logins</p>
+                    <p className="text-sm text-black font-semibold">{userDetails.totalLogins}</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
             {/* Repair Tickets */}
-            <Card className="border-gray-700 bg-gray-800/50">
+            <Card className="border-blue-200 bg-white">
               <CardHeader>
-                <CardTitle className="text-white">
+                <CardTitle className="text-black">
                   Repair Tickets ({tenantTickets.length})
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {tenantTickets.length === 0 ? (
-                  <p className="text-gray-400 text-sm">No repair tickets found</p>
+                  <p className="text-black text-sm">No repair tickets found</p>
                 ) : (
                   <div className="space-y-2 max-h-64 overflow-y-auto">
                     {tenantTickets.slice(0, 10).map((ticket: any) => (
-                      <div key={ticket.id} className="p-3 bg-gray-900/50 rounded border border-gray-700">
+                      <div key={ticket.id} className="p-3 bg-blue-50 rounded border border-blue-200">
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="text-sm font-semibold text-white">
+                            <p className="text-sm font-semibold text-black">
                               {ticket.repairNumber} - {ticket.customerName}
                             </p>
-                            <p className="text-xs text-gray-400">
+                            <p className="text-xs text-black">
                               {ticket.brand} {ticket.model} | {ticket.status}
                             </p>
                           </div>
                           <div className="text-right">
-                            <p className="text-sm font-semibold text-white">€{parseFloat(ticket.price || 0).toFixed(2)}</p>
+                            <p className="text-sm font-semibold text-black">€{parseFloat(ticket.price || 0).toFixed(2)}</p>
                             <Link href={`/tickets/${ticket.id}`}>
                               <Button variant="ghost" size="sm" className="text-xs h-6 mt-1">
                                 View
@@ -156,7 +156,7 @@ export function UserDetailsDialog({ open, onOpenChange, userDetails, users }: Us
                       </div>
                     ))}
                     {tenantTickets.length > 10 && (
-                      <p className="text-xs text-gray-400 text-center pt-2">
+                      <p className="text-xs text-black text-center pt-2">
                         Showing 10 of {tenantTickets.length} tickets
                       </p>
                     )}
@@ -166,21 +166,21 @@ export function UserDetailsDialog({ open, onOpenChange, userDetails, users }: Us
             </Card>
 
             {/* Team Members */}
-            <Card className="border-gray-700 bg-gray-800/50">
+            <Card className="border-blue-200 bg-white">
               <CardHeader>
-                <CardTitle className="text-white">
+                <CardTitle className="text-black">
                   Team Members ({tenantMembers.length})
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {tenantMembers.length === 0 ? (
-                  <p className="text-gray-400 text-sm">No team members found</p>
+                  <p className="text-black text-sm">No team members found</p>
                 ) : (
                   <div className="space-y-2 max-h-48 overflow-y-auto">
                     {tenantMembers.map((member: any) => (
-                      <div key={member.id} className="p-3 bg-gray-900/50 rounded border border-gray-700">
-                        <p className="text-sm font-semibold text-white">{member.name}</p>
-                        <p className="text-xs text-gray-400">{member.email} | {member.role}</p>
+                      <div key={member.id} className="p-3 bg-blue-50 rounded border border-blue-200">
+                        <p className="text-sm font-semibold text-black">{member.name}</p>
+                        <p className="text-xs text-black">{member.email} | {member.role}</p>
                       </div>
                     ))}
                   </div>
@@ -189,20 +189,20 @@ export function UserDetailsDialog({ open, onOpenChange, userDetails, users }: Us
             </Card>
 
             {/* Login History */}
-            <Card className="border-gray-700 bg-gray-800/50">
+            <Card className="border-blue-200 bg-white">
               <CardHeader>
-                <CardTitle className="text-white">Login History</CardTitle>
+                <CardTitle className="text-black">Login History</CardTitle>
               </CardHeader>
               <CardContent>
                 {loginHistory.length === 0 ? (
-                  <p className="text-gray-400 text-sm">No login history available</p>
+                  <p className="text-black text-sm">No login history available</p>
                 ) : (
                   <div className="space-y-2 max-h-48 overflow-y-auto">
                     {loginHistory.slice(0, 10).map((login: any, index: number) => (
-                      <div key={index} className="flex items-center justify-between p-2 bg-gray-900/50 rounded border border-gray-700">
+                      <div key={index} className="flex items-center justify-between p-2 bg-blue-50 rounded border border-blue-200">
                         <div>
-                          <p className="text-sm text-white">{new Date(login.timestamp).toLocaleString()}</p>
-                          <p className="text-xs text-gray-400">IP: {login.ip || "N/A"}</p>
+                          <p className="text-sm text-black">{new Date(login.timestamp).toLocaleString()}</p>
+                          <p className="text-xs text-black">IP: {login.ip || "N/A"}</p>
                         </div>
                       </div>
                     ))}
@@ -212,38 +212,38 @@ export function UserDetailsDialog({ open, onOpenChange, userDetails, users }: Us
             </Card>
 
             {/* Subscription History */}
-            <Card className="border-gray-700 bg-gray-800/50">
+            <Card className="border-blue-200 bg-white">
               <CardHeader>
-                <CardTitle className="text-white">Subscription History</CardTitle>
+                <CardTitle className="text-black">Subscription History</CardTitle>
               </CardHeader>
               <CardContent>
                 {allUserSubscriptions.length === 0 && userPayments.length === 0 ? (
-                  <p className="text-gray-400 text-sm">No subscription history</p>
+                  <p className="text-black text-sm">No subscription history</p>
                 ) : (
                   <div className="space-y-3">
                     {allUserSubscriptions.map((sub: any, index: number) => (
-                      <div key={`${sub.id}_${index}`} className="p-4 bg-gray-900/50 rounded-lg border border-gray-700">
+                      <div key={`${sub.id}_${index}`} className="p-4 bg-blue-50 rounded-lg border border-blue-200">
                         <div className="flex items-center justify-between mb-2">
                           <div>
-                            <p className="text-sm font-semibold text-white">
+                            <p className="text-sm font-semibold text-black">
                               {PLAN_PRICING[sub.plan]?.name || sub.plan}
-                              {index === 0 && <span className="ml-2 text-xs text-blue-400">(Current)</span>}
+                              {index === 0 && <span className="ml-2 text-xs text-blue-600">(Current)</span>}
                             </p>
-                            <p className="text-xs text-gray-400">
+                            <p className="text-xs text-black">
                               {sub.isFreeTrial ? "Free Trial" : `€${PLAN_PRICING[sub.plan]?.price || 0}`}
                             </p>
                           </div>
                           <Badge
                             className={
                               sub.status === "ACTIVE" || sub.status === "active"
-                                ? "bg-green-500/20 text-green-400 border-green-500/50"
+                                ? "bg-green-100 text-green-700 border-green-300"
                                 : sub.status === "FREE_TRIAL" || sub.status === "free_trial"
-                                ? "bg-blue-500/20 text-blue-400 border-blue-500/50"
+                                ? "bg-blue-100 text-blue-700 border-blue-300"
                                 : sub.status === "PENDING" || sub.status === "pending"
-                                ? "bg-yellow-500/20 text-yellow-400 border-yellow-500/50"
+                                ? "bg-yellow-100 text-yellow-700 border-yellow-300"
                                 : sub.status === "EXPIRED" || sub.status === "expired"
-                                ? "bg-red-500/20 text-red-400 border-red-500/50"
-                                : "bg-gray-500/20 text-gray-400 border-gray-500/50"
+                                ? "bg-red-100 text-red-700 border-red-300"
+                                : "bg-gray-100 text-gray-700 border-gray-300"
                             }
                           >
                             {sub.status === "FREE_TRIAL" || sub.status === "free_trial" ? "Free Trial" : sub.status.toUpperCase()}
@@ -251,30 +251,30 @@ export function UserDetailsDialog({ open, onOpenChange, userDetails, users }: Us
                         </div>
                         <div className="grid grid-cols-2 gap-2 text-xs">
                           <div>
-                            <p className="text-gray-400">Start Date</p>
-                            <p className="text-white">{new Date(sub.startDate).toLocaleString()}</p>
+                            <p className="text-black">Start Date</p>
+                            <p className="text-black">{new Date(sub.startDate).toLocaleString()}</p>
                           </div>
                           <div>
-                            <p className="text-gray-400">End Date</p>
-                            <p className="text-white">{getSubscriptionEndDate(sub).toLocaleString()}</p>
+                            <p className="text-black">End Date</p>
+                            <p className="text-black">{getSubscriptionEndDate(sub).toLocaleString()}</p>
                           </div>
                         </div>
                       </div>
                     ))}
                     {userPayments.map((payment: any) => (
-                      <div key={payment.id} className="p-4 bg-gray-900/50 rounded-lg border border-gray-700">
+                      <div key={payment.id} className="p-4 bg-blue-50 rounded-lg border border-blue-200">
                         <div className="flex items-center justify-between mb-2">
                           <div>
-                            <p className="text-sm font-semibold text-white">{payment.planName}</p>
-                            <p className="text-xs text-gray-400">€{payment.price}</p>
+                            <p className="text-sm font-semibold text-black">{payment.planName}</p>
+                            <p className="text-xs text-black">€{payment.price}</p>
                           </div>
                           <Badge
                             className={
                               payment.status === "APPROVED" || payment.status === "approved"
-                                ? "bg-green-500/20 text-green-400 border-green-500/50"
+                                ? "bg-green-100 text-green-700 border-green-300"
                                 : payment.status === "PENDING" || payment.status === "pending"
-                                ? "bg-yellow-500/20 text-yellow-400 border-yellow-500/50"
-                                : "bg-red-500/20 text-red-400 border-red-500/50"
+                                ? "bg-yellow-100 text-yellow-700 border-yellow-300"
+                                : "bg-red-100 text-red-700 border-red-300"
                             }
                           >
                             {payment.status.toUpperCase()}
@@ -282,12 +282,12 @@ export function UserDetailsDialog({ open, onOpenChange, userDetails, users }: Us
                         </div>
                         <div className="grid grid-cols-2 gap-2 text-xs">
                           <div>
-                            <p className="text-gray-400">Submitted</p>
-                            <p className="text-white">{new Date(payment.createdAt).toLocaleString()}</p>
+                            <p className="text-black">Submitted</p>
+                            <p className="text-black">{new Date(payment.createdAt).toLocaleString()}</p>
                           </div>
                           <div>
-                            <p className="text-gray-400">Payment ID</p>
-                            <p className="text-white font-mono text-xs">{payment.id}</p>
+                            <p className="text-black">Payment ID</p>
+                            <p className="text-black font-mono text-xs">{payment.id}</p>
                           </div>
                         </div>
                       </div>
@@ -298,27 +298,27 @@ export function UserDetailsDialog({ open, onOpenChange, userDetails, users }: Us
             </Card>
 
             {/* Dashboard Analytics */}
-            <Card className="border-gray-700 bg-gray-800/50">
+            <Card className="border-blue-200 bg-white">
               <CardHeader>
-                <CardTitle className="text-white">Dashboard Analytics</CardTitle>
+                <CardTitle className="text-black">Dashboard Analytics</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="p-4 bg-gray-900/50 rounded-lg border border-gray-700">
-                    <p className="text-xs text-gray-400 mb-1">Total Devices</p>
-                    <p className="text-2xl font-bold text-white">{userDetails.totalDevices}</p>
+                  <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <p className="text-xs text-black mb-1">Total Devices</p>
+                    <p className="text-2xl font-bold text-black">{userDetails.totalDevices}</p>
                   </div>
-                  <div className="p-4 bg-gray-900/50 rounded-lg border border-gray-700">
-                    <p className="text-xs text-gray-400 mb-1">Total Revenue</p>
-                    <p className="text-2xl font-bold text-white">€{Number.parseFloat(userDetails.totalRevenue || 0).toFixed(2)}</p>
+                  <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <p className="text-xs text-black mb-1">Total Revenue</p>
+                    <p className="text-2xl font-bold text-black">€{Number.parseFloat(userDetails.totalRevenue || 0).toFixed(2)}</p>
                   </div>
-                  <div className="p-4 bg-gray-900/50 rounded-lg border border-gray-700">
-                    <p className="text-xs text-gray-400 mb-1">Pending</p>
-                    <p className="text-2xl font-bold text-yellow-400">{userDetails.pendingDevices}</p>
+                  <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <p className="text-xs text-black mb-1">Pending</p>
+                    <p className="text-2xl font-bold text-yellow-700">{userDetails.pendingDevices}</p>
                   </div>
-                  <div className="p-4 bg-gray-900/50 rounded-lg border border-gray-700">
-                    <p className="text-xs text-gray-400 mb-1">Completed</p>
-                    <p className="text-2xl font-bold text-green-400">{userDetails.completedDevices}</p>
+                  <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <p className="text-xs text-black mb-1">Completed</p>
+                    <p className="text-2xl font-bold text-green-700">{userDetails.completedDevices}</p>
                   </div>
                 </div>
               </CardContent>

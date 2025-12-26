@@ -542,18 +542,18 @@ export function TeamManagement() {
           <form onSubmit={handleEditSubmit} className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="edit-name" className="font-medium text-gray-200">{t("team.member.edit.fullName")}</Label>
+                <Label htmlFor="edit-name" className="font-medium text-black">{t("team.member.edit.fullName")}</Label>
                 <Input
                   id="edit-name"
                   placeholder="John Doe"
                   value={editFormData.name || ""}
                   onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
                   required
-                  className="bg-gray-800/50 border-gray-700 text-white placeholder:text-gray-500 focus:border-blue-500"
+                  className="bg-white border-blue-300 text-black placeholder:text-gray-400 focus:border-blue-500"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="edit-email" className="font-medium text-gray-200">{t("team.member.edit.email")}</Label>
+                <Label htmlFor="edit-email" className="font-medium text-black">{t("team.member.edit.email")}</Label>
                 <Input
                   id="edit-email"
                   type="email"
@@ -561,22 +561,22 @@ export function TeamManagement() {
                   value={editFormData.email || ""}
                   onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
                   required
-                  className="bg-gray-800/50 border-gray-700 text-white placeholder:text-gray-500 focus:border-blue-500"
+                  className="bg-white border-blue-300 text-black placeholder:text-gray-400 focus:border-blue-500"
                 />
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-role" className="font-medium text-gray-200">{t("team.member.edit.role")}</Label>
+              <Label htmlFor="edit-role" className="font-medium text-black">{t("team.member.edit.role")}</Label>
               <Select 
                 value={editFormData.role || "member"} 
                 onValueChange={(value) => setEditFormData({ ...editFormData, role: value })}
               >
-                <SelectTrigger id="edit-role" className="bg-gray-800/50 border-gray-700 text-white">
+                <SelectTrigger id="edit-role" className="bg-white border-blue-300 text-black">
                   <SelectValue placeholder={t("team.member.edit.role")} />
                 </SelectTrigger>
-                <SelectContent className="bg-gray-900 border-gray-700" side="bottom" sideOffset={4}>
-                  <SelectItem value="member" className="text-white">{t("team.add.role.member")}</SelectItem>
-                  <SelectItem value="admin" className="text-white">{t("team.add.role.admin")}</SelectItem>
+                <SelectContent className="bg-white border-blue-200" side="bottom" sideOffset={4}>
+                  <SelectItem value="member" className="text-black">{t("team.add.role.member")}</SelectItem>
+                  <SelectItem value="admin" className="text-black">{t("team.add.role.admin")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -588,7 +588,7 @@ export function TeamManagement() {
                   setIsEditDialogOpen(false)
                   setEditingMember(null)
                 }}
-                className="border-gray-700 bg-gray-900/50 text-white hover:bg-gray-800"
+                className="border-blue-300 bg-white text-black hover:bg-blue-50"
               >
                 {t("team.member.edit.cancel")}
               </Button>

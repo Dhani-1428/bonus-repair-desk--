@@ -266,34 +266,34 @@ export function TestimonialsSection() {
         <DialogContent className="sm:max-w-[500px] bg-white border-blue-200 text-black">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold text-black">Share Your Experience</DialogTitle>
-            <DialogDescription className="text-gray-400">
+            <DialogDescription className="text-black">
               We'd love to hear about your experience with Bonus Repair Desk. Your feedback helps us improve!
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4 mt-4">
             <div className="space-y-2">
-              <Label htmlFor="name" className="text-gray-200">Your Name *</Label>
+              <Label htmlFor="name" className="text-black">Your Name *</Label>
               <Input
                 id="name"
                 placeholder="Enter your name"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 required
-                className="bg-gray-800/50 border-gray-700 text-white placeholder:text-gray-500 focus:border-blue-500"
+                className="bg-white border-blue-300 text-black placeholder:text-gray-400 focus:border-blue-500"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="username" className="text-gray-200">Username (Optional)</Label>
+              <Label htmlFor="username" className="text-black">Username (Optional)</Label>
               <Input
                 id="username"
                 placeholder="@username"
                 value={formData.username}
                 onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                className="bg-gray-800/50 border-gray-700 text-white placeholder:text-gray-500 focus:border-blue-500"
+                className="bg-white border-blue-300 text-black placeholder:text-gray-400 focus:border-blue-500"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="body" className="text-gray-200">Your Comment *</Label>
+              <Label htmlFor="body" className="text-black">Your Comment *</Label>
               <Textarea
                 id="body"
                 placeholder="Share your experience with Bonus Repair Desk..."
@@ -301,7 +301,7 @@ export function TestimonialsSection() {
                 onChange={(e) => setFormData({ ...formData, body: e.target.value })}
                 required
                 rows={5}
-                className="bg-gray-800/50 border-gray-700 text-white placeholder:text-gray-500 focus:border-blue-500 resize-none"
+                className="bg-white border-blue-300 text-black placeholder:text-gray-400 focus:border-blue-500 resize-none"
               />
             </div>
             <div className="flex gap-3 pt-4">
@@ -312,7 +312,7 @@ export function TestimonialsSection() {
                   setIsDialogOpen(false)
                   setFormData({ name: "", username: "", body: "" })
                 }}
-                className="flex-1 bg-gray-800/50 border-gray-700 text-white hover:bg-gray-700/50"
+                className="flex-1 bg-white border-blue-300 text-black hover:bg-blue-50"
                 disabled={isSubmitting}
               >
                 Cancel
