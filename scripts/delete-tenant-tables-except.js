@@ -9,16 +9,19 @@ const mysql = require('mysql2/promise');
 require('dotenv').config();
 
 // Tenant IDs to KEEP (all others will be deleted)
-const TENANTS_TO_KEEP = [
-  'd538eac6-072b-41ee-9f78-070775991051',
-  '732f9131-bb1f-482c-85d3-dc7d24caf33f'
+// These will be fetched from the users table based on:
+// - Super Admin (superadmin@admin.com)
+// - samphone.pt@gmail.com
+const TENANT_EMAILS_TO_KEEP = [
+  'superadmin@admin.com',
+  'samphone.pt@gmail.com'
 ];
 
 async function deleteTenantTablesExcept() {
   console.log('🗑️  Delete Tenant Tables Script');
   console.log('================================\n');
   console.log('⚠️  WARNING: This will permanently delete tenant tables!');
-  console.log(`✅ Keeping tables for tenant IDs: ${TENANTS_TO_KEEP.join(', ')}\n`);
+  console.log(`✅ Keeping tables for emails: ${TENANT_EMAILS_TO_KEEP.join(', ')}\n`);
 
   const config = {
     host: process.env.DB_HOST,
@@ -38,8 +41,28 @@ async function deleteTenantTablesExcept() {
     connection = await mysql.createConnection(config);
     console.log('✅ Connected!\n');
 
+    // Get tenant IDs from users table based on emails
+    console.log('🔍 Finding tenant IDs for specified emails...');
+    const placeholders = TENANT_EMAILS_TO_KEEP.map(() => '?').join(',');
+    const [users] = await connection.execute(
+      `SELECT id, name, email, tenantId FROM users WHERE email IN (${placeholders})`,
+      TENANT_EMAILS_TO_KEEP
+    );
+
+    if (users.length === 0) {
+      console.log('❌ No users found with the specified emails!');
+      return;
+    }
+
+    const tenantsToKeep = users.map(user => user.tenantId);
+    console.log(`✅ Found ${users.length} user(s) to keep:\n`);
+    users.forEach(user => {
+      console.log(`   - ${user.name} (${user.email})`);
+      console.log(`     Tenant ID: ${user.tenantId}\n`);
+    });
+
     // Convert tenant IDs to table name prefixes
-    const prefixesToKeep = TENANTS_TO_KEEP.map(tenantId => 
+    const prefixesToKeep = tenantsToKeep.map(tenantId => 
       `tenant_${tenantId.replace(/-/g, '_')}`
     );
 

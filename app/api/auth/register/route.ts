@@ -140,12 +140,14 @@ export async function POST(request: NextRequest) {
     }
 
     try {
+      // For free trials, always use MONTHLY as placeholder plan
+      // The actual plan will be set when user purchases a subscription
       await execute(
         `INSERT INTO subscriptions (id, userId, tenantId, plan, status, startDate, endDate, isFreeTrial)
-         VALUES (?, ?, ?, ?, 'FREE_TRIAL', ?, ?, TRUE)`,
-        [subscriptionId, userId, tenantId, selectedPlan || "MONTHLY", startDate, endDate]
+         VALUES (?, ?, ?, 'MONTHLY', 'FREE_TRIAL', ?, ?, TRUE)`,
+        [subscriptionId, userId, tenantId, startDate, endDate]
       )
-      console.log(`[API] ✅ Subscription created for user: ${email}`)
+      console.log(`[API] ✅ Free trial subscription created for user: ${email} (15 days)`)
     } catch (subError: any) {
       console.error("[API] Error creating subscription:", subError?.message || subError)
       // Don't fail registration if subscription creation fails - user is already created
@@ -153,6 +155,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Send admin notification about new signup (include password for admin reference)
+    // Note: selectedPlan is for admin reference only - free trial uses MONTHLY as placeholder
     try {
       await sendAdminSignupNotification(user, password, selectedPlan || "MONTHLY")
     } catch (emailError) {

@@ -148,20 +148,7 @@ export function NewRepairTicketForm() {
     }
   }, [])
 
-  const toggleService = (deviceIndex: number, service: string) => {
-    setDevices((prev) =>
-      prev.map((device, idx) =>
-        idx === deviceIndex
-          ? {
-              ...device,
-              selectedServices: device.selectedServices.includes(service)
-                ? device.selectedServices.filter((s) => s !== service)
-                : [...device.selectedServices, service],
-            }
-          : device
-      )
-    )
-  }
+  // toggleService function removed - services option no longer available
 
   const addDevice = () => {
     setDevices((prev) => [
@@ -256,15 +243,7 @@ export function NewRepairTicketForm() {
     // Validate all devices
     for (let i = 0; i < devices.length; i++) {
       const device = devices[i]
-      const imeiRegex = /^\d{15}$/
-      if (!imeiRegex.test(device.imeiNo)) {
-        toast.error(`Device ${i + 1}: IMEI must be exactly 15 digits`)
-        return
-      }
-      if (device.selectedServices.length === 0) {
-        toast.error(`Device ${i + 1}: At least one service is required`)
-        return
-      }
+      // IMEI validation removed - no longer mandatory
       if (!device.model.trim() || !device.price.trim()) {
         toast.error(`Device ${i + 1}: Model and price are required`)
         return
@@ -300,7 +279,7 @@ export function NewRepairTicketForm() {
             loanEquipment: false,
             equipmentObs: device.equipmentObs || null,
             repairObs: device.repairObs || null,
-            selectedServices: device.selectedServices,
+            selectedServices: [],
             condition: null,
             problem: device.problem || null,
             price: parseFloat(device.price),
@@ -508,44 +487,47 @@ export function NewRepairTicketForm() {
   return (
     <div className="space-y-6">
       {!showTicketDetails ? (
-        <Card className="shadow-2xl border border-gray-800/50 bg-gradient-to-br from-gray-900/95 via-black/95 to-gray-900/95 backdrop-blur-sm">
-      <CardHeader className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-b border-gray-800/50 rounded-t-lg px-6 py-4">
-        <CardTitle className="text-2xl flex items-center gap-2 text-white">
+        <Card className="shadow-2xl border border-gray-200 bg-white">
+      <CardHeader className="bg-gradient-to-r from-blue-50 to-purple-50 border-b border-gray-200 rounded-t-lg px-6 py-4">
+        <CardTitle className="text-2xl flex items-center gap-2 text-gray-900">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
           {t("page.newTicket.customerDeviceInformation")}
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-6 text-white">
+      <CardContent className="p-6 text-gray-900">
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Customer Information - All four fields in one line */}
-          <div className="grid gap-6 grid-cols-4 border-b border-gray-800 pb-6">
+          {/* Add New Device Button at Top */}
+          <div className="flex justify-end pb-4 border-b border-gray-200">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => window.open('/tickets/new', '_blank')}
+              className="border-blue-600 bg-blue-50 text-blue-700 hover:bg-blue-100"
+            >
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              {t("form.addAnotherDevice")}
+            </Button>
+          </div>
+
+          {/* Customer Information - Three fields in one line (removed Client ID) */}
+          <div className="grid gap-6 grid-cols-3 border-b border-gray-200 pb-6">
             <div className="space-y-3">
-              <Label htmlFor="clientId" className="text-gray-200 text-base font-semibold">{t("form.clientId")}</Label>
-              <Input
-                id="clientId"
-                value={clientId}
-                disabled
-                className="bg-blue-900/20 border-blue-700/50 text-blue-300 font-mono font-semibold cursor-not-allowed h-12 text-lg"
-              />
-              <p className="text-xs text-gray-500">
-                {t("form.clientIdHint")}
-              </p>
-            </div>
-            <div className="space-y-3">
-              <Label htmlFor="customerName" className="text-gray-200 text-base font-semibold">{t("form.customerName")} *</Label>
+              <Label htmlFor="customerName" className="text-gray-700 text-base font-semibold">{t("form.customerName")} *</Label>
               <Input
                 id="customerName"
                 placeholder={t("placeholder.customerName")}
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
                 required
-                className="bg-gray-800/50 border-gray-700 text-white placeholder:text-gray-500 focus:border-blue-500 h-12 text-lg"
+                className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 h-12 text-lg"
               />
             </div>
             <div className="space-y-3">
-              <Label htmlFor="contact" className="text-gray-200 text-base font-semibold">{t("form.clientPhone")} *</Label>
+              <Label htmlFor="contact" className="text-gray-700 text-base font-semibold">{t("form.clientPhone")} *</Label>
               <Input
                 id="contact"
                 type="tel"
@@ -553,18 +535,18 @@ export function NewRepairTicketForm() {
                 value={contact}
                 onChange={(e) => setContact(e.target.value)}
                 required
-                className="bg-gray-800/50 border-gray-700 text-white placeholder:text-gray-500 focus:border-blue-500 h-12 text-lg"
+                className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 h-12 text-lg"
               />
             </div>
             <div className="space-y-3">
-              <Label htmlFor="receivedBy" className="text-gray-200 text-base font-semibold">{t("form.receivedBy")} *</Label>
+              <Label htmlFor="receivedBy" className="text-gray-700 text-base font-semibold">{t("form.receivedBy")} *</Label>
               <Input
                 id="receivedBy"
                 placeholder={t("placeholder.receivedBy") || "Enter your name"}
                 value={receivedBy}
                 onChange={(e) => setReceivedBy(e.target.value)}
                 required
-                className="bg-gray-800/50 border-gray-700 text-white placeholder:text-gray-500 focus:border-blue-500 h-12 text-lg"
+                className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 h-12 text-lg"
               />
             </div>
           </div>
@@ -574,17 +556,17 @@ export function NewRepairTicketForm() {
             {devices.map((device, deviceIndex) => (
               <div
                 key={deviceIndex}
-                className="border-2 border-gray-800/50 rounded-xl p-6 bg-gradient-to-br from-gray-900/50 to-black/50"
+                className="border-2 border-gray-200 rounded-xl p-6 bg-gray-50"
               >
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-white">{t("form.device")} {deviceIndex + 1}</h3>
+                  <h3 className="text-lg font-semibold text-gray-900">{t("form.device")} {deviceIndex + 1}</h3>
                   {devices.length > 1 && (
                     <Button
                       type="button"
                       variant="outline"
                       size="sm"
                       onClick={() => removeDevice(deviceIndex)}
-                      className="border-red-600/50 bg-red-900/20 text-red-400 hover:bg-red-900/40 hover:border-red-500"
+                      className="border-red-300 bg-red-50 text-red-700 hover:bg-red-100 hover:border-red-400"
                     >
                       <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -596,7 +578,7 @@ export function NewRepairTicketForm() {
 
                 <div className="grid gap-6 md:grid-cols-2">
                   <div className="space-y-2">
-                    <Label className="text-gray-200">{t("form.brand")} *</Label>
+                    <Label className="text-gray-700">{t("form.brand")} *</Label>
                     <div className="relative">
                       <Input
                         placeholder={t("form.brandPlaceholder")}
@@ -609,7 +591,7 @@ export function NewRepairTicketForm() {
                           }
                         }}
                         required
-                        className="bg-gray-800/50 border-gray-700 text-white placeholder:text-gray-500 focus:border-blue-500 pr-10"
+                        className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 pr-10"
                       />
                       <Popover>
                         <PopoverTrigger asChild>
@@ -617,14 +599,14 @@ export function NewRepairTicketForm() {
                             type="button"
                             variant="ghost"
                             size="sm"
-                            className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 p-0 hover:bg-gray-700/50"
+                            className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 p-0 hover:bg-gray-100"
                           >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                             </svg>
                           </Button>
                         </PopoverTrigger>
-                        <PopoverContent className="bg-gray-900 border-gray-700 w-[200px] p-1 max-h-[300px] overflow-y-auto">
+                        <PopoverContent className="bg-white border-gray-200 w-[200px] p-1 max-h-[300px] overflow-y-auto">
                           <div className="space-y-1">
                             {ALL_BRANDS.map((brand) => (
                               <button
@@ -634,7 +616,7 @@ export function NewRepairTicketForm() {
                                   updateDevice(deviceIndex, "brand", brand)
                                   updateDevice(deviceIndex, "model", "")
                                 }}
-                                className="w-full text-left px-3 py-2 text-sm text-white hover:bg-gray-800 rounded-md transition-colors"
+                                className="w-full text-left px-3 py-2 text-sm text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
                               >
                                 {brand}
                               </button>
@@ -646,7 +628,7 @@ export function NewRepairTicketForm() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label className="text-gray-200">{t("form.model")} *</Label>
+                    <Label className="text-gray-700">{t("form.model")} *</Label>
                     <div className="relative">
                       <Input
                         placeholder={device.brand ? t("form.modelPlaceholder") : t("form.selectBrandFirst")}
@@ -654,7 +636,7 @@ export function NewRepairTicketForm() {
                         onChange={(e) => updateDevice(deviceIndex, "model", e.target.value)}
                         required
                         disabled={!device.brand}
-                        className="bg-gray-800/50 border-gray-700 text-white placeholder:text-gray-500 focus:border-blue-500 pr-10 disabled:opacity-50"
+                        className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 pr-10 disabled:opacity-50"
                       />
                       {device.brand && device.brand !== "Other" && BRANDS_AND_MODELS[device.brand] && (
                         <Popover>
@@ -663,21 +645,21 @@ export function NewRepairTicketForm() {
                               type="button"
                               variant="ghost"
                               size="sm"
-                              className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 p-0 hover:bg-gray-700/50"
+                              className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 p-0 hover:bg-gray-100"
                             >
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                               </svg>
                             </Button>
                           </PopoverTrigger>
-                          <PopoverContent className="bg-gray-900 border-gray-700 w-[250px] p-1 max-h-[300px] overflow-y-auto">
+                          <PopoverContent className="bg-white border-gray-200 w-[250px] p-1 max-h-[300px] overflow-y-auto">
                             <div className="space-y-1">
                               {BRANDS_AND_MODELS[device.brand].map((model) => (
                                 <button
                                   key={model}
                                   type="button"
                                   onClick={() => updateDevice(deviceIndex, "model", model)}
-                                  className="w-full text-left px-3 py-2 text-sm text-white hover:bg-gray-800 rounded-md transition-colors"
+                                  className="w-full text-left px-3 py-2 text-sm text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
                                 >
                                   {model}
                                 </button>
@@ -690,33 +672,32 @@ export function NewRepairTicketForm() {
                   </div>
 
                   <div className="space-y-3">
-                    <Label className="text-gray-200 text-base font-semibold">{t("form.imei")} *</Label>
+                    <Label className="text-gray-700 text-base font-semibold">{t("form.imei")}</Label>
                     <Input
                       placeholder={t("placeholder.imei")}
                       value={device.imeiNo}
                       onChange={(e) => updateDevice(deviceIndex, "imeiNo", e.target.value)}
-                      required
                       maxLength={15}
                       inputMode="numeric"
-                      className={`bg-gray-800/50 border-gray-700 text-white placeholder:text-gray-500 focus:border-blue-500 h-12 text-lg ${device.imeiError ? "border-red-500 focus-visible:ring-red-500" : ""}`}
+                      className={`bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 h-12 text-lg ${device.imeiError ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                     />
-                    {device.imeiError && <p className="text-xs text-red-400">{device.imeiError}</p>}
+                    {device.imeiError && <p className="text-xs text-red-600">{device.imeiError}</p>}
                   </div>
 
                   <div className="space-y-3">
-                    <Label className="text-gray-200 text-base font-semibold">{t("form.laptopSerialNumber")}</Label>
+                    <Label className="text-gray-700 text-base font-semibold">{t("form.laptopSerialNumber")}</Label>
                     <Input
                       placeholder={t("form.laptopSerialNumberPlaceholder")}
                       value={device.serialNo || ""}
                       onChange={(e) => updateDevice(deviceIndex, "serialNo", e.target.value)}
-                      className="bg-gray-800/50 border-gray-700 text-white placeholder:text-gray-500 focus:border-blue-500 h-12 text-lg"
+                      className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 h-12 text-lg"
                     />
                     <p className="text-xs text-gray-500">{t("form.laptopSerialNumberHint")}</p>
                   </div>
 
                   <div className="space-y-2">
-                    <Label className="text-gray-200">{t("form.warranty")}</Label>
-                    <label className="flex items-center gap-2 text-sm text-gray-200 hover:text-white cursor-pointer">
+                    <Label className="text-gray-700">{t("form.warranty")}</Label>
+                    <label className="flex items-center gap-2 text-sm text-gray-700 hover:text-gray-900 cursor-pointer">
                       <input
                         type="checkbox"
                         className="h-4 w-4 accent-blue-600"
@@ -727,53 +708,24 @@ export function NewRepairTicketForm() {
                     </label>
                   </div>
 
-                  {/* Services - moved after warranty */}
+                  {/* Equipment Observations */}
                   <div className="space-y-2 md:col-span-2">
-                    <Label className="text-gray-200">{t("form.serviceNames")} *</Label>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 bg-gray-800/50 rounded-md border border-gray-700 p-3">
-                      {[
-                        { key: "LCD", translationKey: "service.lcd" },
-                        { key: "Battery", translationKey: "service.battery" },
-                        { key: "Charging Port", translationKey: "service.chargingPort" },
-                        { key: "Microphone", translationKey: "service.microphone" },
-                        { key: "Ear speaker", translationKey: "service.earSpeaker" },
-                        { key: "Back cover", translationKey: "service.backCover" },
-                        { key: "Wifi/Bluetooth", translationKey: "service.wifiBluetooth" },
-                        { key: "Network", translationKey: "service.network" },
-                        { key: "Software", translationKey: "service.software" },
-                        { key: "Shut off", translationKey: "service.shutOff" },
-                      ].map((service) => (
-                        <label key={service.key} className="flex items-center gap-2 text-sm text-gray-200 hover:text-white cursor-pointer">
-                          <input
-                            type="checkbox"
-                            className="h-4 w-4 accent-blue-600"
-                            checked={device.selectedServices.includes(service.key)}
-                            onChange={() => toggleService(deviceIndex, service.key)}
-                          />
-                          <span>{t(service.translationKey)}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Equipment Observations - moved after services */}
-                  <div className="space-y-2 md:col-span-2">
-                    <Label className="text-gray-200">{t("form.equipmentObservations")}</Label>
+                    <Label className="text-gray-700">{t("form.equipmentObservations")}</Label>
                     <Textarea
                       placeholder={t("form.equipmentObservationsPlaceholder")}
                       value={device.equipmentObs}
                       onChange={(e) => updateDevice(deviceIndex, "equipmentObs", e.target.value)}
                       rows={2}
-                      className="bg-gray-800/50 border-gray-700 text-white placeholder:text-gray-500 focus:border-blue-500"
+                      className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-blue-500"
                     />
                   </div>
 
                   {/* Equipment Check - All 6 blocks in one line */}
                   <div className="space-y-2 md:col-span-2">
-                    <Label className="text-gray-200 text-sm font-semibold mb-2 block">{t("form.equipmentCheck")}</Label>
+                    <Label className="text-gray-700 text-sm font-semibold mb-2 block">{t("form.equipmentCheck")}</Label>
                     <div className="grid grid-cols-6 gap-2">
                       {/* 1. SIM Card */}
-                      <label className="flex items-center gap-1.5 p-2 bg-gray-800/50 rounded border border-gray-700 hover:border-blue-500 hover:bg-gray-800 cursor-pointer transition-all">
+                      <label className="flex items-center gap-1.5 p-2 bg-white rounded border border-gray-300 hover:border-blue-500 hover:bg-gray-50 cursor-pointer transition-all">
                         <input
                           type="checkbox"
                           className="h-4 w-4 accent-blue-600 cursor-pointer"
@@ -781,19 +733,19 @@ export function NewRepairTicketForm() {
                           onChange={(e) => updateDevice(deviceIndex, "simCard", e.target.checked)}
                         />
                         <div className="flex items-center gap-1">
-                          <svg className="w-4 h-4 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M4 4h16v16H4V4zm2 2v12h12V6H6z" fill="currentColor"/>
                             <path d="M4 4l3-3v3H4z" fill="currentColor" opacity="0.6"/>
                             <rect x="8" y="9" width="2" height="1.5" fill="white" opacity="0.9"/>
                             <rect x="11" y="9" width="2" height="1.5" fill="white" opacity="0.9"/>
                             <rect x="14" y="9" width="2" height="1.5" fill="white" opacity="0.9"/>
                           </svg>
-                          <span className="text-xs font-medium text-white">{t("form.simCard")}</span>
+                          <span className="text-xs font-medium text-gray-900">{t("form.simCard")}</span>
                         </div>
                       </label>
                       
                       {/* 2. SIM Tray */}
-                      <label className="flex items-center gap-1.5 p-2 bg-gray-800/50 rounded border border-gray-700 hover:border-blue-500 hover:bg-gray-800 cursor-pointer transition-all">
+                      <label className="flex items-center gap-1.5 p-2 bg-white rounded border border-gray-300 hover:border-blue-500 hover:bg-gray-50 cursor-pointer transition-all">
                         <input
                           type="checkbox"
                           className="h-4 w-4 accent-blue-600 cursor-pointer"
@@ -801,17 +753,17 @@ export function NewRepairTicketForm() {
                           onChange={(e) => updateDevice(deviceIndex, "simTray", e.target.checked)}
                         />
                         <div className="flex items-center gap-1">
-                          <svg className="w-4 h-4 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
                             <rect x="6" y="8" width="12" height="8" rx="1" fill="currentColor"/>
                             <rect x="7" y="10" width="10" height="4" fill="white" opacity="0.3"/>
                             <rect x="9" y="11" width="6" height="2" fill="white" opacity="0.5"/>
                           </svg>
-                          <span className="text-xs font-medium text-white">{t("form.simTray")}</span>
+                          <span className="text-xs font-medium text-gray-900">{t("form.simTray")}</span>
                         </div>
                       </label>
                       
                       {/* 3. Memory Card */}
-                      <label className="flex items-center gap-1.5 p-2 bg-gray-800/50 rounded border border-gray-700 hover:border-blue-500 hover:bg-gray-800 cursor-pointer transition-all">
+                      <label className="flex items-center gap-1.5 p-2 bg-white rounded border border-gray-300 hover:border-blue-500 hover:bg-gray-50 cursor-pointer transition-all">
                         <input
                           type="checkbox"
                           className="h-4 w-4 accent-blue-600 cursor-pointer"
@@ -819,17 +771,17 @@ export function NewRepairTicketForm() {
                           onChange={(e) => updateDevice(deviceIndex, "memoryCard", e.target.checked)}
                         />
                         <div className="flex items-center gap-1">
-                          <svg className="w-4 h-4 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M4 4h16v16H4V4zm2 2v12h12V6H6z" fill="currentColor"/>
                             <path d="M4 4h3v3H4V4z" fill="currentColor" opacity="0.7"/>
                             <rect x="8" y="7" width="8" height="10" fill="white" opacity="0.2"/>
                           </svg>
-                          <span className="text-xs font-medium text-white">{t("form.memoryCard")}</span>
+                          <span className="text-xs font-medium text-gray-900">{t("form.memoryCard")}</span>
                         </div>
                       </label>
                       
                       {/* 4. Charger */}
-                      <label className="flex items-center gap-1.5 p-2 bg-gray-800/50 rounded border border-gray-700 hover:border-blue-500 hover:bg-gray-800 cursor-pointer transition-all">
+                      <label className="flex items-center gap-1.5 p-2 bg-white rounded border border-gray-300 hover:border-blue-500 hover:bg-gray-50 cursor-pointer transition-all">
                         <input
                           type="checkbox"
                           className="h-4 w-4 accent-blue-600 cursor-pointer"
@@ -837,18 +789,18 @@ export function NewRepairTicketForm() {
                           onChange={(e) => updateDevice(deviceIndex, "charger", e.target.checked)}
                         />
                         <div className="flex items-center gap-1">
-                          <svg className="w-4 h-4 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
                             <rect x="9" y="2" width="6" height="8" rx="1" fill="currentColor"/>
                             <rect x="8" y="6" width="1.5" height="4" rx="0.3" fill="currentColor"/>
                             <rect x="14.5" y="6" width="1.5" height="4" rx="0.3" fill="currentColor"/>
                             <path d="M12 10v10M10 12h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
                           </svg>
-                          <span className="text-xs font-medium text-white">{t("form.charger")}</span>
+                          <span className="text-xs font-medium text-gray-900">{t("form.charger")}</span>
                         </div>
                       </label>
                       
                       {/* 5. Battery */}
-                      <label className="flex items-center gap-1.5 p-2 bg-gray-800/50 rounded border border-gray-700 hover:border-blue-500 hover:bg-gray-800 cursor-pointer transition-all">
+                      <label className="flex items-center gap-1.5 p-2 bg-white rounded border border-gray-300 hover:border-blue-500 hover:bg-gray-50 cursor-pointer transition-all">
                         <input
                           type="checkbox"
                           className="h-4 w-4 accent-blue-600 cursor-pointer"
@@ -856,17 +808,17 @@ export function NewRepairTicketForm() {
                           onChange={(e) => updateDevice(deviceIndex, "battery", e.target.checked)}
                         />
                         <div className="flex items-center gap-1">
-                          <svg className="w-4 h-4 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
                             <rect x="4" y="7" width="14" height="10" rx="1" fill="currentColor"/>
                             <rect x="18" y="10" width="2" height="4" rx="0.5" fill="currentColor"/>
                             <rect x="6" y="9" width="10" height="6" rx="0.5" fill="white" opacity="0.9"/>
                           </svg>
-                          <span className="text-xs font-medium text-white">{t("form.battery")}</span>
+                          <span className="text-xs font-medium text-gray-900">{t("form.battery")}</span>
                         </div>
                       </label>
                       
                       {/* 6. Water Damaged */}
-                      <label className="flex items-center gap-1.5 p-2 bg-gray-800/50 rounded border border-gray-700 hover:border-red-500 hover:bg-gray-800 cursor-pointer transition-all">
+                      <label className="flex items-center gap-1.5 p-2 bg-white rounded border border-gray-300 hover:border-red-500 hover:bg-gray-50 cursor-pointer transition-all">
                         <input
                           type="checkbox"
                           className="h-4 w-4 accent-red-600 cursor-pointer"
@@ -874,41 +826,31 @@ export function NewRepairTicketForm() {
                           onChange={(e) => updateDevice(deviceIndex, "waterDamaged", e.target.checked)}
                         />
                         <div className="flex items-center gap-1">
-                          <svg className="w-4 h-4 text-red-400" fill="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M19.36 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.64-4.96z"/>
-                            <path d="M7 16l1 2h2l-1-2M11 16l1 2h2l-1-2" stroke="white" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
+                            <path d="M7 16l1 2h2l-1-2M11 16l1 2h2l-1-2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
                           </svg>
-                          <span className="text-xs font-medium text-white">{t("form.waterDamaged")}</span>
+                          <span className="text-xs font-medium text-gray-900">{t("form.waterDamaged")}</span>
                         </div>
                       </label>
                     </div>
                   </div>
 
                   <div className="space-y-2 md:col-span-2">
-                    <Label className="text-gray-200">{t("form.repairNumber")}</Label>
-                    <Input
-                      value={getRepairNumberPreview()}
-                      disabled
-                      className="bg-purple-900/20 border-purple-700/50 text-purple-300 font-mono font-semibold cursor-not-allowed"
-                    />
-                    <p className="text-xs text-gray-500">{t("form.repairNumberHint")}</p>
-                  </div>
-
-                  <div className="space-y-2 md:col-span-2">
-                    <Label className="text-gray-200">{t("form.repairObservations")}</Label>
+                    <Label className="text-gray-700">{t("form.repairObservations")}</Label>
                     <Textarea
                       placeholder={t("form.repairObservationsPlaceholder")}
                       value={device.repairObs}
                       onChange={(e) => updateDevice(deviceIndex, "repairObs", e.target.value)}
                       rows={2}
-                      className="bg-gray-800/50 border-gray-700 text-white placeholder:text-gray-500 focus:border-blue-500"
+                      className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-blue-500"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label className="text-gray-200">{t("form.price")} *</Label>
+                    <Label className="text-gray-700">{t("form.price")} *</Label>
                     <div className="relative">
-                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg font-semibold">€</span>
+                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600 text-lg font-semibold">€</span>
                       <Input
                         type="number"
                         step="0.01"
@@ -916,41 +858,28 @@ export function NewRepairTicketForm() {
                         value={device.price}
                         onChange={(e) => updateDevice(deviceIndex, "price", e.target.value)}
                         required
-                        className="bg-gray-800/50 border-gray-700 text-white placeholder:text-gray-500 focus:border-blue-500 pl-8"
+                        className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 pl-8"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-2 md:col-span-2">
-                    <Label className="text-gray-200">{t("form.technicianNotes")}</Label>
-                    <Textarea
-                      placeholder={t("placeholder.technicianNotes")}
-                      value={device.problem}
-                      onChange={(e) => updateDevice(deviceIndex, "problem", e.target.value)}
-                      rows={4}
-                      className="bg-gray-800/50 border-gray-700 text-white placeholder:text-gray-500 focus:border-blue-500"
+                    <Label className="text-gray-700">{t("form.repairNumber")}</Label>
+                    <Input
+                      value={getRepairNumberPreview()}
+                      disabled
+                      className="bg-purple-50 border-purple-200 text-purple-700 font-mono font-semibold cursor-not-allowed"
                     />
+                    <p className="text-xs text-gray-500">{t("form.repairNumberHint")}</p>
                   </div>
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="flex items-center justify-between pt-4 border-t border-gray-800">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={addDevice}
-              className="border-gray-700 bg-gray-900/50 text-white hover:bg-gray-800"
-            >
-              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-              {t("form.addAnotherDevice")}
-            </Button>
-
+          <div className="flex items-center justify-end pt-4 border-t border-gray-200">
             <div className="flex gap-4">
-              <Button type="button" variant="outline" onClick={() => router.push("/dashboard")} className="px-8 border-gray-700 bg-gray-900/50 text-white hover:bg-gray-800">
+              <Button type="button" variant="outline" onClick={() => router.push("/dashboard")} className="px-8 border-gray-300 bg-white text-gray-700 hover:bg-gray-50">
                 {t("form.cancel")}
               </Button>
               <Button 
@@ -984,16 +913,16 @@ export function NewRepairTicketForm() {
       </CardContent>
     </Card>
       ) : (
-        <Card className="shadow-2xl border border-gray-800/50 bg-gradient-to-br from-gray-900/95 via-black/95 to-gray-900/95 backdrop-blur-sm">
-          <CardHeader className="bg-gradient-to-r from-green-600/20 to-blue-600/20 border-b border-gray-800/50 rounded-t-lg px-6 py-4">
-            <CardTitle className="text-2xl flex items-center gap-2 text-white">
+        <Card className="shadow-2xl border border-gray-200 bg-white">
+          <CardHeader className="bg-gradient-to-r from-green-50 to-blue-50 border-b border-gray-200 rounded-t-lg px-6 py-4">
+            <CardTitle className="text-2xl flex items-center gap-2 text-gray-900">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               Ticket Details - {createdTicketsDetails.length} Device{createdTicketsDetails.length > 1 ? "s" : ""} Created
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-6 text-white space-y-6">
+          <CardContent className="p-6 text-gray-900 space-y-6">
             {createdTicketsDetails.map((ticket: any, index: number) => {
               const servicesArray = Array.isArray(ticket?.selectedServices) 
                 ? ticket?.selectedServices 
@@ -1009,10 +938,10 @@ export function NewRepairTicketForm() {
               const services = servicesArray.length > 0 ? servicesArray.join(", ") : "N/A"
               
               return (
-                <div key={ticket?.id || index} className="border-2 border-gray-800/50 rounded-xl p-6 bg-gradient-to-br from-gray-900/50 to-black/50 space-y-4">
+                <div key={ticket?.id || index} className="border-2 border-gray-200 rounded-xl p-6 bg-gray-50 space-y-4">
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-semibold text-white">Device {index + 1}</h3>
-                    <Badge className="bg-green-600/20 text-green-400 border-green-600/50">
+                    <h3 className="text-lg font-semibold text-gray-900">Device {index + 1}</h3>
+                    <Badge className="bg-green-100 text-green-700 border-green-300">
                       {ticket?.status || "PENDING"}
                     </Badge>
                   </div>
@@ -1020,82 +949,66 @@ export function NewRepairTicketForm() {
                   <div className="grid gap-4 md:grid-cols-2">
                     {/* Repair Information */}
                     <div className="space-y-3">
-                      <h4 className="text-sm font-semibold text-blue-400 border-b border-gray-700 pb-2">Repair Information</h4>
+                      <h4 className="text-sm font-semibold text-blue-600 border-b border-gray-300 pb-2">Repair Information</h4>
                       <div className="space-y-2 text-sm">
-                        <div><span className="text-gray-400">Repair Number:</span> <span className="text-white font-mono">{ticket?.repairNumber || "N/A"}</span></div>
-                        {ticket?.spu && <div><span className="text-gray-400">SPU:</span> <span className="text-white">{ticket.spu}</span></div>}
-                        <div><span className="text-gray-400">Entry Date:</span> <span className="text-white">{ticket?.createdAt ? new Date(ticket.createdAt).toLocaleString() : "N/A"}</span></div>
+                        <div><span className="text-gray-600">Repair Number:</span> <span className="text-gray-900 font-mono">{ticket?.repairNumber || "N/A"}</span></div>
+                        {ticket?.spu && <div><span className="text-gray-600">SPU:</span> <span className="text-gray-900">{ticket.spu}</span></div>}
+                        <div><span className="text-gray-600">Entry Date:</span> <span className="text-gray-900">{ticket?.createdAt ? new Date(ticket.createdAt).toLocaleString() : "N/A"}</span></div>
                       </div>
                     </div>
 
                     {/* Client Information */}
                     <div className="space-y-3">
-                      <h4 className="text-sm font-semibold text-blue-400 border-b border-gray-700 pb-2">Client Information</h4>
+                      <h4 className="text-sm font-semibold text-blue-600 border-b border-gray-300 pb-2">Client Information</h4>
                       <div className="space-y-2 text-sm">
-                        <div><span className="text-gray-400">Client ID:</span> <span className="text-white font-mono">{ticket?.clientId || "N/A"}</span></div>
-                        <div><span className="text-gray-400">Customer Name:</span> <span className="text-white">{ticket?.customerName || "N/A"}</span></div>
-                        <div><span className="text-gray-400">Contact:</span> <span className="text-white">{ticket?.contact || "N/A"}</span></div>
+                        <div><span className="text-gray-600">Customer Name:</span> <span className="text-gray-900">{ticket?.customerName || "N/A"}</span></div>
+                        <div><span className="text-gray-600">Contact:</span> <span className="text-gray-900">{ticket?.contact || "N/A"}</span></div>
                       </div>
                     </div>
 
                     {/* Device Information */}
                     <div className="space-y-3">
-                      <h4 className="text-sm font-semibold text-blue-400 border-b border-gray-700 pb-2">Device Information</h4>
+                      <h4 className="text-sm font-semibold text-blue-600 border-b border-gray-300 pb-2">Device Information</h4>
                       <div className="space-y-2 text-sm">
-                        <div><span className="text-gray-400">IMEI:</span> <span className="text-white font-mono">{ticket?.imeiNo || "N/A"}</span></div>
-                        <div><span className="text-gray-400">Brand:</span> <span className="text-white">{ticket?.brand || "N/A"}</span></div>
-                        <div><span className="text-gray-400">Model:</span> <span className="text-white">{ticket?.model || "N/A"}</span></div>
-                        {ticket?.serialNo && <div><span className="text-gray-400">Serial Number:</span> <span className="text-white">{ticket.serialNo}</span></div>}
-                        {ticket?.softwareVersion && <div><span className="text-gray-400">Software Version:</span> <span className="text-white">{ticket.softwareVersion}</span></div>}
+                        <div><span className="text-gray-600">IMEI:</span> <span className="text-gray-900 font-mono">{ticket?.imeiNo || "N/A"}</span></div>
+                        <div><span className="text-gray-600">Brand:</span> <span className="text-gray-900">{ticket?.brand || "N/A"}</span></div>
+                        <div><span className="text-gray-600">Model:</span> <span className="text-gray-900">{ticket?.model || "N/A"}</span></div>
+                        {ticket?.serialNo && <div><span className="text-gray-600">Serial Number:</span> <span className="text-gray-900">{ticket.serialNo}</span></div>}
+                        {ticket?.softwareVersion && <div><span className="text-gray-600">Software Version:</span> <span className="text-gray-900">{ticket.softwareVersion}</span></div>}
                       </div>
                     </div>
 
                     {/* Warranty & Equipment Check */}
                     <div className="space-y-3">
-                      <h4 className="text-sm font-semibold text-blue-400 border-b border-gray-700 pb-2">Warranty & Equipment</h4>
+                      <h4 className="text-sm font-semibold text-blue-600 border-b border-gray-300 pb-2">Warranty & Equipment</h4>
                       <div className="space-y-2 text-sm">
-                        <div><span className="text-gray-400">Warranty:</span> <span className="text-white">{ticket?.warranty || "Without Warranty"}</span></div>
+                        <div><span className="text-gray-600">Warranty:</span> <span className="text-gray-900">{ticket?.warranty || "Without Warranty"}</span></div>
                         <div className="flex flex-wrap gap-3 mt-2 text-xs">
-                          <div><span className="text-gray-400">SIM Card:</span> <span className="text-white">{ticket?.simCard ? "Yes" : "No"}</span></div>
-                          <div><span className="text-gray-400">SIM Tray:</span> <span className="text-white">{ticket?.simTray ? "Yes" : "No"}</span></div>
-                          <div><span className="text-gray-400">Memory Card:</span> <span className="text-white">{ticket?.memoryCard ? "Yes" : "No"}</span></div>
-                          <div><span className="text-gray-400">Charger:</span> <span className="text-white">{ticket?.charger ? "Yes" : "No"}</span></div>
-                          <div><span className="text-gray-400">Battery:</span> <span className="text-white">{ticket?.battery ? "Yes" : "No"}</span></div>
-                          <div><span className="text-gray-400">Water Damaged:</span> <span className="text-white">{ticket?.waterDamaged ? "Yes" : "No"}</span></div>
+                          <div><span className="text-gray-600">SIM Card:</span> <span className="text-gray-900">{ticket?.simCard ? "Yes" : "No"}</span></div>
+                          <div><span className="text-gray-600">SIM Tray:</span> <span className="text-gray-900">{ticket?.simTray ? "Yes" : "No"}</span></div>
+                          <div><span className="text-gray-600">Memory Card:</span> <span className="text-gray-900">{ticket?.memoryCard ? "Yes" : "No"}</span></div>
+                          <div><span className="text-gray-600">Charger:</span> <span className="text-gray-900">{ticket?.charger ? "Yes" : "No"}</span></div>
+                          <div><span className="text-gray-600">Battery:</span> <span className="text-gray-900">{ticket?.battery ? "Yes" : "No"}</span></div>
+                          <div><span className="text-gray-600">Water Damaged:</span> <span className="text-gray-900">{ticket?.waterDamaged ? "Yes" : "No"}</span></div>
                         </div>
-                      </div>
-                    </div>
-
-                    {/* Services & Problem */}
-                    <div className="space-y-3 md:col-span-2">
-                      <h4 className="text-sm font-semibold text-blue-400 border-b border-gray-700 pb-2">Services & Problem</h4>
-                      <div className="space-y-2 text-sm">
-                        <div><span className="text-gray-400">Selected Services:</span> <span className="text-white">{services}</span></div>
-                        {ticket?.condition && <div><span className="text-gray-400">Condition:</span> <span className="text-white">{ticket.condition}</span></div>}
-                        {ticket?.problem && (
-                          <div className="mt-2">
-                            <span className="text-gray-400 block mb-1">Problem Description:</span>
-                            <div className="text-white bg-gray-800/50 p-3 rounded border border-gray-700">{ticket.problem}</div>
-                          </div>
-                        )}
                       </div>
                     </div>
 
                     {/* Observations */}
                     {(ticket?.equipmentObs || ticket?.repairObs) && (
                       <div className="space-y-3 md:col-span-2">
-                        <h4 className="text-sm font-semibold text-blue-400 border-b border-gray-700 pb-2">Observations</h4>
+                        <h4 className="text-sm font-semibold text-blue-600 border-b border-gray-300 pb-2">Observations</h4>
                         <div className="space-y-2 text-sm">
                           {ticket?.equipmentObs && (
                             <div>
-                              <span className="text-gray-400 block mb-1">Equipment Observations:</span>
-                              <div className="text-white bg-gray-800/50 p-3 rounded border border-gray-700">{ticket.equipmentObs}</div>
+                              <span className="text-gray-600 block mb-1">Equipment Observations:</span>
+                              <div className="text-gray-900 bg-white p-3 rounded border border-gray-300">{ticket.equipmentObs}</div>
                             </div>
                           )}
                           {ticket?.repairObs && (
                             <div>
-                              <span className="text-gray-400 block mb-1">Repair Observations:</span>
-                              <div className="text-white bg-gray-800/50 p-3 rounded border border-gray-700">{ticket.repairObs}</div>
+                              <span className="text-gray-600 block mb-1">Repair Observations:</span>
+                              <div className="text-gray-900 bg-white p-3 rounded border border-gray-300">{ticket.repairObs}</div>
                             </div>
                           )}
                         </div>
@@ -1104,8 +1017,8 @@ export function NewRepairTicketForm() {
 
                     {/* Price */}
                     <div className="space-y-3 md:col-span-2">
-                      <h4 className="text-sm font-semibold text-blue-400 border-b border-gray-700 pb-2">Pricing</h4>
-                      <div className="text-lg font-bold text-green-400">
+                      <h4 className="text-sm font-semibold text-blue-600 border-b border-gray-300 pb-2">Pricing</h4>
+                      <div className="text-lg font-bold text-green-600">
                         Price: €{ticket?.price ? Number.parseFloat(ticket.price).toFixed(2) : "0.00"}
                       </div>
                     </div>
@@ -1114,7 +1027,7 @@ export function NewRepairTicketForm() {
               )
             })}
 
-            <div className="flex flex-col gap-4 pt-4 border-t border-gray-800">
+            <div className="flex flex-col gap-4 pt-4 border-t border-gray-200">
               {/* Printer Selection */}
               <div className="flex items-center gap-4 p-4 bg-gray-800/50 rounded-lg border border-gray-700">
                 <div className="flex-1">
@@ -1135,7 +1048,7 @@ export function NewRepairTicketForm() {
                   variant="outline"
                   size="sm"
                   disabled={isDetectingPrinters}
-                  className="border-gray-600 bg-gray-900/50 text-white hover:bg-gray-800"
+                  className="border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
                 >
                   {isDetectingPrinters ? (
                     <>
@@ -1169,7 +1082,7 @@ export function NewRepairTicketForm() {
                 <Button
                   onClick={handleContinue}
                   variant="outline"
-                  className="border-gray-700 bg-gray-900/50 text-white hover:bg-gray-800"
+                  className="border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
                 >
                   Continue to Dashboard
                 </Button>
