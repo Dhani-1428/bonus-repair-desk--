@@ -61,15 +61,15 @@ export default function NewTicketPage() {
   const getStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
       case "pending":
-        return "text-yellow-200"
+        return "text-yellow-700"
       case "in_progress":
-        return "text-blue-200"
+        return "text-blue-700"
       case "completed":
-        return "text-green-200"
+        return "text-green-700"
       case "delivered":
-        return "text-purple-200"
+        return "text-purple-700"
       default:
-        return "text-gray-200"
+        return "text-black"
     }
   }
 
@@ -117,27 +117,27 @@ export default function NewTicketPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6 text-white">
+      <div className="space-y-6 text-black">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-balance text-white">
+          <h1 className="text-3xl font-bold tracking-tight text-balance text-black">
             {t("page.newTicket.title")}
           </h1>
-          <p className="text-gray-300 text-balance">
+          <p className="text-black text-balance">
             {t("page.newTicket.subtitle")}
           </p>
         </div>
 
         {/* New Repair Device Form */}
         <div className="mb-6">
-          <h2 className="text-xl font-semibold mb-4 text-white">{t("page.newTicket.title")}</h2>
+          <h2 className="text-xl font-semibold mb-4 text-black">{t("page.newTicket.title")}</h2>
           <NewRepairTicketForm />
         </div>
 
         {/* Devices Information Section */}
-        <Card id="devices-information-section" className="shadow-2xl border border-gray-800/50 bg-gradient-to-br from-gray-900/95 via-black/95 to-gray-900/95 backdrop-blur-sm">
-          <CardHeader className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-b border-gray-800/50 rounded-t-lg px-6 py-4">
+        <Card id="devices-information-section" className="shadow-xl border border-blue-200 bg-white">
+          <CardHeader className="bg-blue-50 border-b border-blue-200 rounded-t-lg px-6 py-4">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-2xl flex items-center gap-2 text-white">
+              <CardTitle className="text-2xl flex items-center gap-2 text-black">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
                 </svg>
@@ -147,7 +147,7 @@ export default function NewTicketPage() {
                 variant="outline"
                 size="sm"
                 onClick={() => setShowDevices(!showDevices)}
-                className="border-gray-700 bg-gray-900/50 text-white hover:bg-gray-800"
+                className="border-blue-300 bg-white text-black hover:bg-blue-50"
                 data-show-devices-button
               >
                 {showDevices ? t("common.hide") : t("common.show")} {t("page.tickets.title")} ({devices.length})
@@ -155,9 +155,9 @@ export default function NewTicketPage() {
             </div>
           </CardHeader>
           {showDevices && (
-            <CardContent className="p-6 text-white">
+            <CardContent className="p-6 text-black">
               {devices.length === 0 ? (
-                <div className="text-center py-8 text-gray-400">
+                <div className="text-center py-8 text-black">
                   <p>{t("dashboard.noDevicesRegistered")}</p>
                   <p className="text-sm mt-2">{t("dashboard.createNewTicketToStart")}</p>
                 </div>
@@ -166,40 +166,40 @@ export default function NewTicketPage() {
                   {devices.map((device, index) => (
                     <div
                       key={device.id || index}
-                      className="border-2 border-gray-800/50 rounded-xl p-4 bg-gradient-to-br from-gray-900/50 to-black/50"
+                      className="border-2 border-blue-200 rounded-xl p-4 bg-white"
                     >
                       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                         <div>
-                          <p className="text-sm text-gray-400">{t("ticket.repairNumber")}</p>
-                          <p className="font-semibold">{device.repairNumber || t("common.notAvailable")}</p>
+                          <p className="text-sm text-black">{t("ticket.repairNumber")}</p>
+                          <p className="font-semibold text-black">{device.repairNumber || t("common.notAvailable")}</p>
                         </div>
                         <div>
-                          <p className="text-sm text-gray-400">{t("form.customerName")}</p>
-                          <p className="font-semibold">{device.customerName || t("common.notAvailable")}</p>
+                          <p className="text-sm text-black">{t("form.customerName")}</p>
+                          <p className="font-semibold text-black">{device.customerName || t("common.notAvailable")}</p>
                         </div>
                         <div>
-                          <p className="text-sm text-gray-400">{t("ticket.clientNif")}</p>
-                          <p className="font-semibold">{device.clientId || t("common.notAvailable")}</p>
+                          <p className="text-sm text-black">{t("ticket.clientNif")}</p>
+                          <p className="font-semibold text-black">{device.clientId || t("common.notAvailable")}</p>
                         </div>
                         <div>
-                          <p className="text-sm text-gray-400">{t("table.contact")}</p>
-                          <p className="font-semibold">{device.contact || t("common.notAvailable")}</p>
+                          <p className="text-sm text-black">{t("table.contact")}</p>
+                          <p className="font-semibold text-black">{device.contact || t("common.notAvailable")}</p>
                         </div>
                         <div>
-                          <p className="text-sm text-gray-400">{t("ticket.brandModel")}</p>
-                          <p className="font-semibold">{device.brand || t("common.notAvailable")} - {device.model || t("common.notAvailable")}</p>
+                          <p className="text-sm text-black">{t("ticket.brandModel")}</p>
+                          <p className="font-semibold text-black">{device.brand || t("common.notAvailable")} - {device.model || t("common.notAvailable")}</p>
                         </div>
                         <div>
-                          <p className="text-sm text-gray-400">{t("table.imei")}</p>
-                          <p className="font-semibold">{device.imeiNo || t("common.notAvailable")}</p>
+                          <p className="text-sm text-black">{t("table.imei")}</p>
+                          <p className="font-semibold text-black">{device.imeiNo || t("common.notAvailable")}</p>
                         </div>
                         <div>
-                          <p className="text-sm text-gray-400 mb-2">{t("table.status")}</p>
+                          <p className="text-sm text-black mb-2">{t("table.status")}</p>
                           <Select
                             value={device.status?.toLowerCase() || "pending"}
                             onValueChange={(value) => updateTicketStatus(device.id, value)}
                           >
-                            <SelectTrigger className={`${getStatusColor(device.status)} bg-gray-800/50 border-gray-700 w-full font-semibold`}>
+                            <SelectTrigger className={`${getStatusColor(device.status)} bg-white border-blue-300 w-full font-semibold`}>
                               <SelectValue>
                                 {device.status === "pending" || device.status === "PENDING" ? t("status.pending") :
                                  device.status === "in_progress" || device.status === "IN_PROGRESS" || device.status === "in-progress" ? t("status.in_progress") :
@@ -208,35 +208,35 @@ export default function NewTicketPage() {
                                  device.status || t("status.pending")}
                               </SelectValue>
                             </SelectTrigger>
-                            <SelectContent className="bg-gray-900 border-gray-700">
-                              <SelectItem value="pending" className="text-white cursor-pointer hover:bg-gray-800">{t("status.pending")}</SelectItem>
-                              <SelectItem value="in_progress" className="text-white cursor-pointer hover:bg-gray-800">{t("status.in_progress")}</SelectItem>
-                              <SelectItem value="completed" className="text-white cursor-pointer hover:bg-gray-800">{t("status.completed")}</SelectItem>
-                              <SelectItem value="delivered" className="text-white cursor-pointer hover:bg-gray-800">{t("status.delivered")}</SelectItem>
+                            <SelectContent className="bg-white border-blue-200">
+                              <SelectItem value="pending" className="text-black cursor-pointer hover:bg-blue-50">{t("status.pending")}</SelectItem>
+                              <SelectItem value="in_progress" className="text-black cursor-pointer hover:bg-blue-50">{t("status.in_progress")}</SelectItem>
+                              <SelectItem value="completed" className="text-black cursor-pointer hover:bg-blue-50">{t("status.completed")}</SelectItem>
+                              <SelectItem value="delivered" className="text-black cursor-pointer hover:bg-blue-50">{t("status.delivered")}</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
                         <div>
-                          <p className="text-sm text-gray-400">{t("table.price")}</p>
-                          <p className="font-semibold">€{device.price || "0.00"}</p>
+                          <p className="text-sm text-black">{t("table.price")}</p>
+                          <p className="font-semibold text-black">€{device.price || "0.00"}</p>
                         </div>
                         <div>
-                          <p className="text-sm text-gray-400">{t("ticket.created")}</p>
-                          <p className="font-semibold text-xs">
+                          <p className="text-sm text-black">{t("ticket.created")}</p>
+                          <p className="font-semibold text-xs text-black">
                             {device.createdAt ? new Date(device.createdAt).toLocaleDateString() : t("common.notAvailable")}
                           </p>
                         </div>
                       </div>
-                      <div className="mt-4 pt-4 border-t border-gray-800">
-                        <p className="text-sm text-gray-400 mb-2">{t("ticket.service")} {Array.isArray(device.selectedServices) ? device.selectedServices.join(", ") : device.serviceName || t("common.notAvailable")}</p>
-                        <p className="text-sm text-gray-400">{t("ticket.problem")} {device.problem || t("common.notAvailable")}</p>
+                      <div className="mt-4 pt-4 border-t border-blue-200">
+                        <p className="text-sm text-black mb-2">{t("ticket.service")} {Array.isArray(device.selectedServices) ? device.selectedServices.join(", ") : device.serviceName || t("common.notAvailable")}</p>
+                        <p className="text-sm text-black">{t("ticket.problem")} {device.problem || t("common.notAvailable")}</p>
                       </div>
                       <div className="mt-4 flex justify-end">
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => handlePrintReceipt(device)}
-                          className="border-blue-600/50 bg-blue-900/20 text-blue-400 hover:bg-blue-900/40 hover:border-blue-500"
+                          className="border-blue-500 bg-blue-50 text-blue-700 hover:bg-blue-100 hover:border-blue-600"
                         >
                           <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />

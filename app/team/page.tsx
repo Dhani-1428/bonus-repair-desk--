@@ -9,12 +9,12 @@ export default function TeamPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6 text-white">
+      <div className="space-y-6 text-black">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-balance text-white">
+          <h1 className="text-3xl font-bold tracking-tight text-balance text-black">
             {t("team.page.title")}
           </h1>
-          <p className="text-gray-300 text-balance">{t("team.page.subtitle")}</p>
+          <p className="text-black text-balance">{t("team.page.subtitle")}</p>
         </div>
         <TeamManagement />
       </div>

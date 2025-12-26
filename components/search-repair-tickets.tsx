@@ -395,11 +395,11 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
       case "pending":
         return "bg-yellow-100 text-yellow-800 border border-yellow-200"
       case "in_progress":
-        return "bg-gray-700 text-white border border-gray-600"
+        return "bg-blue-100 text-blue-800 border border-blue-200"
       case "completed":
-        return "bg-gray-800 text-white border border-gray-700"
+        return "bg-green-100 text-green-800 border border-green-200"
       case "delivered":
-        return "bg-gray-900 text-white border border-gray-800"
+        return "bg-purple-100 text-purple-800 border border-purple-200"
       default:
         return "bg-gray-100 text-gray-800 border border-gray-200"
     }
@@ -418,12 +418,12 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
             {t("search.title")}
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-6 text-white">
+        <CardContent className="p-6 text-black">
           <div className="grid gap-4 md:grid-cols-3">
             <div className="space-y-2">
-              <Label htmlFor="search" className="font-medium text-gray-300">{t("search.searchLabel")}</Label>
+              <Label htmlFor="search" className="font-medium text-black">{t("search.searchLabel")}</Label>
               <div className="relative">
-                <svg className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-600 z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
                 {searchType === "date" ? (
@@ -432,7 +432,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                     type="date"
                     value={dateFilter}
                     onChange={(e) => setDateFilter(e.target.value || "")}
-                    className="pl-10 bg-gray-800/80 border-gray-700 text-white focus:border-blue-500"
+                    className="pl-10 bg-white border-blue-300 text-black focus:border-blue-500"
                   />
                 ) : (
                   <Input
@@ -445,22 +445,22 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                       if (suggestions.length > 0) setShowSuggestions(true)
                     }}
                     onBlur={() => setTimeout(() => { setSearchInputFocused(false); setShowSuggestions(false) }, 200)}
-                    className="pl-10 bg-gray-800/80 border-gray-700 text-white placeholder:text-gray-400 focus:border-blue-500"
+                    className="pl-10 bg-white border-blue-300 text-black placeholder:text-gray-400 focus:border-blue-500"
                   />
                 )}
                 {showSuggestions && suggestions.length > 0 && (
-                  <div className="absolute z-50 w-full mt-1 bg-gray-800 border-2 border-gray-700 rounded-lg shadow-xl max-h-64 overflow-y-auto">
+                  <div className="absolute z-50 w-full mt-1 bg-white border-2 border-blue-200 rounded-lg shadow-xl max-h-64 overflow-y-auto">
                     {suggestions.map((suggestion, index) => (
                       <div
                         key={index}
                         onClick={() => handleSuggestionClick(suggestion)}
-                        className="px-4 py-3 hover:bg-gray-700 cursor-pointer border-b border-gray-700 last:border-b-0 transition-colors"
+                        className="px-4 py-3 hover:bg-blue-50 cursor-pointer border-b border-blue-100 last:border-b-0 transition-colors"
                       >
                         <div className="flex items-center gap-2">
-                          <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4 text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                           </svg>
-                          <span className="text-sm font-medium text-white">{suggestion.display}</span>
+                          <span className="text-sm font-medium text-black">{suggestion.display}</span>
                         </div>
                       </div>
                     ))}
@@ -469,7 +469,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="searchType" className="font-medium text-gray-300">{t("search.searchBy")}</Label>
+              <Label htmlFor="searchType" className="font-medium text-black">{t("search.searchBy")}</Label>
               <Select value={searchType} onValueChange={(value) => {
                 setSearchType(value)
                 if (value === "date") {
@@ -479,31 +479,31 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                   if (searchTerm.trim()) handleSearch(searchTerm, value)
                 }
               }}>
-                <SelectTrigger id="searchType" className="bg-gray-800/80 border-gray-700 text-white">
+                <SelectTrigger id="searchType" className="bg-white border-blue-300 text-black">
                   <SelectValue placeholder={t("search.field.all")} />
                 </SelectTrigger>
-                <SelectContent className="bg-gray-800 border-gray-700" side="bottom" sideOffset={4}>
-                  <SelectItem value="all" className="text-white">{t("search.field.all")}</SelectItem>
-                  <SelectItem value="id" className="text-white">ID</SelectItem>
-                  <SelectItem value="name" className="text-white">{t("search.field.name")}</SelectItem>
-                  <SelectItem value="contact" className="text-white">{t("search.field.contact")}</SelectItem>
-                  <SelectItem value="imei" className="text-white">{t("search.field.imei")}</SelectItem>
-                  <SelectItem value="model" className="text-white">{t("search.field.model")}</SelectItem>
+                <SelectContent className="bg-white border-blue-200" side="bottom" sideOffset={4}>
+                  <SelectItem value="all" className="text-black">{t("search.field.all")}</SelectItem>
+                  <SelectItem value="id" className="text-black">ID</SelectItem>
+                  <SelectItem value="name" className="text-black">{t("search.field.name")}</SelectItem>
+                  <SelectItem value="contact" className="text-black">{t("search.field.contact")}</SelectItem>
+                  <SelectItem value="imei" className="text-black">{t("search.field.imei")}</SelectItem>
+                  <SelectItem value="model" className="text-black">{t("search.field.model")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="statusFilter" className="font-medium text-gray-300">{t("search.filterByStatus")}</Label>
+              <Label htmlFor="statusFilter" className="font-medium text-black">{t("search.filterByStatus")}</Label>
               <Select value={statusFilter} onValueChange={handleStatusFilter}>
-                <SelectTrigger id="statusFilter" className="bg-gray-800/80 border-gray-700 text-white">
+                <SelectTrigger id="statusFilter" className="bg-white border-blue-300 text-black">
                   <SelectValue placeholder={t("status.all")} />
                 </SelectTrigger>
-                <SelectContent className="bg-gray-800 border-gray-700" side="bottom" sideOffset={4}>
-                  <SelectItem value="all" className="text-white">{t("status.all")}</SelectItem>
-                  <SelectItem value="pending" className="text-white">{t("status.pending")}</SelectItem>
-                  <SelectItem value="in_progress" className="text-white">{t("status.in_progress")}</SelectItem>
-                  <SelectItem value="completed" className="text-white">{t("status.completed")}</SelectItem>
-                  <SelectItem value="delivered" className="text-white">{t("status.delivered")}</SelectItem>
+                <SelectContent className="bg-white border-blue-200" side="bottom" sideOffset={4}>
+                  <SelectItem value="all" className="text-black">{t("status.all")}</SelectItem>
+                  <SelectItem value="pending" className="text-black">{t("status.pending")}</SelectItem>
+                  <SelectItem value="in_progress" className="text-black">{t("status.in_progress")}</SelectItem>
+                  <SelectItem value="completed" className="text-black">{t("status.completed")}</SelectItem>
+                  <SelectItem value="delivered" className="text-black">{t("status.delivered")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -511,10 +511,10 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
         </CardContent>
       </Card>
 
-      <Card className="shadow-2xl border border-gray-800/50 bg-gradient-to-br from-gray-900/95 via-black/95 to-gray-900/95 backdrop-blur-sm">
-        <CardHeader className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-b border-gray-800/50 rounded-t-lg p-6">
-          <CardTitle className="text-2xl font-bold text-white flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center ring-2 ring-blue-500/50 shadow-lg">
+      <Card className="shadow-xl border border-blue-200 bg-white">
+        <CardHeader className="bg-blue-50 border-b border-blue-200 rounded-t-lg p-6">
+          <CardTitle className="text-2xl font-bold text-black flex items-center gap-3">
+            <div className="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center ring-2 ring-blue-200 shadow-md">
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>
@@ -522,15 +522,15 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
             {t("common.allDevices")} ({filteredTickets.length} {filteredTickets.length === 1 ? t("search.results.device") : t("search.results.devices")})
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-6 text-white">
+        <CardContent className="p-6 text-black">
           {filteredTickets.length === 0 ? (
             <div className="text-center py-16">
-              <div className="w-20 h-20 mx-auto bg-gradient-to-br from-blue-600/20 to-purple-600/20 rounded-2xl flex items-center justify-center mb-6 border border-gray-800/50">
-                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-20 h-20 mx-auto bg-blue-50 rounded-2xl flex items-center justify-center mb-6 border border-blue-200">
+                <svg className="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
-              <p className="text-gray-300 text-lg font-medium">
+              <p className="text-black text-lg font-medium">
                 {tickets.length === 0 ? t("search.noDevicesYet") : t("search.noDevicesMatch")}
               </p>
             </div>
@@ -538,44 +538,44 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
             <div className="overflow-x-auto">
               <table className="w-full border-collapse">
                 <thead>
-                  <tr className="bg-gradient-to-r from-gray-800/50 to-gray-900/50 border-b-2 border-gray-700">
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider border-r border-gray-700">{t("table.date")}</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider border-r border-gray-700">{t("table.customer")}</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider border-r border-gray-700">{t("table.contact")}</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider border-r border-gray-700">{t("table.model")}</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider border-r border-gray-700">{t("table.imei")}</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider border-r border-gray-700">{t("table.service")}</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider border-r border-gray-700">{t("table.status")}</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider border-r border-gray-700">{t("table.price")}</th>
-                    <th className="px-4 py-3 text-center text-xs font-semibold text-gray-300 uppercase tracking-wider">{t("table.action")}</th>
+                  <tr className="bg-blue-50 border-b-2 border-blue-200">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider border-r border-blue-200">{t("table.date")}</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider border-r border-blue-200">{t("table.customer")}</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider border-r border-blue-200">{t("table.contact")}</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider border-r border-blue-200">{t("table.model")}</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider border-r border-blue-200">{t("table.imei")}</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider border-r border-blue-200">{t("table.service")}</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider border-r border-blue-200">{t("table.status")}</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider border-r border-blue-200">{t("table.price")}</th>
+                    <th className="px-4 py-3 text-center text-xs font-semibold text-black uppercase tracking-wider">{t("table.action")}</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-800/50">
+                <tbody className="divide-y divide-blue-100">
                   {filteredTickets.map((ticket) => (
                     <tr
                       key={ticket.id}
                       onClick={() => handleModelClick(ticket)}
-                      className="bg-gradient-to-r from-gray-900/30 to-black/30 hover:from-gray-800/50 hover:to-gray-900/50 transition-all cursor-pointer border-b border-gray-800/30"
+                      className="bg-white hover:bg-blue-50 transition-all cursor-pointer border-b border-blue-100"
                     >
-                      <td className="px-4 py-3 text-sm text-gray-300 border-r border-gray-800/30 whitespace-nowrap">
+                      <td className="px-4 py-3 text-sm text-black border-r border-blue-100 whitespace-nowrap">
                         {new Date(ticket.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                       </td>
-                      <td className="px-4 py-3 text-sm font-medium text-white border-r border-gray-800/30 whitespace-nowrap">
+                      <td className="px-4 py-3 text-sm font-medium text-black border-r border-blue-100 whitespace-nowrap">
                         {ticket.customerName}
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-300 border-r border-gray-800/30 whitespace-nowrap">
+                      <td className="px-4 py-3 text-sm text-black border-r border-blue-100 whitespace-nowrap">
                         {ticket.contact}
                       </td>
-                      <td className="px-4 py-3 text-sm font-semibold text-white border-r border-gray-800/30 whitespace-nowrap">
+                      <td className="px-4 py-3 text-sm font-semibold text-black border-r border-blue-100 whitespace-nowrap">
                         {ticket.model}
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-300 font-mono border-r border-gray-800/30 whitespace-nowrap">
+                      <td className="px-4 py-3 text-sm text-black font-mono border-r border-blue-100 whitespace-nowrap">
                         {ticket.imeiNo}
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-300 border-r border-gray-800/30 max-w-xs truncate">
+                      <td className="px-4 py-3 text-sm text-black border-r border-blue-100 max-w-xs truncate">
                         {ticket.serviceName || t("common.notAvailable")}
                       </td>
-                      <td className="px-4 py-3 text-sm border-r border-gray-800/30 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
+                      <td className="px-4 py-3 text-sm border-r border-blue-100 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
                         <Select 
                           value={ticket.status?.toLowerCase() || "pending"} 
                           onValueChange={(value) => {
@@ -591,15 +591,15 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                                ticket.status?.replace("_", " ") || t("status.pending")}
                             </SelectValue>
                           </SelectTrigger>
-                          <SelectContent className="bg-gray-800 border-gray-700 z-50">
-                            <SelectItem value="pending" className="text-white cursor-pointer">{t("status.pending")}</SelectItem>
-                            <SelectItem value="in_progress" className="text-white cursor-pointer">{t("status.in_progress")}</SelectItem>
-                            <SelectItem value="completed" className="text-white cursor-pointer">{t("status.completed")}</SelectItem>
-                            <SelectItem value="delivered" className="text-white cursor-pointer">{t("status.delivered")}</SelectItem>
+                          <SelectContent className="bg-white border-blue-200 z-50">
+                            <SelectItem value="pending" className="text-black cursor-pointer">{t("status.pending")}</SelectItem>
+                            <SelectItem value="in_progress" className="text-black cursor-pointer">{t("status.in_progress")}</SelectItem>
+                            <SelectItem value="completed" className="text-black cursor-pointer">{t("status.completed")}</SelectItem>
+                            <SelectItem value="delivered" className="text-black cursor-pointer">{t("status.delivered")}</SelectItem>
                           </SelectContent>
                         </Select>
                       </td>
-                      <td className="px-4 py-3 text-sm font-bold text-white border-r border-gray-800/30 whitespace-nowrap">
+                      <td className="px-4 py-3 text-sm font-bold text-black border-r border-blue-100 whitespace-nowrap">
                         €{ticket.price}
                       </td>
                       <td className="px-4 py-3 text-center whitespace-nowrap">
@@ -608,7 +608,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                             e.stopPropagation()
                             handleEditClick(ticket)
                           }}
-                          className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center mx-auto hover:from-blue-700 hover:to-purple-700 transition-colors shadow-lg cursor-pointer"
+                          className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mx-auto hover:bg-blue-600 transition-colors shadow-md cursor-pointer"
                         >
                           <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
@@ -625,62 +625,62 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
       </Card>
 
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-gradient-to-br from-gray-900/95 via-black/95 to-gray-900/95 border-gray-800 text-white">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-white border-blue-200 text-black">
           <DialogHeader>
-            <DialogTitle className="text-white text-2xl font-bold">{t("ticket.edit")}</DialogTitle>
+            <DialogTitle className="text-black text-2xl font-bold">{t("ticket.edit")}</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleEditSubmit} className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="edit-customerName" className="text-gray-300">{t("form.customerName")} *</Label>
-                <Input id="edit-customerName" value={editFormData.customerName || ""} onChange={(e) => setEditFormData({ ...editFormData, customerName: e.target.value })} required className="bg-gray-800/80 border-gray-700 text-white placeholder:text-gray-400" />
+                <Label htmlFor="edit-customerName" className="text-black">{t("form.customerName")} *</Label>
+                <Input id="edit-customerName" value={editFormData.customerName || ""} onChange={(e) => setEditFormData({ ...editFormData, customerName: e.target.value })} required className="bg-white border-blue-300 text-black placeholder:text-gray-400" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="edit-contact" className="text-gray-300">{t("table.contact")} *</Label>
-                <Input id="edit-contact" value={editFormData.contact || ""} onChange={(e) => setEditFormData({ ...editFormData, contact: e.target.value })} required className="bg-gray-800/80 border-gray-700 text-white placeholder:text-gray-400" />
+                <Label htmlFor="edit-contact" className="text-black">{t("table.contact")} *</Label>
+                <Input id="edit-contact" value={editFormData.contact || ""} onChange={(e) => setEditFormData({ ...editFormData, contact: e.target.value })} required className="bg-white border-blue-300 text-black placeholder:text-gray-400" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="edit-imeiNo" className="text-gray-300">{t("form.imei")} *</Label>
-                <Input id="edit-imeiNo" value={editFormData.imeiNo || ""} onChange={(e) => setEditFormData({ ...editFormData, imeiNo: e.target.value })} required className="bg-gray-800/80 border-gray-700 text-white placeholder:text-gray-400" />
+                <Label htmlFor="edit-imeiNo" className="text-black">{t("form.imei")} *</Label>
+                <Input id="edit-imeiNo" value={editFormData.imeiNo || ""} onChange={(e) => setEditFormData({ ...editFormData, imeiNo: e.target.value })} required className="bg-white border-blue-300 text-black placeholder:text-gray-400" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="edit-model" className="text-gray-300">{t("form.model")} *</Label>
-                <Input id="edit-model" value={editFormData.model || ""} onChange={(e) => setEditFormData({ ...editFormData, model: e.target.value })} required className="bg-gray-800/80 border-gray-700 text-white placeholder:text-gray-400" />
+                <Label htmlFor="edit-model" className="text-black">{t("form.model")} *</Label>
+                <Input id="edit-model" value={editFormData.model || ""} onChange={(e) => setEditFormData({ ...editFormData, model: e.target.value })} required className="bg-white border-blue-300 text-black placeholder:text-gray-400" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="edit-price" className="text-gray-300">{t("form.price")} *</Label>
-                <Input id="edit-price" type="number" step="0.01" value={editFormData.price || ""} onChange={(e) => setEditFormData({ ...editFormData, price: e.target.value })} required className="bg-gray-800/80 border-gray-700 text-white placeholder:text-gray-400" />
+                <Label htmlFor="edit-price" className="text-black">{t("form.price")} *</Label>
+                <Input id="edit-price" type="number" step="0.01" value={editFormData.price || ""} onChange={(e) => setEditFormData({ ...editFormData, price: e.target.value })} required className="bg-white border-blue-300 text-black placeholder:text-gray-400" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="edit-serviceName" className="text-gray-300">{t("form.serviceNames")} *</Label>
-                <Input id="edit-serviceName" value={editFormData.serviceName || ""} onChange={(e) => setEditFormData({ ...editFormData, serviceName: e.target.value })} required className="bg-gray-800/80 border-gray-700 text-white placeholder:text-gray-400" />
+                <Label htmlFor="edit-serviceName" className="text-black">{t("form.serviceNames")} *</Label>
+                <Input id="edit-serviceName" value={editFormData.serviceName || ""} onChange={(e) => setEditFormData({ ...editFormData, serviceName: e.target.value })} required className="bg-white border-blue-300 text-black placeholder:text-gray-400" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="edit-status" className="text-gray-300">{t("table.status")} *</Label>
+                <Label htmlFor="edit-status" className="text-black">{t("table.status")} *</Label>
                 <Select value={editFormData.status || "pending"} onValueChange={(value) => setEditFormData({ ...editFormData, status: value })}>
-                  <SelectTrigger id="edit-status" className="bg-gray-800/80 border-gray-700 text-white">
+                  <SelectTrigger id="edit-status" className="bg-white border-blue-300 text-black">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-gray-800 border-gray-700" side="bottom" sideOffset={4}>
-                    <SelectItem value="pending" className="text-white">{t("status.pending")}</SelectItem>
-                    <SelectItem value="in_progress" className="text-white">{t("status.in_progress")}</SelectItem>
-                    <SelectItem value="completed" className="text-white">{t("status.completed")}</SelectItem>
-                    <SelectItem value="delivered" className="text-white">{t("status.delivered")}</SelectItem>
+                  <SelectContent className="bg-white border-blue-200" side="bottom" sideOffset={4}>
+                    <SelectItem value="pending" className="text-black">{t("status.pending")}</SelectItem>
+                    <SelectItem value="in_progress" className="text-black">{t("status.in_progress")}</SelectItem>
+                    <SelectItem value="completed" className="text-black">{t("status.completed")}</SelectItem>
+                    <SelectItem value="delivered" className="text-black">{t("status.delivered")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-condition" className="text-gray-200">{t("form.condition")}</Label>
-              <Textarea id="edit-condition" value={editFormData.condition || ""} onChange={(e) => setEditFormData({ ...editFormData, condition: e.target.value })} className="bg-gray-800/50 border-gray-700 text-white min-h-[80px]" />
+              <Label htmlFor="edit-condition" className="text-black">{t("form.condition")}</Label>
+              <Textarea id="edit-condition" value={editFormData.condition || ""} onChange={(e) => setEditFormData({ ...editFormData, condition: e.target.value })} className="bg-white border-blue-300 text-black min-h-[80px]" />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-problem" className="text-gray-200">{t("form.technicianNotes")} *</Label>
-              <Textarea id="edit-problem" value={editFormData.problem || ""} onChange={(e) => setEditFormData({ ...editFormData, problem: e.target.value })} required className="bg-gray-800/50 border-gray-700 text-white min-h-[100px]" />
+              <Label htmlFor="edit-problem" className="text-black">{t("form.technicianNotes")} *</Label>
+              <Textarea id="edit-problem" value={editFormData.problem || ""} onChange={(e) => setEditFormData({ ...editFormData, problem: e.target.value })} required className="bg-white border-blue-300 text-black min-h-[100px]" />
             </div>
             <div className="flex justify-end gap-2 pt-4">
-              <Button type="button" variant="outline" onClick={() => { setIsEditDialogOpen(false); setEditingTicket(null) }} className="border-gray-700 bg-gray-900/50 text-white hover:bg-gray-800">{t("form.cancel")}</Button>
-              <Button type="submit" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl hover:shadow-blue-500/20 transform hover:scale-105 transition-all duration-300">{t("common.saveChanges")}</Button>
+              <Button type="button" variant="outline" onClick={() => { setIsEditDialogOpen(false); setEditingTicket(null) }} className="border-blue-300 bg-white text-black hover:bg-blue-50">{t("form.cancel")}</Button>
+              <Button type="submit" className="bg-blue-500 hover:bg-blue-600 text-white shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300">{t("common.saveChanges")}</Button>
             </div>
           </form>
         </DialogContent>
