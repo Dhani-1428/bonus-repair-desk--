@@ -79,15 +79,15 @@ export function StatsCards() {
   return (
     <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-5">
       <Card
-        className="shadow-lg border-0 bg-gray-800 cursor-pointer hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 group overflow-hidden relative"
+        className="shadow-lg border border-blue-200 bg-white cursor-pointer hover:shadow-xl hover:scale-[1.02] transition-all duration-300 group overflow-hidden relative"
         onClick={() => handleCardClick("all")}
       >
-        <CardHeader className="flex flex-row items-center justify-between pb-3 relative z-10">
-          <CardTitle className="text-sm font-semibold text-white uppercase tracking-wide">
+        <CardHeader className="flex flex-row items-center justify-between pb-3 relative z-10 bg-blue-50">
+          <CardTitle className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
             {t("stats.totalDevices")}
           </CardTitle>
-          <div className="w-12 h-12 bg-gray-700 rounded-xl flex items-center justify-center shadow-lg ring-2 ring-gray-600">
-            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center shadow-md ring-2 ring-blue-200">
+            <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -98,21 +98,21 @@ export function StatsCards() {
           </div>
         </CardHeader>
         <CardContent className="relative z-10">
-          <div className="text-4xl font-bold text-white mb-1">{stats.total}</div>
-          <p className="text-xs text-gray-300 font-medium">{t("stats.allRepairDevices")}</p>
+          <div className="text-4xl font-bold text-gray-900 mb-1">{stats.total}</div>
+          <p className="text-xs text-gray-600 font-medium">{t("stats.allRepairDevices")}</p>
         </CardContent>
       </Card>
 
       <Card
-        className="shadow-lg border-2 border-yellow-500/50 bg-gradient-to-br from-yellow-900/30 to-yellow-800/20 cursor-pointer hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 group overflow-hidden relative"
+        className="shadow-lg border-2 border-yellow-300 bg-white cursor-pointer hover:shadow-xl hover:scale-[1.02] transition-all duration-300 group overflow-hidden relative"
         onClick={() => handleCardClick("pending")}
       >
-        <CardHeader className="flex flex-row items-center justify-between pb-3 relative z-10">
-          <CardTitle className="text-sm font-semibold text-yellow-300 uppercase tracking-wide">
+        <CardHeader className="flex flex-row items-center justify-between pb-3 relative z-10 bg-yellow-50">
+          <CardTitle className="text-sm font-semibold text-yellow-700 uppercase tracking-wide">
             {t("status.pending")}
           </CardTitle>
-          <div className="w-12 h-12 bg-yellow-500/20 rounded-xl flex items-center justify-center shadow-lg ring-2 ring-yellow-500/50">
-            <svg className="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center shadow-md ring-2 ring-yellow-200">
+            <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -123,41 +123,41 @@ export function StatsCards() {
           </div>
         </CardHeader>
         <CardContent className="relative z-10">
-          <div className="text-4xl font-bold text-yellow-300 mb-1">{stats.pending}</div>
-          <p className="text-xs text-yellow-200 font-medium">{t("stats.awaitingService")}</p>
+          <div className="text-4xl font-bold text-yellow-700 mb-1">{stats.pending}</div>
+          <p className="text-xs text-yellow-600 font-medium">{t("stats.awaitingService")}</p>
         </CardContent>
       </Card>
 
       <Card
-        className="shadow-lg border-2 border-red-500/50 bg-gradient-to-br from-red-900/30 to-red-800/20 cursor-pointer hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 group overflow-hidden relative"
+        className="shadow-lg border-2 border-blue-300 bg-white cursor-pointer hover:shadow-xl hover:scale-[1.02] transition-all duration-300 group overflow-hidden relative"
         onClick={() => handleCardClick("in_progress")}
       >
-        <CardHeader className="flex flex-row items-center justify-between pb-3 relative z-10">
-          <CardTitle className="text-sm font-semibold text-red-300 uppercase tracking-wide">
+        <CardHeader className="flex flex-row items-center justify-between pb-3 relative z-10 bg-blue-50">
+          <CardTitle className="text-sm font-semibold text-blue-700 uppercase tracking-wide">
             {t("status.in_progress")} {t("status.notOk")}
           </CardTitle>
-          <div className="w-12 h-12 bg-red-500/20 rounded-xl flex items-center justify-center shadow-lg ring-2 ring-red-500/50">
-            <svg className="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center shadow-md ring-2 ring-blue-200">
+            <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
           </div>
         </CardHeader>
         <CardContent className="relative z-10">
-          <div className="text-4xl font-bold text-red-300 mb-1">{stats.inProgress}</div>
-          <p className="text-xs text-red-200 font-medium">{t("stats.currentlyBeingCompleted")}</p>
+          <div className="text-4xl font-bold text-blue-700 mb-1">{stats.inProgress}</div>
+          <p className="text-xs text-blue-600 font-medium">{t("stats.currentlyBeingCompleted")}</p>
         </CardContent>
       </Card>
 
       <Card
-        className="shadow-lg border-2 border-green-500/50 bg-gradient-to-br from-green-900/30 to-green-800/20 cursor-pointer hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 group overflow-hidden relative"
+        className="shadow-lg border-2 border-green-300 bg-white cursor-pointer hover:shadow-xl hover:scale-[1.02] transition-all duration-300 group overflow-hidden relative"
         onClick={() => handleCardClick("completed")}
       >
-        <CardHeader className="flex flex-row items-center justify-between pb-3 relative z-10">
-          <CardTitle className="text-sm font-semibold text-green-300 uppercase tracking-wide">
+        <CardHeader className="flex flex-row items-center justify-between pb-3 relative z-10 bg-green-50">
+          <CardTitle className="text-sm font-semibold text-green-700 uppercase tracking-wide">
             {t("status.completed")}
           </CardTitle>
-          <div className="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center shadow-lg ring-2 ring-green-500/50">
-            <svg className="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center shadow-md ring-2 ring-green-200">
+            <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -168,21 +168,21 @@ export function StatsCards() {
           </div>
         </CardHeader>
         <CardContent className="relative z-10">
-          <div className="text-4xl font-bold text-green-300 mb-1">{stats.completed}</div>
-          <p className="text-xs text-green-200 font-medium">{t("stats.repairsFinished")}</p>
+          <div className="text-4xl font-bold text-green-700 mb-1">{stats.completed}</div>
+          <p className="text-xs text-green-600 font-medium">{t("stats.repairsFinished")}</p>
         </CardContent>
       </Card>
 
       <Card
-        className="shadow-lg border-0 bg-gray-800 cursor-pointer hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 group overflow-hidden relative"
+        className="shadow-lg border border-blue-200 bg-white cursor-pointer hover:shadow-xl hover:scale-[1.02] transition-all duration-300 group overflow-hidden relative"
         onClick={() => handleCardClick("delivered")}
       >
-        <CardHeader className="flex flex-row items-center justify-between pb-3 relative z-10">
-          <CardTitle className="text-sm font-semibold text-white uppercase tracking-wide">
+        <CardHeader className="flex flex-row items-center justify-between pb-3 relative z-10 bg-blue-50">
+          <CardTitle className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
             {t("status.delivered")}
           </CardTitle>
-          <div className="w-12 h-12 bg-gray-700 rounded-xl flex items-center justify-center shadow-lg ring-2 ring-gray-600">
-            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center shadow-md ring-2 ring-blue-200">
+            <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -193,8 +193,8 @@ export function StatsCards() {
           </div>
         </CardHeader>
         <CardContent className="relative z-10">
-          <div className="text-4xl font-bold text-white mb-1">{stats.delivered}</div>
-          <p className="text-xs text-gray-300 font-medium">{t("stats.returnedToCustomers")}</p>
+          <div className="text-4xl font-bold text-gray-900 mb-1">{stats.delivered}</div>
+          <p className="text-xs text-gray-600 font-medium">{t("stats.returnedToCustomers")}</p>
         </CardContent>
       </Card>
     </div>

@@ -23,12 +23,12 @@ export default function DashboardPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-8 text-white">
+      <div className="space-y-8 text-gray-900">
         <div className="space-y-2">
-          <h1 className="text-4xl font-bold tracking-tight text-white">
+          <h1 className="text-4xl font-bold tracking-tight text-gray-900">
             {t("dashboard.welcomeBack")} {user.name}!
           </h1>
-          <p className="text-gray-300 text-lg font-medium">
+          <p className="text-gray-700 text-lg font-medium">
             {t("dashboard.whatsHappening")}
           </p>
         </div>

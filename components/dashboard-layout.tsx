@@ -154,10 +154,10 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-screen bg-blue-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto"></div>
-          <p className="mt-4 text-white">{t("common.loading")}</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+          <p className="mt-4 text-gray-900">{t("common.loading")}</p>
         </div>
       </div>
     )
@@ -170,17 +170,17 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const shopName = user.shopName || user.name || "Admin Panel"
 
   return (
-    <div className="min-h-screen w-full relative bg-black">
-      {/* Pearl Mist Background with Top Glow */}
+    <div className="min-h-screen w-full relative bg-blue-50">
+      {/* Light Blue Background with Top Glow */}
       <div
         className="absolute inset-0 z-0"
         style={{
-          background: "radial-gradient(ellipse 50% 35% at 50% 0%, rgba(226, 232, 240, 0.12), transparent 60%), #000000",
+          background: "radial-gradient(ellipse 50% 35% at 50% 0%, rgba(191, 219, 254, 0.3), transparent 60%), #f0f9ff",
         }}
       />
       
       {/* Header */}
-      <header className="sticky top-2 z-[9999] mx-auto w-full flex-row items-center justify-between self-start rounded-full bg-gradient-to-r from-gray-900/90 via-black/90 to-gray-900/90 backdrop-blur-md border border-gray-800/50 shadow-2xl transition-all duration-300 max-w-7xl px-4 py-2 mt-2"
+      <header className="sticky top-2 z-[9999] mx-auto w-full flex-row items-center justify-between self-start rounded-full bg-white backdrop-blur-md border border-blue-200 shadow-lg transition-all duration-300 max-w-7xl px-4 py-2 mt-2"
         style={{
           willChange: "transform",
           transform: "translateZ(0)",
@@ -191,25 +191,25 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         <div className="w-full flex items-center justify-between">
           <Link href={isSuperAdmin ? "/super-admin" : "/dashboard"} className="z-50 flex items-center justify-center gap-3 transition-all duration-300 group">
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl blur opacity-75 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <div className="relative bg-gradient-to-br from-blue-600 to-purple-700 p-2.5 rounded-xl shadow-lg transform group-hover:scale-105 transition-transform duration-300">
+              <div className="absolute inset-0 bg-blue-400 rounded-xl blur opacity-50 group-hover:opacity-75 transition-opacity duration-300"></div>
+              <div className="relative bg-blue-500 p-2.5 rounded-xl shadow-md transform group-hover:scale-105 transition-transform duration-300">
                 <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                 </svg>
               </div>
             </div>
             <div className="flex flex-col">
-              <span className="text-foreground font-bold text-lg tracking-tight group-hover:text-blue-300 transition-colors duration-300">
+              <span className="text-gray-900 font-bold text-lg tracking-tight group-hover:text-blue-600 transition-colors duration-300">
                 {shopName}
               </span>
               {isSuperAdmin && (
-                <span className="text-xs text-gray-400 font-medium">Super Admin</span>
+                <span className="text-xs text-gray-600 font-medium">Super Admin</span>
               )}
             </div>
           </Link>
           <div className="flex items-center gap-4 relative z-10">
             <div className="flex items-center gap-3">
-              <label className="text-sm text-gray-300 flex items-center gap-2 font-medium">
+              <label className="text-sm text-gray-700 flex items-center gap-2 font-medium">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
                 </svg>
@@ -217,7 +217,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                 <select
                   value={language}
                   onChange={(e) => setLanguage(e.target.value as "en" | "pt" | "de" | "fr" | "ur" | "pa" | "hi")}
-                  className="border border-gray-700 rounded-lg text-sm px-3 py-1.5 bg-gray-900 text-white hover:border-gray-600 focus:border-gray-600 focus:ring-2 focus:ring-gray-700 transition-all font-medium"
+                  className="border border-blue-300 rounded-lg text-sm px-3 py-1.5 bg-white text-gray-900 hover:border-blue-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all font-medium"
                 >
                   <option value="en">{t("header.english")}</option>
                   <option value="pt">{t("header.portuguese")}</option>
@@ -229,26 +229,26 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                 </select>
               </label>
             </div>
-            <div className="h-8 w-px bg-gray-700"></div>
+            <div className="h-8 w-px bg-blue-200"></div>
             <div className="flex items-center gap-3">
               <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl blur opacity-50 group-hover:opacity-75 transition-opacity duration-300"></div>
-                <div className="relative w-10 h-10 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl flex items-center justify-center shadow-lg ring-2 ring-gray-700 group-hover:ring-blue-500 transition-all duration-300">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl blur opacity-50 group-hover:opacity-75 transition-opacity duration-300"></div>
+                <div className="relative w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg ring-2 ring-blue-200 group-hover:ring-blue-400 transition-all duration-300">
                   <span className="text-white font-bold text-sm">
                     {user?.name?.charAt(0).toUpperCase() || "U"}
                   </span>
                 </div>
               </div>
               <div className="hidden md:block">
-                <p className="text-sm font-semibold text-white">{user?.name}</p>
-                <p className="text-xs text-gray-400 capitalize font-medium">{user?.role || "member"}</p>
+                <p className="text-sm font-semibold text-gray-900">{user?.name}</p>
+                <p className="text-xs text-gray-600 capitalize font-medium">{user?.role || "member"}</p>
               </div>
             </div>
             <Button 
               variant="outline" 
               size="sm" 
               onClick={logout}
-              className="border-gray-700 bg-gray-900 text-white hover:bg-red-600 hover:border-red-500 font-medium transition-all duration-300 hover:shadow-lg hover:shadow-red-500/20 transform hover:scale-105"
+              className="border-blue-300 bg-white text-gray-700 hover:bg-red-50 hover:border-red-400 hover:text-red-600 font-medium transition-all duration-300 hover:shadow-lg hover:shadow-red-200 transform hover:scale-105"
             >
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -261,21 +261,21 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
       <div className="flex relative z-10 mt-4">
         {/* Sidebar */}
-        <aside className="w-72 bg-gradient-to-b from-gray-900/95 via-black/95 to-black border-r border-gray-800/50 min-h-[calc(100vh-140px)] p-6 shadow-2xl backdrop-blur-sm">
+        <aside className="w-72 bg-white border-r border-blue-200 min-h-[calc(100vh-140px)] p-6 shadow-lg">
           <nav className="space-y-2 animate-fade-in">
             {(user?.role === "super_admin" || user?.role === "SUPER_ADMIN" || user?.email === "superadmin@admin.com") ? (
               <>
                 <div className="pt-2 mb-4">
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 mb-2 flex items-center gap-2">
+                  <p className="text-xs font-semibold text-blue-600 uppercase tracking-wider px-3 mb-2 flex items-center gap-2">
                     <span className="w-1 h-1 bg-blue-500 rounded-full animate-pulse"></span>
                     Super Admin
                   </p>
                 </div>
                 <Link href="/super-admin">
-                  <Button variant="ghost" className="w-full justify-start hover:bg-gradient-to-r hover:from-blue-600/20 hover:to-purple-600/20 hover:text-white text-gray-300 font-medium h-12 transition-all duration-300 group relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600/0 to-purple-600/0 group-hover:from-blue-600/10 group-hover:to-purple-600/10 transition-all duration-300"></div>
-                    <div className="relative w-9 h-9 bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg flex items-center justify-center mr-3 group-hover:from-blue-600 group-hover:to-purple-600 transition-all duration-300 shadow-lg group-hover:shadow-blue-500/50 group-hover:scale-110">
-                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <Button variant="ghost" className="w-full justify-start hover:bg-blue-50 hover:text-blue-700 text-gray-700 font-medium h-12 transition-all duration-300 group relative overflow-hidden">
+                    <div className="absolute inset-0 bg-blue-50/0 group-hover:bg-blue-50 transition-all duration-300"></div>
+                    <div className="relative w-9 h-9 bg-blue-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-500 transition-all duration-300 shadow-md group-hover:shadow-blue-300 group-hover:scale-110">
+                      <svg className="w-5 h-5 text-blue-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                       </svg>
                     </div>
@@ -283,10 +283,10 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                   </Button>
                 </Link>
                 <Link href="/super-admin/users">
-                  <Button variant="ghost" className="w-full justify-start hover:bg-gradient-to-r hover:from-blue-600/20 hover:to-purple-600/20 hover:text-white text-gray-300 font-medium h-12 transition-all duration-300 group relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600/0 to-purple-600/0 group-hover:from-blue-600/10 group-hover:to-purple-600/10 transition-all duration-300"></div>
-                    <div className="relative w-9 h-9 bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg flex items-center justify-center mr-3 group-hover:from-blue-600 group-hover:to-purple-600 transition-all duration-300 shadow-lg group-hover:shadow-blue-500/50 group-hover:scale-110">
-                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <Button variant="ghost" className="w-full justify-start hover:bg-blue-50 hover:text-blue-700 text-gray-700 font-medium h-12 transition-all duration-300 group relative overflow-hidden">
+                    <div className="absolute inset-0 bg-blue-50/0 group-hover:bg-blue-50 transition-all duration-300"></div>
+                    <div className="relative w-9 h-9 bg-blue-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-500 transition-all duration-300 shadow-md group-hover:shadow-blue-300 group-hover:scale-110">
+                      <svg className="w-5 h-5 text-blue-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                       </svg>
                     </div>
@@ -294,10 +294,10 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                   </Button>
                 </Link>
                 <Link href="/super-admin/subscriptions">
-                  <Button variant="ghost" className="w-full justify-start hover:bg-gradient-to-r hover:from-blue-600/20 hover:to-purple-600/20 hover:text-white text-gray-300 font-medium h-12 transition-all duration-300 group relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600/0 to-purple-600/0 group-hover:from-blue-600/10 group-hover:to-purple-600/10 transition-all duration-300"></div>
-                    <div className="relative w-9 h-9 bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg flex items-center justify-center mr-3 group-hover:from-blue-600 group-hover:to-purple-600 transition-all duration-300 shadow-lg group-hover:shadow-blue-500/50 group-hover:scale-110">
-                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <Button variant="ghost" className="w-full justify-start hover:bg-blue-50 hover:text-blue-700 text-gray-700 font-medium h-12 transition-all duration-300 group relative overflow-hidden">
+                    <div className="absolute inset-0 bg-blue-50/0 group-hover:bg-blue-50 transition-all duration-300"></div>
+                    <div className="relative w-9 h-9 bg-blue-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-500 transition-all duration-300 shadow-md group-hover:shadow-blue-300 group-hover:scale-110">
+                      <svg className="w-5 h-5 text-blue-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                       </svg>
                     </div>
@@ -305,10 +305,10 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                   </Button>
                 </Link>
                 <Link href="/super-admin/payments">
-                  <Button variant="ghost" className="w-full justify-start hover:bg-gradient-to-r hover:from-blue-600/20 hover:to-purple-600/20 hover:text-white text-gray-300 font-medium h-12 transition-all duration-300 group relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600/0 to-purple-600/0 group-hover:from-blue-600/10 group-hover:to-purple-600/10 transition-all duration-300"></div>
-                    <div className="relative w-9 h-9 bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg flex items-center justify-center mr-3 group-hover:from-blue-600 group-hover:to-purple-600 transition-all duration-300 shadow-lg group-hover:shadow-blue-500/50 group-hover:scale-110">
-                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <Button variant="ghost" className="w-full justify-start hover:bg-blue-50 hover:text-blue-700 text-gray-700 font-medium h-12 transition-all duration-300 group relative overflow-hidden">
+                    <div className="absolute inset-0 bg-blue-50/0 group-hover:bg-blue-50 transition-all duration-300"></div>
+                    <div className="relative w-9 h-9 bg-blue-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-500 transition-all duration-300 shadow-md group-hover:shadow-blue-300 group-hover:scale-110">
+                      <svg className="w-5 h-5 text-blue-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
                       </svg>
                     </div>
@@ -319,10 +319,10 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             ) : (
               <>
                 <Link href="/dashboard">
-                  <Button variant="ghost" className="w-full justify-start hover:bg-gradient-to-r hover:from-blue-600/20 hover:to-purple-600/20 hover:text-white text-gray-300 font-medium h-12 transition-all duration-300 group relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600/0 to-purple-600/0 group-hover:from-blue-600/10 group-hover:to-purple-600/10 transition-all duration-300"></div>
-                    <div className="relative w-9 h-9 bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg flex items-center justify-center mr-3 group-hover:from-blue-600 group-hover:to-purple-600 transition-all duration-300 shadow-lg group-hover:shadow-blue-500/50 group-hover:scale-110">
-                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <Button variant="ghost" className="w-full justify-start hover:bg-blue-50 hover:text-blue-700 text-gray-700 font-medium h-12 transition-all duration-300 group relative overflow-hidden">
+                    <div className="absolute inset-0 bg-blue-50/0 group-hover:bg-blue-50 transition-all duration-300"></div>
+                    <div className="relative w-9 h-9 bg-blue-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-500 transition-all duration-300 shadow-md group-hover:shadow-blue-300 group-hover:scale-110">
+                      <svg className="w-5 h-5 text-blue-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -335,10 +335,10 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                   </Button>
                 </Link>
                 <Link href="/tickets/new">
-                  <Button variant="ghost" className="w-full justify-start hover:bg-gradient-to-r hover:from-blue-600/20 hover:to-purple-600/20 hover:text-white text-gray-300 font-medium h-12 transition-all duration-300 group relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600/0 to-purple-600/0 group-hover:from-blue-600/10 group-hover:to-purple-600/10 transition-all duration-300"></div>
-                    <div className="relative w-9 h-9 bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg flex items-center justify-center mr-3 group-hover:from-blue-600 group-hover:to-purple-600 transition-all duration-300 shadow-lg group-hover:shadow-blue-500/50 group-hover:scale-110">
-                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <Button variant="ghost" className="w-full justify-start hover:bg-blue-50 hover:text-blue-700 text-gray-700 font-medium h-12 transition-all duration-300 group relative overflow-hidden">
+                    <div className="absolute inset-0 bg-blue-50/0 group-hover:bg-blue-50 transition-all duration-300"></div>
+                    <div className="relative w-9 h-9 bg-blue-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-500 transition-all duration-300 shadow-md group-hover:shadow-blue-300 group-hover:scale-110">
+                      <svg className="w-5 h-5 text-blue-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
                       </svg>
                     </div>
@@ -346,10 +346,10 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                   </Button>
                 </Link>
                 <Link href="/tickets">
-                  <Button variant="ghost" className="w-full justify-start hover:bg-gradient-to-r hover:from-blue-600/20 hover:to-purple-600/20 hover:text-white text-gray-300 font-medium h-12 transition-all duration-300 group relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600/0 to-purple-600/0 group-hover:from-blue-600/10 group-hover:to-purple-600/10 transition-all duration-300"></div>
-                    <div className="relative w-9 h-9 bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg flex items-center justify-center mr-3 group-hover:from-blue-600 group-hover:to-purple-600 transition-all duration-300 shadow-lg group-hover:shadow-blue-500/50 group-hover:scale-110">
-                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <Button variant="ghost" className="w-full justify-start hover:bg-blue-50 hover:text-blue-700 text-gray-700 font-medium h-12 transition-all duration-300 group relative overflow-hidden">
+                    <div className="absolute inset-0 bg-blue-50/0 group-hover:bg-blue-50 transition-all duration-300"></div>
+                    <div className="relative w-9 h-9 bg-blue-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-500 transition-all duration-300 shadow-md group-hover:shadow-blue-300 group-hover:scale-110">
+                      <svg className="w-5 h-5 text-blue-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -362,10 +362,10 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                   </Button>
                 </Link>
                 <Link href="/analytics">
-                  <Button variant="ghost" className="w-full justify-start hover:bg-gradient-to-r hover:from-blue-600/20 hover:to-purple-600/20 hover:text-white text-gray-300 font-medium h-12 transition-all duration-300 group relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600/0 to-purple-600/0 group-hover:from-blue-600/10 group-hover:to-purple-600/10 transition-all duration-300"></div>
-                    <div className="relative w-9 h-9 bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg flex items-center justify-center mr-3 group-hover:from-blue-600 group-hover:to-purple-600 transition-all duration-300 shadow-lg group-hover:shadow-blue-500/50 group-hover:scale-110">
-                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <Button variant="ghost" className="w-full justify-start hover:bg-blue-50 hover:text-blue-700 text-gray-700 font-medium h-12 transition-all duration-300 group relative overflow-hidden">
+                    <div className="absolute inset-0 bg-blue-50/0 group-hover:bg-blue-50 transition-all duration-300"></div>
+                    <div className="relative w-9 h-9 bg-blue-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-500 transition-all duration-300 shadow-md group-hover:shadow-blue-300 group-hover:scale-110">
+                      <svg className="w-5 h-5 text-blue-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -378,10 +378,10 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                   </Button>
                 </Link>
                 <Link href="/subscription">
-                  <Button variant="ghost" className="w-full justify-start hover:bg-gradient-to-r hover:from-blue-600/20 hover:to-purple-600/20 hover:text-white text-gray-300 font-medium h-12 transition-all duration-300 group relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600/0 to-purple-600/0 group-hover:from-blue-600/10 group-hover:to-purple-600/10 transition-all duration-300"></div>
-                    <div className="relative w-9 h-9 bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg flex items-center justify-center mr-3 group-hover:from-blue-600 group-hover:to-purple-600 transition-all duration-300 shadow-lg group-hover:shadow-blue-500/50 group-hover:scale-110">
-                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <Button variant="ghost" className="w-full justify-start hover:bg-blue-50 hover:text-blue-700 text-gray-700 font-medium h-12 transition-all duration-300 group relative overflow-hidden">
+                    <div className="absolute inset-0 bg-blue-50/0 group-hover:bg-blue-50 transition-all duration-300"></div>
+                    <div className="relative w-9 h-9 bg-blue-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-500 transition-all duration-300 shadow-md group-hover:shadow-blue-300 group-hover:scale-110">
+                      <svg className="w-5 h-5 text-blue-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -393,17 +393,17 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                     <span className="relative">{t("header.subscription")}</span>
                   </Button>
                 </Link>
-                <div className="pt-4 mt-4 border-t border-gray-800">
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 mb-2 flex items-center gap-2">
+                <div className="pt-4 mt-4 border-t border-blue-200">
+                  <p className="text-xs font-semibold text-blue-600 uppercase tracking-wider px-3 mb-2 flex items-center gap-2">
                     <span className="w-1 h-1 bg-blue-500 rounded-full animate-pulse"></span>
                     {t("header.administration")}
                   </p>
                 </div>
                 <Link href="/trash">
-                  <Button variant="ghost" className="w-full justify-start hover:bg-gradient-to-r hover:from-blue-600/20 hover:to-purple-600/20 hover:text-white text-gray-300 font-medium h-12 transition-all duration-300 group relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600/0 to-purple-600/0 group-hover:from-blue-600/10 group-hover:to-purple-600/10 transition-all duration-300"></div>
-                    <div className="relative w-9 h-9 bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg flex items-center justify-center mr-3 group-hover:from-blue-600 group-hover:to-purple-600 transition-all duration-300 shadow-lg group-hover:shadow-blue-500/50 group-hover:scale-110">
-                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <Button variant="ghost" className="w-full justify-start hover:bg-blue-50 hover:text-blue-700 text-gray-700 font-medium h-12 transition-all duration-300 group relative overflow-hidden">
+                    <div className="absolute inset-0 bg-blue-50/0 group-hover:bg-blue-50 transition-all duration-300"></div>
+                    <div className="relative w-9 h-9 bg-blue-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-500 transition-all duration-300 shadow-md group-hover:shadow-blue-300 group-hover:scale-110">
+                      <svg className="w-5 h-5 text-blue-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -425,63 +425,63 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           <div className="flex-1 px-8 pt-8 pb-0">
             <div className="container mx-auto max-w-7xl">
               {subscription.paymentStatus === "REJECTED" || subscription.paymentStatus === "rejected" ? (
-                <div className="bg-gradient-to-r from-red-600/20 to-red-800/20 border-2 border-red-500/50 rounded-lg p-4 mb-4 flex items-center justify-between shadow-lg">
+                <div className="bg-red-50 border-2 border-red-300 rounded-lg p-4 mb-4 flex items-center justify-between shadow-md">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-red-500/20 rounded-full flex items-center justify-center">
-                      <X className="w-6 h-6 text-red-400" />
+                    <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                      <X className="w-6 h-6 text-red-600" />
                     </div>
                     <div>
-                      <p className="text-white font-semibold text-lg">{t("payment.declined")}</p>
-                      <p className="text-red-300 text-sm">{t("payment.declinedMessage")}</p>
+                      <p className="text-gray-900 font-semibold text-lg">{t("payment.declined")}</p>
+                      <p className="text-red-700 text-sm">{t("payment.declinedMessage")}</p>
                     </div>
                   </div>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={dismissPaymentNotification}
-                    className="text-red-300 hover:text-white"
+                    className="text-red-600 hover:text-red-700"
                   >
                     <X className="w-5 h-5" />
                   </Button>
                 </div>
               ) : subscription.paymentStatus === "APPROVED" || subscription.paymentStatus === "approved" ? (
                 subscription.status === "ACTIVE" || subscription.status === "active" ? (
-                  <div className="bg-gradient-to-r from-green-600/20 to-emerald-800/20 border-2 border-green-500/50 rounded-lg p-4 mb-4 flex items-center justify-between shadow-lg">
+                  <div className="bg-green-50 border-2 border-green-300 rounded-lg p-4 mb-4 flex items-center justify-between shadow-md">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-green-500/20 rounded-full flex items-center justify-center">
-                        <CheckCircle className="w-6 h-6 text-green-400" />
+                      <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                        <CheckCircle className="w-6 h-6 text-green-600" />
                       </div>
                       <div>
-                        <p className="text-white font-semibold text-lg">{t("payment.successful")}</p>
-                        <p className="text-green-300 text-sm">{t("payment.successfulMessage")}</p>
+                        <p className="text-gray-900 font-semibold text-lg">{t("payment.successful")}</p>
+                        <p className="text-green-700 text-sm">{t("payment.successfulMessage")}</p>
                       </div>
                     </div>
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={dismissPaymentNotification}
-                      className="text-green-300 hover:text-white"
+                      className="text-green-600 hover:text-green-700"
                     >
                       <X className="w-5 h-5" />
                     </Button>
                   </div>
                 ) : null
               ) : subscription.paymentStatus === "PENDING" || subscription.paymentStatus === "pending" ? (
-                <div className="bg-gradient-to-r from-yellow-600/20 to-orange-800/20 border-2 border-yellow-500/50 rounded-lg p-4 mb-4 flex items-center justify-between shadow-lg">
+                <div className="bg-yellow-50 border-2 border-yellow-300 rounded-lg p-4 mb-4 flex items-center justify-between shadow-md">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-yellow-500/20 rounded-full flex items-center justify-center">
-                      <Clock className="w-6 h-6 text-yellow-400" />
+                    <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+                      <Clock className="w-6 h-6 text-yellow-600" />
                     </div>
                     <div>
-                      <p className="text-white font-semibold text-lg">{t("payment.inProcess")}</p>
-                      <p className="text-yellow-300 text-sm">{t("payment.inProcessMessage")}</p>
+                      <p className="text-gray-900 font-semibold text-lg">{t("payment.inProcess")}</p>
+                      <p className="text-yellow-700 text-sm">{t("payment.inProcessMessage")}</p>
                     </div>
                   </div>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={dismissPaymentNotification}
-                    className="text-yellow-300 hover:text-white"
+                    className="text-yellow-600 hover:text-yellow-700"
                   >
                     <X className="w-5 h-5" />
                   </Button>
@@ -492,7 +492,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         )}
 
         {/* Main Content */}
-        <main className="flex-1 p-8 text-white relative z-10">
+        <main className="flex-1 p-8 text-gray-900 relative z-10">
           <div className="container mx-auto max-w-7xl animate-fade-in">{children}</div>
         </main>
       </div>
