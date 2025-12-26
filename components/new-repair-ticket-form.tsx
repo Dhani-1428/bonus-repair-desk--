@@ -516,7 +516,7 @@ export function NewRepairTicketForm() {
               </svg>
               {t("form.addAnotherDevice")}
             </Button>
-          </div>
+            </div>
 
           {/* Customer Information - Three fields in one line (removed Client ID) */}
           <div className="grid gap-6 grid-cols-3 border-b border-gray-200 pb-6">
@@ -853,21 +853,21 @@ export function NewRepairTicketForm() {
                   </div>
 
                   <div className="grid gap-4 md:grid-cols-2">
-                    <div className="space-y-2">
+                  <div className="space-y-2">
                       <Label className="text-gray-700">{t("form.price")} *</Label>
-                      <div className="relative">
+                    <div className="relative">
                         <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600 text-lg font-semibold">€</span>
-                        <Input
+                      <Input
                           type="text"
                           inputMode="decimal"
                           pattern="[0-9]*\.?[0-9]*"
-                          placeholder={t("placeholder.price")}
-                          value={device.price}
+                        placeholder={t("placeholder.price")}
+                        value={device.price}
                           onChange={(e) => {
                             const value = e.target.value.replace(/[^0-9.]/g, '')
                             updateDevice(deviceIndex, "price", value)
                           }}
-                          required
+                        required
                           className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 pl-8 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                         />
                       </div>
