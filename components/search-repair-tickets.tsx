@@ -407,10 +407,10 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
 
   return (
     <div className="space-y-6">
-      <Card className="shadow-2xl border border-gray-800/50 bg-gradient-to-br from-gray-900/95 via-black/95 to-gray-900/95 backdrop-blur-sm">
-        <CardHeader className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-b border-gray-800/50 rounded-t-lg p-6">
-          <CardTitle className="text-2xl font-bold text-white flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center ring-2 ring-blue-500/50 shadow-lg">
+      <Card className="shadow-xl border border-blue-200 bg-white">
+        <CardHeader className="bg-blue-50 border-b border-blue-200 rounded-t-lg p-6">
+          <CardTitle className="text-2xl font-bold text-black flex items-center gap-3">
+            <div className="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center ring-2 ring-blue-200 shadow-md">
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
