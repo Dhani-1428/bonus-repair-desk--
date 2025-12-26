@@ -83,7 +83,7 @@ export function StatsCards() {
         onClick={() => handleCardClick("all")}
       >
         <CardHeader className="flex flex-row items-center justify-between pb-3 relative z-10 bg-blue-50">
-          <CardTitle className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
+          <CardTitle className="text-sm font-semibold text-black uppercase tracking-wide">
             {t("stats.totalDevices")}
           </CardTitle>
           <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center shadow-md ring-2 ring-blue-200">
@@ -98,8 +98,8 @@ export function StatsCards() {
           </div>
         </CardHeader>
         <CardContent className="relative z-10">
-          <div className="text-4xl font-bold text-gray-900 mb-1">{stats.total}</div>
-          <p className="text-xs text-gray-600 font-medium">{t("stats.allRepairDevices")}</p>
+          <div className="text-4xl font-bold text-black mb-1">{stats.total}</div>
+          <p className="text-xs text-black font-medium">{t("stats.allRepairDevices")}</p>
         </CardContent>
       </Card>
 
@@ -108,7 +108,7 @@ export function StatsCards() {
         onClick={() => handleCardClick("pending")}
       >
         <CardHeader className="flex flex-row items-center justify-between pb-3 relative z-10 bg-yellow-50">
-          <CardTitle className="text-sm font-semibold text-yellow-700 uppercase tracking-wide">
+          <CardTitle className="text-sm font-semibold text-black uppercase tracking-wide">
             {t("status.pending")}
           </CardTitle>
           <div className="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center shadow-md ring-2 ring-yellow-200">
@@ -123,8 +123,8 @@ export function StatsCards() {
           </div>
         </CardHeader>
         <CardContent className="relative z-10">
-          <div className="text-4xl font-bold text-yellow-700 mb-1">{stats.pending}</div>
-          <p className="text-xs text-yellow-600 font-medium">{t("stats.awaitingService")}</p>
+          <div className="text-4xl font-bold text-black mb-1">{stats.pending}</div>
+          <p className="text-xs text-black font-medium">{t("stats.awaitingService")}</p>
         </CardContent>
       </Card>
 
@@ -133,7 +133,7 @@ export function StatsCards() {
         onClick={() => handleCardClick("in_progress")}
       >
         <CardHeader className="flex flex-row items-center justify-between pb-3 relative z-10 bg-blue-50">
-          <CardTitle className="text-sm font-semibold text-blue-700 uppercase tracking-wide">
+          <CardTitle className="text-sm font-semibold text-black uppercase tracking-wide">
             {t("status.in_progress")} {t("status.notOk")}
           </CardTitle>
           <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center shadow-md ring-2 ring-blue-200">
@@ -143,8 +143,8 @@ export function StatsCards() {
           </div>
         </CardHeader>
         <CardContent className="relative z-10">
-          <div className="text-4xl font-bold text-blue-700 mb-1">{stats.inProgress}</div>
-          <p className="text-xs text-blue-600 font-medium">{t("stats.currentlyBeingCompleted")}</p>
+          <div className="text-4xl font-bold text-black mb-1">{stats.inProgress}</div>
+          <p className="text-xs text-black font-medium">{t("stats.currentlyBeingCompleted")}</p>
         </CardContent>
       </Card>
 
@@ -153,7 +153,7 @@ export function StatsCards() {
         onClick={() => handleCardClick("completed")}
       >
         <CardHeader className="flex flex-row items-center justify-between pb-3 relative z-10 bg-green-50">
-          <CardTitle className="text-sm font-semibold text-green-700 uppercase tracking-wide">
+          <CardTitle className="text-sm font-semibold text-black uppercase tracking-wide">
             {t("status.completed")}
           </CardTitle>
           <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center shadow-md ring-2 ring-green-200">
@@ -168,8 +168,8 @@ export function StatsCards() {
           </div>
         </CardHeader>
         <CardContent className="relative z-10">
-          <div className="text-4xl font-bold text-green-700 mb-1">{stats.completed}</div>
-          <p className="text-xs text-green-600 font-medium">{t("stats.repairsFinished")}</p>
+          <div className="text-4xl font-bold text-black mb-1">{stats.completed}</div>
+          <p className="text-xs text-black font-medium">{t("stats.repairsFinished")}</p>
         </CardContent>
       </Card>
 
@@ -178,7 +178,7 @@ export function StatsCards() {
         onClick={() => handleCardClick("delivered")}
       >
         <CardHeader className="flex flex-row items-center justify-between pb-3 relative z-10 bg-blue-50">
-          <CardTitle className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
+          <CardTitle className="text-sm font-semibold text-black uppercase tracking-wide">
             {t("status.delivered")}
           </CardTitle>
           <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center shadow-md ring-2 ring-blue-200">
@@ -193,8 +193,8 @@ export function StatsCards() {
           </div>
         </CardHeader>
         <CardContent className="relative z-10">
-          <div className="text-4xl font-bold text-gray-900 mb-1">{stats.delivered}</div>
-          <p className="text-xs text-gray-600 font-medium">{t("stats.returnedToCustomers")}</p>
+          <div className="text-4xl font-bold text-black mb-1">{stats.delivered}</div>
+          <p className="text-xs text-black font-medium">{t("stats.returnedToCustomers")}</p>
         </CardContent>
       </Card>
     </div>
