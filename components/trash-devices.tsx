@@ -186,10 +186,10 @@ export function TrashDevices() {
     <div className="space-y-6">
       <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "devices" | "members")}>
         <TabsList className="grid w-full max-w-md grid-cols-2 bg-white border border-blue-200">
-          <TabsTrigger value="devices" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white text-black">
+          <TabsTrigger value="devices" className="data-[state=active]:bg-blue-100 data-[state=active]:text-black text-black">
             {t("trash.deletedDevices")} ({deletedTickets.length})
           </TabsTrigger>
-          <TabsTrigger value="members" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white text-black">
+          <TabsTrigger value="members" className="data-[state=active]:bg-blue-100 data-[state=active]:text-black text-black">
             {t("trash.deletedMembers")} ({deletedMembers.length})
           </TabsTrigger>
         </TabsList>
