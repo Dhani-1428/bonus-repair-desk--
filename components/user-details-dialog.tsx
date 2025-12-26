@@ -73,9 +73,9 @@ export function UserDetailsDialog({ open, onOpenChange, userDetails, users }: Us
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl bg-gray-900 border-gray-700 max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl bg-white border-blue-200 max-h-[90vh] overflow-y-auto text-black">
         <DialogHeader>
-          <DialogTitle className="text-white text-2xl">
+          <DialogTitle className="text-black text-2xl">
             User Details - {userDetails.userName}
           </DialogTitle>
         </DialogHeader>

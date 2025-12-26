@@ -37,6 +37,7 @@ interface DeviceFormData {
   customCondition: string
   problem: string
   price: string
+  budget: string
   imeiError: string | null
   repairNumber?: string // Auto-generated, read-only
 }
@@ -98,6 +99,7 @@ export function NewRepairTicketForm() {
       customCondition: "",
       problem: "",
       price: "",
+      budget: "",
       imeiError: null,
     },
   ])
@@ -173,6 +175,7 @@ export function NewRepairTicketForm() {
         customCondition: "",
         problem: "",
         price: "",
+        budget: "",
         imeiError: null,
       },
     ])
@@ -283,6 +286,7 @@ export function NewRepairTicketForm() {
             condition: null,
             problem: device.problem || null,
             price: parseFloat(device.price),
+            budget: device.budget ? parseFloat(device.budget) : null,
             status: "PENDING",
           }),
         })
@@ -449,6 +453,7 @@ export function NewRepairTicketForm() {
       customCondition: "",
       problem: "",
       price: "",
+      budget: "",
       imeiError: null,
     }])
     setCreatedTicketsDetails([])
@@ -847,19 +852,43 @@ export function NewRepairTicketForm() {
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label className="text-gray-700">{t("form.price")} *</Label>
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600 text-lg font-semibold">€</span>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        placeholder={t("placeholder.price")}
-                        value={device.price}
-                        onChange={(e) => updateDevice(deviceIndex, "price", e.target.value)}
-                        required
-                        className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 pl-8"
-                      />
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label className="text-gray-700">{t("form.price")} *</Label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600 text-lg font-semibold">€</span>
+                        <Input
+                          type="text"
+                          inputMode="decimal"
+                          pattern="[0-9]*\.?[0-9]*"
+                          placeholder={t("placeholder.price")}
+                          value={device.price}
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/[^0-9.]/g, '')
+                            updateDevice(deviceIndex, "price", value)
+                          }}
+                          required
+                          className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 pl-8 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-gray-700">{t("form.budget")}</Label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600 text-lg font-semibold">€</span>
+                        <Input
+                          type="text"
+                          inputMode="decimal"
+                          pattern="[0-9]*\.?[0-9]*"
+                          placeholder={t("placeholder.budget") || "Budget"}
+                          value={device.budget}
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/[^0-9.]/g, '')
+                            updateDevice(deviceIndex, "budget", value)
+                          }}
+                          className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 pl-8 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                        />
+                      </div>
                     </div>
                   </div>
 
@@ -1547,7 +1576,7 @@ function LanguageSelectionDialog({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md bg-white border-blue-200 text-black">
         <DialogHeader>
           <DialogTitle>Select Receipt Language</DialogTitle>
           <DialogDescription>

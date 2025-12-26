@@ -263,9 +263,9 @@ export function TestimonialsSection() {
 
       {/* Comment Submission Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[500px] bg-gradient-to-br from-gray-900/95 via-black/95 to-gray-900/95 border-gray-800/50 text-white">
+        <DialogContent className="sm:max-w-[500px] bg-white border-blue-200 text-black">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-white">Share Your Experience</DialogTitle>
+            <DialogTitle className="text-2xl font-bold text-black">Share Your Experience</DialogTitle>
             <DialogDescription className="text-gray-400">
               We'd love to hear about your experience with Bonus Repair Desk. Your feedback helps us improve!
             </DialogDescription>

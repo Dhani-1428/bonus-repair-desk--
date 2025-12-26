@@ -110,6 +110,7 @@ export async function POST(request: NextRequest) {
       condition,
       problem,
       price,
+      budget,
       status,
     } = body
 
@@ -201,8 +202,8 @@ export async function POST(request: NextRequest) {
           `INSERT INTO ${tableName} (id, userId, clientId, customerName, contact, receivedBy, imeiNo,
             brand, model, serialNo, softwareVersion, warranty, simCard, memoryCard,
             charger, battery, waterDamaged, loanEquipment, equipmentObs, repairObs,
-            selectedServices, \`condition\`, problem, price, status)
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            selectedServices, \`condition\`, problem, price, budget, status)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
           [
             ticketId,
             userId,
@@ -228,6 +229,7 @@ export async function POST(request: NextRequest) {
             condition || null,
             problem,
             parseFloat(price),
+            budget ? parseFloat(budget) : null,
             status || "PENDING"
           ]
         ) as mysql.ResultSetHeader[]

@@ -535,9 +535,9 @@ export function TeamManagement() {
       </Card>
 
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="max-w-2xl bg-gray-900 border-gray-800 text-white">
+        <DialogContent className="max-w-2xl bg-white border-blue-200 text-black">
           <DialogHeader>
-            <DialogTitle className="text-white">{t("team.member.editTitle")}</DialogTitle>
+            <DialogTitle className="text-black">{t("team.member.editTitle")}</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleEditSubmit} className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2">

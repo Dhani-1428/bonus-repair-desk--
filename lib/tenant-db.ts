@@ -64,6 +64,7 @@ export async function createTenantTables(tenantId: string): Promise<void> {
       \`condition\` TEXT,
       problem TEXT NOT NULL,
       price DECIMAL(10, 2) NOT NULL,
+      budget DECIMAL(10, 2) DEFAULT NULL,
       status ENUM('PENDING', 'IN_PROGRESS', 'COMPLETED', 'DELIVERED', 'CANCELLED') DEFAULT 'PENDING',
       createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
       updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -116,6 +117,7 @@ export async function createTenantTables(tenantId: string): Promise<void> {
       \`condition\` TEXT,
       problem TEXT NOT NULL,
       price DECIMAL(10, 2) NOT NULL,
+      budget DECIMAL(10, 2) DEFAULT NULL,
       status ENUM('PENDING', 'IN_PROGRESS', 'COMPLETED', 'DELIVERED', 'CANCELLED'),
       deletedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
       INDEX idx_userId (userId)
@@ -337,6 +339,40 @@ export async function migrateTenantTables(tenantId: string): Promise<void> {
           ADD COLUMN receivedBy VARCHAR(255) DEFAULT NULL AFTER contact
         `)
         console.log(`[Migration] ✅ Added receivedBy column to ${tables.deletedTickets}`)
+      } else {
+        throw error
+      }
+    }
+
+    // Check if budget column exists in repair_tickets table
+    try {
+      await query(`SELECT budget FROM ${repairTicketsTable} LIMIT 1`)
+    } catch (error: any) {
+      // Column doesn't exist, add it
+      if (error.code === "ER_BAD_FIELD_ERROR" || error.message?.includes("Unknown column")) {
+        console.log(`[Migration] Adding budget column to ${tables.repairTickets}`)
+        await execute(`
+          ALTER TABLE ${repairTicketsTable} 
+          ADD COLUMN budget DECIMAL(10, 2) DEFAULT NULL AFTER price
+        `)
+        console.log(`[Migration] ✅ Added budget column to ${tables.repairTickets}`)
+      } else {
+        throw error
+      }
+    }
+
+    // Check if budget column exists in deleted_tickets table
+    try {
+      await query(`SELECT budget FROM ${deletedTicketsTable} LIMIT 1`)
+    } catch (error: any) {
+      // Column doesn't exist, add it
+      if (error.code === "ER_BAD_FIELD_ERROR" || error.message?.includes("Unknown column")) {
+        console.log(`[Migration] Adding budget column to ${tables.deletedTickets}`)
+        await execute(`
+          ALTER TABLE ${deletedTicketsTable} 
+          ADD COLUMN budget DECIMAL(10, 2) DEFAULT NULL AFTER price
+        `)
+        console.log(`[Migration] ✅ Added budget column to ${tables.deletedTickets}`)
       } else {
         throw error
       }
