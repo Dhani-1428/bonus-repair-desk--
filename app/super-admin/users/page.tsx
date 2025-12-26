@@ -792,10 +792,10 @@ export default function UsersInformationPage() {
 
         {/* Delete Confirmation Dialog */}
         <AlertDialog open={!!userToDelete} onOpenChange={(open) => !open && setUserToDelete(null)}>
-          <AlertDialogContent className="bg-gray-900 border-gray-700">
+          <AlertDialogContent className="bg-white border-blue-200 text-black">
             <AlertDialogHeader>
-              <AlertDialogTitle className="text-white">Delete User</AlertDialogTitle>
-              <AlertDialogDescription className="text-gray-300">
+              <AlertDialogTitle className="text-black">Delete User</AlertDialogTitle>
+              <AlertDialogDescription className="text-black">
                 Are you sure you want to delete this user? This action cannot be undone and will permanently delete:
                 <ul className="list-disc list-inside mt-2 space-y-1">
                   <li>User account and all associated data</li>
@@ -807,7 +807,7 @@ export default function UsersInformationPage() {
             <AlertDialogFooter>
               <AlertDialogCancel 
                 onClick={() => setUserToDelete(null)}
-                className="border-gray-600 bg-gray-800 text-white hover:bg-gray-700"
+                className="border-blue-300 bg-white text-black hover:bg-blue-50"
               >
                 Cancel
               </AlertDialogCancel>
