@@ -573,7 +573,7 @@ export function NewRepairTicketForm() {
 
                 <div className="grid gap-6 md:grid-cols-2">
                   <div className="space-y-2">
-                    <Label className="text-gray-700">{t("form.brand")} *</Label>
+                    <Label className="text-gray-700">{t("form.brand")}</Label>
                     <div className="relative">
                       <Input
                         placeholder={t("form.brandPlaceholder")}
@@ -585,7 +585,6 @@ export function NewRepairTicketForm() {
                             updateDevice(deviceIndex, "model", "")
                           }
                         }}
-                        required
                         className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 pr-10"
                       />
                       <Popover>

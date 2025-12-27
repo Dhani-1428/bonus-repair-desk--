@@ -208,7 +208,7 @@ export async function POST(request: NextRequest) {
             userId,
             finalClientId || null,
             customerName,
-            contact,
+            contact || null,
             receivedBy?.trim() || null,
             imeiNo || null,
             brand || null,
