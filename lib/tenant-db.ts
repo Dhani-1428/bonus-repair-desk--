@@ -44,11 +44,11 @@ export async function createTenantTables(tenantId: string): Promise<void> {
       repairNumber VARCHAR(50) UNIQUE NULL,
       clientId VARCHAR(255),
       customerName VARCHAR(255) NOT NULL,
-      contact VARCHAR(255) NOT NULL,
+      contact VARCHAR(255) DEFAULT NULL,
       receivedBy VARCHAR(255) DEFAULT NULL,
-      imeiNo VARCHAR(15) UNIQUE NOT NULL,
-      brand VARCHAR(100) NOT NULL,
-      model VARCHAR(100) NOT NULL,
+      imeiNo VARCHAR(15) UNIQUE DEFAULT NULL,
+      brand VARCHAR(100) DEFAULT NULL,
+      model VARCHAR(100) DEFAULT NULL,
       serialNo VARCHAR(255),
       softwareVersion VARCHAR(100),
       warranty VARCHAR(50) DEFAULT 'Without Warranty',
@@ -62,7 +62,7 @@ export async function createTenantTables(tenantId: string): Promise<void> {
       repairObs TEXT,
       selectedServices JSON,
       \`condition\` TEXT,
-      problem TEXT NOT NULL,
+      problem TEXT DEFAULT NULL,
       price DECIMAL(10, 2) NOT NULL,
       budget DECIMAL(10, 2) DEFAULT NULL,
       status ENUM('PENDING', 'IN_PROGRESS', 'COMPLETED', 'DELIVERED', 'CANCELLED') DEFAULT 'PENDING',
@@ -97,11 +97,11 @@ export async function createTenantTables(tenantId: string): Promise<void> {
       repairNumber VARCHAR(50) NOT NULL,
       clientId VARCHAR(255),
       customerName VARCHAR(255) NOT NULL,
-      contact VARCHAR(255) NOT NULL,
+      contact VARCHAR(255) DEFAULT NULL,
       receivedBy VARCHAR(255) DEFAULT NULL,
-      imeiNo VARCHAR(15) NOT NULL,
-      brand VARCHAR(100) NOT NULL,
-      model VARCHAR(100) NOT NULL,
+      imeiNo VARCHAR(15) DEFAULT NULL,
+      brand VARCHAR(100) DEFAULT NULL,
+      model VARCHAR(100) DEFAULT NULL,
       serialNo VARCHAR(255),
       softwareVersion VARCHAR(100),
       warranty VARCHAR(50),
@@ -115,7 +115,7 @@ export async function createTenantTables(tenantId: string): Promise<void> {
       repairObs TEXT,
       selectedServices JSON,
       \`condition\` TEXT,
-      problem TEXT NOT NULL,
+      problem TEXT DEFAULT NULL,
       price DECIMAL(10, 2) NOT NULL,
       budget DECIMAL(10, 2) DEFAULT NULL,
       status ENUM('PENDING', 'IN_PROGRESS', 'COMPLETED', 'DELIVERED', 'CANCELLED'),
@@ -293,6 +293,42 @@ export async function migrateTenantTables(tenantId: string): Promise<void> {
       }
     }
 
+    // Check if problem column is nullable in repair_tickets table
+    try {
+      const columns = await query(`SHOW COLUMNS FROM ${repairTicketsTable} WHERE Field = 'problem'`) as any[]
+      if (columns && columns.length > 0 && columns[0].Null === 'NO') {
+        console.log(`[Migration] Making problem column nullable in ${tables.repairTickets}`)
+        await execute(`
+          ALTER TABLE ${repairTicketsTable} 
+          MODIFY COLUMN problem TEXT DEFAULT NULL
+        `)
+        console.log(`[Migration] ✅ Made problem column nullable in ${tables.repairTickets}`)
+      }
+    } catch (error: any) {
+      // If column doesn't exist or modification fails, that's fine
+      if (error.code !== "ER_BAD_FIELD_ERROR" && !error.message?.includes("Unknown column")) {
+        console.warn(`[Migration] Could not modify problem column:`, error.message)
+      }
+    }
+
+    // Check if problem column is nullable in deleted_tickets table
+    try {
+      const columns = await query(`SHOW COLUMNS FROM ${deletedTicketsTable} WHERE Field = 'problem'`) as any[]
+      if (columns && columns.length > 0 && columns[0].Null === 'NO') {
+        console.log(`[Migration] Making problem column nullable in ${tables.deletedTickets}`)
+        await execute(`
+          ALTER TABLE ${deletedTicketsTable} 
+          MODIFY COLUMN problem TEXT DEFAULT NULL
+        `)
+        console.log(`[Migration] ✅ Made problem column nullable in ${tables.deletedTickets}`)
+      }
+    } catch (error: any) {
+      // If column doesn't exist or modification fails, that's fine
+      if (error.code !== "ER_BAD_FIELD_ERROR" && !error.message?.includes("Unknown column")) {
+        console.warn(`[Migration] Could not modify problem column:`, error.message)
+      }
+    }
+
     // Check if waterDamaged column exists in deleted_tickets table
     try {
       await query(`SELECT waterDamaged FROM ${deletedTicketsTable} LIMIT 1`)
@@ -376,6 +412,93 @@ export async function migrateTenantTables(tenantId: string): Promise<void> {
       } else {
         throw error
       }
+    }
+
+    // Make contact, imeiNo, brand, model, price, and problem nullable in repair_tickets table
+    try {
+      const columns = await query(`SHOW COLUMNS FROM ${repairTicketsTable}`) as any[]
+      const columnMap = new Map(columns.map((col: any) => [col.Field, col]))
+      
+      // Make contact nullable
+      if (columnMap.get('contact')?.Null === 'NO') {
+        await execute(`ALTER TABLE ${repairTicketsTable} MODIFY COLUMN contact VARCHAR(255) DEFAULT NULL`)
+        console.log(`[Migration] ✅ Made contact nullable in ${tables.repairTickets}`)
+      }
+      
+      // Make imeiNo nullable (remove UNIQUE constraint first if needed)
+      if (columnMap.get('imeiNo')?.Null === 'NO') {
+        try {
+          await execute(`ALTER TABLE ${repairTicketsTable} DROP INDEX imeiNo`)
+        } catch (e: any) {
+          // Index might not exist or have different name
+        }
+        await execute(`ALTER TABLE ${repairTicketsTable} MODIFY COLUMN imeiNo VARCHAR(15) DEFAULT NULL`)
+        // Re-add unique index only if not null
+        try {
+          await execute(`CREATE UNIQUE INDEX idx_imeiNo_unique ON ${repairTicketsTable} (imeiNo) WHERE imeiNo IS NOT NULL`)
+        } catch (e: any) {
+          // Index creation might fail, that's okay
+        }
+        console.log(`[Migration] ✅ Made imeiNo nullable in ${tables.repairTickets}`)
+      }
+      
+      // Make brand nullable
+      if (columnMap.get('brand')?.Null === 'NO') {
+        await execute(`ALTER TABLE ${repairTicketsTable} MODIFY COLUMN brand VARCHAR(100) DEFAULT NULL`)
+        console.log(`[Migration] ✅ Made brand nullable in ${tables.repairTickets}`)
+      }
+      
+      // Make model nullable
+      if (columnMap.get('model')?.Null === 'NO') {
+        await execute(`ALTER TABLE ${repairTicketsTable} MODIFY COLUMN model VARCHAR(100) DEFAULT NULL`)
+        console.log(`[Migration] ✅ Made model nullable in ${tables.repairTickets}`)
+      }
+      
+      // Make price nullable
+      if (columnMap.get('price')?.Null === 'NO') {
+        await execute(`ALTER TABLE ${repairTicketsTable} MODIFY COLUMN price DECIMAL(10, 2) DEFAULT NULL`)
+        console.log(`[Migration] ✅ Made price nullable in ${tables.repairTickets}`)
+      }
+    } catch (error: any) {
+      console.warn(`[Migration] Could not modify columns in ${tables.repairTickets}:`, error.message)
+    }
+
+    // Make contact, imeiNo, brand, model, price, and problem nullable in deleted_tickets table
+    try {
+      const columns = await query(`SHOW COLUMNS FROM ${deletedTicketsTable}`) as any[]
+      const columnMap = new Map(columns.map((col: any) => [col.Field, col]))
+      
+      // Make contact nullable
+      if (columnMap.get('contact')?.Null === 'NO') {
+        await execute(`ALTER TABLE ${deletedTicketsTable} MODIFY COLUMN contact VARCHAR(255) DEFAULT NULL`)
+        console.log(`[Migration] ✅ Made contact nullable in ${tables.deletedTickets}`)
+      }
+      
+      // Make imeiNo nullable
+      if (columnMap.get('imeiNo')?.Null === 'NO') {
+        await execute(`ALTER TABLE ${deletedTicketsTable} MODIFY COLUMN imeiNo VARCHAR(15) DEFAULT NULL`)
+        console.log(`[Migration] ✅ Made imeiNo nullable in ${tables.deletedTickets}`)
+      }
+      
+      // Make brand nullable
+      if (columnMap.get('brand')?.Null === 'NO') {
+        await execute(`ALTER TABLE ${deletedTicketsTable} MODIFY COLUMN brand VARCHAR(100) DEFAULT NULL`)
+        console.log(`[Migration] ✅ Made brand nullable in ${tables.deletedTickets}`)
+      }
+      
+      // Make model nullable
+      if (columnMap.get('model')?.Null === 'NO') {
+        await execute(`ALTER TABLE ${deletedTicketsTable} MODIFY COLUMN model VARCHAR(100) DEFAULT NULL`)
+        console.log(`[Migration] ✅ Made model nullable in ${tables.deletedTickets}`)
+      }
+      
+      // Make price nullable
+      if (columnMap.get('price')?.Null === 'NO') {
+        await execute(`ALTER TABLE ${deletedTicketsTable} MODIFY COLUMN price DECIMAL(10, 2) DEFAULT NULL`)
+        console.log(`[Migration] ✅ Made price nullable in ${tables.deletedTickets}`)
+      }
+    } catch (error: any) {
+      console.warn(`[Migration] Could not modify columns in ${tables.deletedTickets}:`, error.message)
     }
   } catch (error: any) {
     // If table doesn't exist, that's fine - it will be created with all columns

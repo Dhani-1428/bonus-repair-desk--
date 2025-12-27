@@ -238,19 +238,10 @@ export function NewRepairTicketForm() {
       return
     }
 
-    if (!customerName.trim() || !contact.trim()) {
-      toast.error("Customer name and contact are required")
+    // Only customerName and receivedBy are mandatory
+    if (!customerName.trim() || !receivedBy.trim()) {
+      toast.error("Customer name and Device Received by are required")
       return
-    }
-
-    // Validate all devices
-    for (let i = 0; i < devices.length; i++) {
-      const device = devices[i]
-      // IMEI validation removed - no longer mandatory
-      if (!device.model.trim() || !device.price.trim()) {
-        toast.error(`Device ${i + 1}: Model and price are required`)
-        return
-      }
     }
 
     setIsSubmitting(true)
@@ -532,14 +523,13 @@ export function NewRepairTicketForm() {
               />
             </div>
             <div className="space-y-3">
-              <Label htmlFor="contact" className="text-gray-700 text-base font-semibold">{t("form.clientPhone")} *</Label>
+              <Label htmlFor="contact" className="text-gray-700 text-base font-semibold">{t("form.clientPhone")}</Label>
               <Input
                 id="contact"
                 type="tel"
                 placeholder={t("form.clientPhonePlaceholder")}
                 value={contact}
                 onChange={(e) => setContact(e.target.value)}
-                required
                 className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 h-12 text-lg"
               />
             </div>
@@ -633,13 +623,12 @@ export function NewRepairTicketForm() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label className="text-gray-700">{t("form.model")} *</Label>
+                    <Label className="text-gray-700">{t("form.model")}</Label>
                     <div className="relative">
                       <Input
                         placeholder={device.brand ? t("form.modelPlaceholder") : t("form.selectBrandFirst")}
                         value={device.model}
                         onChange={(e) => updateDevice(deviceIndex, "model", e.target.value)}
-                        required
                         disabled={!device.brand}
                         className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 pr-10 disabled:opacity-50"
                       />
@@ -854,20 +843,19 @@ export function NewRepairTicketForm() {
 
                   <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
-                      <Label className="text-gray-700">{t("form.price")} *</Label>
-                    <div className="relative">
+                      <Label className="text-gray-700">{t("form.price")}</Label>
+                      <div className="relative">
                         <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600 text-lg font-semibold">€</span>
-                      <Input
+                        <Input
                           type="text"
                           inputMode="decimal"
                           pattern="[0-9]*\.?[0-9]*"
-                        placeholder={t("placeholder.price")}
-                        value={device.price}
+                          placeholder={t("placeholder.price")}
+                          value={device.price}
                           onChange={(e) => {
                             const value = e.target.value.replace(/[^0-9.]/g, '')
                             updateDevice(deviceIndex, "price", value)
                           }}
-                        required
                           className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 pl-8 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                         />
                       </div>

@@ -114,19 +114,19 @@ export async function POST(request: NextRequest) {
       status,
     } = body
 
-    // Validate required fields (clientId is now required, not auto-generated)
-    // Note: problem (technician notes), equipmentObs, and repairObs are optional
-    if (!userId || !customerName || !contact || !receivedBy || !imeiNo || !brand || !model || price === undefined || !clientId || clientId.trim() === "") {
+    // Validate required fields - only customerName and receivedBy are mandatory
+    if (!userId || !customerName || !receivedBy) {
       return NextResponse.json(
-        { error: "Missing required fields. Client NIF, Customer Name, Contact, Device Received by, IMEI, Brand, Model, and Price are required." },
+        { error: "Missing required fields. Customer Name and Device Received by are required." },
         { status: 400 }
       )
     }
 
-    // Validate IMEI: exactly 15 digits, numeric only
-    if (!/^\d{15}$/.test(imeiNo)) {
+    // IMEI validation removed - no longer mandatory
+    // If IMEI is provided, validate format (optional)
+    if (imeiNo && imeiNo.trim() !== "" && !/^\d{15}$/.test(imeiNo)) {
       return NextResponse.json(
-        { error: "IMEI must be exactly 15 digits and numeric only" },
+        { error: "IMEI must be exactly 15 digits and numeric only (if provided)" },
         { status: 400 }
       )
     }
@@ -158,26 +158,28 @@ export async function POST(request: NextRequest) {
     const tableName = escapeId(tables.repairTickets)
     console.log(`[API] Saving repair ticket to tenant table: ${tables.repairTickets} for tenantId: ${user.tenantId}`)
 
-    // Check for duplicate IMEI in tenant's table
-    const existingIMEI = await queryOne(
-      `SELECT id FROM ${tableName} WHERE imeiNo = ? LIMIT 1`,
-      [imeiNo]
-    )
-
-    if (existingIMEI) {
-      return NextResponse.json(
-        { error: "IMEI already exists. Please use a different IMEI." },
-        { status: 400 }
+    // Check for duplicate IMEI in tenant's table (only if IMEI is provided)
+    if (imeiNo && imeiNo.trim() !== "") {
+      const existingIMEI = await queryOne(
+        `SELECT id FROM ${tableName} WHERE imeiNo = ? LIMIT 1`,
+        [imeiNo]
       )
+
+      if (existingIMEI) {
+        return NextResponse.json(
+          { error: "IMEI already exists. Please use a different IMEI." },
+          { status: 400 }
+        )
+      }
     }
 
-    // Client ID is now required and must be provided (no auto-generation)
-    if (!clientId || clientId.trim() === "") {
-      return NextResponse.json(
-        { error: "Client NIF is required and cannot be empty" },
-        { status: 400 }
-      )
+    // Client ID is optional - generate if not provided
+    const generateClientId = () => {
+      const timestamp = Date.now()
+      const random = Math.floor(Math.random() * 1000)
+      return `CLI-${timestamp}-${random}`
     }
+    const finalClientId = clientId && clientId.trim() !== "" ? clientId.trim() : generateClientId()
 
     // Serial number should come from the request body (manual input) - OPTIONAL
     const serialNoFromBody = body.serialNo || body.serialNumber || null
@@ -185,9 +187,6 @@ export async function POST(request: NextRequest) {
     if (serialNoFromBody && typeof serialNoFromBody === 'string' && serialNoFromBody.trim() !== "") {
       finalSerialNo = serialNoFromBody.trim()
     }
-
-    // Client ID is required and provided by user (no auto-generation)
-    const finalClientId = clientId.trim()
 
     try {
       // Create repair ticket in tenant-specific table
@@ -211,9 +210,9 @@ export async function POST(request: NextRequest) {
             customerName,
             contact,
             receivedBy?.trim() || null,
-            imeiNo,
-            brand,
-            model,
+            imeiNo || null,
+            brand || null,
+            model || null,
             finalSerialNo || null,
             softwareVersion || null,
             warranty || "Without Warranty",
@@ -227,8 +226,8 @@ export async function POST(request: NextRequest) {
             repairObs || null,
             JSON.stringify(selectedServices || []),
             condition || null,
-            problem,
-            parseFloat(price),
+            problem || null,
+            price ? parseFloat(price) : 0,
             budget ? parseFloat(budget) : null,
             status || "PENDING"
           ]
