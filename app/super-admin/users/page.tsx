@@ -39,17 +39,12 @@ interface UserAnalytics {
   userEmail: string
   shopName: string
   password: string
-  totalRevenue: number
   subscriptionPlan: string
   subscriptionStatus: string
   daysUntilExpiration: number
   signupDate: string
   lastLogin?: string
   totalLogins: number
-  totalDevices: number
-  pendingDevices: number
-  inProgressDevices: number
-  completedDevices: number
 }
 
 export default function UsersInformationPage() {
@@ -125,36 +120,8 @@ export default function UsersInformationPage() {
     const allSubscriptions = getAllSubscriptions()
     const analytics: UserAnalytics[] = []
 
-    // Use Promise.all to fetch all tickets in parallel
-    const userTicketsPromises = allUsers.map(async (u: any) => {
-      let ticketsArray: any[] = []
-      
-      try {
-        // Fetch tenant data from database using tenantId
-        if (u.tenantId) {
-          const response = await fetch(`/api/super-admin/tenants/${u.tenantId}`)
-          if (response.ok) {
-            const tenantData = await response.json()
-            ticketsArray = Array.isArray(tenantData.data?.repairTickets) ? tenantData.data.repairTickets : []
-          } else {
-            // Fallback to API endpoint with userId
-            const tickets = await getUserData<any[]>("repairTickets", [], u.id)
-            ticketsArray = Array.isArray(tickets) ? tickets : []
-          }
-        } else {
-          // Fallback to API endpoint with userId
-      const tickets = await getUserData<any[]>("repairTickets", [], u.id)
-          ticketsArray = Array.isArray(tickets) ? tickets : []
-        }
-      } catch (error) {
-        console.error(`Error fetching tickets for user ${u.id}:`, error)
-        // Fallback to empty array
-        ticketsArray = []
-      }
-      
-      // Calculate analytics
-      const totalRevenue = ticketsArray.reduce((sum: number, ticket: any) => sum + (parseFloat(ticket.price) || 0), 0)
-      
+    // Fetch user data without device/repair ticket information
+    const userDataPromises = allUsers.map(async (u: any) => {
       // Get subscription info
       const userSub = allSubscriptions.find((s: any) => s.userId === u.id)
       const daysUntilExpiration = userSub ? getDaysUntilExpiration(userSub) : 0
@@ -180,38 +147,22 @@ export default function UsersInformationPage() {
         console.error(`Error fetching login history for user ${u.id}:`, error)
       }
 
-      // Get device statistics
-      const pendingDevices = ticketsArray.filter((t: any) => 
-        t.status === "PENDING" || t.status === "pending"
-      ).length
-      const inProgressDevices = ticketsArray.filter((t: any) => 
-        t.status === "IN_PROGRESS" || t.status === "in-progress" || t.status === "in_progress"
-      ).length
-      const completedDevices = ticketsArray.filter((t: any) => 
-        t.status === "COMPLETED" || t.status === "completed"
-      ).length
-
       return {
         userId: u.id,
         userName: u.name,
         userEmail: u.email,
         shopName: u.shopName || "-",
         password: u.password || "N/A",
-        totalRevenue,
         subscriptionPlan: userSub ? PLAN_PRICING[userSub.plan]?.name || userSub.plan : "No Subscription",
         subscriptionStatus: userSub ? (isExpired(userSub) ? "Expired" : userSub.status === "free_trial" ? "Free Trial" : userSub.status === "pending" ? "Pending" : "Active") : "No Subscription",
         daysUntilExpiration: daysUntilExpiration,
         signupDate: u.createdAt,
         lastLogin: lastLogin,
         totalLogins: totalLogins,
-        totalDevices: ticketsArray.length,
-        pendingDevices,
-        inProgressDevices,
-        completedDevices,
       }
     })
 
-    const results = await Promise.all(userTicketsPromises)
+    const results = await Promise.all(userDataPromises)
     analytics.push(...results)
 
     setUserAnalytics(analytics)
@@ -360,9 +311,6 @@ export default function UsersInformationPage() {
                   <th className="border-r border-gray-700 px-4 py-3 text-center text-xs font-semibold text-gray-300 uppercase tracking-wider w-[8%]">
                     Days Left
                   </th>
-                  <th className="border-r border-gray-700 px-4 py-3 text-center text-xs font-semibold text-gray-300 uppercase tracking-wider w-[7%]">
-                    Total Revenue (€)
-                  </th>
                   <th className="px-4 py-3 text-center text-xs font-semibold text-gray-300 uppercase tracking-wider w-[10%]">
                     Actions
                   </th>
@@ -371,7 +319,7 @@ export default function UsersInformationPage() {
               <tbody className="divide-y divide-gray-800/50">
                 {filteredAnalytics.length === 0 ? (
                   <tr>
-                    <td colSpan={9} className="px-4 py-8 text-center text-gray-400">
+                    <td colSpan={8} className="px-4 py-8 text-center text-gray-400">
                       No users found
                     </td>
                   </tr>
@@ -462,9 +410,6 @@ export default function UsersInformationPage() {
                         ) : (
                           <span className="text-red-400 font-semibold">Expired</span>
                         )}
-                      </td>
-                      <td className="border-r border-gray-700/50 px-4 py-3 text-sm text-center text-gray-300 font-semibold">
-                        {Number.parseFloat(analytics.totalRevenue || 0).toFixed(2)}
                       </td>
                       <td className="px-4 py-3 text-center">
                         <div className="flex items-center justify-center gap-2">

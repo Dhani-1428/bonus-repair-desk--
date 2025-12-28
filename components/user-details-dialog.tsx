@@ -18,7 +18,6 @@ interface UserDetailsDialogProps {
 
 export function UserDetailsDialog({ open, onOpenChange, userDetails, users }: UserDetailsDialogProps) {
   const [loginHistory, setLoginHistory] = useState<any[]>([])
-  const [tenantTickets, setTenantTickets] = useState<any[]>([])
   const [tenantMembers, setTenantMembers] = useState<any[]>([])
   const [userPayments, setUserPayments] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -38,12 +37,11 @@ export function UserDetailsDialog({ open, onOpenChange, userDetails, users }: Us
           setLoginHistory(Array.isArray(loginData.history) ? loginData.history : [])
         }
 
-        // Fetch tenant data
+        // Fetch tenant data (only team members, not repair tickets)
         if (user?.tenantId) {
           const tenantResponse = await fetch(`/api/super-admin/tenants/${user.tenantId}`)
           if (tenantResponse.ok) {
             const tenantData = await tenantResponse.json()
-            setTenantTickets(Array.isArray(tenantData.data?.repairTickets) ? tenantData.data.repairTickets : [])
             setTenantMembers(Array.isArray(tenantData.data?.teamMembers) ? tenantData.data.teamMembers : [])
           }
         }
@@ -121,49 +119,6 @@ export function UserDetailsDialog({ open, onOpenChange, userDetails, users }: Us
               </CardContent>
             </Card>
 
-            {/* Repair Tickets */}
-            <Card className="border-blue-200 bg-white">
-              <CardHeader>
-                <CardTitle className="text-black">
-                  Repair Tickets ({tenantTickets.length})
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {tenantTickets.length === 0 ? (
-                  <p className="text-black text-sm">No repair tickets found</p>
-                ) : (
-                  <div className="space-y-2 max-h-64 overflow-y-auto">
-                    {tenantTickets.slice(0, 10).map((ticket: any) => (
-                      <div key={ticket.id} className="p-3 bg-blue-50 rounded border border-blue-200">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="text-sm font-semibold text-black">
-                              {ticket.repairNumber} - {ticket.customerName}
-                            </p>
-                            <p className="text-xs text-black">
-                              {ticket.brand} {ticket.model} | {ticket.status}
-                            </p>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-sm font-semibold text-black">€{parseFloat(ticket.price || 0).toFixed(2)}</p>
-                            <Link href={`/tickets/${ticket.id}`}>
-                              <Button variant="ghost" size="sm" className="text-xs h-6 mt-1">
-                                View
-                              </Button>
-                            </Link>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                    {tenantTickets.length > 10 && (
-                      <p className="text-xs text-black text-center pt-2">
-                        Showing 10 of {tenantTickets.length} tickets
-                      </p>
-                    )}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
 
             {/* Team Members */}
             <Card className="border-blue-200 bg-white">
@@ -297,32 +252,6 @@ export function UserDetailsDialog({ open, onOpenChange, userDetails, users }: Us
               </CardContent>
             </Card>
 
-            {/* Dashboard Analytics */}
-            <Card className="border-blue-200 bg-white">
-              <CardHeader>
-                <CardTitle className="text-black">Dashboard Analytics</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                    <p className="text-xs text-black mb-1">Total Devices</p>
-                    <p className="text-2xl font-bold text-black">{userDetails.totalDevices}</p>
-                  </div>
-                  <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                    <p className="text-xs text-black mb-1">Total Revenue</p>
-                    <p className="text-2xl font-bold text-black">€{Number.parseFloat(userDetails.totalRevenue || 0).toFixed(2)}</p>
-                  </div>
-                  <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                    <p className="text-xs text-black mb-1">Pending</p>
-                    <p className="text-2xl font-bold text-yellow-700">{userDetails.pendingDevices}</p>
-                  </div>
-                  <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                    <p className="text-xs text-black mb-1">Completed</p>
-                    <p className="text-2xl font-bold text-green-700">{userDetails.completedDevices}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
           </div>
         )}
       </DialogContent>
