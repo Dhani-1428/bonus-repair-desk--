@@ -69,14 +69,38 @@ export async function POST(request: NextRequest) {
         sqlMessage: insertError?.sqlMessage,
       })
       
-      if (insertError?.code === "ER_DUP_ENTRY") {
+      // If the error is about role column, try with explicit role value
+      if (insertError?.code === "ER_DATA_TOO_LONG" || insertError?.sqlMessage?.includes("role") || insertError?.sqlMessage?.includes("Data truncated")) {
+        console.log("[API] Retrying with explicit role value...")
+        try {
+          await execute(
+            `INSERT INTO users (id, name, email, password, shopName, contactNumber, role, tenantId)
+             VALUES (?, ?, ?, ?, ?, ?, CAST(? AS CHAR), ?)`,
+            [userId, name, email, hashedPassword, shopName || null, contactNumber || null, 'USER', tenantId]
+          )
+          console.log(`[API] ✅ User created successfully with explicit role: ${email} (${userId})`)
+        } catch (retryError: any) {
+          console.error("[API] Retry also failed:", retryError?.message || retryError)
+          // If retry fails, check if role column exists and what type it is
+          try {
+            const columnInfo = await queryOne(
+              `SELECT COLUMN_TYPE FROM INFORMATION_SCHEMA.COLUMNS 
+               WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'users' AND COLUMN_NAME = 'role'`
+            )
+            console.error("[API] Role column info:", columnInfo)
+          } catch (infoError) {
+            console.error("[API] Could not get column info:", infoError)
+          }
+          throw new Error(`Failed to create user in database: ${retryError?.sqlMessage || retryError?.message || "Unknown error"}`)
+        }
+      } else if (insertError?.code === "ER_DUP_ENTRY") {
         return NextResponse.json(
           { error: "User with this email already exists" },
           { status: 400 }
         )
+      } else {
+        throw new Error(`Failed to create user in database: ${insertError?.sqlMessage || insertError?.message || "Unknown error"}`)
       }
-      
-      throw new Error(`Failed to create user in database: ${insertError?.sqlMessage || insertError?.message || "Unknown error"}`)
     }
 
     // Get created user
