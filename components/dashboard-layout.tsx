@@ -54,7 +54,14 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     }
 
     // Check subscription status for non-super-admin users (only if not already on subscription or pricing page)
-    if (user && user.role !== "super_admin" && user.role !== "SUPER_ADMIN" && typeof window !== "undefined") {
+    // Skip subscription check for super admin (check role or email)
+    const isSuperAdmin = 
+      user?.role === "super_admin" || 
+      user?.role === "SUPER_ADMIN" || 
+      user?.email === "superadmin@admin.com" ||
+      user?.email?.toLowerCase() === "superadmin@admin.com"
+    
+    if (user && !isSuperAdmin && typeof window !== "undefined") {
       const currentPath = window.location.pathname
       // Don't redirect if already on subscription, pricing, billing, or login page
       if (currentPath === "/subscription" || currentPath === "/pricing" || currentPath === "/billing" || currentPath.startsWith("/billing/") || currentPath === "/login" || currentPath === "/register") {

@@ -215,7 +215,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.log("[Login] User data received:", { id: userData.id, email: userData.email, role: userData.role })
 
       // Skip subscription check for super admin
-      if (userData.role === "SUPER_ADMIN" || userData.role === "super_admin") {
+      // Check role (case-insensitive) or email
+      const isSuperAdmin = 
+        userData.role === "SUPER_ADMIN" || 
+        userData.role === "super_admin" || 
+        userData.email === "superadmin@admin.com" ||
+        userData.email?.toLowerCase() === "superadmin@admin.com"
+      
+      if (isSuperAdmin) {
+        console.log("[Login] Super admin detected, skipping subscription check")
         setUser(userData)
         sessionStorage.setItem("user", JSON.stringify(userData))
         sessionStorage.setItem("auth-token", "demo-token")
