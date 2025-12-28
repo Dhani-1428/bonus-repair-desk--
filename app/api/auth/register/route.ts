@@ -50,11 +50,12 @@ export async function POST(request: NextRequest) {
     const tenantId = uuidv4()
 
     // Create user
+    // Ensure role is one of the valid ENUM values: 'ADMIN', 'USER', 'SUPER_ADMIN'
     try {
       await execute(
         `INSERT INTO users (id, name, email, password, shopName, contactNumber, role, tenantId)
-         VALUES (?, ?, ?, ?, ?, ?, 'USER', ?)`,
-        [userId, name, email, hashedPassword, shopName || null, contactNumber || null, tenantId]
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        [userId, name, email, hashedPassword, shopName || null, contactNumber || null, 'USER', tenantId]
       )
       console.log(`[API] ✅ User created successfully: ${email} (${userId})`)
     } catch (insertError: any) {

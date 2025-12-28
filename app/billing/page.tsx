@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { DashboardLayout } from "@/components/dashboard-layout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -17,7 +17,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 
-export default function BillingPage() {
+function BillingContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { user, subscription, updateSubscription } = useAuth()
@@ -357,7 +357,7 @@ export default function BillingPage() {
                           )}
                         </div>
                         <p className="text-2xl font-bold text-white mb-1">€{plan.price}</p>
-                        <p className="text-sm text-gray-400">{t("subscription.for")} {plan.months === 6 ? t("subscription.sixMonths") : plan.months === 12 ? t("subscription.twelveMonths") : `${plan.months} ${t("subscription.months")}`}</p>
+                        <p className="text-sm text-gray-400">for {plan.months === 6 ? "6 months" : plan.months === 12 ? "12 months" : `${plan.months} months`}</p>
                       </CardContent>
                     </Card>
                   ))}
@@ -401,7 +401,7 @@ export default function BillingPage() {
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-400">Duration:</span>
-                        <span className="text-white">{PLAN_PRICING[selectedPlan].months === 6 ? t("subscription.sixMonths") : PLAN_PRICING[selectedPlan].months === 12 ? t("subscription.twelveMonths") : `${PLAN_PRICING[selectedPlan].months} ${t("subscription.months")}`}</span>
+                        <span className="text-white">{PLAN_PRICING[selectedPlan].months === 6 ? "6 months" : PLAN_PRICING[selectedPlan].months === 12 ? "12 months" : `${PLAN_PRICING[selectedPlan].months} months`}</span>
                       </div>
                       <div className="border-t border-gray-700 pt-2 mt-2">
                         <div className="flex justify-between">
