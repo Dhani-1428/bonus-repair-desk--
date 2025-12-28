@@ -521,3 +521,20 @@ function BillingContent() {
   )
 }
 
+export default function BillingPage() {
+  return (
+    <Suspense fallback={
+      <DashboardLayout>
+        <div className="space-y-6 text-black p-6">
+          <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <h2 className="text-xl font-bold text-black mb-2">Loading Billing Page...</h2>
+            <p className="text-gray-600">Please wait while we load your billing information.</p>
+          </div>
+        </div>
+      </DashboardLayout>
+    }>
+      <BillingContent />
+    </Suspense>
+  )
+}
+
