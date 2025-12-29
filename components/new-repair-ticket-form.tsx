@@ -75,20 +75,24 @@ const generateClientId = async (userId?: string): Promise<string> => {
         const tickets = Array.isArray(data.tickets) ? data.tickets : []
         
         // Extract numeric part from existing client IDs (format: CLI-0001, CLI-0002, etc.)
+        // Only consider properly formatted client IDs (CLI- followed by 1-4 digits)
         let maxNumber = 0
         tickets.forEach((ticket: any) => {
-          if (ticket.clientId) {
-            const match = ticket.clientId.match(/CLI-(\d+)/)
+          if (ticket.clientId && typeof ticket.clientId === 'string') {
+            // Match CLI- followed by 1-4 digits only (to avoid matching timestamps or invalid formats)
+            const match = ticket.clientId.match(/^CLI-(\d{1,4})$/)
             if (match) {
               const num = parseInt(match[1], 10)
-              if (!isNaN(num) && num > maxNumber) {
+              // Only consider reasonable numbers (1 to 9999)
+              if (!isNaN(num) && num >= 1 && num <= 9999 && num > maxNumber) {
                 maxNumber = num
               }
             }
           }
         })
         
-        const nextNumber = maxNumber + 1
+        // If no valid client IDs found, start from 1
+        const nextNumber = maxNumber === 0 ? 1 : maxNumber + 1
         return `CLI-${String(nextNumber).padStart(4, "0")}`
       }
     }

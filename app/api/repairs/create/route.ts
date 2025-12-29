@@ -185,11 +185,13 @@ export async function POST(request: NextRequest) {
         let maxNumber = 0
         if (existingTickets && Array.isArray(existingTickets)) {
           existingTickets.forEach((ticket: any) => {
-            if (ticket.clientId) {
-              const match = ticket.clientId.match(/CLI-(\d+)/)
+            if (ticket.clientId && typeof ticket.clientId === 'string') {
+              // Match CLI- followed by 1-4 digits only (to avoid matching timestamps or invalid formats)
+              const match = ticket.clientId.match(/^CLI-(\d{1,4})$/)
               if (match) {
                 const num = parseInt(match[1], 10)
-                if (!isNaN(num) && num > maxNumber) {
+                // Only consider reasonable numbers (1 to 9999)
+                if (!isNaN(num) && num >= 1 && num <= 9999 && num > maxNumber) {
                   maxNumber = num
                 }
               }
@@ -197,7 +199,8 @@ export async function POST(request: NextRequest) {
           })
         }
         
-        const nextNumber = maxNumber + 1
+        // If no valid client IDs found, start from 1
+        const nextNumber = maxNumber === 0 ? 1 : maxNumber + 1
         return `CLI-${String(nextNumber).padStart(4, "0")}`
       } catch (error) {
         console.error("[generateClientId] Error:", error)
