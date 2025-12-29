@@ -253,6 +253,20 @@ export function NewRepairTicketForm() {
       setBatchId(currentBatchId)
     }
 
+    // Get translation function - ensure it's available
+    const translate = (key: string) => {
+      try {
+        return t(key)
+      } catch (error) {
+        // Fallback if translation is not available
+        const fallbacks: Record<string, string> = {
+          "form.warrantyUntil30Days": "Warranty Until 30 Days",
+          "form.withoutWarranty": "Without Warranty"
+        }
+        return fallbacks[key] || key
+      }
+    }
+
     try {
       // Create tickets for all devices via API
       const createdTickets = []
@@ -270,7 +284,7 @@ export function NewRepairTicketForm() {
             brand: device.brand || device.model.split(" ")[0] || "N/A",
             model: device.model,
             serialNo: device.serialNo?.trim() || null,
-            warranty: device.warrantyUntil30Days ? t("form.warrantyUntil30Days") : t("form.withoutWarranty"),
+            warranty: device.warrantyUntil30Days ? translate("form.warrantyUntil30Days") : translate("form.withoutWarranty"),
             simCard: device.simCard,
             simTray: device.simTray,
             memoryCard: device.memoryCard,
