@@ -285,7 +285,7 @@ export function NewRepairTicketForm() {
             problem: device.problem || null,
             price: parseFloat(device.price),
             budget: device.budget ? parseFloat(device.budget) : null,
-            batchId: currentBatchId,
+            batchId: currentBatchId, // Use the batchId generated above
             status: "PENDING",
           }),
         })

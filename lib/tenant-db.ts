@@ -503,6 +503,51 @@ export async function migrateTenantTables(tenantId: string): Promise<void> {
     } catch (error: any) {
       console.warn(`[Migration] Could not modify columns in ${tables.deletedTickets}:`, error.message)
     }
+
+    // Check if batchId column exists in repair_tickets table
+    try {
+      await query(`SELECT batchId FROM ${repairTicketsTable} LIMIT 1`)
+    } catch (error: any) {
+      // Column doesn't exist, add it
+      if (error.code === "ER_BAD_FIELD_ERROR" || error.message?.includes("Unknown column")) {
+        console.log(`[Migration] Adding batchId column to ${tables.repairTickets}`)
+        await execute(`
+          ALTER TABLE ${repairTicketsTable} 
+          ADD COLUMN batchId VARCHAR(100) DEFAULT NULL AFTER budget
+        `)
+        console.log(`[Migration] ✅ Added batchId column to ${tables.repairTickets}`)
+        
+        // Add index for batchId
+        try {
+          await execute(`
+            ALTER TABLE ${repairTicketsTable} 
+            ADD INDEX idx_batchId (batchId)
+          `)
+          console.log(`[Migration] ✅ Added index for batchId`)
+        } catch (indexError: any) {
+          // Index might already exist, that's fine
+          if (indexError.code !== "ER_DUP_KEYNAME") {
+            console.warn(`[Migration] Could not add batchId index:`, indexError.message)
+          }
+        }
+        
+        // Add composite index for clientId and customerName
+        try {
+          await execute(`
+            ALTER TABLE ${repairTicketsTable} 
+            ADD INDEX idx_clientId_customerName (clientId, customerName)
+          `)
+          console.log(`[Migration] ✅ Added composite index for clientId and customerName`)
+        } catch (indexError: any) {
+          // Index might already exist, that's fine
+          if (indexError.code !== "ER_DUP_KEYNAME") {
+            console.warn(`[Migration] Could not add composite index:`, indexError.message)
+          }
+        }
+      } else {
+        throw error
+      }
+    }
   } catch (error: any) {
     // If table doesn't exist, that's fine - it will be created with all columns
     if (error.code === "ER_NO_SUCH_TABLE") {
