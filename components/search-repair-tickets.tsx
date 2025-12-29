@@ -657,21 +657,22 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
               <table className="w-full border-collapse table-fixed">
                 <thead>
                   <tr className="bg-blue-50 border-b-2 border-blue-300">
-                    <th className="border-r border-blue-300 px-4 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider w-[10%]">{t("table.date")}</th>
-                    <th className="border-r border-blue-300 px-4 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider w-[15%]">{t("table.client") || t("form.clientName")}</th>
-                    <th className="border-r border-blue-300 px-4 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider w-[12%]">{t("table.contact")}</th>
-                    <th className="border-r border-blue-300 px-4 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider w-[15%]">{t("table.model")}</th>
-                    <th className="border-r border-blue-300 px-4 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider w-[12%]">{t("table.imei")}</th>
-                    <th className="border-r border-blue-300 px-4 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider w-[12%]">{t("table.service")}</th>
-                    <th className="border-r border-blue-300 px-4 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider w-[10%]">{t("table.status")}</th>
-                    <th className="border-r border-blue-300 px-4 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider w-[8%]">{t("table.price")}</th>
-                    <th className="px-4 py-3 text-center text-xs font-semibold text-black uppercase tracking-wider w-[6%]">{t("table.action")}</th>
+                    <th className="border-r border-blue-300 px-2 py-2 text-left text-xs font-semibold text-black uppercase tracking-wider w-[8%]">{t("table.date")}</th>
+                    <th className="border-r border-blue-300 px-2 py-2 text-left text-xs font-semibold text-black uppercase tracking-wider w-[8%]">{t("form.clientId") || "Client ID"}</th>
+                    <th className="border-r border-blue-300 px-2 py-2 text-left text-xs font-semibold text-black uppercase tracking-wider w-[12%]">{t("table.client") || t("form.clientName")}</th>
+                    <th className="border-r border-blue-300 px-2 py-2 text-left text-xs font-semibold text-black uppercase tracking-wider w-[10%]">{t("table.contact")}</th>
+                    <th className="border-r border-blue-300 px-2 py-2 text-left text-xs font-semibold text-black uppercase tracking-wider w-[12%]">{t("table.model")}</th>
+                    <th className="border-r border-blue-300 px-2 py-2 text-left text-xs font-semibold text-black uppercase tracking-wider w-[10%]">{t("table.imei")}</th>
+                    <th className="border-r border-blue-300 px-2 py-2 text-left text-xs font-semibold text-black uppercase tracking-wider w-[10%]">{t("table.service")}</th>
+                    <th className="border-r border-blue-300 px-2 py-2 text-left text-xs font-semibold text-black uppercase tracking-wider w-[8%]">{t("table.status")}</th>
+                    <th className="border-r border-blue-300 px-2 py-2 text-left text-xs font-semibold text-black uppercase tracking-wider w-[7%]">{t("table.price")}</th>
+                    <th className="px-2 py-2 text-center text-xs font-semibold text-black uppercase tracking-wider w-[5%]">{t("table.action")}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-blue-200">
                   {filteredTickets.length === 0 ? (
                     <tr>
-                      <td colSpan={9} className="px-4 py-8 text-center text-black">
+                      <td colSpan={10} className="px-4 py-8 text-center text-black">
                         No devices found
                       </td>
                     </tr>
@@ -685,22 +686,30 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                           index % 2 === 0 ? "bg-white" : "bg-blue-50/30"
                         }`}
                       >
-                        <td className="border-r border-blue-300 px-4 py-3 text-sm text-black whitespace-nowrap">
-                          {new Date(ticket.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                        <td className="border-r border-blue-300 px-2 py-2 text-sm text-black whitespace-nowrap">
+                          <div>{new Date(ticket.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}</div>
+                          {initialStatusFilter === "delivered" && ticket.deliveredDate && (
+                            <div className="text-xs text-blue-600 font-medium mt-1">
+                              Out: {new Date(ticket.deliveredDate).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                            </div>
+                          )}
                         </td>
-                        <td className="border-r border-blue-300 px-4 py-3 text-sm font-medium text-black break-words">
+                        <td className="border-r border-blue-300 px-2 py-2 text-sm font-semibold text-black whitespace-nowrap">
+                          {ticket.clientId || "-"}
+                        </td>
+                        <td className="border-r border-blue-300 px-2 py-2 text-sm font-medium text-black break-words">
                           {ticket.customerName}
                         </td>
-                        <td className="border-r border-blue-300 px-4 py-3 text-sm text-black break-words">
+                        <td className="border-r border-blue-300 px-2 py-2 text-sm text-black break-words">
                           {ticket.contact || "-"}
                         </td>
-                        <td className="border-r border-blue-300 px-4 py-3 text-sm font-semibold text-black break-words">
+                        <td className="border-r border-blue-300 px-2 py-2 text-sm font-semibold text-black break-words">
                           {ticket.model || "-"}
                         </td>
-                        <td className="border-r border-blue-300 px-4 py-3 text-sm text-black font-mono break-words">
+                        <td className="border-r border-blue-300 px-2 py-2 text-sm text-black font-mono break-words text-xs">
                           {ticket.imeiNo || "-"}
                         </td>
-                        <td className="border-r border-blue-300 px-4 py-3 text-sm text-black break-words">
+                        <td className="border-r border-blue-300 px-2 py-2 text-sm text-black break-words">
                           {(() => {
                             let services = ticket.serviceName || ""
                             if (ticket.selectedServices) {
@@ -718,7 +727,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                             return services || "-"
                           })()}
                         </td>
-                        <td className="border-r border-blue-300 px-4 py-3 text-sm whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
+                        <td className="border-r border-blue-300 px-2 py-2 text-sm whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
                           <Select 
                             value={ticket.status?.toLowerCase() || "pending"} 
                             onValueChange={(value) => {
@@ -742,10 +751,10 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                             </SelectContent>
                           </Select>
                         </td>
-                        <td className="border-r border-blue-300 px-4 py-3 text-sm text-black whitespace-nowrap">
+                        <td className="border-r border-blue-300 px-2 py-2 text-sm text-black whitespace-nowrap">
                           €{Number.parseFloat(ticket.price || 0).toFixed(2)}
                         </td>
-                        <td className="px-4 py-3 text-center whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
+                        <td className="px-2 py-2 text-center whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
                           <div className="flex items-center justify-center gap-2">
                             <Button
                               variant="ghost"
@@ -936,10 +945,6 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
             <div className="space-y-2">
               <Label htmlFor="edit-equipmentObs" className="text-black">{t("form.equipmentObservations")}</Label>
               <Textarea id="edit-equipmentObs" value={editFormData.equipmentObs || ""} onChange={(e) => setEditFormData({ ...editFormData, equipmentObs: e.target.value })} className="bg-white border-blue-300 text-black min-h-[80px]" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="edit-condition" className="text-black">{t("form.equipmentObservations")}</Label>
-              <Textarea id="edit-condition" value={editFormData.condition || ""} onChange={(e) => setEditFormData({ ...editFormData, condition: e.target.value })} className="bg-white border-blue-300 text-black min-h-[80px]" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="edit-problem" className="text-black">{t("form.technicianNotes")}</Label>

@@ -215,6 +215,16 @@ export async function PUT(
       }
     })
 
+    // If status is being changed to DELIVERED, set deliveredDate
+    if (updateData.status && (updateData.status === "DELIVERED" || updateData.status === "delivered") && 
+        (originalTicket.status !== "DELIVERED" && originalTicket.status !== "delivered")) {
+      // Check if deliveredDate column exists
+      if (existingColumns.size === 0 || existingColumns.has("deliveredDate")) {
+        updateFields.push(`\`deliveredDate\` = ?`)
+        updateValues.push(new Date().toISOString().slice(0, 19).replace('T', ' '))
+      }
+    }
+
     // Get existing edit history
     let editHistory: any[] = []
     if (originalTicket.editHistory) {

@@ -144,7 +144,7 @@ export function StatsCards() {
         </CardHeader>
         <CardContent className="relative z-10">
           <div className="text-4xl font-bold text-black mb-1">{stats.notOk}</div>
-          <p className="text-xs text-black font-medium">{t("stats.currentlyBeingCompleted")}</p>
+          <p className="text-xs text-black font-medium">{t("stats.cannotRepaired") || "Cannot Repaired"}</p>
         </CardContent>
       </Card>
 

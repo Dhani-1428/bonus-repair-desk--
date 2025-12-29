@@ -69,6 +69,7 @@ export async function createTenantTables(tenantId: string): Promise<void> {
       batchId VARCHAR(100) DEFAULT NULL,
       status ENUM('PENDING', 'NOT_OK', 'COMPLETED', 'DELIVERED', 'CANCELLED') DEFAULT 'PENDING',
       editHistory JSON DEFAULT NULL,
+      deliveredDate DATETIME DEFAULT NULL,
       createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
       updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
       INDEX idx_userId (userId),
@@ -598,6 +599,23 @@ export async function migrateTenantTables(tenantId: string): Promise<void> {
           ADD COLUMN simTray BOOLEAN DEFAULT NULL AFTER simCard
         `)
         console.log(`[Migration] ✅ Added simTray column to ${tables.deletedTickets}`)
+      } else {
+        throw error
+      }
+    }
+
+    // Check if deliveredDate column exists in repair_tickets table
+    try {
+      await query(`SELECT deliveredDate FROM ${repairTicketsTable} LIMIT 1`)
+    } catch (error: any) {
+      // Column doesn't exist, add it
+      if (error.code === "ER_BAD_FIELD_ERROR" || error.message?.includes("Unknown column")) {
+        console.log(`[Migration] Adding deliveredDate column to ${tables.repairTickets}`)
+        await execute(`
+          ALTER TABLE ${repairTicketsTable} 
+          ADD COLUMN deliveredDate DATETIME DEFAULT NULL AFTER editHistory
+        `)
+        console.log(`[Migration] ✅ Added deliveredDate column to ${tables.repairTickets}`)
       } else {
         throw error
       }
