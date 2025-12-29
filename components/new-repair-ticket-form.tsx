@@ -1793,6 +1793,105 @@ export function printReceiptForTickets(
   // Get translations for the selected language
   const t = getReceiptTranslations(language)
   
+  // Function to generate receipt HTML for multiple devices added together
+  const generateReceiptHTMLForMultipleDevices = (tickets: any[], copyType: 'CLIENT' | 'ADMIN' = 'CLIENT') => {
+    if (tickets.length === 0) return ''
+    
+    const firstTicket = tickets[0]
+    const ticketClientId = firstTicket.clientId || "N/A"
+    const ticketCustomerName = firstTicket.customerName || "N/A"
+    const ticketContact = firstTicket.contact || "N/A"
+    const ticketReceivedBy = firstTicket.receivedBy || "N/A"
+    const entryDate = new Date(firstTicket?.createdAt || Date.now())
+    const formattedDate = entryDate.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })
+    const formattedTime = entryDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+    
+    const copyLabel = copyType === 'CLIENT' ? t["receipt.clientCopy"] : t["receipt.adminCopy"]
+    
+    // Calculate total price
+    const totalPrice = tickets.reduce((sum, ticket) => sum + (Number.parseFloat(ticket.price || 0)), 0)
+    
+    // Generate device list HTML
+    const devicesList = tickets.map((ticket, index) => {
+      const ticketRepairNumber = ticket.repairNumber || "N/A"
+      const ticketImeiNo = ticket.imeiNo || "000000000000000"
+      const ticketBrand = ticket.brand || "N/A"
+      const ticketModel = ticket.model || "N/A"
+      const ticketSerialNo = ticket.serialNo || "-"
+      const ticketWarrantyText = translateWarrantyValue(ticket.warranty, language)
+      const ticketPrice = Number.parseFloat(ticket.price || 0).toFixed(2)
+      
+      return `
+        <div style="margin: 3px 0; padding: 2px 0; border-bottom: 1px dotted #ccc;">
+          <div style="font-weight: bold; margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;">Device ${index + 1}:</div>
+          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.repairN"]}:</span> ${ticketRepairNumber}</div>
+          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.imei"]}:</span> ${ticketImeiNo}</div>
+          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.brandModel"]}:</span> ${ticketBrand} - ${ticketModel}</div>
+          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.laptopSerialN"]}:</span> ${ticketSerialNo}</div>
+          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.warranty"]}:</span> ${ticketWarrantyText}</div>
+          <div style="margin: 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.price"]}:</span> €${ticketPrice}</div>
+        </div>
+      `
+    }).join("")
+    
+    return `
+      <div style="font-family: Arial, sans-serif; width: 100%; font-size: 6.5pt; line-height: 1.6; page-break-inside: avoid !important; margin: 0; padding: 0;">
+        <div style="text-align: center; font-weight: bold; font-size: 7pt; margin: 0 0 3px 0; padding: 2px; background-color: #e0e0e0; border: 1px solid #999;">
+          ${copyLabel}
+        </div>
+        <div style="display: table; width: 100%; margin: 0 0 4px 0; border-bottom: 1.5px solid #000; padding: 0 0 2px 0;">
+          <div style="display: table-row;">
+            <div style="display: table-cell; width: 50%; vertical-align: top; padding-right: 6px;">
+              <div style="font-weight: bold; font-size: 8pt; margin: 0 0 2px 0; padding: 0; color: #000; line-height: 1.6;">${shopName}</div>
+              <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">${companyAddress}</div>
+              <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">${companyPhone1}${companyPhone2 ? `, ${companyPhone2}` : ""}</div>
+              <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">${companyEmail}</div>
+              <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">${companyWebsite}</div>
+              <div style="margin: 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">VAT: ${companyVAT}</div>
+            </div>
+            <div style="display: table-cell; width: 50%; vertical-align: top; padding-left: 6px;">
+              <div style="font-weight: bold; font-size: 7pt; margin: 0 0 2px 0; padding: 0; color: #000; line-height: 1.6;">${t["receipt.clientId"]}: ${ticketClientId}</div>
+              <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;"><strong>${t["receipt.name"]}:</strong> ${ticketCustomerName}</div>
+              <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;"><strong>${t["receipt.clientPhone"]}:</strong> ${ticketContact}</div>
+              <div style="margin: 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;"><strong>${t["receipt.receivedBy"] || "Device Received By"}:</strong> ${ticketReceivedBy}</div>
+            </div>
+          </div>
+        </div>
+        
+        <div style="margin: 3px 0;">
+          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.entryDate"]}:</span> ${formattedDate} ${formattedTime}</div>
+          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">Number of Devices:</span> ${tickets.length}</div>
+        </div>
+        
+        <div style="margin: 3px 0;">
+          <div style="font-weight: bold; margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;">Devices:</div>
+          ${devicesList}
+        </div>
+        
+        <div style="margin: 3px 0; padding: 3px; background-color: #f0f0f0; text-align: center; font-weight: bold; font-size: 7pt; border: 1px solid #ddd;">
+          <div style="font-size: 7pt; font-weight: bold;">Total Price: €${totalPrice.toFixed(2)}</div>
+        </div>
+        
+        <div style="margin: 3px 0; padding: 3px; background-color: #f0f0f0; text-align: center; font-weight: bold; font-size: 6.5pt; border: 1px solid #ddd;">
+          ${t["receipt.responsibleText"]}
+        </div>
+        
+        <div style="margin-top: 3px; padding: 3px; background-color: #f9f9f9; font-size: 6pt; line-height: 1.3; border: 1px solid #ddd;">
+          <div style="font-weight: bold; margin-bottom: 2px; font-size: 6.5pt;">${t["receipt.storageTitle"]}</div>
+          <div style="text-align: justify; margin-bottom: 2px; font-size: 6pt;">
+            ${t["receipt.storageText1"]} <strong>${shopName}</strong>.
+          </div>
+          <div style="text-align: justify; margin-bottom: 2px; font-size: 6pt;">
+            ${t["receipt.storageText2"]}
+          </div>
+          <div style="text-align: justify; margin-bottom: 2px; font-size: 6pt;">
+            ${t["receipt.storageText3"]}
+          </div>
+        </div>
+      </div>
+    `
+  }
+  
   // Function to generate a single receipt HTML
   const generateReceiptHTML = (ticket: any, copyType: 'CLIENT' | 'ADMIN' = 'CLIENT') => {
     // Validate ticket parameter
