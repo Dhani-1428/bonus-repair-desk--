@@ -326,8 +326,8 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
         const reloadResponse = await fetch(`/api/repairs?userId=${userId}`)
         if (reloadResponse.ok) {
           const data = await reloadResponse.json()
-          const ticketsArray = Array.isArray(data.tickets) ? data.tickets : []
-          setTickets(ticketsArray)
+            const ticketsArray = Array.isArray(data.tickets) ? data.tickets : []
+            setTickets(sortTicketsByClientId(ticketsArray))
           
           // Update filtered tickets
           setFilteredTickets(ticketsArray.filter((t: any) => {
@@ -453,8 +453,8 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
         const reloadResponse = await fetch(`/api/repairs?userId=${userId}`)
         if (reloadResponse.ok) {
           const data = await reloadResponse.json()
-          const ticketsArray = Array.isArray(data.tickets) ? data.tickets : []
-          setTickets(ticketsArray)
+            const ticketsArray = Array.isArray(data.tickets) ? data.tickets : []
+            setTickets(sortTicketsByClientId(ticketsArray))
           
           // Update filtered tickets
           setFilteredTickets(ticketsArray.filter((t: any) => {
