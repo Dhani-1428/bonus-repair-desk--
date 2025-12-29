@@ -294,6 +294,7 @@ const translations: Record<Language, Record<string, string>> = {
     "stats.inProgress.title": "In Progress",
     "stats.inProgress.subtitle": "Currently being completed",
     "stats.currentlyBeingCompleted": "Currently being completed",
+    "stats.cannotRepaired": "Cannot Repaired",
     "stats.completed.title": "Completed",
     "stats.completed.subtitle": "Repairs finished",
     "stats.repairsFinished": "Repairs finished",
