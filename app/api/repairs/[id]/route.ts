@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { query, queryOne, execute, escapeId } from "@/lib/mysql"
-import { getTenantTableNames, tenantTablesExist, createTenantTables } from "@/lib/tenant-db"
+import { getTenantTableNames, tenantTablesExist, createTenantTables, migrateTenantTables } from "@/lib/tenant-db"
 
 // GET single repair ticket by ID (tenant-specific)
 export async function GET(
@@ -109,6 +109,15 @@ export async function PUT(
       )
     }
 
+    // Ensure tables exist and are migrated
+    const tablesExist = await tenantTablesExist(user.tenantId)
+    if (!tablesExist) {
+      await createTenantTables(user.tenantId)
+    } else {
+      // Run migration to ensure all columns exist (including simTray)
+      await migrateTenantTables(user.tenantId)
+    }
+
     const tables = getTenantTableNames(user.tenantId)
     const tableName = escapeId(tables.repairTickets)
 
@@ -154,9 +163,24 @@ export async function PUT(
       return normalizedOld === normalizedNew
     }
 
+    // Check which columns exist in the table
+    let existingColumns: Set<string> = new Set()
+    try {
+      const columns = await query(`SHOW COLUMNS FROM ${tableName}`) as any[]
+      existingColumns = new Set(columns.map((col: any) => col.Field))
+    } catch (error) {
+      console.warn("[API] Could not fetch column list, proceeding with update")
+    }
+
     Object.entries(updateData).forEach(([key, value]) => {
       // Skip userId and other non-database fields
       if (key === "userId" || key === "id") return
+      
+      // Skip fields that don't exist in the database (e.g., simTray if migration hasn't run yet)
+      if (existingColumns.size > 0 && !existingColumns.has(key)) {
+        console.warn(`[API] Skipping field ${key} - column does not exist in database`)
+        return
+      }
       
       const originalValue = originalTicket[key]
       

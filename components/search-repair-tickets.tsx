@@ -396,13 +396,19 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
         return
       }
 
+      // Validate IMEI if provided
+      if (editFormData.imeiNo && editFormData.imeiNo.trim() !== "" && editFormData.imeiNo.length !== 15) {
+        toast.error(t("error.imei.exact") || "IMEI Number must be exactly 15 digits")
+        return
+      }
+
       // Prepare update data - convert price and budget to numbers, handle selectedServices
       const updateData: any = {
         userId,
         customerName: editFormData.customerName || null,
         contact: editFormData.contact || null,
         receivedBy: editFormData.receivedBy || null,
-        imeiNo: editFormData.imeiNo || null,
+        imeiNo: editFormData.imeiNo && editFormData.imeiNo.trim() !== "" ? editFormData.imeiNo.trim() : null,
         brand: editFormData.brand || null,
         model: editFormData.model || null,
         serialNo: editFormData.serialNo || null,
@@ -832,7 +838,21 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
               </div>
               <div className="space-y-2">
                 <Label htmlFor="edit-imeiNo" className="text-black">{t("form.imei")}</Label>
-                <Input id="edit-imeiNo" value={editFormData.imeiNo || ""} onChange={(e) => setEditFormData({ ...editFormData, imeiNo: e.target.value })} className="bg-white border-blue-300 text-black" />
+                <Input 
+                  id="edit-imeiNo" 
+                  value={editFormData.imeiNo || ""} 
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, '') // Only allow digits
+                    if (value.length <= 15) {
+                      setEditFormData({ ...editFormData, imeiNo: value })
+                    }
+                  }}
+                  maxLength={15}
+                  className="bg-white border-blue-300 text-black" 
+                />
+                {editFormData.imeiNo && editFormData.imeiNo.length !== 15 && (
+                  <p className="text-xs text-red-600">{t("error.imei.exact") || "IMEI Number must be exactly 15 digits"}</p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="edit-brand" className="text-black">{t("form.brand")}</Label>
