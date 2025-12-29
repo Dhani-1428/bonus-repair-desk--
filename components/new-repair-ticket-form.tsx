@@ -268,134 +268,185 @@ export function NewRepairTicketForm() {
     }
 
     try {
-      // Create tickets for all devices via API
+      // Filter out empty/invalid devices before submission
+      const validDevices = devices.filter((device, index) => {
+        // A device is valid if it has at least a model or brand
+        const hasModel = device.model && device.model.trim() !== ""
+        const hasBrand = device.brand && device.brand.trim() !== ""
+        const isValid = hasModel || hasBrand
+        
+        if (!isValid) {
+          console.warn(`[NewRepairTicketForm] Skipping device ${index + 1} - missing model and brand`)
+        }
+        
+        return isValid
+      })
+
+      if (validDevices.length === 0) {
+        toast.error("Please add at least one device with a model or brand")
+        setIsSubmitting(false)
+        return
+      }
+
+      if (validDevices.length < devices.length) {
+        toast.warning(`${devices.length - validDevices.length} empty device(s) were skipped`)
+      }
+
+      console.log(`[NewRepairTicketForm] Processing ${validDevices.length} valid device(s) out of ${devices.length} total`)
+
+      // Create tickets for all valid devices via API
       const createdTickets = []
-      for (const device of devices) {
-        const response = await fetch("/api/repairs/create", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            userId: user.id,
-            clientId: clientId.trim(),
-            customerName,
-            contact,
-            receivedBy: receivedBy.trim(),
-            imeiNo: device.imeiNo,
-            brand: device.brand || device.model.split(" ")[0] || "N/A",
-            model: device.model,
-            serialNo: device.serialNo?.trim() || null,
-            warranty: device.warrantyUntil30Days ? translate("form.warrantyUntil30Days") : translate("form.withoutWarranty"),
-            simCard: device.simCard,
-            simTray: device.simTray,
-            memoryCard: device.memoryCard,
-            charger: device.charger,
-            battery: device.battery,
-            waterDamaged: device.waterDamaged,
-            loanEquipment: false,
-            equipmentObs: device.equipmentObs || null,
-            repairObs: device.repairObs || null,
-            selectedServices: [],
-            condition: null,
-            problem: device.problem || null,
-            price: parseFloat(device.price),
-            budget: device.budget ? parseFloat(device.budget) : null,
-            batchId: currentBatchId, // Use the batchId generated above
-            status: "PENDING",
-          }),
-        })
-
-        let data
+      const errors: string[] = []
+      
+      for (let i = 0; i < validDevices.length; i++) {
+        const device = validDevices[i]
+        const deviceNumber = i + 1
+        
         try {
-          const responseText = await response.text()
-          if (!responseText) {
-            throw new Error("Empty response from server")
-          }
-          try {
-            data = JSON.parse(responseText)
-          } catch (parseError) {
-            console.error("[NewRepairTicketForm] Failed to parse JSON response:", parseError)
-            console.error("[NewRepairTicketForm] Response text:", responseText)
-            throw new Error(`Server error: ${responseText.substring(0, 200)}`)
-          }
-        } catch (jsonError: any) {
-          console.error("[NewRepairTicketForm] Failed to parse response:", jsonError)
-          throw new Error(jsonError.message || "Invalid response from server. Please try again.")
-        }
-
-        if (!response.ok) {
-          // Extract error message - prioritize specific error messages
-          let errorMessage = data?.error || data?.message || `HTTP ${response.status}: ${response.statusText}`
-          
-          // If there are details, append them for better debugging
-          if (data?.details && typeof data.details === 'object') {
-            const detailsStr = Object.entries(data.details)
-              .map(([key, value]) => `${key}: ${value}`)
-              .join(', ')
-            if (detailsStr) {
-              console.error("[NewRepairTicketForm] Error details:", detailsStr)
-            }
-          }
-          
-          console.error("[NewRepairTicketForm] API Error:", {
-            status: response.status,
-            statusText: response.statusText,
-            data: data,
-            error: errorMessage
+          const response = await fetch("/api/repairs/create", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              userId: user.id,
+              clientId: clientId.trim(),
+              customerName,
+              contact,
+              receivedBy: receivedBy.trim(),
+              imeiNo: device.imeiNo || "000000000000000",
+              brand: device.brand || device.model.split(" ")[0] || "N/A",
+              model: device.model,
+              serialNo: device.serialNo?.trim() || null,
+              warranty: device.warrantyUntil30Days ? translate("form.warrantyUntil30Days") : translate("form.withoutWarranty"),
+              simCard: device.simCard,
+              simTray: device.simTray,
+              memoryCard: device.memoryCard,
+              charger: device.charger,
+              battery: device.battery,
+              waterDamaged: device.waterDamaged,
+              loanEquipment: false,
+              equipmentObs: device.equipmentObs || null,
+              repairObs: device.repairObs || null,
+              selectedServices: [],
+              condition: null,
+              problem: device.problem || null,
+              price: parseFloat(device.price) || 0,
+              budget: device.budget ? parseFloat(device.budget) : null,
+              batchId: currentBatchId, // Use the batchId generated above
+              status: "PENDING",
+            }),
           })
-          
-          // Show specific error message to user
-          toast.error(errorMessage)
-          throw new Error(errorMessage)
-        }
 
-        // Normalize ticket data - parse JSON fields if needed
-        const ticket = data?.ticket || data
-        if (ticket && typeof ticket === 'object') {
-          // Parse selectedServices if it's a string
-          if (typeof ticket.selectedServices === 'string') {
-            try {
-              ticket.selectedServices = JSON.parse(ticket.selectedServices)
-            } catch (e) {
-              console.error("[NewRepairTicketForm] Error parsing selectedServices:", e)
-              ticket.selectedServices = []
+          let data
+          try {
+            const responseText = await response.text()
+            if (!responseText) {
+              throw new Error("Empty response from server")
             }
+            try {
+              data = JSON.parse(responseText)
+            } catch (parseError) {
+              console.error(`[NewRepairTicketForm] Failed to parse JSON response for device ${deviceNumber}:`, parseError)
+              console.error(`[NewRepairTicketForm] Response text:`, responseText)
+              throw new Error(`Server error: ${responseText.substring(0, 200)}`)
+            }
+          } catch (jsonError: any) {
+            console.error(`[NewRepairTicketForm] Failed to parse response for device ${deviceNumber}:`, jsonError)
+            throw new Error(jsonError.message || "Invalid response from server. Please try again.")
           }
-          
-          // Ensure all required fields exist
-          const normalizedTicket = {
-            ...ticket,
-            clientId: ticket.clientId || clientId.trim(),
-            customerName: ticket.customerName || customerName,
-            contact: ticket.contact || contact,
-            receivedBy: ticket.receivedBy || receivedBy.trim(),
-            imeiNo: ticket.imeiNo || device.imeiNo,
-            brand: ticket.brand || device.brand || "N/A",
-            model: ticket.model || device.model,
-            serialNo: ticket.serialNo || null,
-            warranty: ticket.warranty || t("form.withoutWarranty"),
-            simCard: ticket.simCard ?? false,
-            simTray: ticket.simTray ?? false,
-            memoryCard: ticket.memoryCard ?? false,
-            charger: ticket.charger ?? false,
-            battery: ticket.battery ?? false,
-            waterDamaged: ticket.waterDamaged ?? false,
-            loanEquipment: false,
-            equipmentObs: ticket.equipmentObs || null,
-            repairObs: ticket.repairObs || null,
-            selectedServices: Array.isArray(ticket.selectedServices) ? ticket.selectedServices : (device.selectedServices || []),
-            condition: ticket.condition || null,
-            problem: ticket.problem || device.problem,
-            price: ticket.price || parseFloat(device.price),
-            budget: ticket.budget || (device.budget ? parseFloat(device.budget) : null),
-            repairNumber: ticket.repairNumber || "N/A",
-            createdAt: ticket.createdAt || new Date().toISOString(),
+
+          if (!response.ok) {
+            // Extract error message - prioritize specific error messages
+            let errorMessage = data?.error || data?.message || `HTTP ${response.status}: ${response.statusText}`
+            
+            // If there are details, append them for better debugging
+            if (data?.details && typeof data.details === 'object') {
+              const detailsStr = Object.entries(data.details)
+                .map(([key, value]) => `${key}: ${value}`)
+                .join(', ')
+              if (detailsStr) {
+                console.error(`[NewRepairTicketForm] Error details for device ${deviceNumber}:`, detailsStr)
+              }
+            }
+            
+            console.error(`[NewRepairTicketForm] API Error for device ${deviceNumber}:`, {
+              status: response.status,
+              statusText: response.statusText,
+              data: data,
+              error: errorMessage
+            })
+            
+            // Collect error but continue processing other devices
+            errors.push(`Device ${deviceNumber}: ${errorMessage}`)
+            continue
           }
-          
-          createdTickets.push(normalizedTicket)
-        } else {
-          console.error("[NewRepairTicketForm] No valid ticket data returned from server. Response data:", data)
-          throw new Error("No ticket data returned from server")
+
+          // Normalize ticket data - parse JSON fields if needed
+          const ticket = data?.ticket || data
+          if (ticket && typeof ticket === 'object') {
+            // Parse selectedServices if it's a string
+            if (typeof ticket.selectedServices === 'string') {
+              try {
+                ticket.selectedServices = JSON.parse(ticket.selectedServices)
+              } catch (e) {
+                console.error(`[NewRepairTicketForm] Error parsing selectedServices for device ${deviceNumber}:`, e)
+                ticket.selectedServices = []
+              }
+            }
+            
+            // Ensure all required fields exist
+            const normalizedTicket = {
+              ...ticket,
+              clientId: ticket.clientId || clientId.trim(),
+              customerName: ticket.customerName || customerName,
+              contact: ticket.contact || contact,
+              receivedBy: ticket.receivedBy || receivedBy.trim(),
+              imeiNo: ticket.imeiNo || device.imeiNo || "000000000000000",
+              brand: ticket.brand || device.brand || "N/A",
+              model: ticket.model || device.model,
+              serialNo: ticket.serialNo || null,
+              warranty: ticket.warranty || t("form.withoutWarranty"),
+              simCard: ticket.simCard ?? false,
+              simTray: ticket.simTray ?? false,
+              memoryCard: ticket.memoryCard ?? false,
+              charger: ticket.charger ?? false,
+              battery: ticket.battery ?? false,
+              waterDamaged: ticket.waterDamaged ?? false,
+              loanEquipment: false,
+              equipmentObs: ticket.equipmentObs || null,
+              repairObs: ticket.repairObs || null,
+              selectedServices: Array.isArray(ticket.selectedServices) ? ticket.selectedServices : (device.selectedServices || []),
+              condition: ticket.condition || null,
+              problem: ticket.problem || device.problem,
+              price: ticket.price || parseFloat(device.price) || 0,
+              budget: ticket.budget || (device.budget ? parseFloat(device.budget) : null),
+              repairNumber: ticket.repairNumber || "N/A",
+              createdAt: ticket.createdAt || new Date().toISOString(),
+            }
+            
+            createdTickets.push(normalizedTicket)
+            console.log(`[NewRepairTicketForm] Successfully created ticket for device ${deviceNumber}: ${normalizedTicket.repairNumber}`)
+          } else {
+            console.error(`[NewRepairTicketForm] No valid ticket data returned from server for device ${deviceNumber}. Response data:`, data)
+            errors.push(`Device ${deviceNumber}: No ticket data returned from server`)
+          }
+        } catch (error: any) {
+          // Log error but continue processing other devices
+          console.error(`[NewRepairTicketForm] Error creating ticket for device ${deviceNumber}:`, error)
+          errors.push(`Device ${deviceNumber}: ${error.message || "Failed to create ticket"}`)
         }
+      }
+
+      // Show errors if any devices failed
+      if (errors.length > 0) {
+        console.error(`[NewRepairTicketForm] Errors occurred for ${errors.length} device(s):`, errors)
+        toast.error(`${errors.length} device(s) failed to create. Check console for details.`)
+      }
+
+      // Check if at least one device was created successfully
+      if (createdTickets.length === 0) {
+        toast.error("Failed to create any device tickets. Please try again.")
+        setIsSubmitting(false)
+        return
       }
 
       console.log(`[NewRepairTicketForm] Successfully created ${createdTickets.length} device ticket(s)`)
@@ -442,12 +493,12 @@ export function NewRepairTicketForm() {
       }, 500)
 
       // Print receipt for all devices added together
-      if (createdTickets.length > 0) {
+      if (ticketsWithBatch.length > 0) {
         try {
-          // Always pass all created tickets to print function
+          // Always pass all created tickets with batchId to print function
           // The print function will handle grouping and display all devices
-          console.log(`[NewRepairTicketForm] Printing receipt for ${createdTickets.length} device(s)`)
-          printReceipt(createdTickets)
+          console.log(`[NewRepairTicketForm] Printing receipt for ${ticketsWithBatch.length} device(s) with batchId: ${currentBatchId}`)
+          printReceipt(ticketsWithBatch)
         } catch (printError) {
           console.error("[NewRepairTicketForm] Error printing receipt:", printError)
           toast.error("Device entry created, but failed to print receipt. You can print it later from the device list.")
@@ -1174,7 +1225,7 @@ export function NewRepairTicketForm() {
                   <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
                   </svg>
-                  Print Receipt
+                  Print Receipt ({createdTicketsDetails.length} Device{createdTicketsDetails.length > 1 ? "s" : ""})
                 </Button>
                 <Button
                   onClick={handleContinue}
