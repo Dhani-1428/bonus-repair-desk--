@@ -2035,8 +2035,8 @@ export function printReceiptForTickets(
     if (ticketGroup.length > 1) {
       // Multiple devices added together - show on one receipt
       const firstTicket = ticketGroup[0]
-      const clientCopy = generateReceiptHTMLForMultipleDevices(ticketGroup, 'CLIENT', t)
-      const adminCopy = generateReceiptHTMLForMultipleDevices(ticketGroup, 'ADMIN', t)
+      const clientCopy = generateReceiptHTMLForMultipleDevices(ticketGroup, 'CLIENT')
+      const adminCopy = generateReceiptHTMLForMultipleDevices(ticketGroup, 'ADMIN')
       
       return `
         <div class="ticket-container" style="page-break-inside: avoid !important; page-break-after: avoid !important; break-inside: avoid !important; break-after: avoid !important; margin: 0 auto; padding: 0; width: 100%; display: flex; flex-direction: column; box-sizing: border-box; justify-content: center;">
