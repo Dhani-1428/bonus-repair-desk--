@@ -53,6 +53,7 @@ export async function createTenantTables(tenantId: string): Promise<void> {
       softwareVersion VARCHAR(100),
       warranty VARCHAR(50) DEFAULT 'Without Warranty',
       simCard BOOLEAN DEFAULT FALSE,
+      simTray BOOLEAN DEFAULT FALSE,
       memoryCard BOOLEAN DEFAULT FALSE,
       charger BOOLEAN DEFAULT FALSE,
       battery BOOLEAN DEFAULT FALSE,
@@ -110,6 +111,7 @@ export async function createTenantTables(tenantId: string): Promise<void> {
       softwareVersion VARCHAR(100),
       warranty VARCHAR(50),
       simCard BOOLEAN,
+      simTray BOOLEAN,
       memoryCard BOOLEAN,
       charger BOOLEAN,
       battery BOOLEAN,
@@ -562,6 +564,40 @@ export async function migrateTenantTables(tenantId: string): Promise<void> {
           ADD COLUMN editHistory JSON DEFAULT NULL AFTER status
         `)
         console.log(`[Migration] ✅ Added editHistory column to ${tables.repairTickets}`)
+      } else {
+        throw error
+      }
+    }
+
+    // Check if simTray column exists in repair_tickets table
+    try {
+      await query(`SELECT simTray FROM ${repairTicketsTable} LIMIT 1`)
+    } catch (error: any) {
+      // Column doesn't exist, add it
+      if (error.code === "ER_BAD_FIELD_ERROR" || error.message?.includes("Unknown column")) {
+        console.log(`[Migration] Adding simTray column to ${tables.repairTickets}`)
+        await execute(`
+          ALTER TABLE ${repairTicketsTable} 
+          ADD COLUMN simTray BOOLEAN DEFAULT FALSE AFTER simCard
+        `)
+        console.log(`[Migration] ✅ Added simTray column to ${tables.repairTickets}`)
+      } else {
+        throw error
+      }
+    }
+
+    // Check if simTray column exists in deleted_tickets table
+    try {
+      await query(`SELECT simTray FROM ${deletedTicketsTable} LIMIT 1`)
+    } catch (error: any) {
+      // Column doesn't exist, add it
+      if (error.code === "ER_BAD_FIELD_ERROR" || error.message?.includes("Unknown column")) {
+        console.log(`[Migration] Adding simTray column to ${tables.deletedTickets}`)
+        await execute(`
+          ALTER TABLE ${deletedTicketsTable} 
+          ADD COLUMN simTray BOOLEAN DEFAULT NULL AFTER simCard
+        `)
+        console.log(`[Migration] ✅ Added simTray column to ${tables.deletedTickets}`)
       } else {
         throw error
       }
