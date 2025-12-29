@@ -103,28 +103,33 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
     if (searchTerm.trim() && searchType !== "date") {
       const lowercaseTerm = searchTerm.toLowerCase()
       filtered = filtered.filter((ticket: any) => {
-        switch (searchType) {
-          case "id":
-            return ticket.repairNumber?.toLowerCase().includes(lowercaseTerm) || 
-                   ticket.id?.toLowerCase().includes(lowercaseTerm)
-          case "name":
-            return ticket.customerName.toLowerCase().includes(lowercaseTerm)
-          case "contact":
-            return ticket.contact.toLowerCase().includes(lowercaseTerm)
-          case "imei":
-            return ticket.imeiNo.toLowerCase().includes(lowercaseTerm)
-          case "model":
-            return ticket.model.toLowerCase().includes(lowercaseTerm)
-          default:
-            // Search in all allowed fields: ID, IMEI, Contact, name, model
-            return (
-              ticket.repairNumber?.toLowerCase().includes(lowercaseTerm) ||
-              ticket.id?.toLowerCase().includes(lowercaseTerm) ||
-              ticket.customerName.toLowerCase().includes(lowercaseTerm) ||
-              ticket.contact.toLowerCase().includes(lowercaseTerm) ||
-              ticket.imeiNo.toLowerCase().includes(lowercaseTerm) ||
-              ticket.model.toLowerCase().includes(lowercaseTerm)
-            )
+        try {
+          switch (searchType) {
+            case "id":
+              return (ticket.repairNumber?.toLowerCase()?.includes(lowercaseTerm) || false) || 
+                     (ticket.id?.toLowerCase()?.includes(lowercaseTerm) || false)
+            case "name":
+              return ticket.customerName?.toLowerCase()?.includes(lowercaseTerm) || false
+            case "contact":
+              return ticket.contact?.toLowerCase()?.includes(lowercaseTerm) || false
+            case "imei":
+              return ticket.imeiNo?.toLowerCase()?.includes(lowercaseTerm) || false
+            case "model":
+              return ticket.model?.toLowerCase()?.includes(lowercaseTerm) || false
+            default:
+              // Search in all allowed fields: ID, IMEI, Contact, name, model
+              return (
+                (ticket.repairNumber?.toLowerCase()?.includes(lowercaseTerm) || false) ||
+                (ticket.id?.toLowerCase()?.includes(lowercaseTerm) || false) ||
+                (ticket.customerName?.toLowerCase()?.includes(lowercaseTerm) || false) ||
+                (ticket.contact?.toLowerCase()?.includes(lowercaseTerm) || false) ||
+                (ticket.imeiNo?.toLowerCase()?.includes(lowercaseTerm) || false) ||
+                (ticket.model?.toLowerCase()?.includes(lowercaseTerm) || false)
+              )
+          }
+        } catch (error) {
+          console.error("[SearchRepairTickets] Error filtering ticket:", error, ticket)
+          return false
         }
       })
     }
@@ -166,69 +171,74 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
       
       const ticketsArray = Array.isArray(tickets) ? tickets : []
       ticketsArray.forEach((ticket: any) => {
-        let matchValue = ""
-        let displayText = ""
-        
-        switch (type) {
-          case "name":
-            if (ticket.customerName.toLowerCase().includes(lowercaseTerm)) {
-              matchValue = ticket.customerName
-              displayText = `${ticket.customerName} - ${ticket.model}`
-            }
-            break
-          case "contact":
-            if (ticket.contact.toLowerCase().includes(lowercaseTerm)) {
-              matchValue = ticket.contact
-              displayText = `${ticket.contact} - ${ticket.customerName}`
-            }
-            break
-          case "imei":
-            if (ticket.imeiNo.toLowerCase().includes(lowercaseTerm)) {
-              matchValue = ticket.imeiNo
-              displayText = `${ticket.imeiNo} - ${ticket.model}`
-            }
-            break
-          case "model":
-            if (ticket.model.toLowerCase().includes(lowercaseTerm)) {
-              matchValue = ticket.model
-              displayText = `${ticket.model} - ${ticket.customerName}`
-            }
-            break
-          case "service":
-            if (ticket.serviceName?.toLowerCase().includes(lowercaseTerm)) {
-              matchValue = ticket.serviceName
-              displayText = `${ticket.serviceName} - ${ticket.customerName}`
-            }
-            break
-          case "repairNumber":
-            if (ticket.repairNumber?.toLowerCase().includes(lowercaseTerm)) {
-              matchValue = ticket.repairNumber
-              displayText = `${ticket.repairNumber} - ${ticket.customerName}`
-            }
-            break
-          case "all":
-            if (ticket.customerName.toLowerCase().includes(lowercaseTerm) && !seen.has(ticket.customerName)) {
-              seen.add(ticket.customerName)
-              suggestionList.push({ value: ticket.customerName, display: ticket.customerName, type: "name" })
-            }
-            if (ticket.model.toLowerCase().includes(lowercaseTerm) && !seen.has(ticket.model)) {
-              seen.add(ticket.model)
-              suggestionList.push({ value: ticket.model, display: `${ticket.model} - ${ticket.customerName}`, type: "model" })
-            }
-            if (ticket.imeiNo.toLowerCase().includes(lowercaseTerm) && !seen.has(ticket.imeiNo)) {
-              seen.add(ticket.imeiNo)
-              suggestionList.push({ value: ticket.imeiNo, display: `${ticket.imeiNo} - ${ticket.model}`, type: "imei" })
-            }
-            if (ticket.repairNumber?.toLowerCase().includes(lowercaseTerm) && !seen.has(ticket.repairNumber)) {
-              seen.add(ticket.repairNumber)
-              suggestionList.push({ value: ticket.repairNumber, display: `${ticket.repairNumber} - ${ticket.customerName}`, type: "repairNumber" })
-            }
-            break
-        }
-        
-        if (matchValue && !seen.has(matchValue) && type !== "all") {
-          seen.add(matchValue)
-          suggestionList.push({ value: matchValue, display: displayText, type: type, ticket: ticket })
+        try {
+          let matchValue = ""
+          let displayText = ""
+          
+          switch (type) {
+            case "name":
+              if (ticket.customerName?.toLowerCase()?.includes(lowercaseTerm)) {
+                matchValue = ticket.customerName
+                displayText = `${ticket.customerName || ""} - ${ticket.model || ""}`
+              }
+              break
+            case "contact":
+              if (ticket.contact?.toLowerCase()?.includes(lowercaseTerm)) {
+                matchValue = ticket.contact
+                displayText = `${ticket.contact || ""} - ${ticket.customerName || ""}`
+              }
+              break
+            case "imei":
+              if (ticket.imeiNo?.toLowerCase()?.includes(lowercaseTerm)) {
+                matchValue = ticket.imeiNo
+                displayText = `${ticket.imeiNo || ""} - ${ticket.model || ""}`
+              }
+              break
+            case "model":
+              if (ticket.model?.toLowerCase()?.includes(lowercaseTerm)) {
+                matchValue = ticket.model
+                displayText = `${ticket.model || ""} - ${ticket.customerName || ""}`
+              }
+              break
+            case "service":
+              if (ticket.serviceName?.toLowerCase()?.includes(lowercaseTerm)) {
+                matchValue = ticket.serviceName
+                displayText = `${ticket.serviceName || ""} - ${ticket.customerName || ""}`
+              }
+              break
+            case "repairNumber":
+              if (ticket.repairNumber?.toLowerCase()?.includes(lowercaseTerm)) {
+                matchValue = ticket.repairNumber
+                displayText = `${ticket.repairNumber || ""} - ${ticket.customerName || ""}`
+              }
+              break
+            case "all":
+              if (ticket.customerName?.toLowerCase()?.includes(lowercaseTerm) && !seen.has(ticket.customerName)) {
+                seen.add(ticket.customerName)
+                suggestionList.push({ value: ticket.customerName, display: ticket.customerName, type: "name" })
+              }
+              if (ticket.model?.toLowerCase()?.includes(lowercaseTerm) && !seen.has(ticket.model)) {
+                seen.add(ticket.model)
+                suggestionList.push({ value: ticket.model, display: `${ticket.model || ""} - ${ticket.customerName || ""}`, type: "model" })
+              }
+              if (ticket.imeiNo?.toLowerCase()?.includes(lowercaseTerm) && !seen.has(ticket.imeiNo)) {
+                seen.add(ticket.imeiNo)
+                suggestionList.push({ value: ticket.imeiNo, display: `${ticket.imeiNo || ""} - ${ticket.model || ""}`, type: "imei" })
+              }
+              if (ticket.repairNumber?.toLowerCase()?.includes(lowercaseTerm) && !seen.has(ticket.repairNumber)) {
+                seen.add(ticket.repairNumber)
+                suggestionList.push({ value: ticket.repairNumber, display: `${ticket.repairNumber || ""} - ${ticket.customerName || ""}`, type: "repairNumber" })
+              }
+              break
+          }
+          
+          if (matchValue && !seen.has(matchValue) && type !== "all") {
+            seen.add(matchValue)
+            suggestionList.push({ value: matchValue, display: displayText, type: type, ticket: ticket })
+          }
+        } catch (error) {
+          console.error("[SearchRepairTickets] Error processing ticket in handleSearch:", error, ticket)
+          // Continue processing other tickets
         }
       })
       
