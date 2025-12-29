@@ -22,11 +22,23 @@ export default function NewTicketPage() {
     try {
       const response = await fetch(`/api/repairs?userId=${user.id}`)
       const data = await response.json()
+      console.log(`[NewTicketPage] Loaded ${data.tickets?.length || 0} device(s) from API`)
       if (data.tickets) {
+        console.log(`[NewTicketPage] Device details:`, data.tickets.map((t: any) => ({
+          id: t.id,
+          repairNumber: t.repairNumber,
+          customerName: t.customerName,
+          brand: t.brand,
+          model: t.model
+        })))
         setDevices(data.tickets)
+      } else {
+        console.warn("[NewTicketPage] No tickets in API response:", data)
+        setDevices([])
       }
     } catch (error) {
-      console.error("Error loading devices:", error)
+      console.error("[NewTicketPage] Error loading devices:", error)
+      setDevices([])
     }
   }
 
@@ -163,36 +175,52 @@ export default function NewTicketPage() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {devices.map((device, index) => (
-                    <div
-                      key={device.id || index}
-                      className="border-2 border-blue-200 rounded-xl p-4 bg-white"
-                    >
-                      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                        <div>
-                          <p className="text-sm text-black">{t("ticket.repairNumber")}</p>
-                          <p className="font-semibold text-black">{device.repairNumber || t("common.notAvailable")}</p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-black">{t("form.customerName")}</p>
-                          <p className="font-semibold text-black">{device.customerName || t("common.notAvailable")}</p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-black">{t("ticket.clientNif")}</p>
-                          <p className="font-semibold text-black">{device.clientId || t("common.notAvailable")}</p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-black">{t("table.contact")}</p>
-                          <p className="font-semibold text-black">{device.contact || t("common.notAvailable")}</p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-black">{t("ticket.brandModel")}</p>
-                          <p className="font-semibold text-black">{device.brand || t("common.notAvailable")} - {device.model || t("common.notAvailable")}</p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-black">{t("table.imei")}</p>
-                          <p className="font-semibold text-black">{device.imeiNo || t("common.notAvailable")}</p>
-                        </div>
+                  {devices && devices.length > 0 ? (
+                    devices.map((device, index) => {
+                      console.log(`[NewTicketPage] Rendering device ${index + 1}:`, {
+                        id: device.id,
+                        repairNumber: device.repairNumber,
+                        customerName: device.customerName,
+                        brand: device.brand,
+                        model: device.model
+                      })
+                      return (
+                        <div
+                          key={device.id || `device-${index}`}
+                          className="border-2 border-blue-200 rounded-xl p-4 bg-white"
+                        >
+                          <div className="mb-3 pb-2 border-b border-blue-200">
+                            <h3 className="text-lg font-semibold text-black">Device {index + 1}</h3>
+                          </div>
+                          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                            <div>
+                              <p className="text-sm text-black">{t("ticket.repairNumber")}</p>
+                              <p className="font-semibold text-black">{device.repairNumber || t("common.notAvailable")}</p>
+                            </div>
+                            <div>
+                              <p className="text-sm text-black">{t("form.customerName")}</p>
+                              <p className="font-semibold text-black">{device.customerName || t("common.notAvailable")}</p>
+                            </div>
+                            <div>
+                              <p className="text-sm text-black">{t("form.receivedBy")}</p>
+                              <p className="font-semibold text-black">{device.receivedBy || t("common.notAvailable")}</p>
+                            </div>
+                            <div>
+                              <p className="text-sm text-black">{t("ticket.clientNif")}</p>
+                              <p className="font-semibold text-black">{device.clientId || t("common.notAvailable")}</p>
+                            </div>
+                            <div>
+                              <p className="text-sm text-black">{t("table.contact")}</p>
+                              <p className="font-semibold text-black">{device.contact || t("common.notAvailable")}</p>
+                            </div>
+                            <div>
+                              <p className="text-sm text-black">{t("ticket.brandModel")}</p>
+                              <p className="font-semibold text-black">{device.brand || t("common.notAvailable")} - {device.model || t("common.notAvailable")}</p>
+                            </div>
+                            <div>
+                              <p className="text-sm text-black">{t("table.imei")}</p>
+                              <p className="font-semibold text-black">{device.imeiNo || t("common.notAvailable")}</p>
+                            </div>
                         <div>
                           <p className="text-sm text-black mb-2">{t("table.status")}</p>
                           <Select
@@ -243,9 +271,15 @@ export default function NewTicketPage() {
                           </svg>
                           {t("page.newTicket.print")}
                         </Button>
+                        </div>
                       </div>
+                    )
+                    })
+                  ) : (
+                    <div className="text-center py-8 text-black">
+                      <p>No devices found. Please add a device first.</p>
                     </div>
-                  ))}
+                  )}
                 </div>
               )}
             </CardContent>
