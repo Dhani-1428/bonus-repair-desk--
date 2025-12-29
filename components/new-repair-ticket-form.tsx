@@ -402,10 +402,10 @@ export function NewRepairTicketForm() {
       toast.success(`${createdTickets.length} device${createdTickets.length > 1 ? "s" : ""} entry created successfully!`)
 
       // Store created tickets details with batch ID for tracking
-      const currentBatchId = batchId || `batch_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+      // Use the currentBatchId that was already generated above
       const ticketsWithBatch = createdTickets.map((ticket, index) => ({
         ...ticket,
-        batchId: currentBatchId,
+        batchId: currentBatchId, // Use the batchId generated above
         deviceIndex: index + 1 // Add device index for display
       }))
       
