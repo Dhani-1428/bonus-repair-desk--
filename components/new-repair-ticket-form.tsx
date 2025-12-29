@@ -555,7 +555,7 @@ export function NewRepairTicketForm() {
                     className="bg-white border-gray-300 text-gray-900 placeholder:text-black focus:border-blue-500 h-12 text-lg"
                   />
                 ) : (
-                  <div className="bg-gray-50 border border-gray-300 rounded-md px-4 py-3 h-12 text-lg text-gray-700 flex items-center">
+                  <div className="bg-white border border-gray-300 rounded-md px-4 py-3 h-12 text-lg text-gray-700 flex items-center">
                     {customerName || t("common.notAvailable")}
                   </div>
                 )}
@@ -572,7 +572,7 @@ export function NewRepairTicketForm() {
                     className="bg-white border-gray-300 text-gray-900 placeholder:text-black focus:border-blue-500 h-12 text-lg"
                   />
                 ) : (
-                  <div className="bg-gray-50 border border-gray-300 rounded-md px-4 py-3 h-12 text-lg text-gray-700 flex items-center">
+                  <div className="bg-white border border-gray-300 rounded-md px-4 py-3 h-12 text-lg text-gray-700 flex items-center">
                     {contact || t("common.notAvailable")}
                   </div>
                 )}
@@ -589,7 +589,7 @@ export function NewRepairTicketForm() {
                     className="bg-white border-gray-300 text-gray-900 placeholder:text-black focus:border-blue-500 h-12 text-lg"
                   />
                 ) : (
-                  <div className="bg-gray-50 border border-gray-300 rounded-md px-4 py-3 h-12 text-lg text-gray-700 flex items-center">
+                  <div className="bg-white border border-gray-300 rounded-md px-4 py-3 h-12 text-lg text-gray-700 flex items-center">
                     {receivedBy || t("common.notAvailable")}
                   </div>
                 )}
