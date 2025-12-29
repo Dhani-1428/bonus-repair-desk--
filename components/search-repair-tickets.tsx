@@ -714,9 +714,9 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                         }`}
                       >
                         <td className="border-r border-blue-300 px-2 py-2 text-sm text-black whitespace-nowrap">
-                          <div>{new Date(ticket.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}</div>
-                          {initialStatusFilter === "delivered" && ticket.deliveredDate && (
-                            <div className="text-xs text-blue-600 font-medium mt-1">
+                          <div className="text-black">{new Date(ticket.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}</div>
+                          {(initialStatusFilter === "delivered" || ticket.status === "DELIVERED" || ticket.status === "delivered") && ticket.deliveredDate && (
+                            <div className="text-xs text-blue-600 font-semibold mt-1">
                               Out: {new Date(ticket.deliveredDate).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                             </div>
                           )}
