@@ -553,7 +553,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
               </p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
+            <div className="overflow-x-hidden">
               <table className="w-full border-collapse table-fixed">
                 <thead>
                   <tr className="bg-blue-50 border-b-2 border-blue-300">
@@ -579,6 +579,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                     filteredTickets.map((ticket, index) => (
                       <tr
                         key={ticket.id}
+                        data-ticket-row
                         onClick={() => handleModelClick(ticket)}
                         className={`hover:bg-blue-50 transition-colors cursor-pointer ${
                           index % 2 === 0 ? "bg-white" : "bg-blue-50/30"
