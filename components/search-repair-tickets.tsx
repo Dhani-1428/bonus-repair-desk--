@@ -593,29 +593,29 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                           {ticket.serviceName || t("common.notAvailable")}
                         </td>
                         <td className="border-r border-blue-300 px-4 py-3 text-sm whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
-                        <Select 
-                          value={ticket.status?.toLowerCase() || "pending"} 
-                          onValueChange={(value) => {
-                            updateTicketStatus(ticket.id, value)
-                          }}
-                        >
-                          <SelectTrigger className={`${getStatusColor(ticket.status)} text-xs px-2 py-1 h-auto border w-auto min-w-[120px] cursor-pointer`}>
-                            <SelectValue>
-                              {ticket.status === "pending" || ticket.status === "PENDING" ? t("status.pending") :
-                               ticket.status === "in_progress" || ticket.status === "IN_PROGRESS" ? t("status.in_progress") :
-                               ticket.status === "completed" || ticket.status === "COMPLETED" ? t("status.completed") :
-                               ticket.status === "delivered" || ticket.status === "DELIVERED" ? t("status.delivered") :
-                               ticket.status?.replace("_", " ") || t("status.pending")}
-                            </SelectValue>
-                          </SelectTrigger>
-                          <SelectContent className="bg-white border-blue-200 z-50">
-                            <SelectItem value="pending" className="text-black cursor-pointer">{t("status.pending")}</SelectItem>
-                            <SelectItem value="in_progress" className="text-black cursor-pointer">{t("status.in_progress")}</SelectItem>
-                            <SelectItem value="completed" className="text-black cursor-pointer">{t("status.completed")}</SelectItem>
-                            <SelectItem value="delivered" className="text-black cursor-pointer">{t("status.delivered")}</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </td>
+                          <Select 
+                            value={ticket.status?.toLowerCase() || "pending"} 
+                            onValueChange={(value) => {
+                              updateTicketStatus(ticket.id, value)
+                            }}
+                          >
+                            <SelectTrigger className={`${getStatusColor(ticket.status)} text-xs px-2 py-1 h-auto border w-full cursor-pointer`}>
+                              <SelectValue>
+                                {ticket.status === "pending" || ticket.status === "PENDING" ? t("status.pending") :
+                                 ticket.status === "in_progress" || ticket.status === "IN_PROGRESS" ? t("status.in_progress") :
+                                 ticket.status === "completed" || ticket.status === "COMPLETED" ? t("status.completed") :
+                                 ticket.status === "delivered" || ticket.status === "DELIVERED" ? t("status.delivered") :
+                                 ticket.status?.replace("_", " ") || t("status.pending")}
+                              </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent className="bg-white border-blue-200 z-50">
+                              <SelectItem value="pending" className="text-black cursor-pointer">{t("status.pending")}</SelectItem>
+                              <SelectItem value="in_progress" className="text-black cursor-pointer">{t("status.in_progress")}</SelectItem>
+                              <SelectItem value="completed" className="text-black cursor-pointer">{t("status.completed")}</SelectItem>
+                              <SelectItem value="delivered" className="text-black cursor-pointer">{t("status.delivered")}</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </td>
                         <td className="border-r border-blue-300 px-4 py-3 text-sm text-black whitespace-nowrap">
                           €{Number.parseFloat(ticket.price || 0).toFixed(2)}
                         </td>
