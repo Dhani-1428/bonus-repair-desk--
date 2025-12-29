@@ -1858,14 +1858,14 @@ export function printReceiptForTickets(
       console.log(`[generateReceiptHTMLForMultipleDevices] Adding Device ${index + 1}: ${ticketBrand} ${ticketModel} (Repair: ${ticketRepairNumber})`)
       
       return `
-        <div style="margin: 5px 0; padding: 4px 0; border-bottom: 1px dotted #ccc; background-color: #f9f9f9;">
-          <div style="font-weight: bold; margin: 0 0 3px 0; padding: 2px 0; font-size: 7pt; line-height: 1.6; color: #000; background-color: #e0e0e0; padding: 2px 4px;">Device ${index + 1}:</div>
-          <div style="margin: 1px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.repairN"]}:</span> ${ticketRepairNumber}</div>
-          <div style="margin: 1px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.imei"]}:</span> ${ticketImeiNo}</div>
-          <div style="margin: 1px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.brandModel"]}:</span> ${ticketBrand} - ${ticketModel}</div>
-          <div style="margin: 1px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.laptopSerialN"]}:</span> ${ticketSerialNo}</div>
-          <div style="margin: 1px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.warranty"]}:</span> ${ticketWarrantyText}</div>
-          <div style="margin: 1px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.price"]}:</span> €${ticketPrice}</div>
+        <div style="margin: 6px 0; padding: 5px 0; border-bottom: 1.5px solid #ccc; background-color: #f5f5f5; page-break-inside: avoid;">
+          <div style="font-weight: bold; margin: 0 0 4px 0; padding: 3px 6px; font-size: 7.5pt; line-height: 1.6; color: #000; background-color: #d0d0d0; border-left: 3px solid #0066cc;">Device ${index + 1}:</div>
+          <div style="margin: 2px 0; padding: 1px 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.repairN"]}:</span> ${ticketRepairNumber}</div>
+          <div style="margin: 2px 0; padding: 1px 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.imei"]}:</span> ${ticketImeiNo}</div>
+          <div style="margin: 2px 0; padding: 1px 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.brandModel"]}:</span> ${ticketBrand} - ${ticketModel}</div>
+          <div style="margin: 2px 0; padding: 1px 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.laptopSerialN"]}:</span> ${ticketSerialNo}</div>
+          <div style="margin: 2px 0; padding: 1px 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.warranty"]}:</span> ${ticketWarrantyText}</div>
+          <div style="margin: 2px 0; padding: 1px 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.price"]}:</span> €${ticketPrice}</div>
         </div>
       `
     }).join("")
@@ -2075,13 +2075,20 @@ export function printReceiptForTickets(
   // Generate receipts - one receipt per group (devices added together share one receipt)
   const receiptsHTML = Object.values(groupedTickets).map(ticketGroup => {
     console.log(`[printReceiptForTickets] Processing group with ${ticketGroup.length} ticket(s)`)
+    // Sort tickets by creation date to maintain order
+    const sortedTickets = [...ticketGroup].sort((a, b) => {
+      const dateA = new Date(a.createdAt || 0).getTime()
+      const dateB = new Date(b.createdAt || 0).getTime()
+      return dateA - dateB
+    })
+    
     // If multiple tickets in group, show all devices on one receipt
-    if (ticketGroup.length > 1) {
+    if (sortedTickets.length > 1) {
       // Multiple devices added together - show on one receipt
-      console.log(`[printReceiptForTickets] Generating multi-device receipt for ${ticketGroup.length} devices`)
-      const firstTicket = ticketGroup[0]
-      const clientCopy = generateReceiptHTMLForMultipleDevices(ticketGroup, 'CLIENT')
-      const adminCopy = generateReceiptHTMLForMultipleDevices(ticketGroup, 'ADMIN')
+      console.log(`[printReceiptForTickets] Generating multi-device receipt for ${sortedTickets.length} devices`)
+      const firstTicket = sortedTickets[0]
+      const clientCopy = generateReceiptHTMLForMultipleDevices(sortedTickets, 'CLIENT')
+      const adminCopy = generateReceiptHTMLForMultipleDevices(sortedTickets, 'ADMIN')
       
       return `
         <div class="ticket-container" style="page-break-inside: avoid !important; page-break-after: avoid !important; break-inside: avoid !important; break-after: avoid !important; margin: 0 auto; padding: 0; width: 100%; display: flex; flex-direction: column; box-sizing: border-box; justify-content: center;">
@@ -2111,7 +2118,7 @@ export function printReceiptForTickets(
       `
     } else {
       // Single device - show individual receipt
-      const ticket = ticketGroup[0]
+      const ticket = sortedTickets[0]
       const clientCopy = generateReceiptHTML(ticket, 'CLIENT')
       const adminCopy = generateReceiptHTML(ticket, 'ADMIN')
       

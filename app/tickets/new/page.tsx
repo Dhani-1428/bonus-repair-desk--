@@ -191,24 +191,81 @@ export default function NewTicketPage() {
                   <p className="text-sm mt-2">{t("dashboard.createNewTicketToStart")}</p>
                 </div>
               ) : (
-                <div className="space-y-4">
-                  {devices && devices.length > 0 ? (
-                    devices.map((device, index) => {
-                      console.log(`[NewTicketPage] Rendering device ${index + 1}:`, {
-                        id: device.id,
-                        repairNumber: device.repairNumber,
-                        customerName: device.customerName,
-                        brand: device.brand,
-                        model: device.model
-                      })
+                <div className="space-y-6">
+                  {devices && devices.length > 0 ? (() => {
+                    // Group devices by clientId and customerName (same repair/customer)
+                    const groupedDevices: { [key: string]: any[] } = {}
+                    devices.forEach((device: any) => {
+                      const key = `${device.clientId || ''}_${device.customerName || ''}`
+                      if (!groupedDevices[key]) {
+                        groupedDevices[key] = []
+                      }
+                      groupedDevices[key].push(device)
+                    })
+                    
+                    console.log(`[NewTicketPage] Grouped ${devices.length} device(s) into ${Object.keys(groupedDevices).length} repair group(s)`)
+                    
+                    // Sort groups by creation date (most recent first)
+                    const sortedGroups = Object.values(groupedDevices).sort((a, b) => {
+                      const dateA = new Date(a[0]?.createdAt || 0).getTime()
+                      const dateB = new Date(b[0]?.createdAt || 0).getTime()
+                      return dateB - dateA
+                    })
+                    
+                    return sortedGroups.map((deviceGroup, groupIndex) => {
+                      const firstDevice = deviceGroup[0]
+                      const repairNumber = firstDevice.repairNumber || `Repair-${groupIndex + 1}`
+                      
                       return (
                         <div
-                          key={device.id || `device-${index}`}
-                          className="border-2 border-blue-200 rounded-xl p-4 bg-white"
+                          key={`repair-${firstDevice.clientId}-${firstDevice.customerName}-${groupIndex}`}
+                          className="border-2 border-blue-300 rounded-xl p-6 bg-white shadow-sm"
                         >
-                          <div className="mb-3 pb-2 border-b border-blue-200">
-                            <h3 className="text-lg font-semibold text-black">Device {index + 1}</h3>
+                          {/* Customer/Repair Header */}
+                          <div className="mb-4 pb-3 border-b-2 border-blue-300">
+                            <div className="flex items-center justify-between mb-2">
+                              <h2 className="text-xl font-bold text-black">
+                                {t("ticket.repairNumber")}: {repairNumber}
+                              </h2>
+                              <Badge className="bg-blue-100 text-blue-700 border-blue-300">
+                                {deviceGroup.length} {deviceGroup.length === 1 ? t("search.results.device") : t("search.results.devices")}
+                              </Badge>
+                            </div>
+                            <div className="grid gap-2 md:grid-cols-3 text-sm">
+                              <div>
+                                <span className="text-black font-semibold">{t("form.customerName")}:</span>
+                                <span className="text-black ml-2">{firstDevice.customerName || t("common.notAvailable")}</span>
+                              </div>
+                              <div>
+                                <span className="text-black font-semibold">{t("table.contact")}:</span>
+                                <span className="text-black ml-2">{firstDevice.contact || t("common.notAvailable")}</span>
+                              </div>
+                              <div>
+                                <span className="text-black font-semibold">{t("ticket.clientNif")}:</span>
+                                <span className="text-black ml-2">{firstDevice.clientId || t("common.notAvailable")}</span>
+                              </div>
+                            </div>
                           </div>
+                          
+                          {/* Devices List */}
+                          <div className="space-y-3">
+                            {deviceGroup.map((device, deviceIndex) => {
+                              console.log(`[NewTicketPage] Rendering Device ${deviceIndex + 1} of repair ${repairNumber}:`, {
+                                id: device.id,
+                                repairNumber: device.repairNumber,
+                                brand: device.brand,
+                                model: device.model
+                              })
+                              return (
+                                <div
+                                  key={device.id || `device-${deviceIndex}`}
+                                  className="border border-blue-200 rounded-lg p-4 bg-blue-50/30"
+                                >
+                                  <div className="mb-3 pb-2 border-b border-blue-200">
+                                    <h3 className="text-lg font-semibold text-black">
+                                      Device {deviceIndex + 1}
+                                    </h3>
+                                  </div>
                           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                             <div>
                               <p className="text-sm text-black">{t("ticket.repairNumber")}</p>
