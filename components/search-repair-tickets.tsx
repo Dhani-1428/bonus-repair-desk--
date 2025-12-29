@@ -536,46 +536,55 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full border-collapse">
+              <table className="w-full border-collapse table-fixed">
                 <thead>
-                  <tr className="bg-blue-50 border-b-2 border-blue-200">
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider border-r border-blue-200">{t("table.date")}</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider border-r border-blue-200">{t("table.customer")}</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider border-r border-blue-200">{t("table.contact")}</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider border-r border-blue-200">{t("table.model")}</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider border-r border-blue-200">{t("table.imei")}</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider border-r border-blue-200">{t("table.service")}</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider border-r border-blue-200">{t("table.status")}</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider border-r border-blue-200">{t("table.price")}</th>
-                    <th className="px-4 py-3 text-center text-xs font-semibold text-black uppercase tracking-wider">{t("table.action")}</th>
+                  <tr className="bg-blue-50 border-b-2 border-blue-300">
+                    <th className="border-r border-blue-300 px-4 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider w-[10%]">{t("table.date")}</th>
+                    <th className="border-r border-blue-300 px-4 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider w-[15%]">{t("table.customer")}</th>
+                    <th className="border-r border-blue-300 px-4 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider w-[12%]">{t("table.contact")}</th>
+                    <th className="border-r border-blue-300 px-4 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider w-[15%]">{t("table.model")}</th>
+                    <th className="border-r border-blue-300 px-4 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider w-[12%]">{t("table.imei")}</th>
+                    <th className="border-r border-blue-300 px-4 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider w-[12%]">{t("table.service")}</th>
+                    <th className="border-r border-blue-300 px-4 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider w-[10%]">{t("table.status")}</th>
+                    <th className="border-r border-blue-300 px-4 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider w-[8%]">{t("table.price")}</th>
+                    <th className="px-4 py-3 text-center text-xs font-semibold text-black uppercase tracking-wider w-[6%]">{t("table.action")}</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-blue-100">
-                  {filteredTickets.map((ticket) => (
-                    <tr
-                      key={ticket.id}
-                      onClick={() => handleModelClick(ticket)}
-                      className="bg-white hover:bg-blue-50 transition-all cursor-pointer border-b border-blue-100"
-                    >
-                      <td className="px-4 py-3 text-sm text-black border-r border-blue-100 whitespace-nowrap">
-                        {new Date(ticket.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                <tbody className="divide-y divide-blue-200">
+                  {filteredTickets.length === 0 ? (
+                    <tr>
+                      <td colSpan={9} className="px-4 py-8 text-center text-black">
+                        No devices found
                       </td>
-                      <td className="px-4 py-3 text-sm font-medium text-black border-r border-blue-100 whitespace-nowrap">
-                        {ticket.customerName}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-black border-r border-blue-100 whitespace-nowrap">
-                        {ticket.contact}
-                      </td>
-                      <td className="px-4 py-3 text-sm font-semibold text-black border-r border-blue-100 whitespace-nowrap">
-                        {ticket.model}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-black font-mono border-r border-blue-100 whitespace-nowrap">
-                        {ticket.imeiNo}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-black border-r border-blue-100 max-w-xs truncate">
-                        {ticket.serviceName || t("common.notAvailable")}
-                      </td>
-                      <td className="px-4 py-3 text-sm border-r border-blue-100 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
+                    </tr>
+                  ) : (
+                    filteredTickets.map((ticket, index) => (
+                      <tr
+                        key={ticket.id}
+                        onClick={() => handleModelClick(ticket)}
+                        className={`hover:bg-blue-50 transition-colors cursor-pointer ${
+                          index % 2 === 0 ? "bg-white" : "bg-blue-50/30"
+                        }`}
+                      >
+                        <td className="border-r border-blue-300 px-4 py-3 text-sm text-black whitespace-nowrap">
+                          {new Date(ticket.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                        </td>
+                        <td className="border-r border-blue-300 px-4 py-3 text-sm font-medium text-black break-words">
+                          {ticket.customerName}
+                        </td>
+                        <td className="border-r border-blue-300 px-4 py-3 text-sm text-black break-words">
+                          {ticket.contact || "-"}
+                        </td>
+                        <td className="border-r border-blue-300 px-4 py-3 text-sm font-semibold text-black break-words">
+                          {ticket.model || "-"}
+                        </td>
+                        <td className="border-r border-blue-300 px-4 py-3 text-sm text-black font-mono break-words">
+                          {ticket.imeiNo || "-"}
+                        </td>
+                        <td className="border-r border-blue-300 px-4 py-3 text-sm text-black break-words">
+                          {ticket.serviceName || t("common.notAvailable")}
+                        </td>
+                        <td className="border-r border-blue-300 px-4 py-3 text-sm whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
                         <Select 
                           value={ticket.status?.toLowerCase() || "pending"} 
                           onValueChange={(value) => {
