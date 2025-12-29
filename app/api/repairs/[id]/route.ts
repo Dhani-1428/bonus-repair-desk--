@@ -85,9 +85,9 @@ export async function PUT(
       )
     }
 
-    // Get user to find tenantId
+    // Get user to find tenantId and name for edit history
     const user = await queryOne(
-      `SELECT tenantId FROM users WHERE id = ?`,
+      `SELECT tenantId, name FROM users WHERE id = ?`,
       [userId]
     )
 
@@ -112,11 +112,36 @@ export async function PUT(
     const tables = getTenantTableNames(user.tenantId)
     const tableName = escapeId(tables.repairTickets)
 
+    // Get original ticket for edit history
+    const originalTicket = await queryOne(
+      `SELECT * FROM ${tableName} WHERE id = ?`,
+      [ticketId]
+    )
+
+    if (!originalTicket) {
+      return NextResponse.json(
+        { error: "Ticket not found" },
+        { status: 404 }
+      )
+    }
+
     // Build update query dynamically
     const updateFields: string[] = []
     const updateValues: any[] = []
+    const changes: any = {}
 
     Object.entries(updateData).forEach(([key, value]) => {
+      // Skip fields that haven't changed
+      if (originalTicket[key] === value) return
+      
+      // Track changes for edit history
+      changes[key] = {
+        old: originalTicket[key],
+        new: value,
+        changedAt: new Date().toISOString(),
+        changedBy: userId
+      }
+      
       if (key === "selectedServices" && Array.isArray(value)) {
         updateFields.push(`\`${key}\` = ?`)
         updateValues.push(JSON.stringify(value))
@@ -133,10 +158,36 @@ export async function PUT(
       )
     }
 
+    // Get existing edit history
+    let editHistory: any[] = []
+    if (originalTicket.editHistory) {
+      try {
+        editHistory = typeof originalTicket.editHistory === 'string' 
+          ? JSON.parse(originalTicket.editHistory) 
+          : originalTicket.editHistory
+      } catch {
+        editHistory = []
+      }
+    }
+
+    // Add new edit record
+    if (Object.keys(changes).length > 0) {
+      editHistory.push({
+        changes,
+        editedAt: new Date().toISOString(),
+        editedBy: userId,
+        editedByName: user.name || "Unknown"
+      })
+      
+      // Add editHistory to update
+      updateFields.push(`\`editHistory\` = ?`)
+      updateValues.push(JSON.stringify(editHistory))
+    }
+
     updateValues.push(ticketId)
 
     await execute(
-      `UPDATE ${tableName} SET ${updateFields.join(", ")} WHERE id = ?`,
+      `UPDATE ${tableName} SET ${updateFields.join(", ")}, updatedAt = CURRENT_TIMESTAMP WHERE id = ?`,
       updateValues
     )
 

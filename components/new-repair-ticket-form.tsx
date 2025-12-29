@@ -64,11 +64,40 @@ const BRANDS_AND_MODELS: Record<string, string[]> = {
 const ALL_BRANDS = Object.keys(BRANDS_AND_MODELS)
 
 
-// Generate Client ID
-const generateClientId = (): string => {
-  const timestamp = Date.now()
-  const random = Math.floor(Math.random() * 1000)
-  return `CLI-${timestamp}-${random}`
+// Generate Client ID - starts from 001
+const generateClientId = async (userId?: string): Promise<string> => {
+  try {
+    if (userId) {
+      // Get the highest client ID number for this user
+      const response = await fetch(`/api/repairs?userId=${userId}`)
+      if (response.ok) {
+        const data = await response.json()
+        const tickets = Array.isArray(data.tickets) ? data.tickets : []
+        
+        // Extract numeric part from existing client IDs (format: CLI-001, CLI-002, etc.)
+        let maxNumber = 0
+        tickets.forEach((ticket: any) => {
+          if (ticket.clientId) {
+            const match = ticket.clientId.match(/CLI-(\d+)/)
+            if (match) {
+              const num = parseInt(match[1], 10)
+              if (!isNaN(num) && num > maxNumber) {
+                maxNumber = num
+              }
+            }
+          }
+        })
+        
+        const nextNumber = maxNumber + 1
+        return `CLI-${String(nextNumber).padStart(3, "0")}`
+      }
+    }
+  } catch (error) {
+    console.error("[generateClientId] Error fetching tickets:", error)
+  }
+  
+  // Fallback: start from 001
+  return "CLI-001"
 }
 
 export function NewRepairTicketForm() {
@@ -76,7 +105,14 @@ export function NewRepairTicketForm() {
   const { t } = useTranslation()
   const { user } = useAuth()
   const [customerName, setCustomerName] = useState("")
-  const [clientId, setClientId] = useState(generateClientId())
+  const [clientId, setClientId] = useState("CLI-001")
+  
+  // Initialize Client ID on mount
+  useEffect(() => {
+    if (user?.id) {
+      generateClientId(user.id).then(setClientId).catch(() => setClientId("CLI-001"))
+    }
+  }, [user?.id])
   const [contact, setContact] = useState("")
   const [receivedBy, setReceivedBy] = useState("")
   const [batchId, setBatchId] = useState<string | null>(null) // Track devices added together
@@ -559,7 +595,11 @@ export function NewRepairTicketForm() {
   const handleContinue = () => {
     // Reset form
     setCustomerName("")
-    setClientId(generateClientId())
+    if (user?.id) {
+      generateClientId(user.id).then(setClientId).catch(() => setClientId("CLI-001"))
+    } else {
+      setClientId("CLI-001")
+    }
     setContact("")
     setReceivedBy("")
     setBatchId(null) // Reset batch ID for new entry
@@ -650,7 +690,13 @@ export function NewRepairTicketForm() {
 
           {/* Customer Information - Only show and allow editing for first device */}
           {devices.length > 0 && (
-            <div className="grid gap-6 grid-cols-3 border-b border-blue-200 pb-6">
+            <div className="grid gap-6 grid-cols-4 border-b border-blue-200 pb-6">
+              <div className="space-y-3">
+                <Label htmlFor="clientId" className="text-black text-base font-semibold">{t("receipt.clientId") || "Client ID"}</Label>
+                <div className="bg-white border border-blue-200 rounded-md px-4 py-3 h-12 text-lg text-black flex items-center font-mono">
+                  {clientId}
+                </div>
+              </div>
               <div className="space-y-3">
                 <Label htmlFor="customerName" className="text-black text-base font-semibold">{t("form.customerName")} *</Label>
                 {devices.length === 1 ? (
@@ -2048,6 +2094,9 @@ export function printReceiptForTickets(
           <div style="font-size: 7pt; font-weight: bold;">Total Price: €${totalPrice.toFixed(2)}</div>
         </div>
         
+        <!-- Gap between device information and footer -->
+        <div style="margin: 8px 0; height: 8px; page-break-inside: avoid;"></div>
+        
         <div style="margin: 3px 0; padding: 3px; background-color: #f0f0f0; text-align: center; font-weight: bold; font-size: 6.5pt; border: 1px solid #ddd; page-break-inside: avoid;">
           ${t["receipt.responsibleText"]}
         </div>
@@ -2164,6 +2213,9 @@ export function printReceiptForTickets(
           <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.problem"]}:</span> ${ticketProblem}</div>
           <div style="margin: 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.price"]}:</span> €${ticketPrice}</div>
         </div>
+        
+        <!-- Gap between device information and footer -->
+        <div style="margin: 8px 0; height: 8px;"></div>
         
         <div style="margin: 3px 0; padding: 3px; background-color: #f0f0f0; text-align: center; font-weight: bold; font-size: 6.5pt; border: 1px solid #ddd;">
           ${t["receipt.responsibleText"]}

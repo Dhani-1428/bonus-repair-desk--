@@ -42,8 +42,8 @@ export function RepairTicketList() {
     switch (status?.toLowerCase()) {
       case "pending":
         return "bg-yellow-500/20 text-yellow-200 border border-yellow-500/50"
-      case "in_progress":
-        return "bg-blue-500/20 text-blue-200 border border-blue-500/50"
+      case "not_ok":
+        return "bg-red-500/20 text-red-200 border border-red-500/50"
       case "completed":
         return "bg-green-500/20 text-green-200 border border-green-500/50"
       case "delivered":
@@ -160,7 +160,7 @@ export function RepairTicketList() {
                         <SelectTrigger className={`${getStatusColor(ticket.status)} text-xs px-2 py-1 h-auto border w-auto min-w-[140px] cursor-pointer font-semibold`}>
                           <SelectValue>
                             {ticket.status === "pending" || ticket.status === "PENDING" ? t("status.pending") :
-                             ticket.status === "in_progress" || ticket.status === "IN_PROGRESS" ? t("status.in_progress") :
+                             ticket.status === "not_ok" || ticket.status === "NOT_OK" ? (t("status.notOk") || "Not OK") :
                              ticket.status === "completed" || ticket.status === "COMPLETED" ? t("status.completed") :
                              ticket.status === "delivered" || ticket.status === "DELIVERED" ? t("status.delivered") :
                              ticket.status?.replace("_", " ") || t("status.pending")}
@@ -168,7 +168,7 @@ export function RepairTicketList() {
                         </SelectTrigger>
                         <SelectContent className="bg-white border-blue-200">
                           <SelectItem value="pending" className="text-black cursor-pointer hover:bg-blue-50">{t("status.pending")}</SelectItem>
-                          <SelectItem value="in_progress" className="text-black cursor-pointer hover:bg-blue-50">{t("status.in_progress")}</SelectItem>
+                          <SelectItem value="not_ok" className="text-black cursor-pointer hover:bg-blue-50">{t("status.notOk") || "Not OK"}</SelectItem>
                           <SelectItem value="completed" className="text-black cursor-pointer hover:bg-blue-50">{t("status.completed")}</SelectItem>
                           <SelectItem value="delivered" className="text-black cursor-pointer hover:bg-blue-50">{t("status.delivered")}</SelectItem>
                         </SelectContent>

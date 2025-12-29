@@ -17,7 +17,7 @@ export default function AnalyticsPage() {
     averagePrice: 0,
     statusDistribution: {
       pending: 0,
-      inProgress: 0,
+      notOk: 0,
       completed: 0,
       delivered: 0,
     },
@@ -53,7 +53,7 @@ export default function AnalyticsPage() {
 
         const statusDistribution = {
           pending: ticketsArray.filter((t: any) => t.status === "PENDING" || t.status === "pending").length,
-          inProgress: ticketsArray.filter((t: any) => t.status === "IN_PROGRESS" || t.status === "in_progress").length,
+          notOk: ticketsArray.filter((t: any) => t.status === "NOT_OK" || t.status === "not_ok").length,
           completed: ticketsArray.filter((t: any) => t.status === "COMPLETED" || t.status === "completed").length,
           delivered: ticketsArray.filter((t: any) => t.status === "DELIVERED" || t.status === "delivered").length,
         }
@@ -78,7 +78,7 @@ export default function AnalyticsPage() {
           averagePrice: 0,
           statusDistribution: {
             pending: 0,
-            inProgress: 0,
+            notOk: 0,
             completed: 0,
             delivered: 0,
           },
@@ -98,7 +98,7 @@ export default function AnalyticsPage() {
     switch (status) {
       case "pending":
         return "bg-yellow-100 text-yellow-700 border-yellow-300"
-      case "in_progress":
+      case "not_ok":
         return "bg-blue-100 text-blue-700 border-blue-300"
       case "completed":
         return "bg-green-100 text-green-700 border-green-300"
@@ -182,8 +182,8 @@ export default function AnalyticsPage() {
                 <p className="text-sm text-black">{t("analytics.pending")}</p>
               </div>
               <div className="p-4 rounded-lg bg-blue-50 border border-blue-200">
-                <div className="text-3xl font-bold text-blue-700 mb-1">{analytics.statusDistribution.inProgress}</div>
-                <p className="text-sm text-black">{t("analytics.inProgress")}</p>
+                <div className="text-3xl font-bold text-red-700 mb-1">{analytics.statusDistribution.notOk}</div>
+                <p className="text-sm text-black">{t("status.notOk") || "Not OK"}</p>
               </div>
               <div className="p-4 rounded-lg bg-green-50 border border-green-200">
                 <div className="text-3xl font-bold text-green-700 mb-1">{analytics.statusDistribution.completed}</div>
@@ -228,7 +228,7 @@ export default function AnalyticsPage() {
                           <h3 className="font-semibold text-lg text-black">{device.customerName}</h3>
                           <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(device.status)}`}>
                             {device.status === "PENDING" || device.status === "pending" ? t("analytics.pending") :
-                             device.status === "IN_PROGRESS" || device.status === "in_progress" ? t("analytics.inProgress") :
+                             device.status === "NOT_OK" || device.status === "not_ok" ? (t("status.notOk") || "Not OK") :
                              device.status === "COMPLETED" || device.status === "completed" ? t("analytics.completed") :
                              device.status === "DELIVERED" || device.status === "delivered" ? t("analytics.delivered") :
                              device.status.replace("_", " ")}

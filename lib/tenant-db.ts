@@ -66,7 +66,8 @@ export async function createTenantTables(tenantId: string): Promise<void> {
       price DECIMAL(10, 2) DEFAULT NULL,
       budget DECIMAL(10, 2) DEFAULT NULL,
       batchId VARCHAR(100) DEFAULT NULL,
-      status ENUM('PENDING', 'IN_PROGRESS', 'COMPLETED', 'DELIVERED', 'CANCELLED') DEFAULT 'PENDING',
+      status ENUM('PENDING', 'NOT_OK', 'COMPLETED', 'DELIVERED', 'CANCELLED') DEFAULT 'PENDING',
+      editHistory JSON DEFAULT NULL,
       createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
       updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
       INDEX idx_userId (userId),
@@ -121,7 +122,7 @@ export async function createTenantTables(tenantId: string): Promise<void> {
       problem TEXT DEFAULT NULL,
       price DECIMAL(10, 2) DEFAULT NULL,
       budget DECIMAL(10, 2) DEFAULT NULL,
-      status ENUM('PENDING', 'IN_PROGRESS', 'COMPLETED', 'DELIVERED', 'CANCELLED'),
+      status ENUM('PENDING', 'NOT_OK', 'COMPLETED', 'DELIVERED', 'CANCELLED'),
       deletedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
       INDEX idx_userId (userId)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -547,6 +548,35 @@ export async function migrateTenantTables(tenantId: string): Promise<void> {
       } else {
         throw error
       }
+    }
+
+    // Check if editHistory column exists in repair_tickets table
+    try {
+      await query(`SELECT editHistory FROM ${repairTicketsTable} LIMIT 1`)
+    } catch (error: any) {
+      // Column doesn't exist, add it
+      if (error.code === "ER_BAD_FIELD_ERROR" || error.message?.includes("Unknown column")) {
+        console.log(`[Migration] Adding editHistory column to ${tables.repairTickets}`)
+        await execute(`
+          ALTER TABLE ${repairTicketsTable} 
+          ADD COLUMN editHistory JSON DEFAULT NULL AFTER status
+        `)
+        console.log(`[Migration] ✅ Added editHistory column to ${tables.repairTickets}`)
+      } else {
+        throw error
+      }
+    }
+
+    // Update status enum to include NOT_OK instead of IN_PROGRESS
+    try {
+      await execute(`
+        ALTER TABLE ${repairTicketsTable}
+        MODIFY COLUMN status ENUM('PENDING', 'NOT_OK', 'COMPLETED', 'DELIVERED', 'CANCELLED') DEFAULT 'PENDING'
+      `)
+      console.log(`[Migration] ✅ Updated status enum to include NOT_OK`)
+    } catch (error: any) {
+      // If modification fails, that's fine - might already be updated
+      console.warn(`[Migration] Could not update status enum:`, error.message)
     }
   } catch (error: any) {
     // If table doesn't exist, that's fine - it will be created with all columns

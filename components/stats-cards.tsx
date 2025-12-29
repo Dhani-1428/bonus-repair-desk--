@@ -13,7 +13,7 @@ export function StatsCards() {
   const [stats, setStats] = useState({
     total: 0,
     pending: 0,
-    inProgress: 0,
+    notOk: 0,
     completed: 0,
     delivered: 0,
   })
@@ -31,7 +31,7 @@ export function StatsCards() {
           setStats({
             total: ticketsArray.length,
             pending: ticketsArray.filter((t: any) => t.status === "PENDING" || t.status === "pending").length,
-            inProgress: ticketsArray.filter((t: any) => t.status === "IN_PROGRESS" || t.status === "in_progress").length,
+            notOk: ticketsArray.filter((t: any) => t.status === "NOT_OK" || t.status === "not_ok").length,
             completed: ticketsArray.filter((t: any) => t.status === "COMPLETED" || t.status === "completed").length,
             delivered: ticketsArray.filter((t: any) => t.status === "DELIVERED" || t.status === "delivered").length,
           })
@@ -40,7 +40,7 @@ export function StatsCards() {
           setStats({
             total: 0,
             pending: 0,
-            inProgress: 0,
+            notOk: 0,
             completed: 0,
             delivered: 0,
           })
@@ -51,7 +51,7 @@ export function StatsCards() {
         setStats({
           total: 0,
           pending: 0,
-          inProgress: 0,
+          notOk: 0,
           completed: 0,
           delivered: 0,
         })
@@ -67,7 +67,7 @@ export function StatsCards() {
       router.push("/tickets")
     } else if (status === "pending") {
       router.push("/tickets/pending")
-    } else if (status === "in_progress") {
+    } else if (status === "not_ok") {
       router.push("/tickets/in-progress")
     } else if (status === "completed") {
       router.push("/tickets/completed")
@@ -130,11 +130,11 @@ export function StatsCards() {
 
       <Card
         className="shadow-lg border-2 border-blue-300 bg-white cursor-pointer hover:shadow-xl hover:scale-[1.02] transition-all duration-300 group overflow-hidden relative"
-        onClick={() => handleCardClick("in_progress")}
+        onClick={() => handleCardClick("not_ok")}
       >
         <CardHeader className="flex flex-row items-center justify-between pb-3 relative z-10 bg-blue-50">
           <CardTitle className="text-sm font-semibold text-black uppercase tracking-wide">
-            {t("status.in_progress")} {t("status.notOk")}
+            {t("status.notOk") || "Not OK"}
           </CardTitle>
           <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center shadow-md ring-2 ring-blue-200">
             <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -143,7 +143,7 @@ export function StatsCards() {
           </div>
         </CardHeader>
         <CardContent className="relative z-10">
-          <div className="text-4xl font-bold text-black mb-1">{stats.inProgress}</div>
+          <div className="text-4xl font-bold text-black mb-1">{stats.notOk}</div>
           <p className="text-xs text-black font-medium">{t("stats.currentlyBeingCompleted")}</p>
         </CardContent>
       </Card>

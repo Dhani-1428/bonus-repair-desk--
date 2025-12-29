@@ -160,8 +160,8 @@ export function TrashDevices() {
     switch (status) {
       case "pending":
         return "bg-yellow-100 text-yellow-700 border border-yellow-300"
-      case "in_progress":
-        return "bg-blue-100 text-blue-700 border border-blue-300"
+      case "not_ok":
+        return "bg-red-100 text-red-700 border border-red-300"
       case "completed":
         return "bg-green-100 text-green-700 border border-green-300"
       case "delivered":

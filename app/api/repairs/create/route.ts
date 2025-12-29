@@ -174,13 +174,37 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Client ID is optional - generate if not provided
-    const generateClientId = () => {
-      const timestamp = Date.now()
-      const random = Math.floor(Math.random() * 1000)
-      return `CLI-${timestamp}-${random}`
+    // Client ID is optional - generate if not provided (starts from 001)
+    const generateClientId = async () => {
+      try {
+        // Get the highest client ID number for this tenant
+        const existingTickets = await query(
+          `SELECT clientId FROM ${tableName} WHERE clientId IS NOT NULL AND clientId != '' ORDER BY clientId DESC LIMIT 100`
+        ) as any[]
+        
+        let maxNumber = 0
+        if (existingTickets && Array.isArray(existingTickets)) {
+          existingTickets.forEach((ticket: any) => {
+            if (ticket.clientId) {
+              const match = ticket.clientId.match(/CLI-(\d+)/)
+              if (match) {
+                const num = parseInt(match[1], 10)
+                if (!isNaN(num) && num > maxNumber) {
+                  maxNumber = num
+                }
+              }
+            }
+          })
+        }
+        
+        const nextNumber = maxNumber + 1
+        return `CLI-${String(nextNumber).padStart(3, "0")}`
+      } catch (error) {
+        console.error("[generateClientId] Error:", error)
+        return "CLI-001"
+      }
     }
-    const finalClientId = clientId && clientId.trim() !== "" ? clientId.trim() : generateClientId()
+    const finalClientId = clientId && clientId.trim() !== "" ? clientId.trim() : await generateClientId()
 
     // Serial number should come from the request body (manual input) - OPTIONAL
     const serialNoFromBody = body.serialNo || body.serialNumber || null

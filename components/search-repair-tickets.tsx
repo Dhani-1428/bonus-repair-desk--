@@ -42,7 +42,30 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
   const [dateFilter, setDateFilter] = useState("")
   const [currentUser, setCurrentUser] = useState<any>(null)
   const [editingTicket, setEditingTicket] = useState<any>(null)
-  const [editFormData, setEditFormData] = useState<any>({})
+  const [editFormData, setEditFormData] = useState<any>({
+    customerName: "",
+    contact: "",
+    receivedBy: "",
+    imeiNo: "",
+    brand: "",
+    model: "",
+    serialNo: "",
+    warranty: "",
+    simCard: false,
+    simTray: false,
+    memoryCard: false,
+    charger: false,
+    battery: false,
+    waterDamaged: false,
+    equipmentObs: "",
+    repairObs: "",
+    selectedServices: [],
+    condition: "",
+    problem: "",
+    price: "",
+    budget: "",
+    status: "pending",
+  })
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [selectedTicket, setSelectedTicket] = useState<any>(null)
   const [isSheetOpen, setIsSheetOpen] = useState(false)
@@ -137,9 +160,9 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
       filtered = filtered.filter((ticket: any) => {
         const ticketStatus = ticket.status?.toLowerCase() || ""
         const filterStatus = statusFilter.toLowerCase()
-        // Handle both "in_progress" and "in-progress" variations
-        if (filterStatus === "in_progress") {
-          return ticketStatus === "in_progress" || ticketStatus === "in-progress" || ticketStatus === "in progress"
+        // Handle both "not_ok" and "not-ok" variations
+        if (filterStatus === "not_ok") {
+          return ticketStatus === "not_ok" || ticketStatus === "NOT_OK" || ticketStatus === "not-ok" || ticketStatus === "not ok"
         }
         return ticketStatus === filterStatus
       })
@@ -318,16 +341,42 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
 
   const handleEditClick = (ticket: any) => {
     setEditingTicket(ticket)
+    // Parse selectedServices if it's a string
+    let servicesArray = ticket.selectedServices
+    if (typeof servicesArray === 'string') {
+      try {
+        servicesArray = JSON.parse(servicesArray)
+      } catch {
+        servicesArray = []
+      }
+    }
+    if (!Array.isArray(servicesArray)) {
+      servicesArray = ticket.serviceName ? [ticket.serviceName] : []
+    }
+    
     setEditFormData({
-      customerName: ticket.customerName,
-      contact: ticket.contact,
-      imeiNo: ticket.imeiNo,
-      model: ticket.model,
-      problem: ticket.problem,
-      condition: ticket.condition,
-      price: ticket.price,
-      serviceName: ticket.serviceName,
-      status: ticket.status,
+      customerName: ticket.customerName || "",
+      contact: ticket.contact || "",
+      receivedBy: ticket.receivedBy || "",
+      imeiNo: ticket.imeiNo || "",
+      brand: ticket.brand || "",
+      model: ticket.model || "",
+      serialNo: ticket.serialNo || "",
+      warranty: ticket.warranty || "Without Warranty",
+      simCard: ticket.simCard ?? false,
+      simTray: ticket.simTray ?? false,
+      memoryCard: ticket.memoryCard ?? false,
+      charger: ticket.charger ?? false,
+      battery: ticket.battery ?? false,
+      waterDamaged: ticket.waterDamaged ?? false,
+      equipmentObs: ticket.equipmentObs || "",
+      repairObs: ticket.repairObs || "",
+      selectedServices: servicesArray,
+      condition: ticket.condition || "",
+      problem: ticket.problem || "",
+      price: ticket.price || "",
+      budget: ticket.budget || "",
+      status: ticket.status || "pending",
     })
     setIsEditDialogOpen(true)
   }
@@ -347,15 +396,38 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
         return
       }
 
+      // Prepare update data - convert price and budget to numbers, handle selectedServices
+      const updateData: any = {
+        userId,
+        customerName: editFormData.customerName || null,
+        contact: editFormData.contact || null,
+        receivedBy: editFormData.receivedBy || null,
+        imeiNo: editFormData.imeiNo || null,
+        brand: editFormData.brand || null,
+        model: editFormData.model || null,
+        serialNo: editFormData.serialNo || null,
+        warranty: editFormData.warranty || null,
+        simCard: editFormData.simCard ?? false,
+        simTray: editFormData.simTray ?? false,
+        memoryCard: editFormData.memoryCard ?? false,
+        charger: editFormData.charger ?? false,
+        battery: editFormData.battery ?? false,
+        waterDamaged: editFormData.waterDamaged ?? false,
+        equipmentObs: editFormData.equipmentObs || null,
+        repairObs: editFormData.repairObs || null,
+        selectedServices: Array.isArray(editFormData.selectedServices) ? editFormData.selectedServices : [],
+        condition: editFormData.condition || null,
+        problem: editFormData.problem || null,
+        price: editFormData.price ? Number.parseFloat(editFormData.price) : null,
+        budget: editFormData.budget ? Number.parseFloat(editFormData.budget) : null,
+        status: editFormData.status || "pending",
+      }
+
       // Update via API
       const response = await fetch(`/api/repairs/${editingTicket.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId,
-          ...editFormData,
-          price: Number.parseFloat(editFormData.price),
-        }),
+        body: JSON.stringify(updateData),
       })
 
       if (response.ok) {
@@ -422,8 +494,8 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
     switch (status) {
       case "pending":
         return "bg-yellow-100 text-yellow-800 border border-yellow-200"
-      case "in_progress":
-        return "bg-blue-100 text-blue-800 border border-blue-200"
+      case "not_ok":
+        return "bg-red-100 text-red-800 border border-red-200"
       case "completed":
         return "bg-green-100 text-green-800 border border-green-200"
       case "delivered":
@@ -541,7 +613,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                 <SelectContent className="bg-white border-blue-200" side="bottom" sideOffset={4}>
                   <SelectItem value="all" className="text-black">{t("status.all")}</SelectItem>
                   <SelectItem value="pending" className="text-black">{t("status.pending")}</SelectItem>
-                  <SelectItem value="in_progress" className="text-black">{t("status.in_progress")}</SelectItem>
+                  <SelectItem value="not_ok" className="text-black">{t("status.notOk") || "Not OK"}</SelectItem>
                   <SelectItem value="completed" className="text-black">{t("status.completed")}</SelectItem>
                   <SelectItem value="delivered" className="text-black">{t("status.delivered")}</SelectItem>
                 </SelectContent>
@@ -623,7 +695,22 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                           {ticket.imeiNo || "-"}
                         </td>
                         <td className="border-r border-blue-300 px-4 py-3 text-sm text-black break-words">
-                          {ticket.serviceName || t("common.notAvailable")}
+                          {(() => {
+                            let services = ticket.serviceName || ""
+                            if (ticket.selectedServices) {
+                              try {
+                                const servicesArray = typeof ticket.selectedServices === 'string' 
+                                  ? JSON.parse(ticket.selectedServices) 
+                                  : ticket.selectedServices
+                                if (Array.isArray(servicesArray) && servicesArray.length > 0) {
+                                  services = servicesArray.join(", ")
+                                }
+                              } catch {
+                                // Keep serviceName if parsing fails
+                              }
+                            }
+                            return services || t("common.notAvailable")
+                          })()}
                         </td>
                         <td className="border-r border-blue-300 px-4 py-3 text-sm whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
                           <Select 
@@ -635,7 +722,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                             <SelectTrigger className={`${getStatusColor(ticket.status)} text-xs px-2 py-1 h-auto border w-full cursor-pointer`}>
                               <SelectValue>
                                 {ticket.status === "pending" || ticket.status === "PENDING" ? t("status.pending") :
-                                 ticket.status === "in_progress" || ticket.status === "IN_PROGRESS" ? t("status.in_progress") :
+                                 ticket.status === "not_ok" || ticket.status === "NOT_OK" ? (t("status.notOk") || "Not OK") :
                                  ticket.status === "completed" || ticket.status === "COMPLETED" ? t("status.completed") :
                                  ticket.status === "delivered" || ticket.status === "DELIVERED" ? t("status.delivered") :
                                  ticket.status?.replace("_", " ") || t("status.pending")}
@@ -643,7 +730,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                             </SelectTrigger>
                             <SelectContent className="bg-white border-blue-200 z-50">
                               <SelectItem value="pending" className="text-black cursor-pointer">{t("status.pending")}</SelectItem>
-                              <SelectItem value="in_progress" className="text-black cursor-pointer">{t("status.in_progress")}</SelectItem>
+                              <SelectItem value="not_ok" className="text-black cursor-pointer">{t("status.notOk") || "Not OK"}</SelectItem>
                               <SelectItem value="completed" className="text-black cursor-pointer">{t("status.completed")}</SelectItem>
                               <SelectItem value="delivered" className="text-black cursor-pointer">{t("status.delivered")}</SelectItem>
                             </SelectContent>
@@ -720,51 +807,122 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
           <form onSubmit={handleEditSubmit} className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="edit-customerName" className="text-black">{t("form.customerName")} *</Label>
-                <Input id="edit-customerName" value={editFormData.customerName || ""} onChange={(e) => setEditFormData({ ...editFormData, customerName: e.target.value })} required className="bg-white border-blue-300 text-black placeholder:text-gray-400" />
+                <Label htmlFor="edit-customerName" className="text-black">{t("form.customerName")}</Label>
+                <Input id="edit-customerName" value={editFormData.customerName || ""} onChange={(e) => setEditFormData({ ...editFormData, customerName: e.target.value })} className="bg-white border-blue-300 text-black placeholder:text-gray-400" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="edit-contact" className="text-black">{t("table.contact")} *</Label>
-                <Input id="edit-contact" value={editFormData.contact || ""} onChange={(e) => setEditFormData({ ...editFormData, contact: e.target.value })} required className="bg-white border-blue-300 text-black placeholder:text-gray-400" />
+                <Label htmlFor="edit-contact" className="text-black">{t("table.contact")}</Label>
+                <Input id="edit-contact" value={editFormData.contact || ""} onChange={(e) => setEditFormData({ ...editFormData, contact: e.target.value })} className="bg-white border-blue-300 text-black placeholder:text-gray-400" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="edit-imeiNo" className="text-black">{t("form.imei")} *</Label>
-                <Input id="edit-imeiNo" value={editFormData.imeiNo || ""} onChange={(e) => setEditFormData({ ...editFormData, imeiNo: e.target.value })} required className="bg-white border-blue-300 text-black placeholder:text-gray-400" />
+                <Label htmlFor="edit-receivedBy" className="text-black">{t("form.receivedBy")}</Label>
+                <Input id="edit-receivedBy" value={editFormData.receivedBy || ""} onChange={(e) => setEditFormData({ ...editFormData, receivedBy: e.target.value })} className="bg-white border-blue-300 text-black placeholder:text-gray-400" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="edit-model" className="text-black">{t("form.model")} *</Label>
-                <Input id="edit-model" value={editFormData.model || ""} onChange={(e) => setEditFormData({ ...editFormData, model: e.target.value })} required className="bg-white border-blue-300 text-black placeholder:text-gray-400" />
+                <Label htmlFor="edit-imeiNo" className="text-black">{t("form.imei")}</Label>
+                <Input id="edit-imeiNo" value={editFormData.imeiNo || ""} onChange={(e) => setEditFormData({ ...editFormData, imeiNo: e.target.value })} className="bg-white border-blue-300 text-black placeholder:text-gray-400" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="edit-price" className="text-black">{t("form.price")} *</Label>
-                <Input id="edit-price" type="number" step="0.01" value={editFormData.price || ""} onChange={(e) => setEditFormData({ ...editFormData, price: e.target.value })} required className="bg-white border-blue-300 text-black placeholder:text-gray-400" />
+                <Label htmlFor="edit-brand" className="text-black">{t("form.brand")}</Label>
+                <Input id="edit-brand" value={editFormData.brand || ""} onChange={(e) => setEditFormData({ ...editFormData, brand: e.target.value })} className="bg-white border-blue-300 text-black placeholder:text-gray-400" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="edit-serviceName" className="text-black">{t("form.serviceNames")} *</Label>
-                <Input id="edit-serviceName" value={editFormData.serviceName || ""} onChange={(e) => setEditFormData({ ...editFormData, serviceName: e.target.value })} required className="bg-white border-blue-300 text-black placeholder:text-gray-400" />
+                <Label htmlFor="edit-model" className="text-black">{t("form.model")}</Label>
+                <Input id="edit-model" value={editFormData.model || ""} onChange={(e) => setEditFormData({ ...editFormData, model: e.target.value })} className="bg-white border-blue-300 text-black placeholder:text-gray-400" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="edit-status" className="text-black">{t("table.status")} *</Label>
+                <Label htmlFor="edit-serialNo" className="text-black">{t("form.laptopSerialNumber")}</Label>
+                <Input id="edit-serialNo" value={editFormData.serialNo || ""} onChange={(e) => setEditFormData({ ...editFormData, serialNo: e.target.value })} className="bg-white border-blue-300 text-black placeholder:text-gray-400" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-warranty" className="text-black">{t("form.warranty")}</Label>
+                <Select value={editFormData.warranty || "Without Warranty"} onValueChange={(value) => setEditFormData({ ...editFormData, warranty: value })}>
+                  <SelectTrigger id="edit-warranty" className="bg-white border-blue-300 text-black">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white border-blue-200">
+                    <SelectItem value="Without Warranty" className="text-black">{t("form.withoutWarranty")}</SelectItem>
+                    <SelectItem value="Warranty Until 30 Days" className="text-black">{t("form.warrantyUntil30Days")}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-price" className="text-black">{t("form.price")}</Label>
+                <Input id="edit-price" type="number" step="0.01" value={editFormData.price || ""} onChange={(e) => setEditFormData({ ...editFormData, price: e.target.value })} className="bg-white border-blue-300 text-black placeholder:text-gray-400" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-budget" className="text-black">{t("form.budget")}</Label>
+                <Input id="edit-budget" type="number" step="0.01" value={editFormData.budget || ""} onChange={(e) => setEditFormData({ ...editFormData, budget: e.target.value })} className="bg-white border-blue-300 text-black placeholder:text-gray-400" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-status" className="text-black">{t("table.status")}</Label>
                 <Select value={editFormData.status || "pending"} onValueChange={(value) => setEditFormData({ ...editFormData, status: value })}>
                   <SelectTrigger id="edit-status" className="bg-white border-blue-300 text-black">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-white border-blue-200" side="bottom" sideOffset={4}>
                     <SelectItem value="pending" className="text-black">{t("status.pending")}</SelectItem>
-                    <SelectItem value="in_progress" className="text-black">{t("status.in_progress")}</SelectItem>
+                    <SelectItem value="not_ok" className="text-black">{t("status.notOk") || "Not OK"}</SelectItem>
                     <SelectItem value="completed" className="text-black">{t("status.completed")}</SelectItem>
                     <SelectItem value="delivered" className="text-black">{t("status.delivered")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
+            
+            {/* Equipment Check */}
+            <div className="space-y-2">
+              <Label className="text-black">{t("form.equipmentCheck")}</Label>
+              <div className="grid grid-cols-3 gap-2">
+                <label className="flex items-center gap-2 p-2 bg-white rounded border border-blue-200 hover:border-blue-500 cursor-pointer">
+                  <input type="checkbox" checked={editFormData.simCard} onChange={(e) => setEditFormData({ ...editFormData, simCard: e.target.checked })} className="h-4 w-4" />
+                  <span className="text-sm text-black">{t("form.simCard")}</span>
+                </label>
+                <label className="flex items-center gap-2 p-2 bg-white rounded border border-blue-200 hover:border-blue-500 cursor-pointer">
+                  <input type="checkbox" checked={editFormData.simTray} onChange={(e) => setEditFormData({ ...editFormData, simTray: e.target.checked })} className="h-4 w-4" />
+                  <span className="text-sm text-black">{t("form.simTray")}</span>
+                </label>
+                <label className="flex items-center gap-2 p-2 bg-white rounded border border-blue-200 hover:border-blue-500 cursor-pointer">
+                  <input type="checkbox" checked={editFormData.memoryCard} onChange={(e) => setEditFormData({ ...editFormData, memoryCard: e.target.checked })} className="h-4 w-4" />
+                  <span className="text-sm text-black">{t("form.memoryCard")}</span>
+                </label>
+                <label className="flex items-center gap-2 p-2 bg-white rounded border border-blue-200 hover:border-blue-500 cursor-pointer">
+                  <input type="checkbox" checked={editFormData.charger} onChange={(e) => setEditFormData({ ...editFormData, charger: e.target.checked })} className="h-4 w-4" />
+                  <span className="text-sm text-black">{t("form.charger")}</span>
+                </label>
+                <label className="flex items-center gap-2 p-2 bg-white rounded border border-blue-200 hover:border-blue-500 cursor-pointer">
+                  <input type="checkbox" checked={editFormData.battery} onChange={(e) => setEditFormData({ ...editFormData, battery: e.target.checked })} className="h-4 w-4" />
+                  <span className="text-sm text-black">{t("form.battery")}</span>
+                </label>
+                <label className="flex items-center gap-2 p-2 bg-white rounded border border-red-200 hover:border-red-500 cursor-pointer">
+                  <input type="checkbox" checked={editFormData.waterDamaged} onChange={(e) => setEditFormData({ ...editFormData, waterDamaged: e.target.checked })} className="h-4 w-4" />
+                  <span className="text-sm text-black">{t("form.waterDamaged")}</span>
+                </label>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="edit-equipmentObs" className="text-black">{t("form.equipmentObservations")}</Label>
+              <Textarea id="edit-equipmentObs" value={editFormData.equipmentObs || ""} onChange={(e) => setEditFormData({ ...editFormData, equipmentObs: e.target.value })} className="bg-white border-blue-300 text-black min-h-[80px]" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-repairObs" className="text-black">{t("form.repairObservations")}</Label>
+              <Textarea id="edit-repairObs" value={editFormData.repairObs || ""} onChange={(e) => setEditFormData({ ...editFormData, repairObs: e.target.value })} className="bg-white border-blue-300 text-black min-h-[80px]" />
+            </div>
             <div className="space-y-2">
               <Label htmlFor="edit-condition" className="text-black">{t("form.condition")}</Label>
               <Textarea id="edit-condition" value={editFormData.condition || ""} onChange={(e) => setEditFormData({ ...editFormData, condition: e.target.value })} className="bg-white border-blue-300 text-black min-h-[80px]" />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-problem" className="text-black">{t("form.technicianNotes")} *</Label>
-              <Textarea id="edit-problem" value={editFormData.problem || ""} onChange={(e) => setEditFormData({ ...editFormData, problem: e.target.value })} required className="bg-white border-blue-300 text-black min-h-[100px]" />
+              <Label htmlFor="edit-problem" className="text-black">{t("form.technicianNotes")}</Label>
+              <Textarea id="edit-problem" value={editFormData.problem || ""} onChange={(e) => setEditFormData({ ...editFormData, problem: e.target.value })} className="bg-white border-blue-300 text-black min-h-[100px]" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-selectedServices" className="text-black">{t("form.serviceNames")}</Label>
+              <Input id="edit-selectedServices" value={Array.isArray(editFormData.selectedServices) ? editFormData.selectedServices.join(", ") : editFormData.selectedServices || ""} onChange={(e) => {
+                const services = e.target.value.split(",").map(s => s.trim()).filter(s => s)
+                setEditFormData({ ...editFormData, selectedServices: services })
+              }} placeholder="Service 1, Service 2, ..." className="bg-white border-blue-300 text-black placeholder:text-gray-400" />
             </div>
             <div className="flex justify-end gap-2 pt-4">
               <Button type="button" variant="outline" onClick={() => { setIsEditDialogOpen(false); setEditingTicket(null) }} className="border-blue-300 bg-white text-black hover:bg-blue-50">{t("form.cancel")}</Button>

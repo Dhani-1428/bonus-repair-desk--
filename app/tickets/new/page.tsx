@@ -75,8 +75,8 @@ export default function NewTicketPage() {
     switch (status?.toLowerCase()) {
       case "pending":
         return "text-yellow-700"
-      case "in_progress":
-        return "text-blue-700"
+      case "not_ok":
+        return "text-red-700"
       case "completed":
         return "text-green-700"
       case "delivered":
@@ -306,7 +306,7 @@ export default function NewTicketPage() {
                             <SelectTrigger className={`${getStatusColor(device.status)} bg-white border-blue-300 w-full font-semibold`}>
                               <SelectValue>
                                 {device.status === "pending" || device.status === "PENDING" ? t("status.pending") :
-                                 device.status === "in_progress" || device.status === "IN_PROGRESS" || device.status === "in-progress" ? t("status.in_progress") :
+                                 device.status === "not_ok" || device.status === "NOT_OK" ? (t("status.notOk") || "Not OK") :
                                  device.status === "completed" || device.status === "COMPLETED" ? t("status.completed") :
                                  device.status === "delivered" || device.status === "DELIVERED" ? t("status.delivered") :
                                  device.status || t("status.pending")}
@@ -314,7 +314,7 @@ export default function NewTicketPage() {
                             </SelectTrigger>
                             <SelectContent className="bg-white border-blue-200">
                               <SelectItem value="pending" className="text-black cursor-pointer hover:bg-blue-50">{t("status.pending")}</SelectItem>
-                              <SelectItem value="in_progress" className="text-black cursor-pointer hover:bg-blue-50">{t("status.in_progress")}</SelectItem>
+                              <SelectItem value="not_ok" className="text-black cursor-pointer hover:bg-blue-50">{t("status.notOk") || "Not OK"}</SelectItem>
                               <SelectItem value="completed" className="text-black cursor-pointer hover:bg-blue-50">{t("status.completed")}</SelectItem>
                               <SelectItem value="delivered" className="text-black cursor-pointer hover:bg-blue-50">{t("status.delivered")}</SelectItem>
                             </SelectContent>
