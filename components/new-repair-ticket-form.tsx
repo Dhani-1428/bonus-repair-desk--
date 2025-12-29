@@ -554,10 +554,10 @@ export function NewRepairTicketForm() {
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
                     required
-                    className="bg-white border-gray-300 text-gray-900 placeholder:text-black focus:border-blue-500 h-12 text-lg"
+                    className="bg-white border-blue-200 text-black placeholder:text-black focus:border-blue-500 h-12 text-lg"
                   />
                 ) : (
-                  <div className="bg-white border border-gray-300 rounded-md px-4 py-3 h-12 text-lg text-gray-700 flex items-center">
+                  <div className="bg-white border border-blue-200 rounded-md px-4 py-3 h-12 text-lg text-black flex items-center">
                     {customerName || t("common.notAvailable")}
                   </div>
                 )}
@@ -738,15 +738,15 @@ export function NewRepairTicketForm() {
                       onChange={(e) => updateDevice(deviceIndex, "serialNo", e.target.value)}
                       className="bg-white border-gray-300 text-gray-900 placeholder:text-black focus:border-blue-500 h-12 text-lg"
                     />
-                    <p className="text-xs text-gray-500">{t("form.laptopSerialNumberHint")}</p>
+                    <p className="text-xs text-black">{t("form.laptopSerialNumberHint")}</p>
                   </div>
 
                   <div className="space-y-2">
-                    <Label className="text-gray-700">{t("form.warranty")}</Label>
-                    <label className="flex items-center gap-2 text-sm text-gray-700 hover:text-gray-900 cursor-pointer">
+                    <Label className="text-black">{t("form.warranty")}</Label>
+                    <label className="flex items-center gap-2 text-sm text-black hover:text-black cursor-pointer">
                       <input
                         type="checkbox"
-                        className="h-4 w-4 cursor-pointer bg-white border-gray-300 text-blue-600 focus:ring-blue-500 rounded"
+                        className="h-4 w-4 cursor-pointer bg-white border-blue-200 text-blue-600 focus:ring-blue-500 rounded"
                         checked={device.warrantyUntil30Days}
                         onChange={(e) => updateDevice(deviceIndex, "warrantyUntil30Days", e.target.checked)}
                       />
@@ -756,25 +756,25 @@ export function NewRepairTicketForm() {
 
                   {/* Equipment Observations */}
                   <div className="space-y-2 md:col-span-2">
-                    <Label className="text-gray-700">{t("form.equipmentObservations")}</Label>
+                    <Label className="text-black">{t("form.equipmentObservations")}</Label>
                     <Textarea
                       placeholder={t("form.equipmentObservationsPlaceholder")}
                       value={device.equipmentObs}
                       onChange={(e) => updateDevice(deviceIndex, "equipmentObs", e.target.value)}
                       rows={2}
-                      className="bg-white border-gray-300 text-gray-900 placeholder:text-black focus:border-blue-500"
+                      className="bg-white border-blue-200 text-black placeholder:text-black focus:border-blue-500"
                     />
                   </div>
 
                   {/* Equipment Check - All 6 blocks in one line */}
                   <div className="space-y-2 md:col-span-2">
-                    <Label className="text-gray-700 text-sm font-semibold mb-2 block">{t("form.equipmentCheck")}</Label>
+                    <Label className="text-black text-sm font-semibold mb-2 block">{t("form.equipmentCheck")}</Label>
                     <div className="grid grid-cols-6 gap-2">
                       {/* 1. SIM Card */}
-                      <label className="flex items-center gap-1.5 p-2 bg-white rounded border border-gray-300 hover:border-blue-500 hover:bg-gray-50 cursor-pointer transition-all">
+                      <label className="flex items-center gap-1.5 p-2 bg-white rounded border border-blue-200 hover:border-blue-500 hover:bg-blue-50 cursor-pointer transition-all">
                         <input
                           type="checkbox"
-                          className="h-4 w-4 cursor-pointer bg-white border-gray-300 text-blue-600 focus:ring-blue-500 rounded"
+                          className="h-4 w-4 cursor-pointer bg-white border-blue-200 text-blue-600 focus:ring-blue-500 rounded"
                           checked={device.simCard}
                           onChange={(e) => updateDevice(deviceIndex, "simCard", e.target.checked)}
                         />
@@ -786,15 +786,15 @@ export function NewRepairTicketForm() {
                             <rect x="11" y="9" width="2" height="1.5" fill="white" opacity="0.9"/>
                             <rect x="14" y="9" width="2" height="1.5" fill="white" opacity="0.9"/>
                           </svg>
-                          <span className="text-xs font-medium text-gray-900">{t("form.simCard")}</span>
+                          <span className="text-xs font-medium text-black">{t("form.simCard")}</span>
                         </div>
                       </label>
                       
                       {/* 2. SIM Tray */}
-                      <label className="flex items-center gap-1.5 p-2 bg-white rounded border border-gray-300 hover:border-blue-500 hover:bg-gray-50 cursor-pointer transition-all">
+                      <label className="flex items-center gap-1.5 p-2 bg-white rounded border border-blue-200 hover:border-blue-500 hover:bg-blue-50 cursor-pointer transition-all">
                         <input
                           type="checkbox"
-                          className="h-4 w-4 cursor-pointer bg-white border-gray-300 text-blue-600 focus:ring-blue-500 rounded"
+                          className="h-4 w-4 cursor-pointer bg-white border-blue-200 text-blue-600 focus:ring-blue-500 rounded"
                           checked={device.simTray}
                           onChange={(e) => updateDevice(deviceIndex, "simTray", e.target.checked)}
                         />
@@ -804,15 +804,15 @@ export function NewRepairTicketForm() {
                             <rect x="7" y="10" width="10" height="4" fill="white" opacity="0.3"/>
                             <rect x="9" y="11" width="6" height="2" fill="white" opacity="0.5"/>
                           </svg>
-                          <span className="text-xs font-medium text-gray-900">{t("form.simTray")}</span>
+                          <span className="text-xs font-medium text-black">{t("form.simTray")}</span>
                         </div>
                       </label>
                       
                       {/* 3. Memory Card */}
-                      <label className="flex items-center gap-1.5 p-2 bg-white rounded border border-gray-300 hover:border-blue-500 hover:bg-gray-50 cursor-pointer transition-all">
+                      <label className="flex items-center gap-1.5 p-2 bg-white rounded border border-blue-200 hover:border-blue-500 hover:bg-blue-50 cursor-pointer transition-all">
                         <input
                           type="checkbox"
-                          className="h-4 w-4 cursor-pointer bg-white border-gray-300 text-blue-600 focus:ring-blue-500 rounded"
+                          className="h-4 w-4 cursor-pointer bg-white border-blue-200 text-blue-600 focus:ring-blue-500 rounded"
                           checked={device.memoryCard}
                           onChange={(e) => updateDevice(deviceIndex, "memoryCard", e.target.checked)}
                         />
@@ -822,15 +822,15 @@ export function NewRepairTicketForm() {
                             <path d="M4 4h3v3H4V4z" fill="currentColor" opacity="0.7"/>
                             <rect x="8" y="7" width="8" height="10" fill="white" opacity="0.2"/>
                           </svg>
-                          <span className="text-xs font-medium text-gray-900">{t("form.memoryCard")}</span>
+                          <span className="text-xs font-medium text-black">{t("form.memoryCard")}</span>
                         </div>
                       </label>
                       
                       {/* 4. Charger */}
-                      <label className="flex items-center gap-1.5 p-2 bg-white rounded border border-gray-300 hover:border-blue-500 hover:bg-gray-50 cursor-pointer transition-all">
+                      <label className="flex items-center gap-1.5 p-2 bg-white rounded border border-blue-200 hover:border-blue-500 hover:bg-blue-50 cursor-pointer transition-all">
                         <input
                           type="checkbox"
-                          className="h-4 w-4 cursor-pointer bg-white border-gray-300 text-blue-600 focus:ring-blue-500 rounded"
+                          className="h-4 w-4 cursor-pointer bg-white border-blue-200 text-blue-600 focus:ring-blue-500 rounded"
                           checked={device.charger}
                           onChange={(e) => updateDevice(deviceIndex, "charger", e.target.checked)}
                         />
@@ -841,15 +841,15 @@ export function NewRepairTicketForm() {
                             <rect x="14.5" y="6" width="1.5" height="4" rx="0.3" fill="currentColor"/>
                             <path d="M12 10v10M10 12h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
                           </svg>
-                          <span className="text-xs font-medium text-gray-900">{t("form.charger")}</span>
+                          <span className="text-xs font-medium text-black">{t("form.charger")}</span>
                         </div>
                       </label>
                       
                       {/* 5. Battery */}
-                      <label className="flex items-center gap-1.5 p-2 bg-white rounded border border-gray-300 hover:border-blue-500 hover:bg-gray-50 cursor-pointer transition-all">
+                      <label className="flex items-center gap-1.5 p-2 bg-white rounded border border-blue-200 hover:border-blue-500 hover:bg-blue-50 cursor-pointer transition-all">
                         <input
                           type="checkbox"
-                          className="h-4 w-4 cursor-pointer bg-white border-gray-300 text-blue-600 focus:ring-blue-500 rounded"
+                          className="h-4 w-4 cursor-pointer bg-white border-blue-200 text-blue-600 focus:ring-blue-500 rounded"
                           checked={device.battery}
                           onChange={(e) => updateDevice(deviceIndex, "battery", e.target.checked)}
                         />
@@ -859,15 +859,15 @@ export function NewRepairTicketForm() {
                             <rect x="18" y="10" width="2" height="4" rx="0.5" fill="currentColor"/>
                             <rect x="6" y="9" width="10" height="6" rx="0.5" fill="white" opacity="0.9"/>
                           </svg>
-                          <span className="text-xs font-medium text-gray-900">{t("form.battery")}</span>
+                          <span className="text-xs font-medium text-black">{t("form.battery")}</span>
                         </div>
                       </label>
                       
                       {/* 6. Water Damaged */}
-                      <label className="flex items-center gap-1.5 p-2 bg-white rounded border border-gray-300 hover:border-red-500 hover:bg-gray-50 cursor-pointer transition-all">
+                      <label className="flex items-center gap-1.5 p-2 bg-white rounded border border-blue-200 hover:border-red-500 hover:bg-red-50 cursor-pointer transition-all">
                         <input
                           type="checkbox"
-                          className="h-4 w-4 cursor-pointer bg-white border-gray-300 text-red-600 focus:ring-red-500 rounded"
+                          className="h-4 w-4 cursor-pointer bg-white border-blue-200 text-red-600 focus:ring-red-500 rounded"
                           checked={device.waterDamaged}
                           onChange={(e) => updateDevice(deviceIndex, "waterDamaged", e.target.checked)}
                         />
@@ -876,20 +876,20 @@ export function NewRepairTicketForm() {
                             <path d="M19.36 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.64-4.96z"/>
                             <path d="M7 16l1 2h2l-1-2M11 16l1 2h2l-1-2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
                           </svg>
-                          <span className="text-xs font-medium text-gray-900">{t("form.waterDamaged")}</span>
+                          <span className="text-xs font-medium text-black">{t("form.waterDamaged")}</span>
                         </div>
                       </label>
                     </div>
                   </div>
 
                   <div className="space-y-2 md:col-span-2">
-                    <Label className="text-gray-700">{t("form.repairObservations")}</Label>
+                    <Label className="text-black">{t("form.repairObservations")}</Label>
                     <Textarea
                       placeholder={t("form.repairObservationsPlaceholder")}
                       value={device.repairObs}
                       onChange={(e) => updateDevice(deviceIndex, "repairObs", e.target.value)}
                       rows={2}
-                      className="bg-white border-gray-300 text-gray-900 placeholder:text-black focus:border-blue-500"
+                      className="bg-white border-blue-200 text-black placeholder:text-black focus:border-blue-500"
                     />
                   </div>
 
@@ -2038,11 +2038,11 @@ export function printReceiptForTickets(
     return
   }
   
-  // Group tickets by clientId and customerName (devices added together)
-  // Only group if they have the same clientId and customerName (same form submission)
+  // Group tickets by batchId if available, otherwise by clientId and customerName (devices added together)
   const groupedTickets: { [key: string]: any[] } = {}
   validTickets.forEach(ticket => {
-    const key = `${ticket.clientId || ''}_${ticket.customerName || ''}`
+    // Use batchId if available, otherwise use clientId and customerName
+    const key = ticket.batchId || `${ticket.clientId || ''}_${ticket.customerName || ''}`
     if (!groupedTickets[key]) {
       groupedTickets[key] = []
     }
