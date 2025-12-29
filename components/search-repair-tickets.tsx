@@ -669,8 +669,9 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                             </AlertDialog>
                           </div>
                         </td>
-                    </tr>
-                  ))}
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
