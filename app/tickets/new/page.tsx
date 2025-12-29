@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useAuth } from "@/hooks/use-auth"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
 
 export default function NewTicketPage() {
@@ -346,10 +347,30 @@ export default function NewTicketPage() {
                           {t("page.newTicket.print")}
                         </Button>
                         </div>
-                      </div>
-                    )
+                                  </div>
+                                </div>
+                              )
+                            })}
+                          </div>
+                          
+                          {/* Print Button for this device group */}
+                          <div className="mt-4 pt-3 border-t border-blue-200">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handlePrintReceipt(firstDevice)}
+                              className="border-blue-500 bg-blue-50 text-blue-700 hover:bg-blue-100 hover:border-blue-600"
+                            >
+                              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                              </svg>
+                              {t("page.newTicket.print")} ({deviceGroup.length} {deviceGroup.length === 1 ? t("search.results.device") : t("search.results.devices")})
+                            </Button>
+                          </div>
+                        </div>
+                      )
                     })
-                  ) : (
+                  })() : (
                     <div className="text-center py-8 text-black">
                       <p>No devices found. Please add a device first.</p>
                     </div>
