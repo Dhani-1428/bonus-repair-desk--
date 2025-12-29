@@ -349,9 +349,10 @@ export function NewRepairTicketForm() {
           // Ensure all required fields exist
           const normalizedTicket = {
             ...ticket,
-            clientId: ticket.clientId || null,
+            clientId: ticket.clientId || clientId.trim(),
             customerName: ticket.customerName || customerName,
             contact: ticket.contact || contact,
+            receivedBy: ticket.receivedBy || receivedBy.trim(),
             imeiNo: ticket.imeiNo || device.imeiNo,
             brand: ticket.brand || device.brand || "N/A",
             model: ticket.model || device.model,
@@ -370,6 +371,7 @@ export function NewRepairTicketForm() {
             condition: ticket.condition || null,
             problem: ticket.problem || device.problem,
             price: ticket.price || parseFloat(device.price),
+            budget: ticket.budget || (device.budget ? parseFloat(device.budget) : null),
             repairNumber: ticket.repairNumber || "N/A",
             createdAt: ticket.createdAt || new Date().toISOString(),
           }
@@ -514,19 +516,19 @@ export function NewRepairTicketForm() {
   return (
     <div className="space-y-6">
       {!showTicketDetails ? (
-        <Card className="shadow-2xl border border-gray-200 bg-white">
-      <CardHeader className="bg-gradient-to-r from-blue-50 to-purple-50 border-b border-gray-200 rounded-t-lg px-6 py-4">
-        <CardTitle className="text-2xl flex items-center gap-2 text-gray-900">
+        <Card className="shadow-2xl border border-blue-200 bg-white">
+      <CardHeader className="bg-gradient-to-r from-blue-50 to-purple-50 border-b border-blue-200 rounded-t-lg px-6 py-4">
+        <CardTitle className="text-2xl flex items-center gap-2 text-black">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
           {t("page.newTicket.customerDeviceInformation")}
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-6 text-gray-900">
+      <CardContent className="p-6 text-black">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Add New Device Button at Top */}
-          <div className="flex justify-end pb-4 border-b border-gray-200">
+          <div className="flex justify-end pb-4 border-b border-blue-200">
             <Button
               type="button"
               variant="outline"
@@ -542,9 +544,9 @@ export function NewRepairTicketForm() {
 
           {/* Customer Information - Only show and allow editing for first device */}
           {devices.length > 0 && (
-            <div className="grid gap-6 grid-cols-3 border-b border-gray-200 pb-6">
+            <div className="grid gap-6 grid-cols-3 border-b border-blue-200 pb-6">
               <div className="space-y-3">
-                <Label htmlFor="customerName" className="text-gray-700 text-base font-semibold">{t("form.customerName")} *</Label>
+                <Label htmlFor="customerName" className="text-black text-base font-semibold">{t("form.customerName")} *</Label>
                 {devices.length === 1 ? (
                   <Input
                     id="customerName"
@@ -561,7 +563,7 @@ export function NewRepairTicketForm() {
                 )}
               </div>
               <div className="space-y-3">
-                <Label htmlFor="contact" className="text-gray-700 text-base font-semibold">{t("form.clientPhone")}</Label>
+                <Label htmlFor="contact" className="text-black text-base font-semibold">{t("form.clientPhone")}</Label>
                 {devices.length === 1 ? (
                   <Input
                     id="contact"
@@ -569,16 +571,16 @@ export function NewRepairTicketForm() {
                     placeholder={t("form.clientPhonePlaceholder")}
                     value={contact}
                     onChange={(e) => setContact(e.target.value)}
-                    className="bg-white border-gray-300 text-gray-900 placeholder:text-black focus:border-blue-500 h-12 text-lg"
+                    className="bg-white border-blue-200 text-black placeholder:text-black focus:border-blue-500 h-12 text-lg"
                   />
                 ) : (
-                  <div className="bg-white border border-gray-300 rounded-md px-4 py-3 h-12 text-lg text-gray-700 flex items-center">
+                  <div className="bg-white border border-blue-200 rounded-md px-4 py-3 h-12 text-lg text-black flex items-center">
                     {contact || t("common.notAvailable")}
                   </div>
                 )}
               </div>
               <div className="space-y-3">
-                <Label htmlFor="receivedBy" className="text-gray-700 text-base font-semibold">{t("form.receivedBy")} *</Label>
+                <Label htmlFor="receivedBy" className="text-black text-base font-semibold">{t("form.receivedBy")} *</Label>
                 {devices.length === 1 ? (
                   <Input
                     id="receivedBy"
@@ -586,10 +588,10 @@ export function NewRepairTicketForm() {
                     value={receivedBy}
                     onChange={(e) => setReceivedBy(e.target.value)}
                     required
-                    className="bg-white border-gray-300 text-gray-900 placeholder:text-black focus:border-blue-500 h-12 text-lg"
+                    className="bg-white border-blue-200 text-black placeholder:text-black focus:border-blue-500 h-12 text-lg"
                   />
                 ) : (
-                  <div className="bg-white border border-gray-300 rounded-md px-4 py-3 h-12 text-lg text-gray-700 flex items-center">
+                  <div className="bg-white border border-blue-200 rounded-md px-4 py-3 h-12 text-lg text-black flex items-center">
                     {receivedBy || t("common.notAvailable")}
                   </div>
                 )}
@@ -605,7 +607,7 @@ export function NewRepairTicketForm() {
                 className="border-2 border-blue-200 rounded-xl p-6 bg-white"
               >
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900">{t("form.device")} {deviceIndex + 1}</h3>
+                  <h3 className="text-lg font-semibold text-black">{t("form.device")} {deviceIndex + 1}</h3>
                   {devices.length > 1 && (
                     <Button
                       type="button"
@@ -624,7 +626,7 @@ export function NewRepairTicketForm() {
 
                 <div className="grid gap-6 md:grid-cols-2">
                   <div className="space-y-2">
-                    <Label className="text-gray-700">{t("form.brand")}</Label>
+                    <Label className="text-black">{t("form.brand")}</Label>
                     <div className="relative">
                       <Input
                         placeholder={t("form.brandPlaceholder")}
@@ -636,7 +638,7 @@ export function NewRepairTicketForm() {
                             updateDevice(deviceIndex, "model", "")
                           }
                         }}
-                        className="bg-white border-gray-300 text-gray-900 placeholder:text-black focus:border-blue-500 pr-10"
+                        className="bg-white border-blue-200 text-black placeholder:text-black focus:border-blue-500 pr-10"
                       />
                       <Popover>
                         <PopoverTrigger asChild>
@@ -673,14 +675,14 @@ export function NewRepairTicketForm() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label className="text-gray-700">{t("form.model")}</Label>
+                    <Label className="text-black">{t("form.model")}</Label>
                     <div className="relative">
                       <Input
                         placeholder={device.brand ? t("form.modelPlaceholder") : t("form.selectBrandFirst")}
                         value={device.model}
                         onChange={(e) => updateDevice(deviceIndex, "model", e.target.value)}
                         disabled={!device.brand}
-                        className="bg-white border-gray-300 text-gray-900 placeholder:text-black focus:border-blue-500 pr-10 disabled:opacity-50"
+                        className="bg-white border-blue-200 text-black placeholder:text-black focus:border-blue-500 pr-10 disabled:opacity-50"
                       />
                       {device.brand && device.brand !== "Other" && BRANDS_AND_MODELS[device.brand] && (
                         <Popover>
@@ -716,14 +718,14 @@ export function NewRepairTicketForm() {
                   </div>
 
                   <div className="space-y-3">
-                    <Label className="text-gray-700 text-base font-semibold">{t("form.imei")}</Label>
+                    <Label className="text-black text-base font-semibold">{t("form.imei")}</Label>
                     <Input
                       placeholder={t("placeholder.imei")}
                       value={device.imeiNo}
                       onChange={(e) => updateDevice(deviceIndex, "imeiNo", e.target.value)}
                       maxLength={15}
                       inputMode="numeric"
-                      className={`bg-white border-gray-300 text-gray-900 placeholder:text-black focus:border-blue-500 h-12 text-lg ${device.imeiError ? "border-red-500 focus-visible:ring-red-500" : ""}`}
+                      className={`bg-white border-blue-200 text-black placeholder:text-black focus:border-blue-500 h-12 text-lg ${device.imeiError ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                     />
                     {device.imeiError && <p className="text-xs text-red-600">{device.imeiError}</p>}
                   </div>
@@ -1005,9 +1007,9 @@ export function NewRepairTicketForm() {
               const services = servicesArray.length > 0 ? servicesArray.join(", ") : "N/A"
               
               return (
-                <div key={ticket?.id || index} className="border-2 border-gray-200 rounded-xl p-6 bg-gray-50 space-y-4">
+                <div key={ticket?.id || index} className="border-2 border-blue-200 rounded-xl p-6 bg-white space-y-4">
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-semibold text-gray-900">Device {index + 1}</h3>
+                    <h3 className="text-lg font-semibold text-black">Device {index + 1}</h3>
                     <Badge className="bg-green-100 text-green-700 border-green-300">
                       {ticket?.status || "PENDING"}
                     </Badge>
@@ -1016,47 +1018,47 @@ export function NewRepairTicketForm() {
                   <div className="grid gap-4 md:grid-cols-2">
                     {/* Repair Information */}
                     <div className="space-y-3">
-                      <h4 className="text-sm font-semibold text-blue-600 border-b border-gray-300 pb-2">Repair Information</h4>
+                      <h4 className="text-sm font-semibold text-blue-600 border-b border-blue-200 pb-2">Repair Information</h4>
                       <div className="space-y-2 text-sm">
-                        <div><span className="text-gray-600">Repair Number:</span> <span className="text-gray-900 font-mono">{ticket?.repairNumber || "N/A"}</span></div>
-                        {ticket?.spu && <div><span className="text-gray-600">SPU:</span> <span className="text-gray-900">{ticket.spu}</span></div>}
-                        <div><span className="text-gray-600">Entry Date:</span> <span className="text-gray-900">{ticket?.createdAt ? new Date(ticket.createdAt).toLocaleString() : "N/A"}</span></div>
+                        <div><span className="text-black">Repair Number:</span> <span className="text-black font-mono">{ticket?.repairNumber || "N/A"}</span></div>
+                        {ticket?.spu && <div><span className="text-black">SPU:</span> <span className="text-black">{ticket.spu}</span></div>}
+                        <div><span className="text-black">Entry Date:</span> <span className="text-black">{ticket?.createdAt ? new Date(ticket.createdAt).toLocaleString() : "N/A"}</span></div>
                       </div>
                     </div>
 
                     {/* Client Information */}
                     <div className="space-y-3">
-                      <h4 className="text-sm font-semibold text-blue-600 border-b border-gray-300 pb-2">Client Information</h4>
+                      <h4 className="text-sm font-semibold text-blue-600 border-b border-blue-200 pb-2">Client Information</h4>
                       <div className="space-y-2 text-sm">
-                        <div><span className="text-gray-600">Customer Name:</span> <span className="text-gray-900">{ticket?.customerName || "N/A"}</span></div>
-                        <div><span className="text-gray-600">Contact:</span> <span className="text-gray-900">{ticket?.contact || "N/A"}</span></div>
+                        <div><span className="text-black">Customer Name:</span> <span className="text-black">{ticket?.customerName || "N/A"}</span></div>
+                        <div><span className="text-black">Contact:</span> <span className="text-black">{ticket?.contact || "N/A"}</span></div>
                       </div>
                     </div>
 
                     {/* Device Information */}
                     <div className="space-y-3">
-                      <h4 className="text-sm font-semibold text-blue-600 border-b border-gray-300 pb-2">Device Information</h4>
+                      <h4 className="text-sm font-semibold text-blue-600 border-b border-blue-200 pb-2">Device Information</h4>
                       <div className="space-y-2 text-sm">
-                        <div><span className="text-gray-600">IMEI:</span> <span className="text-gray-900 font-mono">{ticket?.imeiNo || "N/A"}</span></div>
-                        <div><span className="text-gray-600">Brand:</span> <span className="text-gray-900">{ticket?.brand || "N/A"}</span></div>
-                        <div><span className="text-gray-600">Model:</span> <span className="text-gray-900">{ticket?.model || "N/A"}</span></div>
-                        {ticket?.serialNo && <div><span className="text-gray-600">Serial Number:</span> <span className="text-gray-900">{ticket.serialNo}</span></div>}
-                        {ticket?.softwareVersion && <div><span className="text-gray-600">Software Version:</span> <span className="text-gray-900">{ticket.softwareVersion}</span></div>}
+                        <div><span className="text-black">IMEI:</span> <span className="text-black font-mono">{ticket?.imeiNo || "N/A"}</span></div>
+                        <div><span className="text-black">Brand:</span> <span className="text-black">{ticket?.brand || "N/A"}</span></div>
+                        <div><span className="text-black">Model:</span> <span className="text-black">{ticket?.model || "N/A"}</span></div>
+                        {ticket?.serialNo && <div><span className="text-black">Serial Number:</span> <span className="text-black">{ticket.serialNo}</span></div>}
+                        {ticket?.softwareVersion && <div><span className="text-black">Software Version:</span> <span className="text-black">{ticket.softwareVersion}</span></div>}
                       </div>
                     </div>
 
                     {/* Warranty & Equipment Check */}
                     <div className="space-y-3">
-                      <h4 className="text-sm font-semibold text-blue-600 border-b border-gray-300 pb-2">Warranty & Equipment</h4>
+                      <h4 className="text-sm font-semibold text-blue-600 border-b border-blue-200 pb-2">Warranty & Equipment</h4>
                       <div className="space-y-2 text-sm">
-                        <div><span className="text-gray-600">Warranty:</span> <span className="text-gray-900">{ticket?.warranty || "Without Warranty"}</span></div>
+                        <div><span className="text-black">Warranty:</span> <span className="text-black">{ticket?.warranty || "Without Warranty"}</span></div>
                         <div className="flex flex-wrap gap-3 mt-2 text-xs">
-                          <div><span className="text-gray-600">SIM Card:</span> <span className="text-gray-900">{ticket?.simCard ? "Yes" : "No"}</span></div>
-                          <div><span className="text-gray-600">SIM Tray:</span> <span className="text-gray-900">{ticket?.simTray ? "Yes" : "No"}</span></div>
-                          <div><span className="text-gray-600">Memory Card:</span> <span className="text-gray-900">{ticket?.memoryCard ? "Yes" : "No"}</span></div>
-                          <div><span className="text-gray-600">Charger:</span> <span className="text-gray-900">{ticket?.charger ? "Yes" : "No"}</span></div>
-                          <div><span className="text-gray-600">Battery:</span> <span className="text-gray-900">{ticket?.battery ? "Yes" : "No"}</span></div>
-                          <div><span className="text-gray-600">Water Damaged:</span> <span className="text-gray-900">{ticket?.waterDamaged ? "Yes" : "No"}</span></div>
+                          <div><span className="text-black">SIM Card:</span> <span className="text-black">{ticket?.simCard ? "Yes" : "No"}</span></div>
+                          <div><span className="text-black">SIM Tray:</span> <span className="text-black">{ticket?.simTray ? "Yes" : "No"}</span></div>
+                          <div><span className="text-black">Memory Card:</span> <span className="text-black">{ticket?.memoryCard ? "Yes" : "No"}</span></div>
+                          <div><span className="text-black">Charger:</span> <span className="text-black">{ticket?.charger ? "Yes" : "No"}</span></div>
+                          <div><span className="text-black">Battery:</span> <span className="text-black">{ticket?.battery ? "Yes" : "No"}</span></div>
+                          <div><span className="text-black">Water Damaged:</span> <span className="text-black">{ticket?.waterDamaged ? "Yes" : "No"}</span></div>
                         </div>
                       </div>
                     </div>
@@ -1064,18 +1066,18 @@ export function NewRepairTicketForm() {
                     {/* Observations */}
                     {(ticket?.equipmentObs || ticket?.repairObs) && (
                       <div className="space-y-3 md:col-span-2">
-                        <h4 className="text-sm font-semibold text-blue-600 border-b border-gray-300 pb-2">Observations</h4>
+                        <h4 className="text-sm font-semibold text-blue-600 border-b border-blue-200 pb-2">Observations</h4>
                         <div className="space-y-2 text-sm">
                           {ticket?.equipmentObs && (
                             <div>
-                              <span className="text-gray-600 block mb-1">Equipment Observations:</span>
-                              <div className="text-gray-900 bg-white p-3 rounded border border-gray-300">{ticket.equipmentObs}</div>
+                              <span className="text-black block mb-1">Equipment Observations:</span>
+                              <div className="text-black bg-white p-3 rounded border border-blue-200">{ticket.equipmentObs}</div>
                             </div>
                           )}
                           {ticket?.repairObs && (
                             <div>
-                              <span className="text-gray-600 block mb-1">Repair Observations:</span>
-                              <div className="text-gray-900 bg-white p-3 rounded border border-gray-300">{ticket.repairObs}</div>
+                              <span className="text-black block mb-1">Repair Observations:</span>
+                              <div className="text-black bg-white p-3 rounded border border-blue-200">{ticket.repairObs}</div>
                             </div>
                           )}
                         </div>
@@ -1084,7 +1086,7 @@ export function NewRepairTicketForm() {
 
                     {/* Price */}
                     <div className="space-y-3 md:col-span-2">
-                      <h4 className="text-sm font-semibold text-blue-600 border-b border-gray-300 pb-2">Pricing</h4>
+                      <h4 className="text-sm font-semibold text-blue-600 border-b border-blue-200 pb-2">Pricing</h4>
                       <div className="text-lg font-bold text-green-600">
                         Price: €{ticket?.price ? Number.parseFloat(ticket.price).toFixed(2) : "0.00"}
                       </div>
@@ -1094,7 +1096,7 @@ export function NewRepairTicketForm() {
               )
             })}
 
-            <div className="flex flex-col gap-4 pt-4 border-t border-gray-200">
+            <div className="flex flex-col gap-4 pt-4 border-t border-blue-200">
               {/* Printer Selection */}
               <div className="flex items-center gap-4 p-4 bg-white rounded-lg border border-blue-200">
                 <div className="flex-1">
@@ -1115,7 +1117,7 @@ export function NewRepairTicketForm() {
                   variant="outline"
                   size="sm"
                   disabled={isDetectingPrinters}
-                  className="border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+                  className="border-blue-200 bg-white text-black hover:bg-blue-50"
                 >
                   {isDetectingPrinters ? (
                     <>
@@ -1149,7 +1151,7 @@ export function NewRepairTicketForm() {
                 <Button
                   onClick={handleContinue}
                   variant="outline"
-                  className="border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+                  className="border-blue-200 bg-white text-black hover:bg-blue-50"
                 >
                   Continue to Dashboard
                 </Button>
