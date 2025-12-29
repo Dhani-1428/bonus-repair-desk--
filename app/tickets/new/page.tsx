@@ -93,38 +93,55 @@ export default function NewTicketPage() {
   }, [user?.id])
 
   const handlePrintReceipt = (ticket: any) => {
-    // Ensure all required fields are present and use the exported print function
-    // Normalize the ticket data to match the expected structure
-    const normalizedTicket = {
-      ...ticket,
+    // Find all devices with the same clientId and customerName (devices added together)
+    const sameClientDevices = devices.filter((device: any) => 
+      device.clientId === ticket.clientId && 
+      device.customerName === ticket.customerName
+    )
+    
+    console.log(`[NewTicketPage] Printing receipt for ${sameClientDevices.length} device(s) with clientId: ${ticket.clientId}`)
+    
+    // Normalize all devices with the same client details
+    const normalizedTickets = sameClientDevices.map((device: any) => ({
+      ...device,
       // Ensure all fields exist with defaults if missing
-      clientId: ticket.clientId || null,
-      customerName: ticket.customerName || "N/A",
-      contact: ticket.contact || "N/A",
-      receivedBy: ticket.receivedBy || "N/A",
-      imeiNo: ticket.imeiNo || "000000000000000",
-      brand: ticket.brand || "N/A",
-      model: ticket.model || "N/A",
-      serialNo: ticket.serialNo || null,
-      softwareVersion: ticket.softwareVersion || null,
-      warranty: ticket.warranty || "Without Warranty",
-      battery: ticket.battery ?? false,
-      charger: ticket.charger ?? false,
-      simCard: ticket.simCard ?? false,
-      memoryCard: ticket.memoryCard ?? false,
-      loanEquipment: ticket.loanEquipment ?? false,
-      equipmentObs: ticket.equipmentObs || null,
-      repairObs: ticket.repairObs || null,
-      selectedServices: ticket.selectedServices || ticket.serviceName ? [ticket.serviceName] : [],
-      condition: ticket.condition || null,
-      problem: ticket.problem || "N/A",
-      price: ticket.price || 0,
-      repairNumber: ticket.repairNumber || "N/A",
-      spu: ticket.spu || "N/A",
-      createdAt: ticket.createdAt || new Date().toISOString(),
-    }
+      clientId: device.clientId || null,
+      customerName: device.customerName || "N/A",
+      contact: device.contact || "N/A",
+      receivedBy: device.receivedBy || "N/A",
+      imeiNo: device.imeiNo || "000000000000000",
+      brand: device.brand || "N/A",
+      model: device.model || "N/A",
+      serialNo: device.serialNo || null,
+      softwareVersion: device.softwareVersion || null,
+      warranty: device.warranty || "Without Warranty",
+      battery: device.battery ?? false,
+      charger: device.charger ?? false,
+      simCard: device.simCard ?? false,
+      memoryCard: device.memoryCard ?? false,
+      loanEquipment: device.loanEquipment ?? false,
+      equipmentObs: device.equipmentObs || null,
+      repairObs: device.repairObs || null,
+      selectedServices: Array.isArray(device.selectedServices) ? device.selectedServices : (device.serviceName ? [device.serviceName] : []),
+      condition: device.condition || null,
+      problem: device.problem || "N/A",
+      price: device.price || 0,
+      budget: device.budget || null,
+      repairNumber: device.repairNumber || "N/A",
+      spu: device.spu || "N/A",
+      createdAt: device.createdAt || new Date().toISOString(),
+    }))
+    
+    console.log(`[NewTicketPage] Normalized tickets:`, normalizedTickets.map((t: any) => ({
+      repairNumber: t.repairNumber,
+      brand: t.brand,
+      model: t.model,
+      customerName: t.customerName
+    })))
+    
     // Use the wrapper function that shows language selection dialog first
-    printReceiptWithLanguageSelection([normalizedTicket])
+    // Pass all devices with the same client details so they print together
+    printReceiptWithLanguageSelection(normalizedTickets)
   }
 
   return (
