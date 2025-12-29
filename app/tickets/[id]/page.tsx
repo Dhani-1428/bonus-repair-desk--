@@ -70,38 +70,87 @@ export default function DeviceDetailPage() {
     }
   }
 
-  const handlePrint = () => {
-    if (typeof window !== "undefined" && ticket) {
-      // Normalize the ticket data to match the expected structure
-      const normalizedTicket = {
-        ...ticket,
-        // Ensure all fields exist with defaults if missing
-        clientId: ticket.clientId || null,
-        customerName: ticket.customerName || "N/A",
-        contact: ticket.contact || "N/A",
-        imeiNo: ticket.imeiNo || "000000000000000",
-        brand: ticket.brand || "N/A",
-        model: ticket.model || "N/A",
-        serialNo: ticket.serialNo || null,
-        softwareVersion: ticket.softwareVersion || null,
-        warranty: ticket.warranty || "Without Warranty",
-        battery: ticket.battery ?? false,
-        charger: ticket.charger ?? false,
-        simCard: ticket.simCard ?? false,
-        memoryCard: ticket.memoryCard ?? false,
-        loanEquipment: ticket.loanEquipment ?? false,
-        equipmentObs: ticket.equipmentObs || null,
-        repairObs: ticket.repairObs || null,
-        selectedServices: ticket.selectedServices || (ticket.serviceName ? [ticket.serviceName] : []),
-        condition: ticket.condition || null,
-        problem: ticket.problem || "N/A",
-        price: ticket.price || 0,
-        repairNumber: ticket.repairNumber || "N/A",
-        spu: ticket.spu || "N/A",
-        createdAt: ticket.createdAt || new Date().toISOString(),
+  const handlePrint = async () => {
+    if (typeof window !== "undefined" && ticket && user?.id) {
+      try {
+        // Fetch all tickets to find devices with the same clientId and customerName
+        const response = await fetch(`/api/repairs?userId=${user.id}`)
+        const data = await response.json()
+        
+        // Find all devices with the same clientId and customerName (devices added together)
+        const sameClientDevices = (data.tickets || []).filter((t: any) => 
+          t.clientId === ticket.clientId && 
+          t.customerName === ticket.customerName &&
+          (t.batchId === ticket.batchId || (!t.batchId && !ticket.batchId))
+        )
+        
+        console.log(`[DeviceDetailPage] Printing receipt for ${sameClientDevices.length} device(s) with clientId: ${ticket.clientId}`)
+        
+        // Normalize all devices with the same client details
+        const normalizedTickets = sameClientDevices.map((device: any) => ({
+          ...device,
+          // Ensure all fields exist with defaults if missing
+          clientId: device.clientId || null,
+          customerName: device.customerName || "N/A",
+          contact: device.contact || "N/A",
+          receivedBy: device.receivedBy || "N/A",
+          imeiNo: device.imeiNo || "000000000000000",
+          brand: device.brand || "N/A",
+          model: device.model || "N/A",
+          serialNo: device.serialNo || null,
+          softwareVersion: device.softwareVersion || null,
+          warranty: device.warranty || "Without Warranty",
+          battery: device.battery ?? false,
+          charger: device.charger ?? false,
+          simCard: device.simCard ?? false,
+          memoryCard: device.memoryCard ?? false,
+          loanEquipment: device.loanEquipment ?? false,
+          equipmentObs: device.equipmentObs || null,
+          repairObs: device.repairObs || null,
+          selectedServices: Array.isArray(device.selectedServices) ? device.selectedServices : (device.serviceName ? [device.serviceName] : []),
+          condition: device.condition || null,
+          problem: device.problem || "N/A",
+          price: device.price || 0,
+          budget: device.budget || null,
+          repairNumber: device.repairNumber || "N/A",
+          spu: device.spu || "N/A",
+          createdAt: device.createdAt || new Date().toISOString(),
+        }))
+        
+        printReceiptWithLanguageSelection(normalizedTickets)
+      } catch (error) {
+        console.error("[DeviceDetailPage] Error loading tickets for print:", error)
+        // Fallback to printing just the current ticket
+        const normalizedTicket = {
+          ...ticket,
+          clientId: ticket.clientId || null,
+          customerName: ticket.customerName || "N/A",
+          contact: ticket.contact || "N/A",
+          receivedBy: ticket.receivedBy || "N/A",
+          imeiNo: ticket.imeiNo || "000000000000000",
+          brand: ticket.brand || "N/A",
+          model: ticket.model || "N/A",
+          serialNo: ticket.serialNo || null,
+          softwareVersion: ticket.softwareVersion || null,
+          warranty: ticket.warranty || "Without Warranty",
+          battery: ticket.battery ?? false,
+          charger: ticket.charger ?? false,
+          simCard: ticket.simCard ?? false,
+          memoryCard: ticket.memoryCard ?? false,
+          loanEquipment: ticket.loanEquipment ?? false,
+          equipmentObs: ticket.equipmentObs || null,
+          repairObs: ticket.repairObs || null,
+          selectedServices: Array.isArray(ticket.selectedServices) ? ticket.selectedServices : (ticket.serviceName ? [ticket.serviceName] : []),
+          condition: ticket.condition || null,
+          problem: ticket.problem || "N/A",
+          price: ticket.price || 0,
+          budget: ticket.budget || null,
+          repairNumber: ticket.repairNumber || "N/A",
+          spu: ticket.spu || "N/A",
+          createdAt: ticket.createdAt || new Date().toISOString(),
+        }
+        printReceiptWithLanguageSelection([normalizedTicket])
       }
-      // Use the wrapper function that shows language selection dialog first
-      printReceiptWithLanguageSelection([normalizedTicket])
     }
   }
 
