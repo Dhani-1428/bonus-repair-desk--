@@ -194,10 +194,11 @@ export default function NewTicketPage() {
               ) : (
                 <div className="space-y-6">
                   {devices && devices.length > 0 ? (() => {
-                    // Group devices by clientId and customerName (same repair/customer)
+                    // Group devices by batchId if available, otherwise by clientId and customerName (same repair/customer)
                     const groupedDevices: { [key: string]: any[] } = {}
                     devices.forEach((device: any) => {
-                      const key = `${device.clientId || ''}_${device.customerName || ''}`
+                      // Use batchId if available, otherwise use clientId and customerName
+                      const key = device.batchId || `${device.clientId || ''}_${device.customerName || ''}`
                       if (!groupedDevices[key]) {
                         groupedDevices[key] = []
                       }

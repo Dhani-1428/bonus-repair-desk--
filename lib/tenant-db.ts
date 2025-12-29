@@ -65,13 +65,16 @@ export async function createTenantTables(tenantId: string): Promise<void> {
       problem TEXT DEFAULT NULL,
       price DECIMAL(10, 2) DEFAULT NULL,
       budget DECIMAL(10, 2) DEFAULT NULL,
+      batchId VARCHAR(100) DEFAULT NULL,
       status ENUM('PENDING', 'IN_PROGRESS', 'COMPLETED', 'DELIVERED', 'CANCELLED') DEFAULT 'PENDING',
       createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
       updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
       INDEX idx_userId (userId),
       INDEX idx_repairNumber (repairNumber),
       INDEX idx_imeiNo (imeiNo),
-      INDEX idx_status (status)
+      INDEX idx_status (status),
+      INDEX idx_batchId (batchId),
+      INDEX idx_clientId_customerName (clientId, customerName)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
   `)
 
