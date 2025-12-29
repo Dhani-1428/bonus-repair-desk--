@@ -383,13 +383,25 @@ export function NewRepairTicketForm() {
         }
       }
 
+      console.log(`[NewRepairTicketForm] Successfully created ${createdTickets.length} device ticket(s)`)
       toast.success(`${createdTickets.length} device${createdTickets.length > 1 ? "s" : ""} entry created successfully!`)
 
       // Store created tickets details with batch ID for tracking
-      const ticketsWithBatch = createdTickets.map(ticket => ({
+      const currentBatchId = batchId || `batch_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+      const ticketsWithBatch = createdTickets.map((ticket, index) => ({
         ...ticket,
-        batchId: batchId || `batch_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+        batchId: currentBatchId,
+        deviceIndex: index + 1 // Add device index for display
       }))
+      
+      console.log(`[NewRepairTicketForm] Storing ${ticketsWithBatch.length} ticket(s) with batchId: ${currentBatchId}`)
+      console.log(`[NewRepairTicketForm] Ticket details:`, ticketsWithBatch.map(t => ({
+        device: t.deviceIndex,
+        repairNumber: t.repairNumber,
+        brand: t.brand,
+        model: t.model
+      })))
+      
       setCreatedTicketsDetails(ticketsWithBatch)
       setShowTicketDetails(true)
       
@@ -414,18 +426,13 @@ export function NewRepairTicketForm() {
         }
       }, 500)
 
-      // Print receipt for all devices added together (only if multiple devices in same submission)
+      // Print receipt for all devices added together
       if (createdTickets.length > 0) {
         try {
-          // Only print together if multiple devices were added in the same form submission
-          // All devices in this submission share the same clientId and customerName
-          if (createdTickets.length > 1) {
-            // Multiple devices added together - print together on one receipt
-            printReceipt(createdTickets)
-          } else {
-            // Single device - print separately
-            printReceipt(createdTickets)
-          }
+          // Always pass all created tickets to print function
+          // The print function will handle grouping and display all devices
+          console.log(`[NewRepairTicketForm] Printing receipt for ${createdTickets.length} device(s)`)
+          printReceipt(createdTickets)
         } catch (printError) {
           console.error("[NewRepairTicketForm] Error printing receipt:", printError)
           toast.error("Device entry created, but failed to print receipt. You can print it later from the device list.")
@@ -991,8 +998,9 @@ export function NewRepairTicketForm() {
               Ticket Details - {createdTicketsDetails.length} Device{createdTicketsDetails.length > 1 ? "s" : ""} Created
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-6 text-gray-900 space-y-6">
-            {createdTicketsDetails.map((ticket: any, index: number) => {
+          <CardContent className="p-6 text-black space-y-6">
+            {createdTicketsDetails && createdTicketsDetails.length > 0 ? (
+              createdTicketsDetails.map((ticket: any, index: number) => {
               const servicesArray = Array.isArray(ticket?.selectedServices) 
                 ? ticket?.selectedServices 
                 : (typeof ticket?.selectedServices === 'string' 
@@ -1094,7 +1102,12 @@ export function NewRepairTicketForm() {
                   </div>
                 </div>
               )
-            })}
+            })
+            ) : (
+              <div className="text-center py-8 text-black">
+                <p>No device information available.</p>
+              </div>
+            )}
 
             <div className="flex flex-col gap-4 pt-4 border-t border-blue-200">
               {/* Printer Selection */}
@@ -1831,7 +1844,8 @@ export function printReceiptForTickets(
     // Calculate total price
     const totalPrice = tickets.reduce((sum, ticket) => sum + (Number.parseFloat(ticket.price || 0)), 0)
     
-    // Generate device list HTML
+    // Generate device list HTML - ensure all devices are included
+    console.log(`[generateReceiptHTMLForMultipleDevices] Generating receipt for ${tickets.length} device(s)`)
     const devicesList = tickets.map((ticket, index) => {
       const ticketRepairNumber = ticket.repairNumber || "N/A"
       const ticketImeiNo = ticket.imeiNo || "000000000000000"
@@ -1841,18 +1855,22 @@ export function printReceiptForTickets(
       const ticketWarrantyText = translateWarrantyValue(ticket.warranty, language)
       const ticketPrice = Number.parseFloat(ticket.price || 0).toFixed(2)
       
+      console.log(`[generateReceiptHTMLForMultipleDevices] Adding Device ${index + 1}: ${ticketBrand} ${ticketModel} (Repair: ${ticketRepairNumber})`)
+      
       return `
-        <div style="margin: 3px 0; padding: 2px 0; border-bottom: 1px dotted #ccc;">
-          <div style="font-weight: bold; margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;">Device ${index + 1}:</div>
-          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.repairN"]}:</span> ${ticketRepairNumber}</div>
-          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.imei"]}:</span> ${ticketImeiNo}</div>
-          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.brandModel"]}:</span> ${ticketBrand} - ${ticketModel}</div>
-          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.laptopSerialN"]}:</span> ${ticketSerialNo}</div>
-          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.warranty"]}:</span> ${ticketWarrantyText}</div>
-          <div style="margin: 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.price"]}:</span> €${ticketPrice}</div>
+        <div style="margin: 5px 0; padding: 4px 0; border-bottom: 1px dotted #ccc; background-color: #f9f9f9;">
+          <div style="font-weight: bold; margin: 0 0 3px 0; padding: 2px 0; font-size: 7pt; line-height: 1.6; color: #000; background-color: #e0e0e0; padding: 2px 4px;">Device ${index + 1}:</div>
+          <div style="margin: 1px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.repairN"]}:</span> ${ticketRepairNumber}</div>
+          <div style="margin: 1px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.imei"]}:</span> ${ticketImeiNo}</div>
+          <div style="margin: 1px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.brandModel"]}:</span> ${ticketBrand} - ${ticketModel}</div>
+          <div style="margin: 1px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.laptopSerialN"]}:</span> ${ticketSerialNo}</div>
+          <div style="margin: 1px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.warranty"]}:</span> ${ticketWarrantyText}</div>
+          <div style="margin: 1px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.price"]}:</span> €${ticketPrice}</div>
         </div>
       `
     }).join("")
+    
+    console.log(`[generateReceiptHTMLForMultipleDevices] Generated HTML for ${tickets.length} device(s)`)
     
     return `
       <div style="font-family: Arial, sans-serif; width: 100%; font-size: 6.5pt; line-height: 1.6; page-break-inside: avoid !important; margin: 0; padding: 0;">
@@ -2038,6 +2056,8 @@ export function printReceiptForTickets(
     return
   }
   
+  console.log(`[printReceiptForTickets] Processing ${validTickets.length} ticket(s)`)
+  
   // Group tickets by batchId if available, otherwise by clientId and customerName (devices added together)
   const groupedTickets: { [key: string]: any[] } = {}
   validTickets.forEach(ticket => {
@@ -2047,13 +2067,18 @@ export function printReceiptForTickets(
       groupedTickets[key] = []
     }
     groupedTickets[key].push(ticket)
+    console.log(`[printReceiptForTickets] Added ticket ${ticket.repairNumber || ticket.id} to group ${key}`)
   })
+  
+  console.log(`[printReceiptForTickets] Grouped into ${Object.keys(groupedTickets).length} group(s)`)
   
   // Generate receipts - one receipt per group (devices added together share one receipt)
   const receiptsHTML = Object.values(groupedTickets).map(ticketGroup => {
+    console.log(`[printReceiptForTickets] Processing group with ${ticketGroup.length} ticket(s)`)
     // If multiple tickets in group, show all devices on one receipt
     if (ticketGroup.length > 1) {
       // Multiple devices added together - show on one receipt
+      console.log(`[printReceiptForTickets] Generating multi-device receipt for ${ticketGroup.length} devices`)
       const firstTicket = ticketGroup[0]
       const clientCopy = generateReceiptHTMLForMultipleDevices(ticketGroup, 'CLIENT')
       const adminCopy = generateReceiptHTMLForMultipleDevices(ticketGroup, 'ADMIN')
