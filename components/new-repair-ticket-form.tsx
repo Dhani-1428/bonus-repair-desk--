@@ -1877,7 +1877,7 @@ export function printReceiptForTickets(
         <div style="text-align: center; font-weight: bold; font-size: 7pt; margin: 0 0 3px 0; padding: 2px; background-color: #e0e0e0; border: 1px solid #999;">
           ${copyLabel}
         </div>
-        <div style="display: table; width: 100%; margin: 0 0 4px 0; border-bottom: 1.5px solid #000; padding: 0 0 2px 0;">
+        <div style="display: table; width: 100%; margin: 0 0 4px 0; border-bottom: 1.5px solid #000; padding: 0 0 2px 0; page-break-inside: avoid;">
           <div style="display: table-row;">
             <div style="display: table-cell; width: 50%; vertical-align: top; padding-right: 6px;">
               <div style="font-weight: bold; font-size: 8pt; margin: 0 0 2px 0; padding: 0; color: #000; line-height: 1.6;">${shopName}</div>
@@ -1896,25 +1896,25 @@ export function printReceiptForTickets(
           </div>
         </div>
         
-        <div style="margin: 3px 0;">
+        <div style="margin: 3px 0; page-break-inside: avoid;">
           <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.entryDate"]}:</span> ${formattedDate} ${formattedTime}</div>
           <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">Number of Devices:</span> ${tickets.length}</div>
         </div>
         
-        <div style="margin: 3px 0;">
-          <div style="font-weight: bold; margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;">Devices:</div>
+        <div style="margin: 3px 0; page-break-inside: avoid;">
+          <div style="font-weight: bold; margin: 0 0 3px 0; padding: 0; font-size: 7pt; line-height: 1.6;">Devices Information:</div>
           ${devicesList}
         </div>
         
-        <div style="margin: 3px 0; padding: 3px; background-color: #f0f0f0; text-align: center; font-weight: bold; font-size: 7pt; border: 1px solid #ddd;">
+        <div style="margin: 5px 0; padding: 4px; background-color: #f0f0f0; text-align: center; font-weight: bold; font-size: 7pt; border: 1px solid #ddd; page-break-inside: avoid;">
           <div style="font-size: 7pt; font-weight: bold;">Total Price: €${totalPrice.toFixed(2)}</div>
         </div>
         
-        <div style="margin: 3px 0; padding: 3px; background-color: #f0f0f0; text-align: center; font-weight: bold; font-size: 6.5pt; border: 1px solid #ddd;">
+        <div style="margin: 3px 0; padding: 3px; background-color: #f0f0f0; text-align: center; font-weight: bold; font-size: 6.5pt; border: 1px solid #ddd; page-break-inside: avoid;">
           ${t["receipt.responsibleText"]}
         </div>
         
-        <div style="margin-top: 3px; padding: 3px; background-color: #f9f9f9; font-size: 6pt; line-height: 1.3; border: 1px solid #ddd;">
+        <div style="margin-top: 3px; padding: 3px; background-color: #f9f9f9; font-size: 6pt; line-height: 1.3; border: 1px solid #ddd; page-break-inside: avoid;">
           <div style="font-weight: bold; margin-bottom: 2px; font-size: 6.5pt;">${t["receipt.storageTitle"]}</div>
           <div style="text-align: justify; margin-bottom: 2px; font-size: 6pt;">
             ${t["receipt.storageText1"]} <strong>${shopName}</strong>.
