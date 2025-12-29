@@ -158,6 +158,16 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
       })
     }
     setFilteredTickets(filtered)
+    
+    // Scroll to first result when search is performed
+    if (filtered.length > 0 && (searchTerm.trim() || statusFilter !== "all" || dateFilter)) {
+      setTimeout(() => {
+        const firstRow = document.querySelector('[data-ticket-row]') as HTMLElement
+        if (firstRow) {
+          firstRow.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        }
+      }, 100)
+    }
   }, [tickets, searchTerm, searchType, statusFilter, dateFilter])
 
   const handleSearch = (term: string, type: string) => {
@@ -458,6 +468,18 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                     placeholder={t("search.searchPlaceholder")}
                     value={searchTerm}
                     onChange={(e) => handleSearch(e.target.value, searchType)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault()
+                        // Scroll to first result after search
+                        setTimeout(() => {
+                          const firstRow = document.querySelector('[data-ticket-row]') as HTMLElement
+                          if (firstRow) {
+                            firstRow.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                          }
+                        }, 100)
+                      }
+                    }}
                     onFocus={() => {
                       setSearchInputFocused(true)
                       if (suggestions.length > 0) setShowSuggestions(true)
