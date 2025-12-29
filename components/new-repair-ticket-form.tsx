@@ -1845,9 +1845,54 @@ export function printReceiptForTickets(
     // Calculate total price
     const totalPrice = tickets.reduce((sum, ticket) => sum + (Number.parseFloat(ticket.price || 0)), 0)
     
-    // Generate device list HTML - ensure all devices are included
+    // Generate device list HTML - use table format for multiple devices
     console.log(`[generateReceiptHTMLForMultipleDevices] Generating receipt for ${tickets.length} device(s)`)
-    const devicesList = tickets.map((ticket, index) => {
+    
+    // For multiple devices, use table format
+    if (tickets.length > 1) {
+      const tableRows = tickets.map((ticket, index) => {
+        const ticketRepairNumber = ticket.repairNumber || "N/A"
+        const ticketImeiNo = ticket.imeiNo || "000000000000000"
+        const ticketBrand = ticket.brand || "N/A"
+        const ticketModel = ticket.model || "N/A"
+        const ticketSerialNo = ticket.serialNo || "-"
+        const ticketWarrantyText = translateWarrantyValue(ticket.warranty, language)
+        const ticketPrice = Number.parseFloat(ticket.price || 0).toFixed(2)
+        
+        console.log(`[generateReceiptHTMLForMultipleDevices] Adding Device ${index + 1}: ${ticketBrand} ${ticketModel} (Repair: ${ticketRepairNumber})`)
+        
+        return `
+          <tr style="page-break-inside: avoid; border-bottom: 1px solid #ddd;">
+            <td style="padding: 3px 4px; font-size: 6pt; text-align: center; border-right: 1px solid #ddd;">${index + 1}</td>
+            <td style="padding: 3px 4px; font-size: 6pt; border-right: 1px solid #ddd;">${ticketBrand} - ${ticketModel}</td>
+            <td style="padding: 3px 4px; font-size: 6pt; border-right: 1px solid #ddd;">${ticketImeiNo}</td>
+            <td style="padding: 3px 4px; font-size: 6pt; border-right: 1px solid #ddd;">${ticketWarrantyText}</td>
+            <td style="padding: 3px 4px; font-size: 6pt; text-align: right; border-right: 1px solid #ddd;">€${ticketPrice}</td>
+            <td style="padding: 3px 4px; font-size: 6pt; text-align: center;">${ticketRepairNumber}</td>
+          </tr>
+        `
+      }).join("")
+      
+      return `
+        <table style="width: 100%; border-collapse: collapse; margin: 4px 0; font-size: 6pt; page-break-inside: avoid;">
+          <thead>
+            <tr style="background-color: #e0e0e0; border-bottom: 2px solid #000;">
+              <th style="padding: 4px; font-size: 6.5pt; font-weight: bold; text-align: center; border-right: 1px solid #000; border-bottom: 1px solid #000;">Device</th>
+              <th style="padding: 4px; font-size: 6.5pt; font-weight: bold; text-align: left; border-right: 1px solid #000; border-bottom: 1px solid #000;">Brand-Model</th>
+              <th style="padding: 4px; font-size: 6.5pt; font-weight: bold; text-align: left; border-right: 1px solid #000; border-bottom: 1px solid #000;">IMEI</th>
+              <th style="padding: 4px; font-size: 6.5pt; font-weight: bold; text-align: left; border-right: 1px solid #000; border-bottom: 1px solid #000;">Warranty</th>
+              <th style="padding: 4px; font-size: 6.5pt; font-weight: bold; text-align: right; border-right: 1px solid #000; border-bottom: 1px solid #000;">Price</th>
+              <th style="padding: 4px; font-size: 6.5pt; font-weight: bold; text-align: center; border-bottom: 1px solid #000;">Repair #</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${tableRows}
+          </tbody>
+        </table>
+      `
+    } else {
+      // Single device - use vertical format
+      const ticket = tickets[0]
       const ticketRepairNumber = ticket.repairNumber || "N/A"
       const ticketImeiNo = ticket.imeiNo || "000000000000000"
       const ticketBrand = ticket.brand || "N/A"
@@ -1856,11 +1901,9 @@ export function printReceiptForTickets(
       const ticketWarrantyText = translateWarrantyValue(ticket.warranty, language)
       const ticketPrice = Number.parseFloat(ticket.price || 0).toFixed(2)
       
-      console.log(`[generateReceiptHTMLForMultipleDevices] Adding Device ${index + 1}: ${ticketBrand} ${ticketModel} (Repair: ${ticketRepairNumber})`)
-      
       return `
         <div style="margin: 6px 0; padding: 5px 0; border-bottom: 1.5px solid #ccc; background-color: #f5f5f5; page-break-inside: avoid;">
-          <div style="font-weight: bold; margin: 0 0 4px 0; padding: 3px 6px; font-size: 7.5pt; line-height: 1.6; color: #000; background-color: #d0d0d0; border-left: 3px solid #0066cc;">Device ${index + 1}:</div>
+          <div style="font-weight: bold; margin: 0 0 4px 0; padding: 3px 6px; font-size: 7.5pt; line-height: 1.6; color: #000; background-color: #d0d0d0; border-left: 3px solid #0066cc;">Device 1:</div>
           <div style="margin: 2px 0; padding: 1px 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.repairN"]}:</span> ${ticketRepairNumber}</div>
           <div style="margin: 2px 0; padding: 1px 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.imei"]}:</span> ${ticketImeiNo}</div>
           <div style="margin: 2px 0; padding: 1px 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.brandModel"]}:</span> ${ticketBrand} - ${ticketModel}</div>
@@ -1869,7 +1912,7 @@ export function printReceiptForTickets(
           <div style="margin: 2px 0; padding: 1px 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.price"]}:</span> €${ticketPrice}</div>
         </div>
       `
-    }).join("")
+    }
     
     console.log(`[generateReceiptHTMLForMultipleDevices] Generated HTML for ${tickets.length} device(s)`)
     
