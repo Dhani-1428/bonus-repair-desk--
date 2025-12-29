@@ -652,7 +652,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                 <thead>
                   <tr className="bg-blue-50 border-b-2 border-blue-300">
                     <th className="border-r border-blue-300 px-4 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider w-[10%]">{t("table.date")}</th>
-                    <th className="border-r border-blue-300 px-4 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider w-[15%]">{t("table.customer")}</th>
+                    <th className="border-r border-blue-300 px-4 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider w-[15%]">{t("table.client") || t("form.clientName")}</th>
                     <th className="border-r border-blue-300 px-4 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider w-[12%]">{t("table.contact")}</th>
                     <th className="border-r border-blue-300 px-4 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider w-[15%]">{t("table.model")}</th>
                     <th className="border-r border-blue-300 px-4 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider w-[12%]">{t("table.imei")}</th>
@@ -709,7 +709,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                                 // Keep serviceName if parsing fails
                               }
                             }
-                            return services || t("common.notAvailable")
+                            return services || "-"
                           })()}
                         </td>
                         <td className="border-r border-blue-300 px-4 py-3 text-sm whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
@@ -746,9 +746,14 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                               size="sm"
                               onClick={(e) => {
                                 e.stopPropagation()
+                                if (ticket.status === "DELIVERED" || ticket.status === "delivered" || ticket.status === "CANCELLED" || ticket.status === "cancelled") {
+                                  toast.error(t("error.cannotEditDelivered") || "Cannot edit tickets that are delivered or cancelled")
+                                  return
+                                }
                                 handleEditClick(ticket)
                               }}
-                              className="text-blue-600 hover:text-blue-800 hover:bg-blue-100 h-8 w-8 p-0"
+                              disabled={ticket.status === "DELIVERED" || ticket.status === "delivered" || ticket.status === "CANCELLED" || ticket.status === "cancelled"}
+                              className="text-blue-600 hover:text-blue-800 hover:bg-blue-100 h-8 w-8 p-0 disabled:opacity-50 disabled:cursor-not-allowed"
                               title="Edit"
                             >
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -760,8 +765,15 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  onClick={(e) => e.stopPropagation()}
-                                  className="text-red-600 hover:text-red-800 hover:bg-red-100 h-8 w-8 p-0"
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    if (ticket.status === "DELIVERED" || ticket.status === "delivered" || ticket.status === "CANCELLED" || ticket.status === "cancelled") {
+                                      toast.error(t("error.cannotDeleteDelivered") || "Cannot delete tickets that are delivered or cancelled")
+                                      e.preventDefault()
+                                    }
+                                  }}
+                                  disabled={ticket.status === "DELIVERED" || ticket.status === "delivered" || ticket.status === "CANCELLED" || ticket.status === "cancelled"}
+                                  className="text-red-600 hover:text-red-800 hover:bg-red-100 h-8 w-8 p-0 disabled:opacity-50 disabled:cursor-not-allowed"
                                   title="Delete"
                                 >
                                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -800,39 +812,39 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
       </Card>
 
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-white border-blue-200 text-black">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-white border-blue-200 text-black" style={{ backgroundColor: 'white' }}>
           <DialogHeader>
             <DialogTitle className="text-black text-2xl font-bold">{t("ticket.edit")}</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleEditSubmit} className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="edit-customerName" className="text-black">{t("form.customerName")}</Label>
-                <Input id="edit-customerName" value={editFormData.customerName || ""} onChange={(e) => setEditFormData({ ...editFormData, customerName: e.target.value })} className="bg-white border-blue-300 text-black placeholder:text-gray-400" />
+                <Label htmlFor="edit-customerName" className="text-black">{t("form.clientName")}</Label>
+                <Input id="edit-customerName" value={editFormData.customerName || ""} onChange={(e) => setEditFormData({ ...editFormData, customerName: e.target.value })} className="bg-white border-blue-300 text-black" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="edit-contact" className="text-black">{t("table.contact")}</Label>
-                <Input id="edit-contact" value={editFormData.contact || ""} onChange={(e) => setEditFormData({ ...editFormData, contact: e.target.value })} className="bg-white border-blue-300 text-black placeholder:text-gray-400" />
+                <Input id="edit-contact" value={editFormData.contact || ""} onChange={(e) => setEditFormData({ ...editFormData, contact: e.target.value })} className="bg-white border-blue-300 text-black" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="edit-receivedBy" className="text-black">{t("form.receivedBy")}</Label>
-                <Input id="edit-receivedBy" value={editFormData.receivedBy || ""} onChange={(e) => setEditFormData({ ...editFormData, receivedBy: e.target.value })} className="bg-white border-blue-300 text-black placeholder:text-gray-400" />
+                <Input id="edit-receivedBy" value={editFormData.receivedBy || ""} onChange={(e) => setEditFormData({ ...editFormData, receivedBy: e.target.value })} className="bg-white border-blue-300 text-black" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="edit-imeiNo" className="text-black">{t("form.imei")}</Label>
-                <Input id="edit-imeiNo" value={editFormData.imeiNo || ""} onChange={(e) => setEditFormData({ ...editFormData, imeiNo: e.target.value })} className="bg-white border-blue-300 text-black placeholder:text-gray-400" />
+                <Input id="edit-imeiNo" value={editFormData.imeiNo || ""} onChange={(e) => setEditFormData({ ...editFormData, imeiNo: e.target.value })} className="bg-white border-blue-300 text-black" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="edit-brand" className="text-black">{t("form.brand")}</Label>
-                <Input id="edit-brand" value={editFormData.brand || ""} onChange={(e) => setEditFormData({ ...editFormData, brand: e.target.value })} className="bg-white border-blue-300 text-black placeholder:text-gray-400" />
+                <Input id="edit-brand" value={editFormData.brand || ""} onChange={(e) => setEditFormData({ ...editFormData, brand: e.target.value })} className="bg-white border-blue-300 text-black" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="edit-model" className="text-black">{t("form.model")}</Label>
-                <Input id="edit-model" value={editFormData.model || ""} onChange={(e) => setEditFormData({ ...editFormData, model: e.target.value })} className="bg-white border-blue-300 text-black placeholder:text-gray-400" />
+                <Input id="edit-model" value={editFormData.model || ""} onChange={(e) => setEditFormData({ ...editFormData, model: e.target.value })} className="bg-white border-blue-300 text-black" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="edit-serialNo" className="text-black">{t("form.laptopSerialNumber")}</Label>
-                <Input id="edit-serialNo" value={editFormData.serialNo || ""} onChange={(e) => setEditFormData({ ...editFormData, serialNo: e.target.value })} className="bg-white border-blue-300 text-black placeholder:text-gray-400" />
+                <Input id="edit-serialNo" value={editFormData.serialNo || ""} onChange={(e) => setEditFormData({ ...editFormData, serialNo: e.target.value })} className="bg-white border-blue-300 text-black" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="edit-warranty" className="text-black">{t("form.warranty")}</Label>
@@ -848,11 +860,11 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
               </div>
               <div className="space-y-2">
                 <Label htmlFor="edit-price" className="text-black">{t("form.price")}</Label>
-                <Input id="edit-price" type="number" step="0.01" value={editFormData.price || ""} onChange={(e) => setEditFormData({ ...editFormData, price: e.target.value })} className="bg-white border-blue-300 text-black placeholder:text-gray-400" />
+                <Input id="edit-price" type="number" step="0.01" value={editFormData.price || ""} onChange={(e) => setEditFormData({ ...editFormData, price: e.target.value })} className="bg-white border-blue-300 text-black" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="edit-budget" className="text-black">{t("form.budget")}</Label>
-                <Input id="edit-budget" type="number" step="0.01" value={editFormData.budget || ""} onChange={(e) => setEditFormData({ ...editFormData, budget: e.target.value })} className="bg-white border-blue-300 text-black placeholder:text-gray-400" />
+                <Input id="edit-budget" type="number" step="0.01" value={editFormData.budget || ""} onChange={(e) => setEditFormData({ ...editFormData, budget: e.target.value })} className="bg-white border-blue-300 text-black" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="edit-status" className="text-black">{t("table.status")}</Label>
@@ -906,11 +918,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
               <Textarea id="edit-equipmentObs" value={editFormData.equipmentObs || ""} onChange={(e) => setEditFormData({ ...editFormData, equipmentObs: e.target.value })} className="bg-white border-blue-300 text-black min-h-[80px]" />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-repairObs" className="text-black">{t("form.repairObservations")}</Label>
-              <Textarea id="edit-repairObs" value={editFormData.repairObs || ""} onChange={(e) => setEditFormData({ ...editFormData, repairObs: e.target.value })} className="bg-white border-blue-300 text-black min-h-[80px]" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="edit-condition" className="text-black">{t("form.condition")}</Label>
+              <Label htmlFor="edit-condition" className="text-black">{t("form.equipmentObservations")}</Label>
               <Textarea id="edit-condition" value={editFormData.condition || ""} onChange={(e) => setEditFormData({ ...editFormData, condition: e.target.value })} className="bg-white border-blue-300 text-black min-h-[80px]" />
             </div>
             <div className="space-y-2">
@@ -922,7 +930,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
               <Input id="edit-selectedServices" value={Array.isArray(editFormData.selectedServices) ? editFormData.selectedServices.join(", ") : editFormData.selectedServices || ""} onChange={(e) => {
                 const services = e.target.value.split(",").map(s => s.trim()).filter(s => s)
                 setEditFormData({ ...editFormData, selectedServices: services })
-              }} placeholder="Service 1, Service 2, ..." className="bg-white border-blue-300 text-black placeholder:text-gray-400" />
+              }} className="bg-white border-blue-300 text-black" />
             </div>
             <div className="flex justify-end gap-2 pt-4">
               <Button type="button" variant="outline" onClick={() => { setIsEditDialogOpen(false); setEditingTicket(null) }} className="border-blue-300 bg-white text-black hover:bg-blue-50">{t("form.cancel")}</Button>

@@ -332,7 +332,20 @@ export default function NewTicketPage() {
                         </div>
                       </div>
                                   <div className="mt-4 pt-4 border-t border-blue-200">
-                                    <p className="text-sm text-black mb-2">{t("ticket.service")} {Array.isArray(device.selectedServices) ? device.selectedServices.join(", ") : device.serviceName || t("common.notAvailable")}</p>
+                                    <p className="text-sm text-black mb-2">{t("ticket.service")} {(() => {
+                                      if (Array.isArray(device.selectedServices) && device.selectedServices.length > 0) {
+                                        return device.selectedServices.join(", ")
+                                      }
+                                      if (device.selectedServices && typeof device.selectedServices === 'string') {
+                                        try {
+                                          const parsed = JSON.parse(device.selectedServices)
+                                          if (Array.isArray(parsed) && parsed.length > 0) {
+                                            return parsed.join(", ")
+                                          }
+                                        } catch {}
+                                      }
+                                      return device.serviceName || "-"
+                                    })()}</p>
                                     <p className="text-sm text-black">{t("ticket.problem")} {device.problem || t("common.notAvailable")}</p>
                                   </div>
                                 </div>

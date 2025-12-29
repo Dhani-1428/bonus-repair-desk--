@@ -698,15 +698,14 @@ export function NewRepairTicketForm() {
                 </div>
               </div>
               <div className="space-y-3">
-                <Label htmlFor="customerName" className="text-black text-base font-semibold">{t("form.customerName")} *</Label>
+                <Label htmlFor="customerName" className="text-black text-base font-semibold">{t("form.clientName")} *</Label>
                 {devices.length === 1 ? (
                   <Input
                     id="customerName"
-                    placeholder={t("placeholder.customerName")}
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
                     required
-                    className="bg-white border-blue-200 text-black placeholder:text-black focus:border-blue-500 h-12 text-lg"
+                    className="bg-white border-blue-200 text-black focus:border-blue-500 h-12 text-lg"
                   />
                 ) : (
                   <div className="bg-white border border-blue-200 rounded-md px-4 py-3 h-12 text-lg text-black flex items-center">
@@ -720,7 +719,6 @@ export function NewRepairTicketForm() {
                   <Input
                     id="contact"
                     type="tel"
-                    placeholder={t("form.clientPhonePlaceholder")}
                     value={contact}
                     onChange={(e) => setContact(e.target.value)}
                     className="bg-white border-blue-200 text-black placeholder:text-black focus:border-blue-500 h-12 text-lg"
@@ -736,7 +734,6 @@ export function NewRepairTicketForm() {
                 {devices.length === 1 ? (
                   <Input
                     id="receivedBy"
-                    placeholder={t("placeholder.receivedBy") || "Enter your name"}
                     value={receivedBy}
                     onChange={(e) => setReceivedBy(e.target.value)}
                     required
@@ -781,7 +778,6 @@ export function NewRepairTicketForm() {
                     <Label className="text-black">{t("form.brand")}</Label>
                     <div className="relative">
                       <Input
-                        placeholder={t("form.brandPlaceholder")}
                         value={device.brand}
                         onChange={(e) => {
                           updateDevice(deviceIndex, "brand", e.target.value)
@@ -830,7 +826,6 @@ export function NewRepairTicketForm() {
                     <Label className="text-black">{t("form.model")}</Label>
                     <div className="relative">
                       <Input
-                        placeholder={device.brand ? t("form.modelPlaceholder") : t("form.selectBrandFirst")}
                         value={device.model}
                         onChange={(e) => updateDevice(deviceIndex, "model", e.target.value)}
                         disabled={!device.brand}
@@ -872,7 +867,6 @@ export function NewRepairTicketForm() {
                   <div className="space-y-3">
                     <Label className="text-black text-base font-semibold">{t("form.imei")}</Label>
                     <Input
-                      placeholder={t("placeholder.imei")}
                       value={device.imeiNo}
                       onChange={(e) => updateDevice(deviceIndex, "imeiNo", e.target.value)}
                       maxLength={15}
@@ -885,7 +879,6 @@ export function NewRepairTicketForm() {
                   <div className="space-y-3">
                     <Label className="text-gray-700 text-base font-semibold">{t("form.laptopSerialNumber")}</Label>
                     <Input
-                      placeholder={t("form.laptopSerialNumberPlaceholder")}
                       value={device.serialNo || ""}
                       onChange={(e) => updateDevice(deviceIndex, "serialNo", e.target.value)}
                       className="bg-white border-gray-300 text-gray-900 placeholder:text-black focus:border-blue-500 h-12 text-lg"
@@ -910,7 +903,6 @@ export function NewRepairTicketForm() {
                   <div className="space-y-2 md:col-span-2">
                     <Label className="text-black">{t("form.equipmentObservations")}</Label>
                     <Textarea
-                      placeholder={t("form.equipmentObservationsPlaceholder")}
                       value={device.equipmentObs}
                       onChange={(e) => updateDevice(deviceIndex, "equipmentObs", e.target.value)}
                       rows={2}
@@ -1037,7 +1029,6 @@ export function NewRepairTicketForm() {
                   <div className="space-y-2 md:col-span-2">
                     <Label className="text-black">{t("form.repairObservations")}</Label>
                     <Textarea
-                      placeholder={t("form.repairObservationsPlaceholder")}
                       value={device.repairObs}
                       onChange={(e) => updateDevice(deviceIndex, "repairObs", e.target.value)}
                       rows={2}
@@ -1054,7 +1045,6 @@ export function NewRepairTicketForm() {
                           type="text"
                           inputMode="decimal"
                           pattern="[0-9]*\.?[0-9]*"
-                          placeholder={t("placeholder.price")}
                           value={device.price}
                           onChange={(e) => {
                             const value = e.target.value.replace(/[^0-9.]/g, '')
@@ -1072,7 +1062,6 @@ export function NewRepairTicketForm() {
                           type="text"
                           inputMode="decimal"
                           pattern="[0-9]*\.?[0-9]*"
-                          placeholder={t("placeholder.budget") || "Budget"}
                           value={device.budget}
                           onChange={(e) => {
                             const value = e.target.value.replace(/[^0-9.]/g, '')
@@ -1183,7 +1172,7 @@ export function NewRepairTicketForm() {
                     <div className="space-y-3">
                       <h4 className="text-sm font-semibold text-blue-600 border-b border-blue-200 pb-2">Client Information</h4>
                       <div className="space-y-2 text-sm">
-                        <div><span className="text-black">Customer Name:</span> <span className="text-black">{ticket?.customerName || "N/A"}</span></div>
+                        <div><span className="text-black">{t("form.clientName")}:</span> <span className="text-black">{ticket?.customerName || "N/A"}</span></div>
                         <div><span className="text-black">Contact:</span> <span className="text-black">{ticket?.contact || "N/A"}</span></div>
                       </div>
                     </div>

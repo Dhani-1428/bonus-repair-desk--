@@ -78,6 +78,7 @@ const translations: Record<Language, Record<string, string>> = {
 
     // NewRepairTicketForm labels
     "form.customerName": "Customer Name",
+    "form.clientName": "Client Name",
     "form.contactNumber": "Contact Number",
     "form.model": "Model",
     "form.imei": "IMEI Number",
@@ -195,6 +196,8 @@ const translations: Record<Language, Record<string, string>> = {
     "error.deviceUpdateFailed": "Failed to update device",
     "error.deviceDeleteFailed": "Failed to delete device",
     "error.ticketStatusUpdateFailed": "Failed to update ticket status",
+    "error.cannotEditDelivered": "Cannot edit tickets that are delivered or cancelled",
+    "error.cannotDeleteDelivered": "Cannot delete tickets that are delivered or cancelled",
     "success.deviceMovedToTrash": "Device moved to trash",
 
     // Payment status banners
@@ -237,7 +240,7 @@ const translations: Record<Language, Record<string, string>> = {
     "status.in_progress": "In Progress",
     "status.completed": "Completed",
     "status.delivered": "Out",
-    "status.notOk": "Not OK",
+    "status.notOk": "Cannot Repair",
 
     // Ticket details
     "ticket.contact": "Contact:",
@@ -446,6 +449,7 @@ const translations: Record<Language, Record<string, string>> = {
     // Table headers
     "table.date": "Date",
     "table.customer": "Customer",
+    "table.client": "Client",
     "table.contact": "Contact",
     "table.model": "Model",
     "table.imei": "IMEI",

@@ -150,7 +150,22 @@ export function RepairTicketList() {
                       {ticket.imeiNo}
                     </td>
                     <td className="px-4 py-3 text-sm text-black border-r border-blue-100 max-w-xs truncate">
-                      {ticket.serviceName || t("common.notAvailable")}
+                      {(() => {
+                        let services = ticket.serviceName || ""
+                        if (ticket.selectedServices) {
+                          try {
+                            const servicesArray = typeof ticket.selectedServices === 'string' 
+                              ? JSON.parse(ticket.selectedServices) 
+                              : ticket.selectedServices
+                            if (Array.isArray(servicesArray) && servicesArray.length > 0) {
+                              services = servicesArray.join(", ")
+                            }
+                          } catch {
+                            // Keep serviceName if parsing fails
+                          }
+                        }
+                        return services || "-"
+                      })()}
                     </td>
                     <td className="px-4 py-3 text-sm border-r border-blue-100 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
                       <Select
