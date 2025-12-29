@@ -79,6 +79,7 @@ export function NewRepairTicketForm() {
   const [clientId, setClientId] = useState(generateClientId())
   const [contact, setContact] = useState("")
   const [receivedBy, setReceivedBy] = useState("")
+  const [batchId, setBatchId] = useState<string | null>(null) // Track devices added together
   const [devices, setDevices] = useState<DeviceFormData[]>([
     {
       model: "",
@@ -246,6 +247,12 @@ export function NewRepairTicketForm() {
 
     setIsSubmitting(true)
 
+    // Generate batch ID for devices added together (only if not already set)
+    const currentBatchId = batchId || `batch_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+    if (!batchId) {
+      setBatchId(currentBatchId)
+    }
+
     try {
       // Create tickets for all devices via API
       const createdTickets = []
@@ -376,27 +383,47 @@ export function NewRepairTicketForm() {
 
       toast.success(`${createdTickets.length} device${createdTickets.length > 1 ? "s" : ""} entry created successfully!`)
 
-      // Store created tickets details and show them
-      setCreatedTicketsDetails(createdTickets)
+      // Store created tickets details with batch ID for tracking
+      const ticketsWithBatch = createdTickets.map(ticket => ({
+        ...ticket,
+        batchId: batchId || `batch_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+      }))
+      setCreatedTicketsDetails(ticketsWithBatch)
       setShowTicketDetails(true)
       
       // Scroll to Devices Information section after a short delay
       setTimeout(() => {
-        const devicesSection = document.getElementById('devices-information-section')
-        if (devicesSection) {
-          devicesSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
-          // Also expand the section if it's collapsed
-          const showButton = document.querySelector('[data-show-devices-button]') as HTMLButtonElement
-          if (showButton && !showButton.textContent?.includes('Hide')) {
-            showButton.click()
+        try {
+          const devicesSection = document.getElementById('devices-information-section')
+          if (devicesSection) {
+            devicesSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
+            // Also expand the section if it's collapsed
+            const showButton = document.querySelector('[data-show-devices-button]') as HTMLButtonElement
+            if (showButton) {
+              const buttonText = showButton.textContent || ''
+              if (!buttonText.toLowerCase().includes('hide')) {
+                showButton.click()
+              }
+            }
           }
+        } catch (scrollError) {
+          console.error("[NewRepairTicketForm] Error scrolling to devices section:", scrollError)
+          // Don't block the flow if scrolling fails
         }
       }, 500)
 
-      // Print receipt for all devices
+      // Print receipt for all devices added together (only if multiple devices in same submission)
       if (createdTickets.length > 0) {
         try {
-          printReceipt(createdTickets)
+          // Only print together if multiple devices were added in the same form submission
+          // All devices in this submission share the same clientId and customerName
+          if (createdTickets.length > 1) {
+            // Multiple devices added together - print together on one receipt
+            printReceipt(createdTickets)
+          } else {
+            // Single device - print separately
+            printReceipt(createdTickets)
+          }
         } catch (printError) {
           console.error("[NewRepairTicketForm] Error printing receipt:", printError)
           toast.error("Device entry created, but failed to print receipt. You can print it later from the device list.")
@@ -405,6 +432,9 @@ export function NewRepairTicketForm() {
         console.error("[NewRepairTicketForm] No tickets created to print")
         toast.error("Device entry created, but no receipt data available.")
       }
+      
+      // Reset batch ID for next submission (devices added separately will have different batch IDs)
+      setBatchId(null)
     } catch (error: any) {
       toast.error(error.message || "Failed to create repair ticket")
     } finally {
@@ -424,6 +454,7 @@ export function NewRepairTicketForm() {
     setClientId(generateClientId())
     setContact("")
     setReceivedBy("")
+    setBatchId(null) // Reset batch ID for new entry
     setDevices([{
       model: "",
       brand: "",
@@ -509,42 +540,44 @@ export function NewRepairTicketForm() {
             </Button>
             </div>
 
-          {/* Customer Information - Three fields in one line (removed Client ID) */}
-          <div className="grid gap-6 grid-cols-3 border-b border-gray-200 pb-6">
-            <div className="space-y-3">
-              <Label htmlFor="customerName" className="text-gray-700 text-base font-semibold">{t("form.customerName")} *</Label>
-              <Input
-                id="customerName"
-                placeholder={t("placeholder.customerName")}
-                value={customerName}
-                onChange={(e) => setCustomerName(e.target.value)}
-                required
-                className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 h-12 text-lg"
-              />
+          {/* Customer Information - Only show for first device */}
+          {devices.length === 1 && (
+            <div className="grid gap-6 grid-cols-3 border-b border-gray-200 pb-6">
+              <div className="space-y-3">
+                <Label htmlFor="customerName" className="text-gray-700 text-base font-semibold">{t("form.customerName")} *</Label>
+                <Input
+                  id="customerName"
+                  placeholder={t("placeholder.customerName")}
+                  value={customerName}
+                  onChange={(e) => setCustomerName(e.target.value)}
+                  required
+                  className="bg-white border-gray-300 text-gray-900 placeholder:text-black focus:border-blue-500 h-12 text-lg"
+                />
+              </div>
+              <div className="space-y-3">
+                <Label htmlFor="contact" className="text-gray-700 text-base font-semibold">{t("form.clientPhone")}</Label>
+                <Input
+                  id="contact"
+                  type="tel"
+                  placeholder={t("form.clientPhonePlaceholder")}
+                  value={contact}
+                  onChange={(e) => setContact(e.target.value)}
+                  className="bg-white border-gray-300 text-gray-900 placeholder:text-black focus:border-blue-500 h-12 text-lg"
+                />
+              </div>
+              <div className="space-y-3">
+                <Label htmlFor="receivedBy" className="text-gray-700 text-base font-semibold">{t("form.receivedBy")} *</Label>
+                <Input
+                  id="receivedBy"
+                  placeholder={t("placeholder.receivedBy") || "Enter your name"}
+                  value={receivedBy}
+                  onChange={(e) => setReceivedBy(e.target.value)}
+                  required
+                  className="bg-white border-gray-300 text-gray-900 placeholder:text-black focus:border-blue-500 h-12 text-lg"
+                />
+              </div>
             </div>
-            <div className="space-y-3">
-              <Label htmlFor="contact" className="text-gray-700 text-base font-semibold">{t("form.clientPhone")}</Label>
-              <Input
-                id="contact"
-                type="tel"
-                placeholder={t("form.clientPhonePlaceholder")}
-                value={contact}
-                onChange={(e) => setContact(e.target.value)}
-                className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 h-12 text-lg"
-              />
-            </div>
-            <div className="space-y-3">
-              <Label htmlFor="receivedBy" className="text-gray-700 text-base font-semibold">{t("form.receivedBy")} *</Label>
-              <Input
-                id="receivedBy"
-                placeholder={t("placeholder.receivedBy") || "Enter your name"}
-                value={receivedBy}
-                onChange={(e) => setReceivedBy(e.target.value)}
-                required
-                className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 h-12 text-lg"
-              />
-            </div>
-          </div>
+          )}
 
           {/* Devices */}
           <div className="space-y-6">
@@ -585,7 +618,7 @@ export function NewRepairTicketForm() {
                             updateDevice(deviceIndex, "model", "")
                           }
                         }}
-                        className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 pr-10"
+                        className="bg-white border-gray-300 text-gray-900 placeholder:text-black focus:border-blue-500 pr-10"
                       />
                       <Popover>
                         <PopoverTrigger asChild>
@@ -629,7 +662,7 @@ export function NewRepairTicketForm() {
                         value={device.model}
                         onChange={(e) => updateDevice(deviceIndex, "model", e.target.value)}
                         disabled={!device.brand}
-                        className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 pr-10 disabled:opacity-50"
+                        className="bg-white border-gray-300 text-gray-900 placeholder:text-black focus:border-blue-500 pr-10 disabled:opacity-50"
                       />
                       {device.brand && device.brand !== "Other" && BRANDS_AND_MODELS[device.brand] && (
                         <Popover>
@@ -672,7 +705,7 @@ export function NewRepairTicketForm() {
                       onChange={(e) => updateDevice(deviceIndex, "imeiNo", e.target.value)}
                       maxLength={15}
                       inputMode="numeric"
-                      className={`bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 h-12 text-lg ${device.imeiError ? "border-red-500 focus-visible:ring-red-500" : ""}`}
+                      className={`bg-white border-gray-300 text-gray-900 placeholder:text-black focus:border-blue-500 h-12 text-lg ${device.imeiError ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                     />
                     {device.imeiError && <p className="text-xs text-red-600">{device.imeiError}</p>}
                   </div>
@@ -683,7 +716,7 @@ export function NewRepairTicketForm() {
                       placeholder={t("form.laptopSerialNumberPlaceholder")}
                       value={device.serialNo || ""}
                       onChange={(e) => updateDevice(deviceIndex, "serialNo", e.target.value)}
-                      className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 h-12 text-lg"
+                      className="bg-white border-gray-300 text-gray-900 placeholder:text-black focus:border-blue-500 h-12 text-lg"
                     />
                     <p className="text-xs text-gray-500">{t("form.laptopSerialNumberHint")}</p>
                   </div>
@@ -709,7 +742,7 @@ export function NewRepairTicketForm() {
                       value={device.equipmentObs}
                       onChange={(e) => updateDevice(deviceIndex, "equipmentObs", e.target.value)}
                       rows={2}
-                      className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-blue-500"
+                      className="bg-white border-gray-300 text-gray-900 placeholder:text-black focus:border-blue-500"
                     />
                   </div>
 
@@ -836,7 +869,7 @@ export function NewRepairTicketForm() {
                       value={device.repairObs}
                       onChange={(e) => updateDevice(deviceIndex, "repairObs", e.target.value)}
                       rows={2}
-                      className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-blue-500"
+                      className="bg-white border-gray-300 text-gray-900 placeholder:text-black focus:border-blue-500"
                     />
                   </div>
 
@@ -855,7 +888,7 @@ export function NewRepairTicketForm() {
                             const value = e.target.value.replace(/[^0-9.]/g, '')
                             updateDevice(deviceIndex, "price", value)
                           }}
-                          className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 pl-8 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                          className="bg-white border-gray-300 text-gray-900 placeholder:text-black focus:border-blue-500 pl-8 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                         />
                       </div>
                     </div>
@@ -873,7 +906,7 @@ export function NewRepairTicketForm() {
                             const value = e.target.value.replace(/[^0-9.]/g, '')
                             updateDevice(deviceIndex, "budget", value)
                           }}
-                          className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 pl-8 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                          className="bg-white border-gray-300 text-gray-900 placeholder:text-black focus:border-blue-500 pl-8 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                         />
                       </div>
                     </div>
@@ -1886,37 +1919,88 @@ export function printReceiptForTickets(
     return
   }
   
-  const ticketsHTML = validTickets.map(ticket => {
-      const clientCopy = generateReceiptHTML(ticket, 'CLIENT')
-      const adminCopy = generateReceiptHTML(ticket, 'ADMIN')
-    
-    return `
-      <div class="ticket-container" style="page-break-inside: avoid !important; page-break-after: avoid !important; break-inside: avoid !important; break-after: avoid !important; margin: 0 auto; padding: 0; width: 100%; display: flex; flex-direction: column; box-sizing: border-box; justify-content: center;">
-        <!-- Client's Copy (Top) -->
-        <div style="width: 100%; flex: 0 0 auto; margin-bottom: 0; padding-bottom: 0; page-break-inside: avoid !important; break-inside: avoid !important;">
-          ${clientCopy}
-        </div>
-        
-        <!-- Tearing Line and Gap (Center) -->
-        <div style="width: 100%; flex: 0 0 auto; margin: 4mm 0; padding: 2mm 0; text-align: center; position: relative; page-break-inside: avoid !important; break-inside: avoid !important;">
-          <!-- Cutting line with dotted pattern -->
-          <div style="width: 100%; margin: 0; padding: 0.5mm 0; position: relative;">
-            <!-- Dotted cutting line -->
-            <div style="border-top: 2px dotted #000; border-bottom: 2px dotted #000; margin: 0 auto; padding: 1mm 0; width: 100%; position: relative;">
-              <div style="text-align: center; font-size: 6pt; color: #000; margin: 0.3mm 0; font-weight: bold; letter-spacing: 2px;"> ${t["receipt.cutHere"]} </div>
+  // Group tickets by clientId and customerName (devices added together)
+  // Only group if they have the same clientId and customerName (same form submission)
+  const groupedTickets: { [key: string]: any[] } = {}
+  validTickets.forEach(ticket => {
+    const key = `${ticket.clientId || ''}_${ticket.customerName || ''}`
+    if (!groupedTickets[key]) {
+      groupedTickets[key] = []
+    }
+    groupedTickets[key].push(ticket)
+  })
+  
+  // Generate receipts - one receipt per group (devices added together share one receipt)
+  const receiptsHTML = Object.values(groupedTickets).map(ticketGroup => {
+    // If multiple tickets in group, show all devices on one receipt
+    if (ticketGroup.length > 1) {
+      // Multiple devices added together - show on one receipt
+      const firstTicket = ticketGroup[0]
+      const clientCopy = generateReceiptHTMLForMultipleDevices(ticketGroup, 'CLIENT', t)
+      const adminCopy = generateReceiptHTMLForMultipleDevices(ticketGroup, 'ADMIN', t)
+      
+      return `
+        <div class="ticket-container" style="page-break-inside: avoid !important; page-break-after: avoid !important; break-inside: avoid !important; break-after: avoid !important; margin: 0 auto; padding: 0; width: 100%; display: flex; flex-direction: column; box-sizing: border-box; justify-content: center;">
+          <!-- Client's Copy (Top) -->
+          <div style="width: 100%; flex: 0 0 auto; margin-bottom: 0; padding-bottom: 0; page-break-inside: avoid !important; break-inside: avoid !important;">
+            ${clientCopy}
+          </div>
+          
+          <!-- Tearing Line and Gap (Center) -->
+          <div style="width: 100%; flex: 0 0 auto; margin: 4mm 0; padding: 2mm 0; text-align: center; position: relative; page-break-inside: avoid !important; break-inside: avoid !important;">
+            <!-- Cutting line with dotted pattern -->
+            <div style="width: 100%; margin: 0; padding: 0.5mm 0; position: relative;">
+              <!-- Dotted cutting line -->
+              <div style="border-top: 2px dotted #000; border-bottom: 2px dotted #000; margin: 0 auto; padding: 1mm 0; width: 100%; position: relative;">
+                <div style="text-align: center; font-size: 6pt; color: #000; margin: 0.3mm 0; font-weight: bold; letter-spacing: 2px;"> ${t["receipt.cutHere"]} </div>
+              </div>
+              <!-- Additional dotted line for better visibility -->
+              <div style="border-top: 1px dotted #666; margin: 0.3mm auto 0; width: 100%;"></div>
             </div>
-            <!-- Additional dotted line for better visibility -->
-            <div style="border-top: 1px dotted #666; margin: 0.3mm auto 0; width: 100%;"></div>
+          </div>
+          
+          <!-- Admin's Copy (Bottom) -->
+          <div style="width: 100%; flex: 0 0 auto; margin-top: 0; padding-top: 0; margin-bottom: 0; page-break-inside: avoid !important; break-inside: avoid !important;">
+            ${adminCopy}
           </div>
         </div>
-        
-        <!-- Admin's Copy (Bottom) -->
-        <div style="width: 100%; flex: 0 0 auto; margin-top: 0; padding-top: 0; margin-bottom: 0; page-break-inside: avoid !important; break-inside: avoid !important;">
-          ${adminCopy}
+      `
+    } else {
+      // Single device - show individual receipt
+      const ticket = ticketGroup[0]
+      const clientCopy = generateReceiptHTML(ticket, 'CLIENT')
+      const adminCopy = generateReceiptHTML(ticket, 'ADMIN')
+      
+      return `
+        <div class="ticket-container" style="page-break-inside: avoid !important; page-break-after: avoid !important; break-inside: avoid !important; break-after: avoid !important; margin: 0 auto; padding: 0; width: 100%; display: flex; flex-direction: column; box-sizing: border-box; justify-content: center;">
+          <!-- Client's Copy (Top) -->
+          <div style="width: 100%; flex: 0 0 auto; margin-bottom: 0; padding-bottom: 0; page-break-inside: avoid !important; break-inside: avoid !important;">
+            ${clientCopy}
+          </div>
+          
+          <!-- Tearing Line and Gap (Center) -->
+          <div style="width: 100%; flex: 0 0 auto; margin: 4mm 0; padding: 2mm 0; text-align: center; position: relative; page-break-inside: avoid !important; break-inside: avoid !important;">
+            <!-- Cutting line with dotted pattern -->
+            <div style="width: 100%; margin: 0; padding: 0.5mm 0; position: relative;">
+              <!-- Dotted cutting line -->
+              <div style="border-top: 2px dotted #000; border-bottom: 2px dotted #000; margin: 0 auto; padding: 1mm 0; width: 100%; position: relative;">
+                <div style="text-align: center; font-size: 6pt; color: #000; margin: 0.3mm 0; font-weight: bold; letter-spacing: 2px;"> ${t["receipt.cutHere"]} </div>
+              </div>
+              <!-- Additional dotted line for better visibility -->
+              <div style="border-top: 1px dotted #666; margin: 0.3mm auto 0; width: 100%;"></div>
+            </div>
+          </div>
+          
+          <!-- Admin's Copy (Bottom) -->
+          <div style="width: 100%; flex: 0 0 auto; margin-top: 0; padding-top: 0; margin-bottom: 0; page-break-inside: avoid !important; break-inside: avoid !important;">
+            ${adminCopy}
+          </div>
         </div>
-      </div>
-    `
+      `
+    }
   }).join("")
+  
+  const ticketsHTML = receiptsHTML
   
   const printHTML = `
     <!DOCTYPE html>
