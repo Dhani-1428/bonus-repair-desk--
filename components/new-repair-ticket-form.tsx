@@ -74,7 +74,7 @@ const generateClientId = async (userId?: string): Promise<string> => {
         const data = await response.json()
         const tickets = Array.isArray(data.tickets) ? data.tickets : []
         
-        // Extract numeric part from existing client IDs (format: CLI-001, CLI-002, etc.)
+        // Extract numeric part from existing client IDs (format: CLI-0001, CLI-0002, etc.)
         let maxNumber = 0
         tickets.forEach((ticket: any) => {
           if (ticket.clientId) {
@@ -89,15 +89,15 @@ const generateClientId = async (userId?: string): Promise<string> => {
         })
         
         const nextNumber = maxNumber + 1
-        return `CLI-${String(nextNumber).padStart(3, "0")}`
+        return `CLI-${String(nextNumber).padStart(4, "0")}`
       }
     }
   } catch (error) {
     console.error("[generateClientId] Error fetching tickets:", error)
   }
   
-  // Fallback: start from 001
-  return "CLI-001"
+  // Fallback: start from 0001
+  return "CLI-0001"
 }
 
 export function NewRepairTicketForm() {
@@ -105,12 +105,12 @@ export function NewRepairTicketForm() {
   const { t } = useTranslation()
   const { user } = useAuth()
   const [customerName, setCustomerName] = useState("")
-  const [clientId, setClientId] = useState("CLI-001")
+  const [clientId, setClientId] = useState("CLI-0001")
   
   // Initialize Client ID on mount
   useEffect(() => {
     if (user?.id) {
-      generateClientId(user.id).then(setClientId).catch(() => setClientId("CLI-001"))
+      generateClientId(user.id).then(setClientId).catch(() => setClientId("CLI-0001"))
     }
   }, [user?.id])
   const [contact, setContact] = useState("")
@@ -596,9 +596,9 @@ export function NewRepairTicketForm() {
     // Reset form
     setCustomerName("")
     if (user?.id) {
-      generateClientId(user.id).then(setClientId).catch(() => setClientId("CLI-001"))
+      generateClientId(user.id).then(setClientId).catch(() => setClientId("CLI-0001"))
     } else {
-      setClientId("CLI-001")
+      setClientId("CLI-0001")
     }
     setContact("")
     setReceivedBy("")

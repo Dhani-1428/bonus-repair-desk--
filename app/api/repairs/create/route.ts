@@ -198,10 +198,10 @@ export async function POST(request: NextRequest) {
         }
         
         const nextNumber = maxNumber + 1
-        return `CLI-${String(nextNumber).padStart(3, "0")}`
+        return `CLI-${String(nextNumber).padStart(4, "0")}`
       } catch (error) {
         console.error("[generateClientId] Error:", error)
-        return "CLI-001"
+        return "CLI-0001"
       }
     }
     const finalClientId = clientId && clientId.trim() !== "" ? clientId.trim() : await generateClientId()
