@@ -126,6 +126,7 @@ const translations: Record<Language, Record<string, string>> = {
     "common.yes": "Yes",
     "common.no": "No",
     "common.loading": "Loading...",
+    "common.exportToExcel": "Export to Excel",
     "form.equipmentCheck": "Equipment Check",
     "form.simCard": "SIM Card",
     "form.simTray": "SIM Tray",

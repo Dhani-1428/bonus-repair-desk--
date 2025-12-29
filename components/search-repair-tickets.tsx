@@ -25,6 +25,7 @@ import {
 import { useTranslation } from "@/components/language-provider"
 import { toast } from "sonner"
 import { getUserData, setUserData } from "@/lib/storage"
+import { exportToCSV } from "@/lib/export-utils"
 
 type SearchRepairTicketsProps = {
   initialStatusFilter?: string
@@ -685,8 +686,8 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                 <thead>
                   <tr className="bg-blue-50 border-b-2 border-blue-300">
                     <th className="border-r border-blue-300 px-2 py-2 text-left text-xs font-semibold text-black uppercase tracking-wider w-[8%]">{t("table.date")}</th>
-                    <th className="border-r border-blue-300 px-2 py-2 text-left text-xs font-semibold text-black uppercase tracking-wider w-[8%]">{t("form.clientId") || "Client ID"}</th>
-                    <th className="border-r border-blue-300 px-2 py-2 text-left text-xs font-semibold text-black uppercase tracking-wider w-[12%]">{t("table.client") || t("form.clientName")}</th>
+                    <th className="border-r border-blue-300 px-1 py-2 text-left text-xs font-semibold text-black uppercase tracking-wider w-[6%]">{t("form.clientId") || "Client ID"}</th>
+                    <th className="border-r border-blue-300 px-2 py-2 text-left text-xs font-semibold text-black uppercase tracking-wider w-[13%]">{t("table.client") || t("form.clientName")}</th>
                     <th className="border-r border-blue-300 px-2 py-2 text-left text-xs font-semibold text-black uppercase tracking-wider w-[10%]">{t("table.contact")}</th>
                     <th className="border-r border-blue-300 px-2 py-2 text-left text-xs font-semibold text-black uppercase tracking-wider w-[12%]">{t("table.model")}</th>
                     <th className="border-r border-blue-300 px-2 py-2 text-left text-xs font-semibold text-black uppercase tracking-wider w-[10%]">{t("table.imei")}</th>
@@ -721,8 +722,8 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                             </div>
                           )}
                         </td>
-                        <td className="border-r border-blue-300 px-2 py-2 text-sm font-semibold text-black whitespace-nowrap">
-                          {ticket.clientId || "-"}
+                        <td className="border-r border-blue-300 px-1 py-2 text-xs font-semibold text-black whitespace-nowrap">
+                          <span className="text-blue-600">{ticket.clientId || "-"}</span>
                         </td>
                         <td className="border-r border-blue-300 px-2 py-2 text-sm font-medium text-black break-words">
                           {ticket.customerName}
