@@ -608,22 +608,59 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                           </SelectContent>
                         </Select>
                       </td>
-                      <td className="px-4 py-3 text-sm font-bold text-black border-r border-blue-100 whitespace-nowrap">
-                        €{ticket.price}
-                      </td>
-                      <td className="px-4 py-3 text-center whitespace-nowrap">
-                        <div 
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            handleEditClick(ticket)
-                          }}
-                          className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mx-auto hover:bg-blue-600 transition-colors shadow-md cursor-pointer"
-                        >
-                          <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-                          </svg>
-                        </div>
-                      </td>
+                        <td className="border-r border-blue-300 px-4 py-3 text-sm text-black whitespace-nowrap">
+                          €{Number.parseFloat(ticket.price || 0).toFixed(2)}
+                        </td>
+                        <td className="px-4 py-3 text-center whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
+                          <div className="flex items-center justify-center gap-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                handleEditClick(ticket)
+                              }}
+                              className="text-blue-600 hover:text-blue-800 hover:bg-blue-100 h-8 w-8 p-0"
+                              title="Edit"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                              </svg>
+                            </Button>
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="text-red-600 hover:text-red-800 hover:bg-red-100 h-8 w-8 p-0"
+                                  title="Delete"
+                                >
+                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                  </svg>
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent className="bg-white border-blue-200 text-black">
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle className="text-black">{t("common.confirmDelete")}</AlertDialogTitle>
+                                  <AlertDialogDescription className="text-black">
+                                    {t("common.deleteConfirmation")}
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel className="bg-white border-blue-300 text-black hover:bg-blue-50">{t("common.cancel")}</AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={() => handleDelete(ticket.id)}
+                                    className="bg-red-600 text-white hover:bg-red-700"
+                                  >
+                                    {t("common.delete")}
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </div>
+                        </td>
                     </tr>
                   ))}
                 </tbody>
