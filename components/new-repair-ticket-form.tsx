@@ -530,7 +530,7 @@ export function NewRepairTicketForm() {
             <Button
               type="button"
               variant="outline"
-              onClick={() => window.open('/tickets/new', '_blank')}
+              onClick={addDevice}
               className="border-blue-600 bg-blue-50 text-blue-700 hover:bg-blue-100"
             >
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -540,41 +540,59 @@ export function NewRepairTicketForm() {
             </Button>
             </div>
 
-          {/* Customer Information - Only show for first device */}
-          {devices.length === 1 && (
+          {/* Customer Information - Only show and allow editing for first device */}
+          {devices.length > 0 && (
             <div className="grid gap-6 grid-cols-3 border-b border-gray-200 pb-6">
               <div className="space-y-3">
                 <Label htmlFor="customerName" className="text-gray-700 text-base font-semibold">{t("form.customerName")} *</Label>
-                <Input
-                  id="customerName"
-                  placeholder={t("placeholder.customerName")}
-                  value={customerName}
-                  onChange={(e) => setCustomerName(e.target.value)}
-                  required
-                  className="bg-white border-gray-300 text-gray-900 placeholder:text-black focus:border-blue-500 h-12 text-lg"
-                />
+                {devices.length === 1 ? (
+                  <Input
+                    id="customerName"
+                    placeholder={t("placeholder.customerName")}
+                    value={customerName}
+                    onChange={(e) => setCustomerName(e.target.value)}
+                    required
+                    className="bg-white border-gray-300 text-gray-900 placeholder:text-black focus:border-blue-500 h-12 text-lg"
+                  />
+                ) : (
+                  <div className="bg-gray-50 border border-gray-300 rounded-md px-4 py-3 h-12 text-lg text-gray-700 flex items-center">
+                    {customerName || t("common.notAvailable")}
+                  </div>
+                )}
               </div>
               <div className="space-y-3">
                 <Label htmlFor="contact" className="text-gray-700 text-base font-semibold">{t("form.clientPhone")}</Label>
-                <Input
-                  id="contact"
-                  type="tel"
-                  placeholder={t("form.clientPhonePlaceholder")}
-                  value={contact}
-                  onChange={(e) => setContact(e.target.value)}
-                  className="bg-white border-gray-300 text-gray-900 placeholder:text-black focus:border-blue-500 h-12 text-lg"
-                />
+                {devices.length === 1 ? (
+                  <Input
+                    id="contact"
+                    type="tel"
+                    placeholder={t("form.clientPhonePlaceholder")}
+                    value={contact}
+                    onChange={(e) => setContact(e.target.value)}
+                    className="bg-white border-gray-300 text-gray-900 placeholder:text-black focus:border-blue-500 h-12 text-lg"
+                  />
+                ) : (
+                  <div className="bg-gray-50 border border-gray-300 rounded-md px-4 py-3 h-12 text-lg text-gray-700 flex items-center">
+                    {contact || t("common.notAvailable")}
+                  </div>
+                )}
               </div>
               <div className="space-y-3">
                 <Label htmlFor="receivedBy" className="text-gray-700 text-base font-semibold">{t("form.receivedBy")} *</Label>
-                <Input
-                  id="receivedBy"
-                  placeholder={t("placeholder.receivedBy") || "Enter your name"}
-                  value={receivedBy}
-                  onChange={(e) => setReceivedBy(e.target.value)}
-                  required
-                  className="bg-white border-gray-300 text-gray-900 placeholder:text-black focus:border-blue-500 h-12 text-lg"
-                />
+                {devices.length === 1 ? (
+                  <Input
+                    id="receivedBy"
+                    placeholder={t("placeholder.receivedBy") || "Enter your name"}
+                    value={receivedBy}
+                    onChange={(e) => setReceivedBy(e.target.value)}
+                    required
+                    className="bg-white border-gray-300 text-gray-900 placeholder:text-black focus:border-blue-500 h-12 text-lg"
+                  />
+                ) : (
+                  <div className="bg-gray-50 border border-gray-300 rounded-md px-4 py-3 h-12 text-lg text-gray-700 flex items-center">
+                    {receivedBy || t("common.notAvailable")}
+                  </div>
+                )}
               </div>
             </div>
           )}
