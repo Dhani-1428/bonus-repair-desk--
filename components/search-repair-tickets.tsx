@@ -543,14 +543,77 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
     <div className="space-y-6">
       <Card className="shadow-xl border border-blue-200 bg-white">
         <CardHeader className="bg-blue-50 border-b border-blue-200 rounded-t-lg p-6">
-          <CardTitle className="text-2xl font-bold text-black flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center ring-2 ring-blue-200 shadow-md">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-2xl font-bold text-black flex items-center gap-3">
+              <div className="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center ring-2 ring-blue-200 shadow-md">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+              {t("search.title")}
+            </CardTitle>
+            <Button
+              onClick={() => {
+                if (filteredTickets.length === 0) {
+                  toast.error("No data to export")
+                  return
+                }
+                const headers = [
+                  { key: "createdAt" as const, label: "Date" },
+                  { key: "clientId" as const, label: "Client ID" },
+                  { key: "customerName" as const, label: "Client Name" },
+                  { key: "contact" as const, label: "Contact" },
+                  { key: "model" as const, label: "Model" },
+                  { key: "imeiNo" as const, label: "IMEI" },
+                  { key: "selectedServices" as const, label: "Services" },
+                  { key: "status" as const, label: "Status" },
+                  { key: "price" as const, label: "Price (€)" },
+                  { key: "repairNumber" as const, label: "Repair Number" },
+                ]
+                const formattedTickets = filteredTickets.map((ticket: any) => {
+                  let services = ""
+                  if (ticket.selectedServices) {
+                    try {
+                      const servicesArray = typeof ticket.selectedServices === 'string' 
+                        ? JSON.parse(ticket.selectedServices) 
+                        : ticket.selectedServices
+                      if (Array.isArray(servicesArray) && servicesArray.length > 0) {
+                        services = servicesArray.join(", ")
+                      }
+                    } catch {
+                      services = ticket.serviceName || ""
+                    }
+                  } else {
+                    services = ticket.serviceName || ""
+                  }
+                  return {
+                    createdAt: new Date(ticket.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }),
+                    clientId: ticket.clientId || "",
+                    customerName: ticket.customerName || "",
+                    contact: ticket.contact || "",
+                    model: ticket.model || "",
+                    imeiNo: ticket.imeiNo || "",
+                    selectedServices: services,
+                    status: ticket.status === "pending" || ticket.status === "PENDING" ? t("status.pending") :
+                           ticket.status === "not_ok" || ticket.status === "NOT_OK" ? (t("status.notOk") || "Not OK") :
+                           ticket.status === "completed" || ticket.status === "COMPLETED" ? t("status.completed") :
+                           ticket.status === "delivered" || ticket.status === "DELIVERED" ? t("status.delivered") :
+                           ticket.status?.replace("_", " ") || "",
+                    price: Number.parseFloat(ticket.price || 0).toFixed(2),
+                    repairNumber: ticket.repairNumber || "",
+                  }
+                })
+                exportToCSV(formattedTickets, "devices", headers)
+                toast.success("Data exported to Excel successfully!")
+              }}
+              className="bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg"
+            >
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-            </div>
-            {t("search.title")}
-          </CardTitle>
+              {t("common.exportToExcel") || "Export to Excel"}
+            </Button>
+          </div>
         </CardHeader>
         <CardContent className="p-6 text-black">
           <div className="grid gap-4 md:grid-cols-3">
