@@ -73,6 +73,21 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [searchInputFocused, setSearchInputFocused] = useState(false)
 
+  // Helper function to sort tickets by clientId (CLI-0001, CLI-0002, etc.) then by createdAt
+  const sortTicketsByClientId = (ticketsArray: any[]): any[] => {
+    return ticketsArray.sort((a: any, b: any) => {
+      const getClientIdNum = (clientId: string | null | undefined): number => {
+        if (!clientId) return 999999
+        const match = clientId.match(/^CLI-(\d{1,4})$/)
+        return match ? parseInt(match[1], 10) : 999999
+      }
+      const aNum = getClientIdNum(a.clientId)
+      const bNum = getClientIdNum(b.clientId)
+      if (aNum !== bNum) return aNum - bNum
+      return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    })
+  }
+
   useEffect(() => {
     const loadData = async () => {
       try {
