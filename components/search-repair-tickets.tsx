@@ -87,7 +87,19 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
           if (response.ok) {
             const data = await response.json()
             const ticketsArray = Array.isArray(data.tickets) ? data.tickets : []
-            setTickets(ticketsArray)
+            // Sort tickets by clientId (CLI-0001, CLI-0002, etc.) then by createdAt
+            const sortedTickets = ticketsArray.sort((a: any, b: any) => {
+              const getClientIdNum = (clientId: string | null | undefined): number => {
+                if (!clientId) return 999999
+                const match = clientId.match(/^CLI-(\d{1,4})$/)
+                return match ? parseInt(match[1], 10) : 999999
+              }
+              const aNum = getClientIdNum(a.clientId)
+              const bNum = getClientIdNum(b.clientId)
+              if (aNum !== bNum) return aNum - bNum
+              return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+            })
+            setTickets(sortedTickets)
           } else {
             console.error("[SearchRepairTickets] Failed to load tickets from API")
             setTickets([])
