@@ -129,7 +129,15 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
       })
     }
     if (statusFilter !== "all") {
-      filtered = filtered.filter((ticket: any) => ticket.status === statusFilter)
+      filtered = filtered.filter((ticket: any) => {
+        const ticketStatus = ticket.status?.toLowerCase() || ""
+        const filterStatus = statusFilter.toLowerCase()
+        // Handle both "in_progress" and "in-progress" variations
+        if (filterStatus === "in_progress") {
+          return ticketStatus === "in_progress" || ticketStatus === "in-progress" || ticketStatus === "in progress"
+        }
+        return ticketStatus === filterStatus
+      })
     }
     if (dateFilter && searchType === "date") {
       filtered = filtered.filter((ticket: any) => {
