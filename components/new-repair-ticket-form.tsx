@@ -110,13 +110,110 @@ export function NewRepairTicketForm() {
   const { user } = useAuth()
   const [customerName, setCustomerName] = useState("")
   const [clientId, setClientId] = useState("CLI-0001")
+  const [existingClients, setExistingClients] = useState<any[]>([])
+  const [showClientSuggestions, setShowClientSuggestions] = useState(false)
+  const [clientSearchTerm, setClientSearchTerm] = useState("")
   
   // Initialize Client ID on mount
   useEffect(() => {
     if (user?.id) {
       generateClientId(user.id).then(setClientId).catch(() => setClientId("CLI-0001"))
+      // Load existing clients for search
+      loadExistingClients()
     }
   }, [user?.id])
+
+  // Load existing clients for search/autocomplete
+  const loadExistingClients = async () => {
+    if (!user?.id) return
+    try {
+      const response = await fetch(`/api/repairs?userId=${user.id}`)
+      if (response.ok) {
+        const data = await response.json()
+        const tickets = Array.isArray(data.tickets) ? data.tickets : []
+        // Get unique clients (by clientId and customerName combination)
+        const uniqueClients = new Map()
+        tickets.forEach((ticket: any) => {
+          if (ticket.clientId && ticket.customerName) {
+            const key = `${ticket.clientId}_${ticket.customerName}`
+            if (!uniqueClients.has(key)) {
+              uniqueClients.set(key, {
+                clientId: ticket.clientId,
+                customerName: ticket.customerName,
+                contact: ticket.contact || "",
+              })
+            }
+          }
+        })
+        setExistingClients(Array.from(uniqueClients.values()))
+      }
+    } catch (error) {
+      console.error("[NewRepairTicketForm] Error loading existing clients:", error)
+    }
+  }
+
+  // Search for existing clients
+  const searchExistingClients = (searchTerm: string) => {
+    if (!searchTerm.trim()) {
+      setShowClientSuggestions(false)
+      return []
+    }
+    const term = searchTerm.toLowerCase().trim()
+    return existingClients.filter((client: any) => 
+      client.customerName?.toLowerCase().includes(term) ||
+      client.clientId?.toLowerCase().includes(term) ||
+      client.contact?.includes(term)
+    )
+  }
+
+  // Handle customer name change - check for existing client
+  const handleCustomerNameChange = (value: string) => {
+    setCustomerName(value)
+    if (value.trim()) {
+      const matchingClients = searchExistingClients(value)
+      if (matchingClients.length > 0) {
+        setShowClientSuggestions(true)
+        setClientSearchTerm(value)
+      } else {
+        setShowClientSuggestions(false)
+      }
+    } else {
+      setShowClientSuggestions(false)
+    }
+  }
+
+  // Handle client ID change - check for existing client
+  const handleClientIdChange = (value: string) => {
+    setClientId(value)
+    if (value.trim()) {
+      const matchingClients = existingClients.filter((client: any) => 
+        client.clientId?.toLowerCase() === value.toLowerCase().trim()
+      )
+      if (matchingClients.length > 0) {
+        // Auto-fill customer name and contact if client ID matches
+        const matchedClient = matchingClients[0]
+        if (!customerName) {
+          setCustomerName(matchedClient.customerName || "")
+        }
+        if (!contact && matchedClient.contact) {
+          setContact(matchedClient.contact)
+        }
+      }
+    }
+  }
+
+  // Select existing client
+  const selectExistingClient = (client: any) => {
+    setClientId(client.clientId)
+    setCustomerName(client.customerName)
+    if (client.contact) {
+      setContact(client.contact)
+    }
+    setShowClientSuggestions(false)
+    setClientSearchTerm("")
+    toast.success(`Selected existing client: ${client.customerName} (${client.clientId})`)
+  }
+
   const [contact, setContact] = useState("")
   const [receivedBy, setReceivedBy] = useState("")
   const [batchId, setBatchId] = useState<string | null>(null) // Track devices added together
@@ -583,6 +680,9 @@ export function NewRepairTicketForm() {
       
       // Reset batch ID for next submission (devices added separately will have different batch IDs)
       setBatchId(null)
+      
+      // Reload existing clients after successful submission
+      loadExistingClients()
     } catch (error: any) {
       toast.error(error.message || "Failed to create repair ticket")
     } finally {
@@ -732,20 +832,75 @@ export function NewRepairTicketForm() {
             <div className="grid gap-6 grid-cols-4 border-b border-blue-200 pb-6">
               <div className="space-y-3">
                 <Label htmlFor="clientId" className="text-black text-base font-semibold">{t("receipt.clientId") || "Client ID"}</Label>
-                <div className="bg-white border border-blue-200 rounded-md px-4 py-3 h-12 text-lg text-black flex items-center font-mono">
-                  {clientId}
-                </div>
+                {devices.length === 1 ? (
+                  <div className="relative">
+                    <Input
+                      id="clientId"
+                      value={clientId}
+                      onChange={(e) => handleClientIdChange(e.target.value)}
+                      placeholder="CLI-0001"
+                      className="bg-white border-blue-200 text-black focus:border-blue-500 h-12 text-lg font-mono"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">Enter existing Client ID or leave for new client</p>
+                  </div>
+                ) : (
+                  <div className="bg-white border border-blue-200 rounded-md px-4 py-3 h-12 text-lg text-black flex items-center font-mono">
+                    {clientId}
+                  </div>
+                )}
               </div>
               <div className="space-y-3">
                 <Label htmlFor="customerName" className="text-black text-base font-semibold">{t("form.clientName")} *</Label>
                 {devices.length === 1 ? (
-                  <Input
-                    id="customerName"
-                    value={customerName}
-                    onChange={(e) => setCustomerName(e.target.value)}
-                    required
-                    className="bg-white border-blue-200 text-black focus:border-blue-500 h-12 text-lg"
-                  />
+                  <div className="relative">
+                    <Input
+                      id="customerName"
+                      value={customerName}
+                      onChange={(e) => handleCustomerNameChange(e.target.value)}
+                      onFocus={() => {
+                        if (customerName.trim()) {
+                          const matches = searchExistingClients(customerName)
+                          if (matches.length > 0) {
+                            setShowClientSuggestions(true)
+                          }
+                        }
+                      }}
+                      onBlur={() => {
+                        // Delay to allow click on suggestion
+                        setTimeout(() => setShowClientSuggestions(false), 200)
+                      }}
+                      required
+                      className="bg-white border-blue-200 text-black focus:border-blue-500 h-12 text-lg"
+                    />
+                    {showClientSuggestions && searchExistingClients(customerName).length > 0 && (
+                      <div className="absolute z-50 w-full mt-1 bg-white border-2 border-blue-200 rounded-lg shadow-xl max-h-64 overflow-y-auto">
+                        <div className="px-3 py-2 text-xs font-semibold text-gray-600 border-b border-blue-100">
+                          Existing Clients - Click to select
+                        </div>
+                        {searchExistingClients(customerName).map((client: any, index: number) => (
+                          <div
+                            key={index}
+                            onClick={() => selectExistingClient(client)}
+                            className="px-4 py-3 hover:bg-blue-50 cursor-pointer border-b border-blue-100 last:border-b-0 transition-colors"
+                          >
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <div className="text-sm font-medium text-black">{client.customerName}</div>
+                                <div className="text-xs text-gray-600 font-mono">{client.clientId}</div>
+                                {client.contact && (
+                                  <div className="text-xs text-gray-500">{client.contact}</div>
+                                )}
+                              </div>
+                              <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                              </svg>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <p className="text-xs text-gray-500 mt-1">Type to search existing clients or enter new client name</p>
+                  </div>
                 ) : (
                   <div className="bg-white border border-blue-200 rounded-md px-4 py-3 h-12 text-lg text-black flex items-center">
                     {customerName || t("common.notAvailable")}
