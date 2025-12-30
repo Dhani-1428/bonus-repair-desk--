@@ -211,6 +211,9 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
             case "id":
               return (ticket.repairNumber?.toLowerCase()?.includes(lowercaseTerm) || false) || 
                      (ticket.id?.toLowerCase()?.includes(lowercaseTerm) || false)
+            case "clientId":
+              return (ticket.clientId?.toLowerCase()?.includes(lowercaseTerm) || false) ||
+                     (formatClientId(ticket.clientId)?.toLowerCase()?.includes(lowercaseTerm) || false)
             case "name":
               return ticket.customerName?.toLowerCase()?.includes(lowercaseTerm) || false
             case "contact":
@@ -220,10 +223,12 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
             case "model":
               return ticket.model?.toLowerCase()?.includes(lowercaseTerm) || false
             default:
-              // Search in all allowed fields: ID, IMEI, Contact, name, model
+              // Search in all allowed fields: ID, Client ID, IMEI, Contact, name, model
               return (
                 (ticket.repairNumber?.toLowerCase()?.includes(lowercaseTerm) || false) ||
                 (ticket.id?.toLowerCase()?.includes(lowercaseTerm) || false) ||
+                (ticket.clientId?.toLowerCase()?.includes(lowercaseTerm) || false) ||
+                (formatClientId(ticket.clientId)?.toLowerCase()?.includes(lowercaseTerm) || false) ||
                 (ticket.customerName?.toLowerCase()?.includes(lowercaseTerm) || false) ||
                 (ticket.contact?.toLowerCase()?.includes(lowercaseTerm) || false) ||
                 (ticket.imeiNo?.toLowerCase()?.includes(lowercaseTerm) || false) ||
@@ -317,6 +322,12 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                 displayText = `${ticket.model || ""} - ${ticket.customerName || ""}`
               }
               break
+            case "clientId":
+              if (ticket.clientId?.toLowerCase()?.includes(lowercaseTerm) || formatClientId(ticket.clientId)?.toLowerCase()?.includes(lowercaseTerm)) {
+                matchValue = formatClientId(ticket.clientId)
+                displayText = `${formatClientId(ticket.clientId) || ""} - ${ticket.customerName || ""}`
+              }
+              break
             case "service":
               if (ticket.serviceName?.toLowerCase()?.includes(lowercaseTerm)) {
                 matchValue = ticket.serviceName
@@ -333,6 +344,13 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
               if (ticket.customerName?.toLowerCase()?.includes(lowercaseTerm) && !seen.has(ticket.customerName)) {
                 seen.add(ticket.customerName)
                 suggestionList.push({ value: ticket.customerName, display: ticket.customerName, type: "name" })
+              }
+              if (ticket.clientId && (ticket.clientId?.toLowerCase()?.includes(lowercaseTerm) || formatClientId(ticket.clientId)?.toLowerCase()?.includes(lowercaseTerm))) {
+                const clientIdFormatted = formatClientId(ticket.clientId)
+                if (!seen.has(clientIdFormatted)) {
+                  seen.add(clientIdFormatted)
+                  suggestionList.push({ value: clientIdFormatted, display: `${clientIdFormatted || ""} - ${ticket.customerName || ""}`, type: "clientId" })
+                }
               }
               if (ticket.model?.toLowerCase()?.includes(lowercaseTerm) && !seen.has(ticket.model)) {
                 seen.add(ticket.model)
@@ -463,6 +481,98 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
       status: ticket.status || "pending",
     })
     setIsEditDialogOpen(true)
+  }
+
+  // Print single device receipt
+  const handlePrintSingleDevice = (ticket: any) => {
+    const normalizeTicket = (device: any) => ({
+      ...device,
+      clientId: device.clientId || null,
+      customerName: device.customerName || "N/A",
+      contact: device.contact || "N/A",
+      receivedBy: device.receivedBy || "N/A",
+      imeiNo: device.imeiNo || "000000000000000",
+      brand: device.brand || "N/A",
+      model: device.model || "N/A",
+      serialNo: device.serialNo || null,
+      softwareVersion: device.softwareVersion || null,
+      warranty: device.warranty || "Without Warranty",
+      battery: device.battery ?? false,
+      charger: device.charger ?? false,
+      simCard: device.simCard ?? false,
+      simTray: device.simTray ?? false,
+      memoryCard: device.memoryCard ?? false,
+      loanEquipment: device.loanEquipment ?? false,
+      equipmentObs: device.equipmentObs || null,
+      repairObs: device.repairObs || null,
+      selectedServices: Array.isArray(device.selectedServices) ? device.selectedServices : (device.serviceName ? [device.serviceName] : []),
+      condition: device.condition || null,
+      problem: device.problem || "N/A",
+      price: device.price || 0,
+      budget: device.budget || null,
+      repairNumber: device.repairNumber || "N/A",
+      spu: device.spu || "N/A",
+      createdAt: device.createdAt || new Date().toISOString(),
+    })
+    printReceiptWithLanguageSelection([normalizeTicket(ticket)])
+  }
+
+  // Print all devices with same client ID
+  const handlePrintAllDevicesWithClientId = async (ticket: any) => {
+    if (!currentUser?.id) {
+      toast.error("User not found")
+      return
+    }
+    try {
+      const response = await fetch(`/api/repairs?userId=${currentUser.id}`)
+      const data = await response.json()
+      
+      // Find all devices with the same clientId
+      const sameClientDevices = (data.tickets || []).filter((t: any) => 
+        t.clientId === ticket.clientId
+      )
+      
+      if (sameClientDevices.length === 0) {
+        toast.error("No devices found with this client ID")
+        return
+      }
+      
+      const normalizeTicket = (device: any) => ({
+        ...device,
+        clientId: device.clientId || null,
+        customerName: device.customerName || "N/A",
+        contact: device.contact || "N/A",
+        receivedBy: device.receivedBy || "N/A",
+        imeiNo: device.imeiNo || "000000000000000",
+        brand: device.brand || "N/A",
+        model: device.model || "N/A",
+        serialNo: device.serialNo || null,
+        softwareVersion: device.softwareVersion || null,
+        warranty: device.warranty || "Without Warranty",
+        battery: device.battery ?? false,
+        charger: device.charger ?? false,
+        simCard: device.simCard ?? false,
+        simTray: device.simTray ?? false,
+        memoryCard: device.memoryCard ?? false,
+        loanEquipment: device.loanEquipment ?? false,
+        equipmentObs: device.equipmentObs || null,
+        repairObs: device.repairObs || null,
+        selectedServices: Array.isArray(device.selectedServices) ? device.selectedServices : (device.serviceName ? [device.serviceName] : []),
+        condition: device.condition || null,
+        problem: device.problem || "N/A",
+        price: device.price || 0,
+        budget: device.budget || null,
+        repairNumber: device.repairNumber || "N/A",
+        spu: device.spu || "N/A",
+        createdAt: device.createdAt || new Date().toISOString(),
+      })
+      
+      const normalizedTickets = sameClientDevices.map(normalizeTicket)
+      printReceiptWithLanguageSelection(normalizedTickets)
+    } catch (error) {
+      console.error("[SearchRepairTickets] Error loading tickets for print:", error)
+      toast.error("Failed to load devices for printing")
+    }
   }
 
   const handleModelClick = (ticket: any) => {
@@ -754,6 +864,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                 <SelectContent className="bg-white border-blue-200" side="bottom" sideOffset={4}>
                   <SelectItem value="all" className="text-black">{t("search.field.all")}</SelectItem>
                   <SelectItem value="id" className="text-black">ID</SelectItem>
+                  <SelectItem value="clientId" className="text-black">{t("form.clientId") || "Client ID"}</SelectItem>
                   <SelectItem value="name" className="text-black">{t("search.field.name")}</SelectItem>
                   <SelectItem value="contact" className="text-black">{t("search.field.contact")}</SelectItem>
                   <SelectItem value="imei" className="text-black">{t("search.field.imei")}</SelectItem>
@@ -910,7 +1021,58 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                           €{Number.parseFloat(ticket.price || 0).toFixed(2)}
                         </td>
                         <td className="px-1 py-1.5 text-center whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
-                          <div className="flex items-center justify-center gap-2">
+                          <div className="flex items-center justify-center gap-1 flex-wrap">
+                            {/* Print buttons - show if there are multiple devices with same client ID */}
+                            {(() => {
+                              const sameClientIdCount = filteredTickets.filter((t: any) => t.clientId === ticket.clientId).length
+                              return sameClientIdCount > 1 ? (
+                                <>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      handlePrintSingleDevice(ticket)
+                                    }}
+                                    className="text-green-600 hover:text-green-800 hover:bg-green-100 h-7 w-7 p-0"
+                                    title="Print This Device"
+                                  >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                                    </svg>
+                                  </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      handlePrintAllDevicesWithClientId(ticket)
+                                    }}
+                                    className="text-purple-600 hover:text-purple-800 hover:bg-purple-100 h-7 w-7 p-0"
+                                    title={`Print All Devices (${sameClientIdCount})`}
+                                  >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                                    </svg>
+                                  </Button>
+                                </>
+                              ) : (
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    handlePrintSingleDevice(ticket)
+                                  }}
+                                  className="text-green-600 hover:text-green-800 hover:bg-green-100 h-7 w-7 p-0"
+                                  title="Print Receipt"
+                                >
+                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                                  </svg>
+                                </Button>
+                              )
+                            })()}
                             <Button
                               variant="ghost"
                               size="sm"

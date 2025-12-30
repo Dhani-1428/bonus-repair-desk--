@@ -683,6 +683,18 @@ export function NewRepairTicketForm() {
       
       // Reload existing clients after successful submission
       loadExistingClients()
+      
+      // Trigger event to refresh search page
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new Event("ticketsUpdated"))
+        // Also update localStorage to trigger storage event
+        try {
+          localStorage.setItem("ticketsUpdated", Date.now().toString())
+          localStorage.removeItem("ticketsUpdated")
+        } catch (e) {
+          // Ignore localStorage errors
+        }
+      }
     } catch (error: any) {
       toast.error(error.message || "Failed to create repair ticket")
     } finally {
