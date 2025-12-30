@@ -77,15 +77,21 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
   // Helper function to format client ID to 4-digit format
   const formatClientId = (clientId: string | null | undefined): string => {
     if (!clientId) return "-"
-    // If already in correct format (CLI-XXXX where X is 1-4 digits), return as is
-    const match = clientId.match(/^CLI-(\d{1,4})$/)
+    
+    // Try to extract any number from the client ID
+    // Match CLI- followed by any digits, or just any digits
+    const match = clientId.match(/CLI-?(\d+)/i) || clientId.match(/(\d+)/)
+    
     if (match) {
       const num = parseInt(match[1], 10)
-      if (!isNaN(num) && num >= 1 && num <= 9999) {
-        return `CLI-${String(num).padStart(4, "0")}`
+      if (!isNaN(num) && num >= 1) {
+        // Ensure number is within valid range (1-9999) and format to 4 digits
+        const validNum = Math.min(num, 9999)
+        return `CLI-${String(validNum).padStart(4, "0")}`
       }
     }
-    // If not in correct format, return as is (will be migrated later)
+    
+    // If no number found, return as is (will be migrated later)
     return clientId
   }
 
@@ -112,6 +118,8 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
         return
       }
 
+      toast.loading("Migrating client IDs to 4-digit format...", { id: "migrate-ids" })
+
       const response = await fetch("/api/migrate/client-ids", {
         method: "POST",
         headers: {
@@ -122,7 +130,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
 
       if (response.ok) {
         const data = await response.json()
-        toast.success(data.message || `Migrated ${data.migrated} client IDs`)
+        toast.success(data.message || `Migrated ${data.migrated} client IDs to 4-digit format (CLI-0001, CLI-0002, etc.)`, { id: "migrate-ids" })
         // Reload tickets
         const reloadResponse = await fetch(`/api/repairs?userId=${currentUser.id}`)
         if (reloadResponse.ok) {
@@ -133,11 +141,11 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
         }
       } else {
         const errorData = await response.json()
-        toast.error(errorData.error || "Migration failed")
+        toast.error(errorData.error || "Migration failed", { id: "migrate-ids" })
       }
     } catch (error: any) {
       console.error("[SearchRepairTickets] Error migrating client IDs:", error)
-      toast.error("Failed to migrate client IDs")
+      toast.error("Failed to migrate client IDs", { id: "migrate-ids" })
     }
   }
 
@@ -813,8 +821,8 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                 <thead>
                   <tr className="bg-blue-50 border-b-2 border-blue-300">
                     <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[7%]">{t("table.date")}</th>
-                    <th className="border-r border-blue-300 px-0.5 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[5%]">{t("form.clientId") || "Client ID"}</th>
-                    <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[14%]">{t("table.client") || t("form.clientName")}</th>
+                    <th className="border-r border-blue-300 px-0.5 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[6%]">{t("form.clientId") || "Client ID"}</th>
+                    <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[13%]">{t("table.client") || t("form.clientName")}</th>
                     <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[10%]">{t("table.contact")}</th>
                     <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[12%]">{t("table.model")}</th>
                     <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[11%]">{t("table.imei")}</th>
@@ -849,8 +857,10 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                             </div>
                           )}
                         </td>
-                        <td className="border-r border-blue-300 px-0.5 py-1.5 text-[10px] font-semibold text-black whitespace-nowrap">
-                          <span className="text-blue-600">{formatClientId(ticket.clientId)}</span>
+                        <td className="border-r border-blue-300 px-0.5 py-1.5 text-[10px] font-semibold text-black">
+                          <span className="text-blue-600 break-words break-all" style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>
+                            {formatClientId(ticket.clientId)}
+                          </span>
                         </td>
                         <td className="border-r border-blue-300 px-1 py-1.5 text-[11px] font-medium text-black break-words">
                           {ticket.customerName}
