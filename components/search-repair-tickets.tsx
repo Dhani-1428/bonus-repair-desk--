@@ -598,10 +598,10 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
   return (
     <div className="space-y-6">
       <Card className="shadow-xl border border-blue-200 bg-white">
-        <CardHeader className="bg-blue-50 border-b border-blue-200 rounded-t-lg p-6">
+        <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-100 border-b-2 border-blue-300 rounded-t-lg p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <CardTitle className="text-2xl font-bold text-black flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center ring-2 ring-blue-200 shadow-md">
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center ring-2 ring-blue-200 shadow-lg">
                 <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
@@ -775,10 +775,10 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
         </CardContent>
       </Card>
 
-      <Card className="shadow-xl border border-blue-200 bg-white">
-        <CardHeader className="bg-blue-50 border-b border-blue-200 rounded-t-lg p-6">
+      <Card className="shadow-xl border-2 border-blue-200 bg-white">
+        <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-100 border-b-2 border-blue-300 rounded-t-lg p-6 shadow-sm">
           <CardTitle className="text-2xl font-bold text-black flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center ring-2 ring-blue-200 shadow-md">
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center ring-2 ring-blue-200 shadow-lg">
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>
@@ -803,7 +803,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
               <table className="w-full border-collapse table-fixed text-xs">
                 <thead>
                   <tr className="bg-blue-50 border-b-2 border-blue-300">
-                    <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[7%]">{t("table.date")}</th>
+                    <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[8%]">{t("table.date")}</th>
                     <th className="border-r border-blue-300 px-0.5 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[6%]">{t("form.clientId") || "Client ID"}</th>
                     <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[13%]">{t("table.client") || t("form.clientName")}</th>
                     <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[10%]">{t("table.contact")}</th>
@@ -832,13 +832,15 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                           index % 2 === 0 ? "bg-white" : "bg-blue-50/30"
                         }`}
                       >
-                        <td className="border-r border-blue-300 px-1 py-1.5 text-[11px] text-black whitespace-nowrap">
-                          <div className="text-black">{new Date(ticket.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}</div>
-                          {(initialStatusFilter === "delivered" || ticket.status === "DELIVERED" || ticket.status === "delivered") && ticket.deliveredDate && (
-                            <div className="text-[10px] text-blue-600 font-semibold mt-0.5">
-                              Out: {new Date(ticket.deliveredDate).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
-                            </div>
-                          )}
+                        <td className="border-r border-blue-300 px-1 py-1.5 text-[11px] text-black">
+                          <div className="flex flex-col gap-0.5">
+                            <div className="text-black leading-tight">{new Date(ticket.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}</div>
+                            {(ticket.status === "DELIVERED" || ticket.status === "delivered") && ticket.deliveredDate && (
+                              <div className="text-[9px] text-blue-600 font-semibold leading-tight">
+                                Out: {new Date(ticket.deliveredDate).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                              </div>
+                            )}
+                          </div>
                         </td>
                         <td className="border-r border-blue-300 px-0.5 py-1.5 text-[10px] font-semibold text-black">
                           <span className="text-blue-600 break-words break-all" style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>

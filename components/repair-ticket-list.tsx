@@ -134,8 +134,15 @@ export function RepairTicketList() {
                     }}
                     className="bg-white hover:bg-blue-50 transition-all cursor-pointer border-b border-blue-100"
                   >
-                    <td className="px-4 py-3 text-sm text-black border-r border-blue-100 whitespace-nowrap">
-                      {new Date(ticket.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                    <td className="px-4 py-3 text-sm text-black border-r border-blue-100">
+                      <div className="flex flex-col gap-0.5">
+                        <div className="leading-tight">{new Date(ticket.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}</div>
+                        {(ticket.status === "DELIVERED" || ticket.status === "delivered") && ticket.deliveredDate && (
+                          <div className="text-xs text-blue-600 font-semibold leading-tight">
+                            Out: {new Date(ticket.deliveredDate).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                          </div>
+                        )}
+                      </div>
                     </td>
                     <td className="px-4 py-3 text-sm font-medium text-black border-r border-blue-100 whitespace-nowrap">
                       {ticket.customerName}
