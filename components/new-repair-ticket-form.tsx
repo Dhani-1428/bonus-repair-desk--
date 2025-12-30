@@ -654,6 +654,41 @@ export function NewRepairTicketForm() {
     }
   }
 
+  // Print single device receipt
+  const handlePrintSingleDevice = (ticket: any) => {
+    // Normalize the ticket to ensure all fields exist
+    const normalizedTicket = {
+      ...ticket,
+      clientId: ticket.clientId || null,
+      customerName: ticket.customerName || "N/A",
+      contact: ticket.contact || "N/A",
+      receivedBy: ticket.receivedBy || "N/A",
+      imeiNo: ticket.imeiNo || "000000000000000",
+      brand: ticket.brand || "N/A",
+      model: ticket.model || "N/A",
+      serialNo: ticket.serialNo || null,
+      softwareVersion: ticket.softwareVersion || null,
+      warranty: ticket.warranty || "Without Warranty",
+      battery: ticket.battery ?? false,
+      charger: ticket.charger ?? false,
+      simCard: ticket.simCard ?? false,
+      simTray: ticket.simTray ?? false,
+      memoryCard: ticket.memoryCard ?? false,
+      loanEquipment: ticket.loanEquipment ?? false,
+      equipmentObs: ticket.equipmentObs || null,
+      repairObs: ticket.repairObs || null,
+      selectedServices: Array.isArray(ticket.selectedServices) ? ticket.selectedServices : (ticket.serviceName ? [ticket.serviceName] : []),
+      condition: ticket.condition || null,
+      problem: ticket.problem || "N/A",
+      price: ticket.price || 0,
+      budget: ticket.budget || null,
+      repairNumber: ticket.repairNumber || "N/A",
+      spu: ticket.spu || "N/A",
+      createdAt: ticket.createdAt || new Date().toISOString(),
+    }
+    printReceipt([normalizedTicket])
+  }
+
   // Handle printer selection
   const handlePrinterSelect = (printerName: string) => {
     setSelectedPrinter(printerName)
@@ -1238,6 +1273,23 @@ export function NewRepairTicketForm() {
                       </div>
                     </div>
                   </div>
+
+                  {/* Print Single Device Button */}
+                  {createdTicketsDetails.length > 1 && (
+                    <div className="mt-4 pt-4 border-t border-blue-200">
+                      <Button
+                        onClick={() => handlePrintSingleDevice(ticket)}
+                        variant="outline"
+                        size="sm"
+                        className="border-blue-500 bg-blue-50 text-blue-700 hover:bg-blue-100 hover:border-blue-600"
+                      >
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                        </svg>
+                        Print This Device Receipt
+                      </Button>
+                    </div>
+                  )}
                 </div>
               )
             })
@@ -1290,15 +1342,28 @@ export function NewRepairTicketForm() {
               </div>
 
               <div className="flex gap-4">
-                <Button
-                  onClick={handlePrintDetails}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-                >
-                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                  </svg>
-                  Print Receipt ({createdTicketsDetails.length} Device{createdTicketsDetails.length > 1 ? "s" : ""})
-                </Button>
+                {createdTicketsDetails.length > 1 && (
+                  <Button
+                    onClick={handlePrintDetails}
+                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                  >
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                    </svg>
+                    Print All Devices Receipt ({createdTicketsDetails.length} Device{createdTicketsDetails.length > 1 ? "s" : ""})
+                  </Button>
+                )}
+                {createdTicketsDetails.length === 1 && (
+                  <Button
+                    onClick={handlePrintDetails}
+                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                  >
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                    </svg>
+                    Print Receipt
+                  </Button>
+                )}
                 <Button
                   onClick={handleContinue}
                   variant="outline"
