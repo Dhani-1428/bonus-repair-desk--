@@ -81,7 +81,7 @@ export default function NewTicketPage() {
       case "completed":
         return "bg-green-500 text-white border-2 border-green-600 font-semibold"
       case "delivered":
-        return "bg-purple-500 text-white border-2 border-purple-600 font-semibold"
+        return "bg-blue-500 text-white border-2 border-blue-600 font-semibold"
       default:
         return "bg-gray-500 text-white border-2 border-gray-600 font-semibold"
     }
@@ -304,7 +304,7 @@ export default function NewTicketPage() {
                             value={device.status?.toLowerCase() || "pending"}
                             onValueChange={(value) => updateTicketStatus(device.id, value)}
                           >
-                            <SelectTrigger className={`${getStatusColor(device.status)} w-full !bg-opacity-100`} style={{ backgroundColor: device.status?.toLowerCase() === 'pending' ? '#eab308' : device.status?.toLowerCase() === 'not_ok' ? '#ef4444' : device.status?.toLowerCase() === 'completed' ? '#22c55e' : device.status?.toLowerCase() === 'delivered' ? '#a855f7' : '#6b7280', color: 'white', borderColor: device.status?.toLowerCase() === 'pending' ? '#ca8a04' : device.status?.toLowerCase() === 'not_ok' ? '#dc2626' : device.status?.toLowerCase() === 'completed' ? '#16a34a' : device.status?.toLowerCase() === 'delivered' ? '#9333ea' : '#4b5563' }}>
+                            <SelectTrigger className={`${getStatusColor(device.status)} w-full !bg-opacity-100`} style={{ backgroundColor: device.status?.toLowerCase() === 'pending' ? '#eab308' : device.status?.toLowerCase() === 'not_ok' ? '#ef4444' : device.status?.toLowerCase() === 'completed' ? '#22c55e' : device.status?.toLowerCase() === 'delivered' ? '#3b82f6' : '#6b7280', color: 'white', borderColor: device.status?.toLowerCase() === 'pending' ? '#ca8a04' : device.status?.toLowerCase() === 'not_ok' ? '#dc2626' : device.status?.toLowerCase() === 'completed' ? '#16a34a' : device.status?.toLowerCase() === 'delivered' ? '#2563eb' : '#4b5563' }}>
                               <SelectValue>
                                 {device.status === "pending" || device.status === "PENDING" ? t("status.pending") :
                                  device.status === "not_ok" || device.status === "NOT_OK" ? (t("status.notOk") || "Not OK") :

@@ -104,7 +104,7 @@ export default function AnalyticsPage() {
       case "completed":
         return "bg-green-500 text-white border-2 border-green-600 font-semibold"
       case "delivered":
-        return "bg-purple-500 text-white border-2 border-purple-600 font-semibold"
+        return "bg-blue-500 text-white border-2 border-blue-600 font-semibold"
       default:
         return "bg-gray-500 text-white border-2 border-gray-600 font-semibold"
     }
@@ -227,7 +227,7 @@ export default function AnalyticsPage() {
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-1">
                           <h3 className="font-semibold text-lg text-black">{device.customerName}</h3>
-                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(device.status)}`} style={{ backgroundColor: device.status?.toLowerCase() === 'pending' ? '#eab308' : device.status?.toLowerCase() === 'not_ok' ? '#ef4444' : device.status?.toLowerCase() === 'completed' ? '#22c55e' : device.status?.toLowerCase() === 'delivered' ? '#a855f7' : '#6b7280', color: 'white', borderColor: device.status?.toLowerCase() === 'pending' ? '#ca8a04' : device.status?.toLowerCase() === 'not_ok' ? '#dc2626' : device.status?.toLowerCase() === 'completed' ? '#16a34a' : device.status?.toLowerCase() === 'delivered' ? '#9333ea' : '#4b5563' }}>
+                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(device.status)}`} style={{ backgroundColor: device.status?.toLowerCase() === 'pending' ? '#eab308' : device.status?.toLowerCase() === 'not_ok' ? '#ef4444' : device.status?.toLowerCase() === 'completed' ? '#22c55e' : device.status?.toLowerCase() === 'delivered' ? '#3b82f6' : '#6b7280', color: 'white', borderColor: device.status?.toLowerCase() === 'pending' ? '#ca8a04' : device.status?.toLowerCase() === 'not_ok' ? '#dc2626' : device.status?.toLowerCase() === 'completed' ? '#16a34a' : device.status?.toLowerCase() === 'delivered' ? '#2563eb' : '#4b5563' }}>
                             {device.status === "PENDING" || device.status === "pending" ? t("analytics.pending") :
                              device.status === "NOT_OK" || device.status === "not_ok" ? (t("status.notOk") || "Not OK") :
                              device.status === "COMPLETED" || device.status === "completed" ? t("analytics.completed") :

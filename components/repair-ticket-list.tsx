@@ -48,7 +48,7 @@ export function RepairTicketList() {
       case "completed":
         return "bg-green-500 text-white border-2 border-green-600 font-semibold"
       case "delivered":
-        return "bg-purple-500 text-white border-2 border-purple-600 font-semibold"
+        return "bg-blue-500 text-white border-2 border-blue-600 font-semibold"
       default:
         return "bg-gray-500 text-white border-2 border-gray-600 font-semibold"
     }
@@ -180,7 +180,7 @@ export function RepairTicketList() {
                         value={ticket.status?.toLowerCase() || "pending"}
                         onValueChange={(value) => updateTicketStatus(ticket.id, value)}
                       >
-                        <SelectTrigger className={`${getStatusColor(ticket.status)} text-xs px-2 py-1 h-auto w-auto min-w-[140px] cursor-pointer !bg-opacity-100`} style={{ backgroundColor: ticket.status?.toLowerCase() === 'pending' ? '#eab308' : ticket.status?.toLowerCase() === 'not_ok' ? '#ef4444' : ticket.status?.toLowerCase() === 'completed' ? '#22c55e' : ticket.status?.toLowerCase() === 'delivered' ? '#a855f7' : '#6b7280', color: 'white', borderColor: ticket.status?.toLowerCase() === 'pending' ? '#ca8a04' : ticket.status?.toLowerCase() === 'not_ok' ? '#dc2626' : ticket.status?.toLowerCase() === 'completed' ? '#16a34a' : ticket.status?.toLowerCase() === 'delivered' ? '#9333ea' : '#4b5563' }}>
+                        <SelectTrigger className={`${getStatusColor(ticket.status)} text-xs px-2 py-1 h-auto w-auto min-w-[140px] cursor-pointer !bg-opacity-100`} style={{ backgroundColor: ticket.status?.toLowerCase() === 'pending' ? '#eab308' : ticket.status?.toLowerCase() === 'not_ok' ? '#ef4444' : ticket.status?.toLowerCase() === 'completed' ? '#22c55e' : ticket.status?.toLowerCase() === 'delivered' ? '#3b82f6' : '#6b7280', color: 'white', borderColor: ticket.status?.toLowerCase() === 'pending' ? '#ca8a04' : ticket.status?.toLowerCase() === 'not_ok' ? '#dc2626' : ticket.status?.toLowerCase() === 'completed' ? '#16a34a' : ticket.status?.toLowerCase() === 'delivered' ? '#2563eb' : '#4b5563' }}>
                           <SelectValue>
                             {ticket.status === "pending" || ticket.status === "PENDING" ? t("status.pending") :
                              ticket.status === "not_ok" || ticket.status === "NOT_OK" ? (t("status.notOk") || "Not OK") :
