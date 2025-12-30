@@ -304,7 +304,7 @@ export default function NewTicketPage() {
                             value={device.status?.toLowerCase() || "pending"}
                             onValueChange={(value) => updateTicketStatus(device.id, value)}
                           >
-                            <SelectTrigger className={`${getStatusColor(device.status)} w-full`}>
+                            <SelectTrigger className={`${getStatusColor(device.status)} w-full !bg-opacity-100`} style={{ backgroundColor: device.status?.toLowerCase() === 'pending' ? '#eab308' : device.status?.toLowerCase() === 'not_ok' ? '#ef4444' : device.status?.toLowerCase() === 'completed' ? '#22c55e' : device.status?.toLowerCase() === 'delivered' ? '#a855f7' : '#6b7280', color: 'white', borderColor: device.status?.toLowerCase() === 'pending' ? '#ca8a04' : device.status?.toLowerCase() === 'not_ok' ? '#dc2626' : device.status?.toLowerCase() === 'completed' ? '#16a34a' : device.status?.toLowerCase() === 'delivered' ? '#9333ea' : '#4b5563' }}>
                               <SelectValue>
                                 {device.status === "pending" || device.status === "PENDING" ? t("status.pending") :
                                  device.status === "not_ok" || device.status === "NOT_OK" ? (t("status.notOk") || "Not OK") :

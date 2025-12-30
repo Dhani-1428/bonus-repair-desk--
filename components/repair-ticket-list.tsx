@@ -180,7 +180,7 @@ export function RepairTicketList() {
                         value={ticket.status?.toLowerCase() || "pending"}
                         onValueChange={(value) => updateTicketStatus(ticket.id, value)}
                       >
-                        <SelectTrigger className={`${getStatusColor(ticket.status)} text-xs px-2 py-1 h-auto border w-auto min-w-[140px] cursor-pointer font-semibold`}>
+                        <SelectTrigger className={`${getStatusColor(ticket.status)} text-xs px-2 py-1 h-auto w-auto min-w-[140px] cursor-pointer !bg-opacity-100`} style={{ backgroundColor: ticket.status?.toLowerCase() === 'pending' ? '#eab308' : ticket.status?.toLowerCase() === 'not_ok' ? '#ef4444' : ticket.status?.toLowerCase() === 'completed' ? '#22c55e' : ticket.status?.toLowerCase() === 'delivered' ? '#a855f7' : '#6b7280', color: 'white', borderColor: ticket.status?.toLowerCase() === 'pending' ? '#ca8a04' : ticket.status?.toLowerCase() === 'not_ok' ? '#dc2626' : ticket.status?.toLowerCase() === 'completed' ? '#16a34a' : ticket.status?.toLowerCase() === 'delivered' ? '#9333ea' : '#4b5563' }}>
                           <SelectValue>
                             {ticket.status === "pending" || ticket.status === "PENDING" ? t("status.pending") :
                              ticket.status === "not_ok" || ticket.status === "NOT_OK" ? (t("status.notOk") || "Not OK") :
