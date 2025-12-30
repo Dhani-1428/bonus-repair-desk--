@@ -163,17 +163,9 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
           if (response.ok) {
             const data = await response.json()
             const ticketsArray = Array.isArray(data.tickets) ? data.tickets : []
-            // Sort tickets by clientId (CLI-0001, CLI-0002, etc.) then by createdAt
+            // Sort tickets by newest first (descending by createdAt)
             const sortedTickets = ticketsArray.sort((a: any, b: any) => {
-              const getClientIdNum = (clientId: string | null | undefined): number => {
-                if (!clientId) return 999999
-                const match = clientId.match(/^CLI-(\d{1,4})$/)
-                return match ? parseInt(match[1], 10) : 999999
-              }
-              const aNum = getClientIdNum(a.clientId)
-              const bNum = getClientIdNum(b.clientId)
-              if (aNum !== bNum) return aNum - bNum
-              return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+              return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
             })
             setTickets(sortedTickets)
           } else {
@@ -268,7 +260,11 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
         }
       })
     }
-    setFilteredTickets(filtered)
+    // Sort filtered tickets by newest first (descending by createdAt)
+    const sortedFiltered = filtered.sort((a: any, b: any) => {
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    })
+    setFilteredTickets(sortedFiltered)
     
     // Scroll to first result when search is performed
     if (filtered.length > 0 && (searchTerm.trim() || statusFilter !== "all" || dateFilter)) {
@@ -642,21 +638,8 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                     { key: "repairNumber" as const, label: "Repair Number" },
                   ]
                   const formattedTickets = filteredTickets.map((ticket: any) => {
-                    let services = ""
-                    if (ticket.selectedServices) {
-                      try {
-                        const servicesArray = typeof ticket.selectedServices === 'string' 
-                          ? JSON.parse(ticket.selectedServices) 
-                          : ticket.selectedServices
-                        if (Array.isArray(servicesArray) && servicesArray.length > 0) {
-                          services = servicesArray.join(", ")
-                        }
-                      } catch {
-                        services = ticket.serviceName || ""
-                      }
-                    } else {
-                      services = ticket.serviceName || ""
-                    }
+                    // Use equipment observations for Services column
+                    const services = ticket.equipmentObs || ticket.equipmentObservations || ""
                     return {
                       createdAt: new Date(ticket.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }),
                       clientId: formatClientId(ticket.clientId),
