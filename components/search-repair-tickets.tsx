@@ -581,17 +581,22 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
   }
 
   const getStatusColor = (status: string) => {
-    switch (status) {
+    const normalizedStatus = status?.toLowerCase() || ""
+    switch (normalizedStatus) {
       case "pending":
-        return "bg-yellow-100 text-yellow-800 border border-yellow-200"
+      case "pending":
+        return "bg-yellow-500 text-white border-2 border-yellow-600 font-semibold"
       case "not_ok":
-        return "bg-red-100 text-red-800 border border-red-200"
+      case "not_ok":
+        return "bg-red-500 text-white border-2 border-red-600 font-semibold"
       case "completed":
-        return "bg-green-100 text-green-800 border border-green-200"
+      case "completed":
+        return "bg-green-500 text-white border-2 border-green-600 font-semibold"
       case "delivered":
-        return "bg-purple-100 text-purple-800 border border-purple-200"
+      case "delivered":
+        return "bg-purple-500 text-white border-2 border-purple-600 font-semibold"
       default:
-        return "bg-gray-100 text-gray-800 border border-gray-200"
+        return "bg-gray-500 text-white border-2 border-gray-600 font-semibold"
     }
   }
 

@@ -157,17 +157,18 @@ export function TrashDevices() {
   }
 
   const getStatusColor = (status: string) => {
-    switch (status) {
+    const normalizedStatus = status?.toLowerCase() || ""
+    switch (normalizedStatus) {
       case "pending":
-        return "bg-yellow-100 text-yellow-700 border border-yellow-300"
+        return "bg-yellow-500 text-white border-2 border-yellow-600 font-semibold"
       case "not_ok":
-        return "bg-red-100 text-red-700 border border-red-300"
+        return "bg-red-500 text-white border-2 border-red-600 font-semibold"
       case "completed":
-        return "bg-green-100 text-green-700 border border-green-300"
+        return "bg-green-500 text-white border-2 border-green-600 font-semibold"
       case "delivered":
-        return "bg-purple-100 text-purple-700 border border-purple-300"
+        return "bg-purple-500 text-white border-2 border-purple-600 font-semibold"
       default:
-        return "bg-gray-100 text-gray-700 border border-gray-300"
+        return "bg-gray-500 text-white border-2 border-gray-600 font-semibold"
     }
   }
 

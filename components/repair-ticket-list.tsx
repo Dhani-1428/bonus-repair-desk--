@@ -39,17 +39,18 @@ export function RepairTicketList() {
   }, [user?.id])
 
   const getStatusColor = (status: string) => {
-    switch (status?.toLowerCase()) {
+    const normalizedStatus = status?.toLowerCase() || ""
+    switch (normalizedStatus) {
       case "pending":
-        return "bg-yellow-500/20 text-yellow-200 border border-yellow-500/50"
+        return "bg-yellow-500 text-white border-2 border-yellow-600 font-semibold"
       case "not_ok":
-        return "bg-red-500/20 text-red-200 border border-red-500/50"
+        return "bg-red-500 text-white border-2 border-red-600 font-semibold"
       case "completed":
-        return "bg-green-500/20 text-green-200 border border-green-500/50"
+        return "bg-green-500 text-white border-2 border-green-600 font-semibold"
       case "delivered":
-        return "bg-purple-500/20 text-purple-200 border border-purple-500/50"
+        return "bg-purple-500 text-white border-2 border-purple-600 font-semibold"
       default:
-        return "bg-gray-500/20 text-gray-200 border border-gray-500/50"
+        return "bg-gray-500 text-white border-2 border-gray-600 font-semibold"
     }
   }
 

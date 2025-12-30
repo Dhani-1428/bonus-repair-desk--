@@ -72,17 +72,18 @@ export default function NewTicketPage() {
   }
 
   const getStatusColor = (status: string) => {
-    switch (status?.toLowerCase()) {
+    const normalizedStatus = status?.toLowerCase() || ""
+    switch (normalizedStatus) {
       case "pending":
-        return "text-yellow-700"
+        return "bg-yellow-500 text-white border-2 border-yellow-600 font-semibold"
       case "not_ok":
-        return "text-red-700"
+        return "bg-red-500 text-white border-2 border-red-600 font-semibold"
       case "completed":
-        return "text-green-700"
+        return "bg-green-500 text-white border-2 border-green-600 font-semibold"
       case "delivered":
-        return "text-purple-700"
+        return "bg-purple-500 text-white border-2 border-purple-600 font-semibold"
       default:
-        return "text-black"
+        return "bg-gray-500 text-white border-2 border-gray-600 font-semibold"
     }
   }
 
@@ -164,8 +165,8 @@ export default function NewTicketPage() {
         </div>
 
         {/* Devices Information Section */}
-        <Card id="devices-information-section" className="shadow-xl border border-blue-200 bg-white">
-          <CardHeader className="bg-blue-50 border-b border-blue-200 rounded-t-lg px-6 py-4">
+        <Card id="devices-information-section" className="shadow-xl border-2 border-blue-200 bg-white">
+          <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-100 border-b-2 border-blue-300 rounded-t-lg px-6 py-4 shadow-sm">
             <div className="flex items-center justify-between">
               <CardTitle className="text-2xl flex items-center gap-2 text-black">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -303,7 +304,7 @@ export default function NewTicketPage() {
                             value={device.status?.toLowerCase() || "pending"}
                             onValueChange={(value) => updateTicketStatus(device.id, value)}
                           >
-                            <SelectTrigger className={`${getStatusColor(device.status)} bg-white border-blue-300 w-full font-semibold`}>
+                            <SelectTrigger className={`${getStatusColor(device.status)} w-full`}>
                               <SelectValue>
                                 {device.status === "pending" || device.status === "PENDING" ? t("status.pending") :
                                  device.status === "not_ok" || device.status === "NOT_OK" ? (t("status.notOk") || "Not OK") :
