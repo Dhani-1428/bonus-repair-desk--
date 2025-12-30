@@ -241,7 +241,7 @@ const translations: Record<Language, Record<string, string>> = {
     "status.in_progress": "In Progress",
     "status.completed": "Completed",
     "status.delivered": "Out",
-    "status.notOk": "Cannot Repair",
+    "status.notOk": "Not Ok",
 
     // Ticket details
     "ticket.contact": "Contact:",
