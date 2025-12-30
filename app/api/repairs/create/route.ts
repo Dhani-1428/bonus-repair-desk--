@@ -216,6 +216,7 @@ export async function POST(request: NextRequest) {
       finalSerialNo = serialNoFromBody.trim()
     }
 
+    let ticket: any = null // Declare ticket variable before use
     try {
       // Create repair ticket in tenant-specific table
       // Insert WITHOUT repairNumber first to get auto-increment repairId
