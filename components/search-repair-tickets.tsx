@@ -74,6 +74,21 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [searchInputFocused, setSearchInputFocused] = useState(false)
 
+  // Helper function to format client ID to 4-digit format
+  const formatClientId = (clientId: string | null | undefined): string => {
+    if (!clientId) return "-"
+    // If already in correct format (CLI-XXXX where X is 1-4 digits), return as is
+    const match = clientId.match(/^CLI-(\d{1,4})$/)
+    if (match) {
+      const num = parseInt(match[1], 10)
+      if (!isNaN(num) && num >= 1 && num <= 9999) {
+        return `CLI-${String(num).padStart(4, "0")}`
+      }
+    }
+    // If not in correct format, return as is (will be migrated later)
+    return clientId
+  }
+
   // Helper function to sort tickets by clientId (CLI-0001, CLI-0002, etc.) then by createdAt
   const sortTicketsByClientId = (ticketsArray: any[]): any[] => {
     return ticketsArray.sort((a: any, b: any) => {
@@ -87,6 +102,43 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
       if (aNum !== bNum) return aNum - bNum
       return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
     })
+  }
+
+  // Function to migrate client IDs to 4-digit format
+  const migrateClientIds = async () => {
+    try {
+      if (!currentUser?.id) {
+        toast.error(t("error.userNotFound"))
+        return
+      }
+
+      const response = await fetch("/api/migrate/client-ids", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId: currentUser.id }),
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        toast.success(data.message || `Migrated ${data.migrated} client IDs`)
+        // Reload tickets
+        const reloadResponse = await fetch(`/api/repairs?userId=${currentUser.id}`)
+        if (reloadResponse.ok) {
+          const reloadData = await reloadResponse.json()
+          const ticketsArray = Array.isArray(reloadData.tickets) ? reloadData.tickets : []
+          const sortedTickets = sortTicketsByClientId(ticketsArray)
+          setTickets(sortedTickets)
+        }
+      } else {
+        const errorData = await response.json()
+        toast.error(errorData.error || "Migration failed")
+      }
+    } catch (error: any) {
+      console.error("[SearchRepairTickets] Error migrating client IDs:", error)
+      toast.error("Failed to migrate client IDs")
+    }
   }
 
   useEffect(() => {
@@ -552,67 +604,79 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
               </div>
               {t("search.title")}
             </CardTitle>
-            <Button
-              onClick={() => {
-                if (filteredTickets.length === 0) {
-                  toast.error("No data to export")
-                  return
-                }
-                const headers = [
-                  { key: "createdAt" as const, label: "Date" },
-                  { key: "clientId" as const, label: "Client ID" },
-                  { key: "customerName" as const, label: "Client Name" },
-                  { key: "contact" as const, label: "Contact" },
-                  { key: "model" as const, label: "Model" },
-                  { key: "imeiNo" as const, label: "IMEI" },
-                  { key: "selectedServices" as const, label: "Services" },
-                  { key: "status" as const, label: "Status" },
-                  { key: "price" as const, label: "Price (€)" },
-                  { key: "repairNumber" as const, label: "Repair Number" },
-                ]
-                const formattedTickets = filteredTickets.map((ticket: any) => {
-                  let services = ""
-                  if (ticket.selectedServices) {
-                    try {
-                      const servicesArray = typeof ticket.selectedServices === 'string' 
-                        ? JSON.parse(ticket.selectedServices) 
-                        : ticket.selectedServices
-                      if (Array.isArray(servicesArray) && servicesArray.length > 0) {
-                        services = servicesArray.join(", ")
+            <div className="flex items-center gap-2">
+              <Button
+                onClick={migrateClientIds}
+                className="bg-orange-600 hover:bg-orange-700 text-white shadow-md hover:shadow-lg text-xs px-3 py-1.5"
+                title="Migrate all client IDs to 4-digit format (CLI-0001, CLI-0002, etc.)"
+              >
+                <svg className="w-3 h-3 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Migrate IDs
+              </Button>
+              <Button
+                onClick={() => {
+                  if (filteredTickets.length === 0) {
+                    toast.error("No data to export")
+                    return
+                  }
+                  const headers = [
+                    { key: "createdAt" as const, label: "Date" },
+                    { key: "clientId" as const, label: "Client ID" },
+                    { key: "customerName" as const, label: "Client Name" },
+                    { key: "contact" as const, label: "Contact" },
+                    { key: "model" as const, label: "Model" },
+                    { key: "imeiNo" as const, label: "IMEI" },
+                    { key: "selectedServices" as const, label: "Services" },
+                    { key: "status" as const, label: "Status" },
+                    { key: "price" as const, label: "Price (€)" },
+                    { key: "repairNumber" as const, label: "Repair Number" },
+                  ]
+                  const formattedTickets = filteredTickets.map((ticket: any) => {
+                    let services = ""
+                    if (ticket.selectedServices) {
+                      try {
+                        const servicesArray = typeof ticket.selectedServices === 'string' 
+                          ? JSON.parse(ticket.selectedServices) 
+                          : ticket.selectedServices
+                        if (Array.isArray(servicesArray) && servicesArray.length > 0) {
+                          services = servicesArray.join(", ")
+                        }
+                      } catch {
+                        services = ticket.serviceName || ""
                       }
-                    } catch {
+                    } else {
                       services = ticket.serviceName || ""
                     }
-                  } else {
-                    services = ticket.serviceName || ""
-                  }
-                  return {
-                    createdAt: new Date(ticket.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }),
-                    clientId: ticket.clientId || "",
-                    customerName: ticket.customerName || "",
-                    contact: ticket.contact || "",
-                    model: ticket.model || "",
-                    imeiNo: ticket.imeiNo || "",
-                    selectedServices: services,
-                    status: ticket.status === "pending" || ticket.status === "PENDING" ? t("status.pending") :
-                           ticket.status === "not_ok" || ticket.status === "NOT_OK" ? (t("status.notOk") || "Not OK") :
-                           ticket.status === "completed" || ticket.status === "COMPLETED" ? t("status.completed") :
-                           ticket.status === "delivered" || ticket.status === "DELIVERED" ? t("status.delivered") :
-                           ticket.status?.replace("_", " ") || "",
-                    price: Number.parseFloat(ticket.price || 0).toFixed(2),
-                    repairNumber: ticket.repairNumber || "",
-                  }
-                })
-                exportToCSV(formattedTickets, "devices", headers)
-                toast.success("Data exported to Excel successfully!")
-              }}
-              className="bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg"
-            >
-              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              {t("common.exportToExcel") || "Export to Excel"}
-            </Button>
+                    return {
+                      createdAt: new Date(ticket.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }),
+                      clientId: formatClientId(ticket.clientId),
+                      customerName: ticket.customerName || "",
+                      contact: ticket.contact || "",
+                      model: ticket.model || "",
+                      imeiNo: ticket.imeiNo || "",
+                      selectedServices: services,
+                      status: ticket.status === "pending" || ticket.status === "PENDING" ? t("status.pending") :
+                             ticket.status === "not_ok" || ticket.status === "NOT_OK" ? (t("status.notOk") || "Not OK") :
+                             ticket.status === "completed" || ticket.status === "COMPLETED" ? t("status.completed") :
+                             ticket.status === "delivered" || ticket.status === "DELIVERED" ? t("status.delivered") :
+                             ticket.status?.replace("_", " ") || "",
+                      price: Number.parseFloat(ticket.price || 0).toFixed(2),
+                      repairNumber: ticket.repairNumber || "",
+                    }
+                  })
+                  exportToCSV(formattedTickets, "devices", headers)
+                  toast.success("Data exported to Excel successfully!")
+                }}
+                className="bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg text-xs px-3 py-1.5"
+              >
+                <svg className="w-3 h-3 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                {t("common.exportToExcel") || "Export to Excel"}
+              </Button>
+            </div>
           </div>
         </CardHeader>
         <CardContent className="p-6 text-black">
@@ -745,19 +809,19 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
             </div>
           ) : (
             <div className="overflow-x-hidden">
-              <table className="w-full border-collapse table-fixed">
+              <table className="w-full border-collapse table-fixed text-xs">
                 <thead>
                   <tr className="bg-blue-50 border-b-2 border-blue-300">
-                    <th className="border-r border-blue-300 px-2 py-2 text-left text-xs font-semibold text-black uppercase tracking-wider w-[8%]">{t("table.date")}</th>
-                    <th className="border-r border-blue-300 px-1 py-2 text-left text-xs font-semibold text-black uppercase tracking-wider w-[6%]">{t("form.clientId") || "Client ID"}</th>
-                    <th className="border-r border-blue-300 px-2 py-2 text-left text-xs font-semibold text-black uppercase tracking-wider w-[13%]">{t("table.client") || t("form.clientName")}</th>
-                    <th className="border-r border-blue-300 px-2 py-2 text-left text-xs font-semibold text-black uppercase tracking-wider w-[10%]">{t("table.contact")}</th>
-                    <th className="border-r border-blue-300 px-2 py-2 text-left text-xs font-semibold text-black uppercase tracking-wider w-[12%]">{t("table.model")}</th>
-                    <th className="border-r border-blue-300 px-2 py-2 text-left text-xs font-semibold text-black uppercase tracking-wider w-[10%]">{t("table.imei")}</th>
-                    <th className="border-r border-blue-300 px-2 py-2 text-left text-xs font-semibold text-black uppercase tracking-wider w-[10%]">{t("table.service")}</th>
-                    <th className="border-r border-blue-300 px-2 py-2 text-left text-xs font-semibold text-black uppercase tracking-wider w-[8%]">{t("table.status")}</th>
-                    <th className="border-r border-blue-300 px-2 py-2 text-left text-xs font-semibold text-black uppercase tracking-wider w-[7%]">{t("table.price")}</th>
-                    <th className="px-2 py-2 text-center text-xs font-semibold text-black uppercase tracking-wider w-[5%]">{t("table.action")}</th>
+                    <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[7%]">{t("table.date")}</th>
+                    <th className="border-r border-blue-300 px-0.5 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[5%]">{t("form.clientId") || "Client ID"}</th>
+                    <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[14%]">{t("table.client") || t("form.clientName")}</th>
+                    <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[10%]">{t("table.contact")}</th>
+                    <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[12%]">{t("table.model")}</th>
+                    <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[11%]">{t("table.imei")}</th>
+                    <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[11%]">{t("table.service")}</th>
+                    <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[9%]">{t("table.status")}</th>
+                    <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[8%]">{t("table.price")}</th>
+                    <th className="px-1 py-1.5 text-center text-[10px] font-semibold text-black uppercase tracking-wider w-[5%]">{t("table.action")}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-blue-200">
@@ -777,30 +841,30 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                           index % 2 === 0 ? "bg-white" : "bg-blue-50/30"
                         }`}
                       >
-                        <td className="border-r border-blue-300 px-2 py-2 text-sm text-black whitespace-nowrap">
+                        <td className="border-r border-blue-300 px-1 py-1.5 text-[11px] text-black whitespace-nowrap">
                           <div className="text-black">{new Date(ticket.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}</div>
                           {(initialStatusFilter === "delivered" || ticket.status === "DELIVERED" || ticket.status === "delivered") && ticket.deliveredDate && (
-                            <div className="text-xs text-blue-600 font-semibold mt-1">
+                            <div className="text-[10px] text-blue-600 font-semibold mt-0.5">
                               Out: {new Date(ticket.deliveredDate).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                             </div>
                           )}
                         </td>
-                        <td className="border-r border-blue-300 px-1 py-2 text-xs font-semibold text-black whitespace-nowrap">
-                          <span className="text-blue-600">{ticket.clientId || "-"}</span>
+                        <td className="border-r border-blue-300 px-0.5 py-1.5 text-[10px] font-semibold text-black whitespace-nowrap">
+                          <span className="text-blue-600">{formatClientId(ticket.clientId)}</span>
                         </td>
-                        <td className="border-r border-blue-300 px-2 py-2 text-sm font-medium text-black break-words">
+                        <td className="border-r border-blue-300 px-1 py-1.5 text-[11px] font-medium text-black break-words">
                           {ticket.customerName}
                         </td>
-                        <td className="border-r border-blue-300 px-2 py-2 text-sm text-black break-words">
+                        <td className="border-r border-blue-300 px-1 py-1.5 text-[11px] text-black break-words">
                           {ticket.contact || "-"}
                         </td>
-                        <td className="border-r border-blue-300 px-2 py-2 text-sm font-semibold text-black break-words">
+                        <td className="border-r border-blue-300 px-1 py-1.5 text-[11px] font-semibold text-black break-words">
                           {ticket.model || "-"}
                         </td>
-                        <td className="border-r border-blue-300 px-2 py-2 text-sm text-black font-mono break-words text-xs">
+                        <td className="border-r border-blue-300 px-1 py-1.5 text-[10px] text-black font-mono break-words">
                           {ticket.imeiNo || "-"}
                         </td>
-                        <td className="border-r border-blue-300 px-2 py-2 text-sm text-black break-words">
+                        <td className="border-r border-blue-300 px-1 py-1.5 text-[11px] text-black break-words">
                           {(() => {
                             let services = ticket.serviceName || ""
                             if (ticket.selectedServices) {
@@ -818,14 +882,14 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                             return services || "-"
                           })()}
                         </td>
-                        <td className="border-r border-blue-300 px-2 py-2 text-sm whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
+                        <td className="border-r border-blue-300 px-1 py-1.5 text-[11px] whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
                           <Select 
                             value={ticket.status?.toLowerCase() || "pending"} 
                             onValueChange={(value) => {
                               updateTicketStatus(ticket.id, value)
                             }}
                           >
-                            <SelectTrigger className={`${getStatusColor(ticket.status)} text-xs px-2 py-1 h-auto border w-full cursor-pointer`}>
+                            <SelectTrigger className={`${getStatusColor(ticket.status)} text-[10px] px-1.5 py-0.5 h-auto border w-full cursor-pointer`}>
                               <SelectValue>
                                 {ticket.status === "pending" || ticket.status === "PENDING" ? t("status.pending") :
                                  ticket.status === "not_ok" || ticket.status === "NOT_OK" ? (t("status.notOk") || "Not OK") :
@@ -842,10 +906,10 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                             </SelectContent>
                           </Select>
                         </td>
-                        <td className="border-r border-blue-300 px-2 py-2 text-sm text-black whitespace-nowrap">
+                        <td className="border-r border-blue-300 px-1 py-1.5 text-[11px] text-black whitespace-nowrap">
                           €{Number.parseFloat(ticket.price || 0).toFixed(2)}
                         </td>
-                        <td className="px-2 py-2 text-center whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
+                        <td className="px-1 py-1.5 text-center whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
                           <div className="flex items-center justify-center gap-2">
                             <Button
                               variant="ghost"
@@ -859,7 +923,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                                 handleEditClick(ticket)
                               }}
                               disabled={ticket.status === "DELIVERED" || ticket.status === "delivered" || ticket.status === "CANCELLED" || ticket.status === "cancelled"}
-                              className="text-blue-600 hover:text-blue-800 hover:bg-blue-100 h-8 w-8 p-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="text-blue-600 hover:text-blue-800 hover:bg-blue-100 h-7 w-7 p-0 disabled:opacity-50 disabled:cursor-not-allowed"
                               title="Edit"
                             >
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -879,7 +943,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                                     }
                                   }}
                                   disabled={ticket.status === "DELIVERED" || ticket.status === "delivered" || ticket.status === "CANCELLED" || ticket.status === "cancelled"}
-                                  className="text-red-600 hover:text-red-800 hover:bg-red-100 h-8 w-8 p-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                                  className="text-red-600 hover:text-red-800 hover:bg-red-100 h-7 w-7 p-0 disabled:opacity-50 disabled:cursor-not-allowed"
                                   title="Delete"
                                 >
                                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
