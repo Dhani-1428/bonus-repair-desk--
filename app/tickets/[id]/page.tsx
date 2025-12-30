@@ -19,6 +19,7 @@ export default function DeviceDetailPage() {
   const { user } = useAuth()
   const [ticket, setTicket] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [relatedDevicesCount, setRelatedDevicesCount] = useState(1)
   const printContentRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -38,6 +39,13 @@ export default function DeviceDetailPage() {
           
           if (foundTicket) {
             setTicket(foundTicket)
+            // Count related devices (same clientId and customerName)
+            const relatedDevices = data.tickets.filter((t: any) => 
+              t.clientId === foundTicket.clientId && 
+              t.customerName === foundTicket.customerName &&
+              (t.batchId === foundTicket.batchId || (!t.batchId && !foundTicket.batchId))
+            )
+            setRelatedDevicesCount(relatedDevices.length)
           } else {
             router.push("/tickets")
           }
@@ -64,13 +72,53 @@ export default function DeviceDetailPage() {
       case "completed":
         return "bg-green-100 text-green-800 border border-green-200"
       case "delivered":
-        return "bg-purple-100 text-purple-800 border border-purple-200"
+        return "bg-blue-500 text-white border-2 border-blue-600 font-semibold"
       default:
         return "bg-gray-100 text-gray-800 border border-gray-200"
     }
   }
 
-  const handlePrint = async () => {
+  // Normalize ticket for printing
+  const normalizeTicket = (t: any) => ({
+    ...t,
+    clientId: t.clientId || null,
+    customerName: t.customerName || "N/A",
+    contact: t.contact || "N/A",
+    receivedBy: t.receivedBy || "N/A",
+    imeiNo: t.imeiNo || "000000000000000",
+    brand: t.brand || "N/A",
+    model: t.model || "N/A",
+    serialNo: t.serialNo || null,
+    softwareVersion: t.softwareVersion || null,
+    warranty: t.warranty || "Without Warranty",
+    battery: t.battery ?? false,
+    charger: t.charger ?? false,
+    simCard: t.simCard ?? false,
+    simTray: t.simTray ?? false,
+    memoryCard: t.memoryCard ?? false,
+    loanEquipment: t.loanEquipment ?? false,
+    equipmentObs: t.equipmentObs || null,
+    repairObs: t.repairObs || null,
+    selectedServices: Array.isArray(t.selectedServices) ? t.selectedServices : (t.serviceName ? [t.serviceName] : []),
+    condition: t.condition || null,
+    problem: t.problem || "N/A",
+    price: t.price || 0,
+    budget: t.budget || null,
+    repairNumber: t.repairNumber || "N/A",
+    spu: t.spu || "N/A",
+    createdAt: t.createdAt || new Date().toISOString(),
+  })
+
+  // Print single device receipt
+  const handlePrintSingleDevice = () => {
+    if (typeof window !== "undefined" && ticket) {
+      const normalizedTicket = normalizeTicket(ticket)
+      printReceiptWithLanguageSelection([normalizedTicket])
+    }
+  }
+
+  // Print all devices in the group
+  const handlePrintAllDevices = async () => {
     if (typeof window !== "undefined" && ticket && user?.id) {
       try {
         // Fetch all tickets to find devices with the same clientId and customerName
@@ -87,68 +135,13 @@ export default function DeviceDetailPage() {
         console.log(`[DeviceDetailPage] Printing receipt for ${sameClientDevices.length} device(s) with clientId: ${ticket.clientId}`)
         
         // Normalize all devices with the same client details
-        const normalizedTickets = sameClientDevices.map((device: any) => ({
-          ...device,
-          // Ensure all fields exist with defaults if missing
-          clientId: device.clientId || null,
-          customerName: device.customerName || "N/A",
-          contact: device.contact || "N/A",
-          receivedBy: device.receivedBy || "N/A",
-          imeiNo: device.imeiNo || "000000000000000",
-          brand: device.brand || "N/A",
-          model: device.model || "N/A",
-          serialNo: device.serialNo || null,
-          softwareVersion: device.softwareVersion || null,
-          warranty: device.warranty || "Without Warranty",
-          battery: device.battery ?? false,
-          charger: device.charger ?? false,
-          simCard: device.simCard ?? false,
-          memoryCard: device.memoryCard ?? false,
-          loanEquipment: device.loanEquipment ?? false,
-          equipmentObs: device.equipmentObs || null,
-          repairObs: device.repairObs || null,
-          selectedServices: Array.isArray(device.selectedServices) ? device.selectedServices : (device.serviceName ? [device.serviceName] : []),
-          condition: device.condition || null,
-          problem: device.problem || "N/A",
-          price: device.price || 0,
-          budget: device.budget || null,
-          repairNumber: device.repairNumber || "N/A",
-          spu: device.spu || "N/A",
-          createdAt: device.createdAt || new Date().toISOString(),
-        }))
+        const normalizedTickets = sameClientDevices.map((device: any) => normalizeTicket(device))
         
         printReceiptWithLanguageSelection(normalizedTickets)
       } catch (error) {
         console.error("[DeviceDetailPage] Error loading tickets for print:", error)
         // Fallback to printing just the current ticket
-        const normalizedTicket = {
-          ...ticket,
-          clientId: ticket.clientId || null,
-          customerName: ticket.customerName || "N/A",
-          contact: ticket.contact || "N/A",
-          receivedBy: ticket.receivedBy || "N/A",
-          imeiNo: ticket.imeiNo || "000000000000000",
-          brand: ticket.brand || "N/A",
-          model: ticket.model || "N/A",
-          serialNo: ticket.serialNo || null,
-          softwareVersion: ticket.softwareVersion || null,
-          warranty: ticket.warranty || "Without Warranty",
-          battery: ticket.battery ?? false,
-          charger: ticket.charger ?? false,
-          simCard: ticket.simCard ?? false,
-          memoryCard: ticket.memoryCard ?? false,
-          loanEquipment: ticket.loanEquipment ?? false,
-          equipmentObs: ticket.equipmentObs || null,
-          repairObs: ticket.repairObs || null,
-          selectedServices: Array.isArray(ticket.selectedServices) ? ticket.selectedServices : (ticket.serviceName ? [ticket.serviceName] : []),
-          condition: ticket.condition || null,
-          problem: ticket.problem || "N/A",
-          price: ticket.price || 0,
-          budget: ticket.budget || null,
-          repairNumber: ticket.repairNumber || "N/A",
-          spu: ticket.spu || "N/A",
-          createdAt: ticket.createdAt || new Date().toISOString(),
-        }
+        const normalizedTicket = normalizeTicket(ticket)
         printReceiptWithLanguageSelection([normalizedTicket])
       }
     }
@@ -180,12 +173,31 @@ export default function DeviceDetailPage() {
               {t("page.tickets.subtitle")}
             </p>
           </div>
-          <Button variant="outline" onClick={handlePrint} className="border-blue-300 bg-white text-black hover:bg-blue-50">
-            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-            </svg>
-            {t("page.tickets.print")}
-          </Button>
+          <div className="flex gap-2">
+            {relatedDevicesCount > 1 ? (
+              <>
+                <Button variant="outline" onClick={handlePrintSingleDevice} className="border-blue-500 bg-blue-50 text-blue-700 hover:bg-blue-100 hover:border-blue-600">
+                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                  </svg>
+                  Print This Device
+                </Button>
+                <Button variant="outline" onClick={handlePrintAllDevices} className="border-blue-300 bg-white text-black hover:bg-blue-50">
+                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                  </svg>
+                  Print All Devices ({relatedDevicesCount})
+                </Button>
+              </>
+            ) : (
+              <Button variant="outline" onClick={handlePrintSingleDevice} className="border-blue-300 bg-white text-black hover:bg-blue-50">
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                </svg>
+                {t("page.tickets.print")}
+              </Button>
+            )}
+          </div>
         </div>
 
         <Card className="shadow-xl border border-blue-200 bg-white">
