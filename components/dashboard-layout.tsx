@@ -57,7 +57,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     // Skip subscription check for super admin (check role or email)
     const isSuperAdmin = 
       user?.role === "super_admin" || 
-      user?.role === "SUPER_ADMIN" || 
+      (typeof user?.role === "string" && user.role.toUpperCase() === "SUPER_ADMIN") || 
       user?.email === "superadmin@admin.com" ||
       user?.email?.toLowerCase() === "superadmin@admin.com"
     
@@ -115,7 +115,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   }, [user, loading, router])
 
   // Calculate isSuperAdmin early so it can be used in useEffect
-  const isSuperAdmin = user?.role === "super_admin" || user?.role === "SUPER_ADMIN" || user?.email === "superadmin@admin.com"
+  const isSuperAdmin = user?.role === "super_admin" || (typeof user?.role === "string" && user.role.toUpperCase() === "SUPER_ADMIN") || user?.email === "superadmin@admin.com"
 
   useEffect(() => {
     // Initialize subscription notification checks when user is logged in
@@ -270,7 +270,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         {/* Sidebar */}
         <aside className="w-72 bg-blue-500 border-r border-blue-600 min-h-[calc(100vh-140px)] p-6 shadow-lg">
           <nav className="space-y-2 animate-fade-in">
-            {(user?.role === "super_admin" || user?.role === "SUPER_ADMIN" || user?.email === "superadmin@admin.com") ? (
+            {(user?.role === "super_admin" || (typeof user?.role === "string" && user.role.toUpperCase() === "SUPER_ADMIN") || user?.email === "superadmin@admin.com") ? (
               <>
                 <div className="pt-2 mb-4">
                   <p className="text-xs font-semibold text-white uppercase tracking-wider px-3 mb-2 flex items-center gap-2">
@@ -431,7 +431,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         {!isSuperAdmin && subscription && subscription.paymentStatus && showPaymentBanner && (
           <div className="flex-1 px-8 pt-8 pb-0">
             <div className="container mx-auto max-w-7xl">
-              {subscription.paymentStatus === "REJECTED" || subscription.paymentStatus === "rejected" ? (
+              {(subscription.paymentStatus === "REJECTED" || (typeof subscription.paymentStatus === "string" && subscription.paymentStatus.toLowerCase() === "rejected")) ? (
                 <div className="bg-red-50 border-2 border-red-300 rounded-lg p-4 mb-4 flex items-center justify-between shadow-md">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
@@ -451,8 +451,8 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                     <X className="w-5 h-5" />
                   </Button>
                 </div>
-              ) : subscription.paymentStatus === "APPROVED" || subscription.paymentStatus === "approved" ? (
-                subscription.status === "ACTIVE" || subscription.status === "active" ? (
+              ) : (subscription.paymentStatus === "APPROVED" || (typeof subscription.paymentStatus === "string" && subscription.paymentStatus.toLowerCase() === "approved")) ? (
+                (subscription.status === "ACTIVE" || (typeof subscription.status === "string" && subscription.status.toLowerCase() === "active")) ? (
                   <div className="bg-green-50 border-2 border-green-300 rounded-lg p-4 mb-4 flex items-center justify-between shadow-md">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
@@ -473,7 +473,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                     </Button>
                   </div>
                 ) : null
-              ) : subscription.paymentStatus === "PENDING" || subscription.paymentStatus === "pending" ? (
+              ) : (subscription.paymentStatus === "PENDING" || (typeof subscription.paymentStatus === "string" && subscription.paymentStatus.toLowerCase() === "pending")) ? (
                 <div className="bg-yellow-50 border-2 border-yellow-300 rounded-lg p-4 mb-4 flex items-center justify-between shadow-md">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
