@@ -811,6 +811,90 @@ export function NewRepairTicketForm() {
     }
   }
 
+  // Print all devices with the same client ID (including old devices)
+  const handlePrintAllDevicesWithClientId = async (ticket: any) => {
+    if (!user?.id || !ticket?.clientId) {
+      toast.error("Unable to fetch devices. Please try again.")
+      return
+    }
+
+    try {
+      // Fetch all tickets for this user
+      const response = await fetch(`/api/repairs?userId=${user.id}`)
+      if (!response.ok) {
+        throw new Error("Failed to fetch tickets")
+      }
+      
+      const data = await response.json()
+      const allTickets = data.tickets || []
+      
+      // Normalize the client ID for comparison (same logic as in printReceiptForTickets)
+      const normalizeClientId = (id: string): string => {
+        const match = id.match(/CLI-?(\d+)/i) || id.match(/(\d+)/)
+        if (match) {
+          const num = parseInt(match[1], 10)
+          if (!isNaN(num) && num >= 1) {
+            return `CLI-${String(num).padStart(4, "0")}`
+          }
+        }
+        return id.toUpperCase()
+      }
+      
+      const normalizedClientId = normalizeClientId(ticket.clientId)
+      
+      // Find all devices with the same normalized client ID
+      const sameClientDevices = allTickets.filter((t: any) => {
+        if (!t.clientId) return false
+        const normalizedTicketClientId = normalizeClientId(t.clientId)
+        return normalizedTicketClientId === normalizedClientId
+      })
+      
+      if (sameClientDevices.length === 0) {
+        toast.error("No devices found with this client ID.")
+        return
+      }
+      
+      console.log(`[NewRepairTicketForm] Printing receipt for ${sameClientDevices.length} device(s) with clientId: ${normalizedClientId}`)
+      
+      // Normalize all devices
+      const normalizedTickets = sameClientDevices.map((device: any) => ({
+        ...device,
+        clientId: device.clientId || null,
+        customerName: device.customerName || "N/A",
+        contact: device.contact || "N/A",
+        receivedBy: device.receivedBy || "N/A",
+        imeiNo: device.imeiNo || "000000000000000",
+        brand: device.brand || "N/A",
+        model: device.model || "N/A",
+        serialNo: device.serialNo || null,
+        softwareVersion: device.softwareVersion || null,
+        warranty: device.warranty || "Without Warranty",
+        battery: device.battery ?? false,
+        charger: device.charger ?? false,
+        simCard: device.simCard ?? false,
+        simTray: device.simTray ?? false,
+        memoryCard: device.memoryCard ?? false,
+        loanEquipment: device.loanEquipment ?? false,
+        equipmentObs: device.equipmentObs || null,
+        repairObs: device.repairObs || null,
+        selectedServices: Array.isArray(device.selectedServices) ? device.selectedServices : (device.serviceName ? [device.serviceName] : []),
+        condition: device.condition || null,
+        problem: device.problem || "N/A",
+        price: device.price || 0,
+        budget: device.budget || null,
+        repairNumber: device.repairNumber || "N/A",
+        spu: device.spu || "N/A",
+        createdAt: device.createdAt || new Date().toISOString(),
+      }))
+      
+      printReceipt(normalizedTickets)
+      toast.success(`Printing receipt for ${sameClientDevices.length} device(s) with client ID ${normalizedClientId}`)
+    } catch (error) {
+      console.error("[NewRepairTicketForm] Error loading tickets for print:", error)
+      toast.error("Failed to load devices. Please try again.")
+    }
+  }
+
   // Print single device receipt
   const handlePrintSingleDevice = (ticket: any) => {
     // Normalize the ticket to ensure all fields exist
