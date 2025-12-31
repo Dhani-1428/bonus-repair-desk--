@@ -26,7 +26,6 @@ import { useTranslation } from "@/components/language-provider"
 import { toast } from "sonner"
 import { getUserData, setUserData } from "@/lib/storage"
 import { exportToCSV } from "@/lib/export-utils"
-import { printReceiptWithLanguageSelection } from "@/components/new-repair-ticket-form"
 
 type SearchRepairTicketsProps = {
   initialStatusFilter?: string
