@@ -2474,9 +2474,11 @@ export function printReceiptForTickets(
   console.log(`[printReceiptForTickets] Processing ${validTickets.length} ticket(s)`)
   
   // Group tickets by batchId if available, otherwise by clientId and customerName (devices added together)
+  // For multiple devices with same clientId, group them together even if no batchId
   const groupedTickets: { [key: string]: any[] } = {}
   validTickets.forEach(ticket => {
     // Use batchId if available, otherwise use clientId and customerName
+    // This ensures devices with same clientId are grouped together
     const key = ticket.batchId || `${ticket.clientId || ''}_${ticket.customerName || ''}`
     if (!groupedTickets[key]) {
       groupedTickets[key] = []
@@ -2485,10 +2487,30 @@ export function printReceiptForTickets(
     console.log(`[printReceiptForTickets] Added ticket ${ticket.repairNumber || ticket.id} to group ${key}`)
   })
   
-  console.log(`[printReceiptForTickets] Grouped into ${Object.keys(groupedTickets).length} group(s)`)
+  // Ensure proper grouping: if multiple tickets have same clientId and customerName but different batchIds,
+  // merge them into one group for printing
+  const mergedGroups: { [key: string]: any[] } = {}
+  Object.entries(groupedTickets).forEach(([key, tickets]) => {
+    if (tickets.length > 0) {
+      const firstTicket = tickets[0]
+      // Create a merge key based on clientId and customerName
+      const mergeKey = `${firstTicket.clientId || ''}_${firstTicket.customerName || ''}`
+      
+      if (!mergedGroups[mergeKey]) {
+        mergedGroups[mergeKey] = []
+      }
+      // Add all tickets from this group to the merged group
+      mergedGroups[mergeKey].push(...tickets)
+    }
+  })
+  
+  // Use merged groups for printing
+  const finalGroupedTickets = mergedGroups
+  
+  console.log(`[printReceiptForTickets] Grouped into ${Object.keys(finalGroupedTickets).length} group(s)`)
   
   // Generate receipts - one receipt per group (devices added together share one receipt)
-  const receiptsHTML = Object.values(groupedTickets).map(ticketGroup => {
+  const receiptsHTML = Object.values(finalGroupedTickets).map(ticketGroup => {
     console.log(`[printReceiptForTickets] Processing group with ${ticketGroup.length} ticket(s)`)
     // Sort tickets by creation date to maintain order
     const sortedTickets = [...ticketGroup].sort((a, b) => {
