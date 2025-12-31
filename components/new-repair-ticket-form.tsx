@@ -123,6 +123,14 @@ export function NewRepairTicketForm() {
     }
   }, [user?.id])
 
+  // Helper function to normalize client ID for comparison
+  const normalizeClientId = (clientId: string | null | undefined): string => {
+    if (!clientId) return ""
+    // Remove CLI- prefix and leading zeros, then format consistently
+    const cleaned = clientId.replace(/^CLI-?/i, "").replace(/^0+/, "") || "0"
+    return `CLI-${cleaned.padStart(4, "0")}`
+  }
+
   // Load existing clients for search/autocomplete
   const loadExistingClients = async () => {
     if (!user?.id) return
@@ -131,17 +139,34 @@ export function NewRepairTicketForm() {
       if (response.ok) {
         const data = await response.json()
         const tickets = Array.isArray(data.tickets) ? data.tickets : []
-        // Get unique clients (by clientId and customerName combination)
+        // Get unique clients by clientId only (use most recent ticket for each clientId)
         const uniqueClients = new Map()
         tickets.forEach((ticket: any) => {
-          if (ticket.clientId && ticket.customerName) {
-            const key = `${ticket.clientId}_${ticket.customerName}`
-            if (!uniqueClients.has(key)) {
-              uniqueClients.set(key, {
-                clientId: ticket.clientId,
-                customerName: ticket.customerName,
+          if (ticket.clientId) {
+            const normalizedId = normalizeClientId(ticket.clientId)
+            // If we haven't seen this client ID, or this ticket is newer, use it
+            if (!uniqueClients.has(normalizedId)) {
+              uniqueClients.set(normalizedId, {
+                clientId: ticket.clientId, // Keep original format
+                normalizedId: normalizedId,
+                customerName: ticket.customerName || "",
                 contact: ticket.contact || "",
+                createdAt: ticket.createdAt || new Date().toISOString(),
               })
+            } else {
+              // If this ticket is newer, update the client info
+              const existing = uniqueClients.get(normalizedId)
+              const existingDate = new Date(existing.createdAt || 0).getTime()
+              const newDate = new Date(ticket.createdAt || 0).getTime()
+              if (newDate > existingDate) {
+                uniqueClients.set(normalizedId, {
+                  clientId: ticket.clientId,
+                  normalizedId: normalizedId,
+                  customerName: ticket.customerName || "",
+                  contact: ticket.contact || "",
+                  createdAt: ticket.createdAt || new Date().toISOString(),
+                })
+              }
             }
           }
         })
@@ -159,11 +184,14 @@ export function NewRepairTicketForm() {
       return []
     }
     const term = searchTerm.toLowerCase().trim()
-    return existingClients.filter((client: any) => 
-      client.customerName?.toLowerCase().includes(term) ||
-      client.clientId?.toLowerCase().includes(term) ||
-      client.contact?.includes(term)
-    )
+    const normalizedTerm = normalizeClientId(searchTerm)
+    return existingClients.filter((client: any) => {
+      const normalizedClientId = normalizeClientId(client.clientId)
+      return client.customerName?.toLowerCase().includes(term) ||
+             client.clientId?.toLowerCase().includes(term) ||
+             normalizedClientId.toLowerCase().includes(normalizedTerm.toLowerCase()) ||
+             client.contact?.includes(term)
+    })
   }
 
   // Handle customer name change - check for existing client
@@ -186,18 +214,33 @@ export function NewRepairTicketForm() {
   const handleClientIdChange = (value: string) => {
     setClientId(value)
     if (value.trim()) {
-      const matchingClients = existingClients.filter((client: any) => 
-        client.clientId?.toLowerCase() === value.toLowerCase().trim()
-      )
+      const normalizedInput = normalizeClientId(value)
+      const matchingClients = existingClients.filter((client: any) => {
+        const normalizedClientId = normalizeClientId(client.clientId)
+        return normalizedClientId === normalizedInput || 
+               client.clientId?.toLowerCase() === value.toLowerCase().trim() ||
+               normalizedClientId.toLowerCase() === value.toLowerCase().trim()
+      })
       if (matchingClients.length > 0) {
-        // Auto-fill customer name and contact if client ID matches
+        // Always auto-fill customer name and contact if client ID matches (use most recent)
         const matchedClient = matchingClients[0]
-        if (!customerName) {
-          setCustomerName(matchedClient.customerName || "")
+        // If multiple matches, use the one with most recent createdAt
+        const bestMatch = matchingClients.length > 1 
+          ? matchingClients.sort((a: any, b: any) => {
+              const dateA = new Date(a.createdAt || 0).getTime()
+              const dateB = new Date(b.createdAt || 0).getTime()
+              return dateB - dateA
+            })[0]
+          : matchedClient
+        
+        // Always update to match the existing client's information
+        setCustomerName(bestMatch.customerName || "")
+        setContact(bestMatch.contact || "")
+        // Also update clientId to match the stored format
+        if (bestMatch.clientId) {
+          setClientId(bestMatch.clientId)
         }
-        if (!contact && matchedClient.contact) {
-          setContact(matchedClient.contact)
-        }
+        toast.success(`Auto-filled client information for ${bestMatch.customerName} (${bestMatch.clientId})`)
       }
     }
   }
@@ -2200,11 +2243,21 @@ export function printReceiptForTickets(
   const generateReceiptHTMLForMultipleDevices = (tickets: any[], copyType: 'CLIENT' | 'ADMIN' = 'CLIENT') => {
     if (tickets.length === 0) return ''
     
-    const firstTicket = tickets[0]
-    const ticketClientId = firstTicket.clientId || "N/A"
-    const ticketCustomerName = firstTicket.customerName || "N/A"
-    const ticketContact = firstTicket.contact || "N/A"
-    const ticketReceivedBy = firstTicket.receivedBy || "N/A"
+    // Use the most recent ticket's client information, or the first one if all have same clientId
+    // Sort by createdAt descending to get most recent first
+    const sortedByDate = [...tickets].sort((a, b) => {
+      const dateA = new Date(a.createdAt || 0).getTime()
+      const dateB = new Date(b.createdAt || 0).getTime()
+      return dateB - dateA
+    })
+    
+    // Find the ticket with the most complete client information (prefer non-empty values)
+    const bestTicket = sortedByDate.find(t => t.customerName && t.customerName.trim() !== "") || sortedByDate[0]
+    
+    const ticketClientId = bestTicket.clientId || tickets[0].clientId || "N/A"
+    const ticketCustomerName = bestTicket.customerName || tickets[0].customerName || "N/A"
+    const ticketContact = bestTicket.contact || tickets[0].contact || "N/A"
+    const ticketReceivedBy = bestTicket.receivedBy || tickets[0].receivedBy || "N/A"
     const entryDate = new Date(firstTicket?.createdAt || Date.now())
     const formattedDate = entryDate.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })
     const formattedTime = entryDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
@@ -2473,39 +2526,33 @@ export function printReceiptForTickets(
   
   console.log(`[printReceiptForTickets] Processing ${validTickets.length} ticket(s)`)
   
-  // Group tickets by batchId if available, otherwise by clientId and customerName (devices added together)
-  // For multiple devices with same clientId, group them together even if no batchId
+  // Helper function to normalize client ID for grouping
+  const normalizeClientIdForGrouping = (clientId: string | null | undefined): string => {
+    if (!clientId) return ""
+    // Remove CLI- prefix and leading zeros, then format consistently
+    const cleaned = clientId.replace(/^CLI-?/i, "").replace(/^0+/, "") || "0"
+    return `CLI-${cleaned.padStart(4, "0")}`
+  }
+
+  // Group tickets by clientId (normalized) - all devices with same clientId should print together
+  // This ensures that even if devices were added at different times or have different batchIds,
+  // they will be grouped together if they have the same clientId
   const groupedTickets: { [key: string]: any[] } = {}
   validTickets.forEach(ticket => {
-    // Use batchId if available, otherwise use clientId and customerName
-    // This ensures devices with same clientId are grouped together
-    const key = ticket.batchId || `${ticket.clientId || ''}_${ticket.customerName || ''}`
+    // Normalize clientId for consistent grouping
+    const normalizedClientId = normalizeClientIdForGrouping(ticket.clientId)
+    // Use normalized clientId as the grouping key
+    const key = normalizedClientId || `no-client-${ticket.id}`
+    
     if (!groupedTickets[key]) {
       groupedTickets[key] = []
     }
     groupedTickets[key].push(ticket)
-    console.log(`[printReceiptForTickets] Added ticket ${ticket.repairNumber || ticket.id} to group ${key}`)
+    console.log(`[printReceiptForTickets] Added ticket ${ticket.repairNumber || ticket.id} (clientId: ${ticket.clientId}, normalized: ${normalizedClientId}) to group ${key}`)
   })
   
-  // Ensure proper grouping: if multiple tickets have same clientId and customerName but different batchIds,
-  // merge them into one group for printing
-  const mergedGroups: { [key: string]: any[] } = {}
-  Object.entries(groupedTickets).forEach(([key, tickets]) => {
-    if (tickets.length > 0) {
-      const firstTicket = tickets[0]
-      // Create a merge key based on clientId and customerName
-      const mergeKey = `${firstTicket.clientId || ''}_${firstTicket.customerName || ''}`
-      
-      if (!mergedGroups[mergeKey]) {
-        mergedGroups[mergeKey] = []
-      }
-      // Add all tickets from this group to the merged group
-      mergedGroups[mergeKey].push(...tickets)
-    }
-  })
-  
-  // Use merged groups for printing
-  const finalGroupedTickets = mergedGroups
+  // Use grouped tickets for printing
+  const finalGroupedTickets = groupedTickets
   
   console.log(`[printReceiptForTickets] Grouped into ${Object.keys(finalGroupedTickets).length} group(s)`)
   
