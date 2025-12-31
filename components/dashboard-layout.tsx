@@ -473,7 +473,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                     </Button>
                   </div>
                 ) : null
-              ) : (subscription.paymentStatus === "PENDING" || (typeof subscription.paymentStatus === "string" && subscription.paymentStatus.toLowerCase() === "pending")) ? (
+              ) : (subscription.paymentStatus === "PENDING" || (subscription.paymentStatus && typeof subscription.paymentStatus === "string" && subscription.paymentStatus.toLowerCase() === "pending")) ? (
                 <div className="bg-yellow-50 border-2 border-yellow-300 rounded-lg p-4 mb-4 flex items-center justify-between shadow-md">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
