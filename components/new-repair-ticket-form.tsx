@@ -2258,7 +2258,7 @@ export function printReceiptForTickets(
     const ticketCustomerName = bestTicket.customerName || tickets[0].customerName || "N/A"
     const ticketContact = bestTicket.contact || tickets[0].contact || "N/A"
     const ticketReceivedBy = bestTicket.receivedBy || tickets[0].receivedBy || "N/A"
-    const entryDate = new Date(firstTicket?.createdAt || Date.now())
+    const entryDate = new Date(bestTicket?.createdAt || tickets[0]?.createdAt || Date.now())
     const formattedDate = entryDate.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })
     const formattedTime = entryDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
     
