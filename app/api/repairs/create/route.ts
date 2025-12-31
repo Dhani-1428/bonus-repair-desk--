@@ -217,6 +217,8 @@ export async function POST(request: NextRequest) {
     }
 
     let ticket: any = null // Declare ticket variable before use
+    let repairId: number | null = null // Declare repairId before use
+    let repairNumber: string | null = null // Declare repairNumber before use
     try {
       // Create repair ticket in tenant-specific table
       // Insert WITHOUT repairNumber first to get auto-increment repairId
@@ -265,7 +267,7 @@ export async function POST(request: NextRequest) {
         ) as mysql.ResultSetHeader[]
 
         // Get the auto-increment repairId from insert result
-        let repairId = insertResult.insertId
+        repairId = insertResult.insertId
 
         if (!repairId) {
           // If we can't get insertId, fetch it from the database
@@ -281,7 +283,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Generate repairNumber starting from 260001 (repairId + 260000)
-        const repairNumber = (repairId + 260000).toString()
+        repairNumber = (repairId + 260000).toString()
 
         // Update the row with repairNumber
         await connection.execute(
@@ -304,7 +306,11 @@ export async function POST(request: NextRequest) {
       )
       
       console.log(`[API] ✅ Repair ticket saved successfully to tenant table: ${tables.repairTickets}`)
-      console.log(`[API] Ticket ID: ${ticketId}, Repair ID: ${repairId}, Repair Number: ${repairNumber}, Tenant: ${user.tenantId}`)
+      if (repairId && repairNumber) {
+        console.log(`[API] Ticket ID: ${ticketId}, Repair ID: ${repairId}, Repair Number: ${repairNumber}, Tenant: ${user.tenantId}`)
+      } else {
+        console.log(`[API] Ticket ID: ${ticketId}, Tenant: ${user.tenantId}`)
+      }
       
     } catch (error: any) {
       console.error("[API] Error creating repair ticket:", error)

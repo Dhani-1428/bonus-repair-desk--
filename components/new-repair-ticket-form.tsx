@@ -663,7 +663,9 @@ export function NewRepairTicketForm() {
       }
 
       console.log(`[NewRepairTicketForm] Successfully created ${createdTickets.length} device ticket(s)`)
-      toast.success(`${createdTickets.length} device${createdTickets.length > 1 ? "s" : ""} entry created successfully!`)
+      toast.success(`✅ Successfully added ${createdTickets.length} device${createdTickets.length > 1 ? "s" : ""}!`, {
+        duration: 3000,
+      })
 
       // Store created tickets details with batch ID for tracking
       // Use the currentBatchId that was already generated above
