@@ -12,6 +12,7 @@ import { getAllSubscriptions, getExpiringSubscriptions } from "@/lib/subscriptio
 import { isSuperAdmin } from "@/lib/storage"
 import { PLAN_PRICING } from "@/lib/constants"
 import Link from "next/link"
+import { toast } from "sonner"
 
 export default function SuperAdminDashboard() {
   const router = useRouter()
@@ -140,6 +141,31 @@ export default function SuperAdminDashboard() {
 
     // Email notifications are now handled automatically by the subscription-notifications system
     // which runs in the dashboard layout component
+  }
+
+  const runUsersTableMigration = async () => {
+    try {
+      toast.loading("Running migration...", { id: "migration" })
+      
+      const response = await fetch("/api/migrate/users-table", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        toast.success(data.message || "Migration completed successfully!", { id: "migration" })
+        console.log("[SuperAdmin] Migration result:", data)
+      } else {
+        toast.error(data.error || "Migration failed", { id: "migration" })
+      }
+    } catch (error: any) {
+      console.error("[SuperAdmin] Migration error:", error)
+      toast.error("Failed to run migration: " + (error.message || "Unknown error"), { id: "migration" })
+    }
   }
 
   if (loading || !user) {
@@ -337,6 +363,28 @@ export default function SuperAdminDashboard() {
                   Manage Payments
                 </Button>
               </Link>
+            </CardContent>
+          </Card>
+
+          <Card className="shadow-xl border-0 bg-white hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 animate-fade-in-up" style={{ animationDelay: "0.9s" }}>
+            <CardHeader className="bg-gradient-to-r from-orange-600 to-orange-700 border-b border-orange-800 rounded-t-lg">
+              <CardTitle className="text-xl text-white flex items-center gap-2">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Database Migration
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <p className="text-gray-600 mb-4">
+                Add company information columns (address, companyEmail, website) to the users table.
+              </p>
+              <Button 
+                onClick={runUsersTableMigration}
+                className="w-full bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+              >
+                Run Users Table Migration
+              </Button>
             </CardContent>
           </Card>
         </div>
