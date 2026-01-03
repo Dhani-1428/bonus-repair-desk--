@@ -930,7 +930,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                           €{Number.parseFloat(ticket.price || 0).toFixed(2)}
                         </td>
                         <td className="px-0.5 py-1.5 text-center whitespace-nowrap border-r border-blue-300" onClick={(e) => e.stopPropagation()}>
-                          <div className="flex items-center justify-center gap-0.5 flex-nowrap">
+                          <div className="flex items-center justify-center gap-0 flex-nowrap">
                             <Button
                               variant="ghost"
                               size="sm"
