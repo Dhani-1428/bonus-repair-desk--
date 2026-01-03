@@ -12,6 +12,11 @@ export interface User {
   contactNumber?: string
   role?: "admin" | "member" | "super_admin"
   createdAt: string
+  address?: string | null
+  companyEmail?: string | null
+  website?: string | null
+  vatNumber?: string | null
+  tenantId?: string
 }
 
 export interface Subscription {
