@@ -326,7 +326,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           address,
           companyEmail,
           website,
-          vatNumber,
         }),
       })
 

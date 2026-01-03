@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
     let user
     try {
       user = await queryOne(
-        `SELECT id, name, email, role, shopName, contactNumber, tenantId, createdAt 
+        `SELECT id, name, email, role, shopName, contactNumber, tenantId, address, companyEmail, website, createdAt 
          FROM users WHERE id = ?`,
         [userId]
       )
