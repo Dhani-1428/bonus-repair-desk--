@@ -2316,6 +2316,8 @@ export async function printReceiptForTickets(
     }
   }
   
+  // Get company information from user database record
+  // Display order on receipt: 1. Shop/Company Name, 2. Full Address, 3. Email, 4. Website (if exists), 5. Contact Number
   const shopName = user?.shopName || user?.name || "Your Company Name"
   const contactNumber = user?.contactNumber || "N/A"
   
@@ -2326,6 +2328,7 @@ export async function printReceiptForTickets(
   const companyPhone2 = null // Not stored in user object
   const companyEmail = user?.companyEmail || ""
   // Ensure website has https:// prefix if not already present
+  // Website is optional - only displayed if user added it during signup
   let companyWebsite = user?.website || ""
   if (companyWebsite && !companyWebsite.startsWith('http://') && !companyWebsite.startsWith('https://')) {
     companyWebsite = companyWebsite.startsWith('www.') ? 'https://' + companyWebsite : 'https://' + companyWebsite
