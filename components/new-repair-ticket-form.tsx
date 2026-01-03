@@ -537,98 +537,98 @@ export function NewRepairTicketForm() {
           }
 
           let data: any
+        try {
+          const responseText = await response.text()
+          if (!responseText) {
+            throw new Error("Empty response from server")
+          }
           try {
-            const responseText = await response.text()
-            if (!responseText) {
-              throw new Error("Empty response from server")
-            }
-            try {
-              data = JSON.parse(responseText)
-            } catch (parseError) {
+            data = JSON.parse(responseText)
+          } catch (parseError) {
               console.error(`[NewRepairTicketForm] Failed to parse JSON response for device ${deviceNumber}:`, parseError)
               console.error(`[NewRepairTicketForm] Response text:`, responseText)
               errors.push(`Device ${deviceNumber}: Invalid server response - ${responseText.substring(0, 100)}`)
               continue
-            }
-          } catch (jsonError: any) {
+          }
+        } catch (jsonError: any) {
             console.error(`[NewRepairTicketForm] Failed to read response for device ${deviceNumber}:`, jsonError)
             errors.push(`Device ${deviceNumber}: ${jsonError.message || "Failed to read server response"}`)
             continue
-          }
+        }
 
-          if (!response.ok) {
-            // Extract error message - prioritize specific error messages
-            let errorMessage = data?.error || data?.message || `HTTP ${response.status}: ${response.statusText}`
-            
-            // If there are details, append them for better debugging
-            if (data?.details && typeof data.details === 'object') {
-              const detailsStr = Object.entries(data.details)
-                .map(([key, value]) => `${key}: ${value}`)
-                .join(', ')
-              if (detailsStr) {
+        if (!response.ok) {
+          // Extract error message - prioritize specific error messages
+          let errorMessage = data?.error || data?.message || `HTTP ${response.status}: ${response.statusText}`
+          
+          // If there are details, append them for better debugging
+          if (data?.details && typeof data.details === 'object') {
+            const detailsStr = Object.entries(data.details)
+              .map(([key, value]) => `${key}: ${value}`)
+              .join(', ')
+            if (detailsStr) {
                 console.error(`[NewRepairTicketForm] Error details for device ${deviceNumber}:`, detailsStr)
                 errorMessage += ` (${detailsStr})`
-              }
             }
-            
+          }
+          
             console.error(`[NewRepairTicketForm] API Error for device ${deviceNumber}:`, {
-              status: response.status,
-              statusText: response.statusText,
-              data: data,
-              error: errorMessage
-            })
-            
+            status: response.status,
+            statusText: response.statusText,
+            data: data,
+            error: errorMessage
+          })
+          
             // Collect error but continue processing other devices
             errors.push(`Device ${deviceNumber}: ${errorMessage}`)
             continue
-          }
+        }
 
-          // Normalize ticket data - parse JSON fields if needed
-          const ticket = data?.ticket || data
-          if (ticket && typeof ticket === 'object') {
-            // Parse selectedServices if it's a string
-            if (typeof ticket.selectedServices === 'string') {
-              try {
-                ticket.selectedServices = JSON.parse(ticket.selectedServices)
-              } catch (e) {
+        // Normalize ticket data - parse JSON fields if needed
+        const ticket = data?.ticket || data
+        if (ticket && typeof ticket === 'object') {
+          // Parse selectedServices if it's a string
+          if (typeof ticket.selectedServices === 'string') {
+            try {
+              ticket.selectedServices = JSON.parse(ticket.selectedServices)
+            } catch (e) {
                 console.error(`[NewRepairTicketForm] Error parsing selectedServices for device ${deviceNumber}:`, e)
-                ticket.selectedServices = []
-              }
+              ticket.selectedServices = []
             }
-            
-            // Ensure all required fields exist
-            const normalizedTicket = {
-              ...ticket,
-              clientId: ticket.clientId || clientId.trim(),
-              customerName: ticket.customerName || customerName,
-              contact: ticket.contact || contact,
-              receivedBy: ticket.receivedBy || receivedBy.trim(),
+          }
+          
+          // Ensure all required fields exist
+          const normalizedTicket = {
+            ...ticket,
+            clientId: ticket.clientId || clientId.trim(),
+            customerName: ticket.customerName || customerName,
+            contact: ticket.contact || contact,
+            receivedBy: ticket.receivedBy || receivedBy.trim(),
               imeiNo: ticket.imeiNo || deviceImei || "",
-              brand: ticket.brand || device.brand || "N/A",
-              model: ticket.model || device.model,
-              serialNo: ticket.serialNo || null,
-              warranty: ticket.warranty || t("form.withoutWarranty"),
-              simCard: ticket.simCard ?? false,
-              simTray: ticket.simTray ?? false,
-              memoryCard: ticket.memoryCard ?? false,
-              charger: ticket.charger ?? false,
-              battery: ticket.battery ?? false,
-              waterDamaged: ticket.waterDamaged ?? false,
-              loanEquipment: false,
-              equipmentObs: ticket.equipmentObs || null,
-              repairObs: ticket.repairObs || null,
-              selectedServices: Array.isArray(ticket.selectedServices) ? ticket.selectedServices : (device.selectedServices || []),
-              condition: ticket.condition || null,
-              problem: ticket.problem || device.problem,
+            brand: ticket.brand || device.brand || "N/A",
+            model: ticket.model || device.model,
+            serialNo: ticket.serialNo || null,
+            warranty: ticket.warranty || t("form.withoutWarranty"),
+            simCard: ticket.simCard ?? false,
+            simTray: ticket.simTray ?? false,
+            memoryCard: ticket.memoryCard ?? false,
+            charger: ticket.charger ?? false,
+            battery: ticket.battery ?? false,
+            waterDamaged: ticket.waterDamaged ?? false,
+            loanEquipment: false,
+            equipmentObs: ticket.equipmentObs || null,
+            repairObs: ticket.repairObs || null,
+            selectedServices: Array.isArray(ticket.selectedServices) ? ticket.selectedServices : (device.selectedServices || []),
+            condition: ticket.condition || null,
+            problem: ticket.problem || device.problem,
               price: ticket.price || parseFloat(device.price) || 0,
-              budget: ticket.budget || (device.budget ? parseFloat(device.budget) : null),
-              repairNumber: ticket.repairNumber || "N/A",
-              createdAt: ticket.createdAt || new Date().toISOString(),
-            }
-            
-            createdTickets.push(normalizedTicket)
+            budget: ticket.budget || (device.budget ? parseFloat(device.budget) : null),
+            repairNumber: ticket.repairNumber || "N/A",
+            createdAt: ticket.createdAt || new Date().toISOString(),
+          }
+          
+          createdTickets.push(normalizedTicket)
             console.log(`[NewRepairTicketForm] ✅ Successfully created ticket for device ${deviceNumber}: ${normalizedTicket.repairNumber}`)
-          } else {
+        } else {
             console.error(`[NewRepairTicketForm] No valid ticket data returned from server for device ${deviceNumber}. Response data:`, data)
             errors.push(`Device ${deviceNumber}: No ticket data returned from server. Response: ${JSON.stringify(data).substring(0, 200)}`)
           }
@@ -994,9 +994,9 @@ export function NewRepairTicketForm() {
                 <Label htmlFor="customerName" className="text-black text-base font-semibold">{t("form.clientName")} *</Label>
                 {devices.length === 1 ? (
                   <div className="relative">
-                    <Input
-                      id="customerName"
-                      value={customerName}
+                  <Input
+                    id="customerName"
+                    value={customerName}
                       onChange={(e) => handleCustomerNameChange(e.target.value)}
                       onFocus={() => {
                         if (customerName.trim()) {
@@ -1010,7 +1010,7 @@ export function NewRepairTicketForm() {
                         // Delay to allow click on suggestion
                         setTimeout(() => setShowClientSuggestions(false), 200)
                       }}
-                      required
+                    required
                       className="bg-white border-blue-200 text-black focus:border-blue-500 h-12 text-lg"
                     />
                     {showClientSuggestions && searchExistingClients(customerName).length > 0 && (
@@ -1663,15 +1663,15 @@ export function NewRepairTicketForm() {
                   </Button>
                 )}
                 {createdTicketsDetails.length === 1 && (
-                  <Button
-                    onClick={handlePrintDetails}
-                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-                  >
-                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                    </svg>
-                    Print Receipt
-                  </Button>
+                <Button
+                  onClick={handlePrintDetails}
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                >
+                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                  </svg>
+                  Print Receipt
+                </Button>
                 )}
                 <Button
                   onClick={handleContinue}
@@ -2169,7 +2169,7 @@ function LanguageSelectionDialog({
 }
 
 // Wrapper function that shows language selection dialog first
-export function printReceiptWithLanguageSelection(
+export async function printReceiptWithLanguageSelection(
   tickets: any[], 
   preferredPrinter: string | null = null
 ) {
@@ -2274,7 +2274,7 @@ export function printReceiptWithLanguageSelection(
         document.body.removeChild(dialog)
       }
       if (lang) {
-        printReceiptForTickets(tickets, preferredPrinter, lang)
+        await printReceiptForTickets(tickets, preferredPrinter, lang)
       }
     })
   })
