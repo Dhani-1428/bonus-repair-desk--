@@ -12,6 +12,11 @@ export interface User {
   contactNumber?: string
   createdAt: string
   updatedAt?: string
+  address?: string | null
+  companyEmail?: string | null
+  website?: string | null
+  vatNumber?: string | null
+  tenantId?: string
 }
 
 // API base URL
