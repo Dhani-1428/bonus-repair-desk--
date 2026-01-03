@@ -2293,38 +2293,46 @@ export async function printReceiptForTickets(
     return
   }
   
-  // Get current user - try to get fresh data from API if available, otherwise use sessionStorage
+  // Get current user - always fetch fresh data from API to ensure we have latest company information
   let user = getCurrentUser()
   
-  // If user data is missing company info fields, try to fetch fresh data from API
-  if (user?.id && (!user.address || !user.companyEmail || !user.website || !user.contactNumber)) {
+  // Always try to fetch fresh user data from API to get latest company information
+  if (user?.id) {
     try {
       const response = await fetch(`/api/users?id=${user.id}`)
       if (response.ok) {
         const data = await response.json()
         if (data.user) {
-          user = { ...user, ...data.user } // Merge fresh data
+          // Merge fresh data from database with existing user data
+          user = { ...user, ...data.user }
           // Update sessionStorage with complete user data
           if (typeof window !== "undefined") {
             sessionStorage.setItem("user", JSON.stringify(user))
           }
+          console.log("[printReceiptForTickets] Fetched fresh user data:", {
+            shopName: user?.shopName,
+            address: user?.address,
+            companyEmail: user?.companyEmail,
+            website: user?.website,
+            contactNumber: user?.contactNumber
+          })
         }
       }
     } catch (error) {
       console.error("[printReceiptForTickets] Error fetching fresh user data:", error)
-      // Continue with existing user data
+      // Continue with existing user data if API call fails
     }
   }
   
   // Get company information from user database record
   // Display order on receipt: 1. Shop/Company Name, 2. Full Address, 3. Email, 4. Website (if exists), 5. Contact Number
   const shopName = user?.shopName || user?.name || "Your Company Name"
-  const contactNumber = user?.contactNumber || "N/A"
+  const contactNumber = user?.contactNumber || ""
   
   // Get company info from user object (from database) - this ensures consistency across devices
   // Priority: user's database fields > fallback to empty strings (no hardcoded defaults)
   const companyAddress = user?.address || ""
-  const companyPhone1 = contactNumber && contactNumber !== "N/A" ? contactNumber : ""
+  const companyPhone1 = contactNumber || ""
   const companyPhone2 = null // Not stored in user object
   const companyEmail = user?.companyEmail || ""
   // Ensure website has https:// prefix if not already present
@@ -2333,6 +2341,15 @@ export async function printReceiptForTickets(
   if (companyWebsite && !companyWebsite.startsWith('http://') && !companyWebsite.startsWith('https://')) {
     companyWebsite = companyWebsite.startsWith('www.') ? 'https://' + companyWebsite : 'https://' + companyWebsite
   }
+  
+  // Debug: Log company information to help troubleshoot
+  console.log("[printReceiptForTickets] Company information for receipt:", {
+    shopName,
+    companyAddress: companyAddress || "(empty)",
+    companyEmail: companyEmail || "(empty)",
+    companyWebsite: companyWebsite || "(empty)",
+    companyPhone1: companyPhone1 || "(empty)"
+  })
 
   const printWindow = window.open("", "_blank")
   if (!printWindow) {
