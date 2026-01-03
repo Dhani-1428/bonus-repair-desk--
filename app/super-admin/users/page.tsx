@@ -65,6 +65,9 @@ export default function UsersInformationPage() {
     email: "",
     shopName: "",
     contactNumber: "",
+    address: "",
+    companyEmail: "",
+    website: "",
   })
   const [isDeleting, setIsDeleting] = useState(false)
   const [userToDelete, setUserToDelete] = useState<string | null>(null)
@@ -425,6 +428,9 @@ export default function UsersInformationPage() {
                                   email: user.email || "",
                                   shopName: user.shopName || "",
                                   contactNumber: user.contactNumber || "",
+                                  address: user.address || "",
+                                  companyEmail: user.companyEmail || "",
+                                  website: user.website || "",
                                 })
                                 setSelectedUserForEdit(analytics)
                                 setIsEditDialogOpen(true)
@@ -679,8 +685,46 @@ export default function UsersInformationPage() {
                     onChange={(e) => setEditFormData(prev => ({ ...prev, contactNumber: e.target.value }))}
                     className="bg-white border-blue-300 text-black"
                   />
-                        </div>
-                      </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-address" className="text-black">
+                    Address
+                  </Label>
+                  <Input
+                    id="edit-address"
+                    value={editFormData.address}
+                    onChange={(e) => setEditFormData(prev => ({ ...prev, address: e.target.value }))}
+                    className="bg-white border-blue-300 text-black"
+                    placeholder="Full address"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-companyEmail" className="text-black">
+                    Company Email
+                  </Label>
+                  <Input
+                    id="edit-companyEmail"
+                    type="email"
+                    value={editFormData.companyEmail}
+                    onChange={(e) => setEditFormData(prev => ({ ...prev, companyEmail: e.target.value }))}
+                    className="bg-white border-blue-300 text-black"
+                    placeholder="company@example.com"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-website" className="text-black">
+                    Website
+                  </Label>
+                  <Input
+                    id="edit-website"
+                    type="url"
+                    value={editFormData.website}
+                    onChange={(e) => setEditFormData(prev => ({ ...prev, website: e.target.value }))}
+                    className="bg-white border-blue-300 text-black"
+                    placeholder="https://example.com"
+                  />
+                </div>
+              </div>
               <div className="flex gap-2 pt-4 border-t border-blue-200">
                 <Button
                   variant="outline"
@@ -710,6 +754,9 @@ export default function UsersInformationPage() {
                           email: editFormData.email,
                           shopName: editFormData.shopName || null,
                           contactNumber: editFormData.contactNumber || null,
+                          address: editFormData.address || null,
+                          companyEmail: editFormData.companyEmail || null,
+                          website: editFormData.website || null,
                         }),
                       })
 

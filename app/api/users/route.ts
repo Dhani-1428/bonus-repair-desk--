@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json()
-    const { id, name, email, shopName, contactNumber } = body
+    const { id, name, email, shopName, contactNumber, address, companyEmail, website } = body
 
     if (!id) {
       return NextResponse.json(
@@ -115,12 +115,12 @@ export async function PUT(request: NextRequest) {
     }
 
     await execute(
-      `UPDATE users SET name = ?, email = ?, shopName = ?, contactNumber = ? WHERE id = ?`,
-      [name, email, shopName, contactNumber, id]
+      `UPDATE users SET name = ?, email = ?, shopName = ?, contactNumber = ?, address = ?, companyEmail = ?, website = ? WHERE id = ?`,
+      [name, email, shopName, contactNumber, address || null, companyEmail || null, website || null, id]
     )
 
     const user = await queryOne(
-      `SELECT id, name, email, role, shopName, contactNumber, tenantId, createdAt
+      `SELECT id, name, email, role, shopName, contactNumber, tenantId, address, companyEmail, website, createdAt, updatedAt
        FROM users WHERE id = ?`,
       [id]
     )

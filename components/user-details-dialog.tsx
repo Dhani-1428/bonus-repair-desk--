@@ -101,7 +101,23 @@ export function UserDetailsDialog({ open, onOpenChange, userDetails, users }: Us
                   </div>
                   <div>
                     <p className="text-xs text-black">Shop Name</p>
-                    <p className="text-sm text-black">{userDetails.shopName}</p>
+                    <p className="text-sm text-black">{userDetails.shopName || user?.shopName || "-"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-black">Contact Number</p>
+                    <p className="text-sm text-black">{user?.contactNumber || "-"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-black">Address</p>
+                    <p className="text-sm text-black">{user?.address || "-"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-black">Company Email</p>
+                    <p className="text-sm text-black">{user?.companyEmail || "-"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-black">Website</p>
+                    <p className="text-sm text-black">{user?.website || "-"}</p>
                   </div>
                   <div>
                     <p className="text-xs text-black">Signup Date</p>
