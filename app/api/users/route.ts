@@ -3,16 +3,38 @@ import { query, queryOne, execute } from "@/lib/mysql"
 import bcrypt from "bcryptjs"
 import { v4 as uuidv4 } from "uuid"
 
-// GET all users
+// GET all users or single user by ID
 export async function GET(request: NextRequest) {
   try {
-    const users = await query(`
-      SELECT id, name, email, role, shopName, contactNumber, tenantId, createdAt, updatedAt
-      FROM users
-      ORDER BY createdAt DESC
-    `)
+    const { searchParams } = new URL(request.url)
+    const userId = searchParams.get("id")
+    
+    if (userId) {
+      // Get single user with all fields
+      const user = await queryOne(`
+        SELECT id, name, email, role, shopName, contactNumber, tenantId, address, companyEmail, website, vatNumber, createdAt, updatedAt
+        FROM users
+        WHERE id = ?
+      `, [userId])
+      
+      if (!user) {
+        return NextResponse.json(
+          { error: "User not found" },
+          { status: 404 }
+        )
+      }
+      
+      return NextResponse.json({ user })
+    } else {
+      // Get all users with all fields
+      const users = await query(`
+        SELECT id, name, email, role, shopName, contactNumber, tenantId, address, companyEmail, website, vatNumber, createdAt, updatedAt
+        FROM users
+        ORDER BY createdAt DESC
+      `)
 
-    return NextResponse.json({ users })
+      return NextResponse.json({ users })
+    }
   } catch (error) {
     console.error("[API] Error fetching users:", error)
     return NextResponse.json(

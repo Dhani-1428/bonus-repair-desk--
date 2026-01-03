@@ -2293,7 +2293,29 @@ export function printReceiptForTickets(
     return
   }
   
-  const user = getCurrentUser()
+  // Get current user - try to get fresh data from API if available, otherwise use sessionStorage
+  let user = getCurrentUser()
+  
+  // If user data is missing company info fields, try to fetch fresh data from API
+  if (user?.id && (!user.address || !user.companyEmail || !user.website || !user.contactNumber)) {
+    try {
+      const response = await fetch(`/api/users?id=${user.id}`)
+      if (response.ok) {
+        const data = await response.json()
+        if (data.user) {
+          user = { ...user, ...data.user } // Merge fresh data
+          // Update sessionStorage with complete user data
+          if (typeof window !== "undefined") {
+            sessionStorage.setItem("user", JSON.stringify(user))
+          }
+        }
+      }
+    } catch (error) {
+      console.error("[printReceiptForTickets] Error fetching fresh user data:", error)
+      // Continue with existing user data
+    }
+  }
+  
   const shopName = user?.shopName || user?.name || "Your Company Name"
   const contactNumber = user?.contactNumber || "N/A"
   
