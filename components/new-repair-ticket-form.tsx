@@ -2267,7 +2267,7 @@ export async function printReceiptWithLanguageSelection(
   // Handle button clicks
   const langButtons = contentDiv.querySelectorAll("button[data-lang], button[data-cancel]")
   langButtons.forEach((btn) => {
-    btn.addEventListener("click", (e) => {
+    btn.addEventListener("click", async (e) => {
       e.stopPropagation()
       const lang = btn.getAttribute("data-lang") as "en" | "pt" | "de" | "fr" | "ur" | "pa" | "hi" | null
       if (document.body.contains(dialog)) {
