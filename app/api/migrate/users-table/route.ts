@@ -5,20 +5,41 @@ export async function POST(request: NextRequest) {
   try {
     console.log("[Migration] Starting migration to add company info columns to users table...")
 
-    // Check if columns exist
+    // Check if columns exist - use current database name
     let existingColumns: string[] = []
     try {
+      // First, get the current database name
+      const [dbResult] = await query(`SELECT DATABASE() as dbName`) as any[]
+      const dbName = dbResult?.dbName || process.env.DB_NAME || 'admin_panel_db'
+      
+      console.log("[Migration] Current database:", dbName)
+      
       const columns = await query(`
         SELECT COLUMN_NAME 
         FROM INFORMATION_SCHEMA.COLUMNS 
-        WHERE TABLE_SCHEMA = DATABASE()
+        WHERE TABLE_SCHEMA = ?
           AND TABLE_NAME = 'users'
           AND COLUMN_NAME IN ('address', 'companyEmail', 'website')
-      `) as any[]
+      `, [dbName]) as any[]
       existingColumns = columns.map((col) => col.COLUMN_NAME)
       console.log("[Migration] Existing columns:", existingColumns)
     } catch (error: any) {
       console.error("[Migration] Error checking columns:", error)
+      // Try with default database name as fallback
+      try {
+        const dbName = process.env.DB_NAME || 'admin_panel_db'
+        const columns = await query(`
+          SELECT COLUMN_NAME 
+          FROM INFORMATION_SCHEMA.COLUMNS 
+          WHERE TABLE_SCHEMA = ?
+            AND TABLE_NAME = 'users'
+            AND COLUMN_NAME IN ('address', 'companyEmail', 'website')
+        `, [dbName]) as any[]
+        existingColumns = columns.map((col) => col.COLUMN_NAME)
+        console.log("[Migration] Existing columns (fallback):", existingColumns)
+      } catch (fallbackError: any) {
+        console.error("[Migration] Fallback check also failed:", fallbackError)
+      }
     }
 
     const addedColumns: string[] = []
@@ -80,15 +101,23 @@ export async function POST(request: NextRequest) {
       console.log("[Migration] ⏭️  website column already exists")
     }
 
-    // Verify columns
-    const verifyColumns = await query(`
-      SELECT COLUMN_NAME, DATA_TYPE, IS_NULLABLE, COLUMN_DEFAULT
-      FROM INFORMATION_SCHEMA.COLUMNS
-      WHERE TABLE_SCHEMA = DATABASE()
-        AND TABLE_NAME = 'users'
-        AND COLUMN_NAME IN ('address', 'companyEmail', 'website')
-      ORDER BY COLUMN_NAME
-    `) as any[]
+    // Verify columns - use current database name
+    let verifyColumns: any[] = []
+    try {
+      const [dbResult] = await query(`SELECT DATABASE() as dbName`) as any[]
+      const dbName = dbResult?.dbName || process.env.DB_NAME || 'admin_panel_db'
+      
+      verifyColumns = await query(`
+        SELECT COLUMN_NAME, DATA_TYPE, IS_NULLABLE, COLUMN_DEFAULT
+        FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_SCHEMA = ?
+          AND TABLE_NAME = 'users'
+          AND COLUMN_NAME IN ('address', 'companyEmail', 'website')
+        ORDER BY COLUMN_NAME
+      `, [dbName]) as any[]
+    } catch (error: any) {
+      console.error("[Migration] Error verifying columns:", error)
+    }
 
     console.log("[Migration] ✅ Migration complete!")
 
