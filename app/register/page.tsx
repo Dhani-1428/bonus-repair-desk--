@@ -27,7 +27,6 @@ export default function RegisterPage() {
     address: "",
     companyEmail: "",
     website: "",
-    vatNumber: "",
     selectedPlan: "THREE_MONTH" as SubscriptionPlan,
   })
   const [error, setError] = useState("")
@@ -71,8 +70,7 @@ export default function RegisterPage() {
         formData.selectedPlan,
         formData.address,
         formData.companyEmail,
-        formData.website,
-        formData.vatNumber
+        formData.website
       )
       
       setSuccess(true)
@@ -247,21 +245,6 @@ export default function RegisterPage() {
                       />
                     </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="vatNumber" className="text-gray-200 text-sm">
-                        VAT Number
-                      </Label>
-                      <Input
-                        id="vatNumber"
-                        name="vatNumber"
-                        type="text"
-                        placeholder="VAT Number"
-                        value={formData.vatNumber}
-                        onChange={handleChange}
-                        disabled={loading}
-                        className="bg-zinc-800 border-zinc-700 text-white placeholder:text-gray-500 h-10"
-                      />
-                    </div>
                   </div>
                 </div>
 

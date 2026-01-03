@@ -2303,8 +2303,11 @@ export function printReceiptForTickets(
   const companyPhone1 = contactNumber && contactNumber !== "N/A" ? contactNumber : ""
   const companyPhone2 = null // Not stored in user object
   const companyEmail = user?.companyEmail || ""
-  const companyWebsite = user?.website || ""
-  const companyVAT = user?.vatNumber || ""
+  // Ensure website has https:// prefix if not already present
+  let companyWebsite = user?.website || ""
+  if (companyWebsite && !companyWebsite.startsWith('http://') && !companyWebsite.startsWith('https://')) {
+    companyWebsite = companyWebsite.startsWith('www.') ? 'https://' + companyWebsite : 'https://' + companyWebsite
+  }
 
   const printWindow = window.open("", "_blank")
   if (!printWindow) {
@@ -2357,11 +2360,10 @@ export function printReceiptForTickets(
           <div style="display: table-row;">
             <div style="display: table-cell; width: 50%; vertical-align: top; padding-right: 6px;">
               <div style="font-weight: bold; font-size: 8pt; margin: 0 0 2px 0; padding: 0; color: #000; line-height: 1.6;">${shopName}</div>
-              <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">${companyAddress}</div>
-              <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">${companyPhone1}${companyPhone2 ? `, ${companyPhone2}` : ""}</div>
-              <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">${companyEmail}</div>
-              <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">${companyWebsite}</div>
-              <div style="margin: 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">VAT: ${companyVAT}</div>
+              ${companyAddress ? `<div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">${companyAddress}</div>` : ""}
+              ${companyEmail ? `<div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">${companyEmail}</div>` : ""}
+              ${companyWebsite ? `<div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">${companyWebsite.startsWith('http') ? companyWebsite : (companyWebsite.startsWith('www.') ? 'https://' + companyWebsite : 'https://' + companyWebsite)}</div>` : ""}
+              ${companyPhone1 && companyPhone1 !== "N/A" ? `<div style="margin: 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">${companyPhone1}</div>` : ""}
             </div>
             <div style="display: table-cell; width: 50%; vertical-align: top; padding-left: 6px;">
               <div style="font-weight: bold; font-size: 7pt; margin: 0 0 2px 0; padding: 0; color: #000; line-height: 1.6;">${t["receipt.clientId"]}: ${ticketClientId}</div>
@@ -2531,11 +2533,10 @@ export function printReceiptForTickets(
           <div style="display: table-row;">
             <div style="display: table-cell; width: 50%; vertical-align: top; padding-right: 6px;">
               <div style="font-weight: bold; font-size: 8pt; margin: 0 0 2px 0; padding: 0; color: #000; line-height: 1.6;">${shopName}</div>
-              <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">${companyAddress}</div>
-              <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">${companyPhone1}${companyPhone2 ? `, ${companyPhone2}` : ""}</div>
-              <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">${companyEmail}</div>
-              <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">${companyWebsite}</div>
-              <div style="margin: 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">VAT: ${companyVAT}</div>
+              ${companyAddress ? `<div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">${companyAddress}</div>` : ""}
+              ${companyEmail ? `<div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">${companyEmail}</div>` : ""}
+              ${companyWebsite ? `<div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">${companyWebsite.startsWith('http') ? companyWebsite : (companyWebsite.startsWith('www.') ? 'https://' + companyWebsite : 'https://' + companyWebsite)}</div>` : ""}
+              ${companyPhone1 && companyPhone1 !== "N/A" ? `<div style="margin: 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">${companyPhone1}</div>` : ""}
             </div>
             <div style="display: table-cell; width: 50%; vertical-align: top; padding-left: 6px;">
               <div style="font-weight: bold; font-size: 7pt; margin: 0 0 2px 0; padding: 0; color: #000; line-height: 1.6;">${t["receipt.clientId"]}: ${ticketClientId}</div>

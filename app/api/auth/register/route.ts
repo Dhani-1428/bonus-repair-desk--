@@ -8,7 +8,7 @@ import { sendAdminSignupNotification } from "@/lib/email-service"
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { name, email, password, shopName, contactNumber, selectedPlan, address, companyEmail, website, vatNumber } = body
+    const { name, email, password, shopName, contactNumber, selectedPlan, address, companyEmail, website } = body
 
     if (!name || !email || !password) {
       return NextResponse.json(
@@ -84,9 +84,9 @@ export async function POST(request: NextRequest) {
       }
 
       await execute(
-        `INSERT INTO users (id, name, email, password, shopName, contactNumber, tenantId, address, companyEmail, website, vatNumber)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [userId, name, email, hashedPassword, shopName || null, contactNumber || null, tenantId, address || null, companyEmail || null, website || null, vatNumber || null]
+        `INSERT INTO users (id, name, email, password, shopName, contactNumber, tenantId, address, companyEmail, website)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [userId, name, email, hashedPassword, shopName || null, contactNumber || null, tenantId, address || null, companyEmail || null, website || null]
       )
       console.log(`[API] ✅ User created successfully: ${email} (${userId})`)
     } catch (insertError: any) {
@@ -103,9 +103,9 @@ export async function POST(request: NextRequest) {
         console.log("[API] Retrying with explicit role value...")
         try {
           await execute(
-            `INSERT INTO users (id, name, email, password, shopName, contactNumber, role, tenantId, address, companyEmail, website, vatNumber)
-             VALUES (?, ?, ?, ?, ?, ?, CAST(? AS CHAR), ?, ?, ?, ?, ?)`,
-            [userId, name, email, hashedPassword, shopName || null, contactNumber || null, 'USER', tenantId, address || null, companyEmail || null, website || null, vatNumber || null]
+            `INSERT INTO users (id, name, email, password, shopName, contactNumber, role, tenantId, address, companyEmail, website)
+             VALUES (?, ?, ?, ?, ?, ?, CAST(? AS CHAR), ?, ?, ?, ?)`,
+            [userId, name, email, hashedPassword, shopName || null, contactNumber || null, 'USER', tenantId, address || null, companyEmail || null, website || null]
           )
           console.log(`[API] ✅ User created successfully with explicit role: ${email} (${userId})`)
         } catch (retryError: any) {
