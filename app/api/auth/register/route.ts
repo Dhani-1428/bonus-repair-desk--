@@ -8,7 +8,7 @@ import { sendAdminSignupNotification } from "@/lib/email-service"
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { name, email, password, shopName, contactNumber, selectedPlan } = body
+    const { name, email, password, shopName, contactNumber, selectedPlan, address, companyEmail, website, vatNumber } = body
 
     if (!name || !email || !password) {
       return NextResponse.json(
@@ -54,10 +54,39 @@ export async function POST(request: NextRequest) {
     try {
       // First, try to insert without specifying role to use DEFAULT
       // If that doesn't work, we'll use explicit CAST
+      // Check if address, companyEmail, website, vatNumber columns exist, if not add them
+      try {
+        await query(`SELECT address, companyEmail, website, vatNumber FROM users LIMIT 1`)
+      } catch (error: any) {
+        if (error.code === "ER_BAD_FIELD_ERROR" || error.message?.includes("Unknown column")) {
+          console.log("[API] Adding company info columns to users table...")
+          try {
+            await execute(`ALTER TABLE users ADD COLUMN address VARCHAR(500) DEFAULT NULL`)
+          } catch (e: any) {
+            if (!e.message?.includes("Duplicate column")) console.error("[API] Error adding address column:", e)
+          }
+          try {
+            await execute(`ALTER TABLE users ADD COLUMN companyEmail VARCHAR(255) DEFAULT NULL`)
+          } catch (e: any) {
+            if (!e.message?.includes("Duplicate column")) console.error("[API] Error adding companyEmail column:", e)
+          }
+          try {
+            await execute(`ALTER TABLE users ADD COLUMN website VARCHAR(255) DEFAULT NULL`)
+          } catch (e: any) {
+            if (!e.message?.includes("Duplicate column")) console.error("[API] Error adding website column:", e)
+          }
+          try {
+            await execute(`ALTER TABLE users ADD COLUMN vatNumber VARCHAR(100) DEFAULT NULL`)
+          } catch (e: any) {
+            if (!e.message?.includes("Duplicate column")) console.error("[API] Error adding vatNumber column:", e)
+          }
+        }
+      }
+
       await execute(
-        `INSERT INTO users (id, name, email, password, shopName, contactNumber, tenantId)
-         VALUES (?, ?, ?, ?, ?, ?, ?)`,
-        [userId, name, email, hashedPassword, shopName || null, contactNumber || null, tenantId]
+        `INSERT INTO users (id, name, email, password, shopName, contactNumber, tenantId, address, companyEmail, website, vatNumber)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [userId, name, email, hashedPassword, shopName || null, contactNumber || null, tenantId, address || null, companyEmail || null, website || null, vatNumber || null]
       )
       console.log(`[API] ✅ User created successfully: ${email} (${userId})`)
     } catch (insertError: any) {
@@ -74,9 +103,9 @@ export async function POST(request: NextRequest) {
         console.log("[API] Retrying with explicit role value...")
         try {
           await execute(
-            `INSERT INTO users (id, name, email, password, shopName, contactNumber, role, tenantId)
-             VALUES (?, ?, ?, ?, ?, ?, CAST(? AS CHAR), ?)`,
-            [userId, name, email, hashedPassword, shopName || null, contactNumber || null, 'USER', tenantId]
+            `INSERT INTO users (id, name, email, password, shopName, contactNumber, role, tenantId, address, companyEmail, website, vatNumber)
+             VALUES (?, ?, ?, ?, ?, ?, CAST(? AS CHAR), ?, ?, ?, ?, ?)`,
+            [userId, name, email, hashedPassword, shopName || null, contactNumber || null, 'USER', tenantId, address || null, companyEmail || null, website || null, vatNumber || null]
           )
           console.log(`[API] ✅ User created successfully with explicit role: ${email} (${userId})`)
         } catch (retryError: any) {

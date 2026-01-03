@@ -2297,37 +2297,14 @@ export function printReceiptForTickets(
   const shopName = user?.shopName || user?.name || "Your Company Name"
   const contactNumber = user?.contactNumber || "N/A"
   
-  // Get company info from localStorage or use defaults
-  interface CompanyInfo {
-    address?: string
-    phone1?: string
-    phone?: string
-    phone2?: string
-    email?: string
-    companyEmail?: string
-    website?: string
-    vatNumber?: string
-  }
-  
-  let companyInfo: CompanyInfo = {}
-  try {
-    const stored = localStorage.getItem("companyInfo")
-    if (stored) {
-      companyInfo = JSON.parse(stored) as CompanyInfo
-    }
-  } catch (e) {
-    console.error("Error parsing company info:", e)
-  }
-  
-  const companyAddress = companyInfo.address || "Avenida Almirente Reis n 23a, Lisboa, 1150-008"
-  // Use only the admin's contact number from signup, not super admin's number
-  // Priority: user's contactNumber > companyInfo.phone1 > companyInfo.phone > default
-  const companyPhone1 = contactNumber && contactNumber !== "N/A" ? contactNumber : (companyInfo.phone1 || companyInfo.phone || "218870168")
-  // Only show phone2 if explicitly set in companyInfo, don't use default super admin number
-  const companyPhone2 = companyInfo.phone2 || null
-  const companyEmail = companyInfo.email || companyInfo.companyEmail || "geral.tudo4mobile@gmail.com"
-  const companyWebsite = companyInfo.website || "www.Tudo4Mobile.Pt"
-  const companyVAT = companyInfo.vatNumber || "515570664"
+  // Get company info from user object (from database) - this ensures consistency across devices
+  // Priority: user's database fields > fallback to empty strings (no hardcoded defaults)
+  const companyAddress = user?.address || ""
+  const companyPhone1 = contactNumber && contactNumber !== "N/A" ? contactNumber : ""
+  const companyPhone2 = null // Not stored in user object
+  const companyEmail = user?.companyEmail || ""
+  const companyWebsite = user?.website || ""
+  const companyVAT = user?.vatNumber || ""
 
   const printWindow = window.open("", "_blank")
   if (!printWindow) {

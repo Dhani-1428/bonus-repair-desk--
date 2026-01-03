@@ -9,7 +9,7 @@ interface AuthContextType {
   subscription: Subscription | null
   loading: boolean
   login: (email: string, password: string) => Promise<User>
-  register: (name: string, email: string, password: string, shopName?: string, contactNumber?: string, selectedPlan?: SubscriptionPlan) => Promise<void>
+  register: (name: string, email: string, password: string, shopName?: string, contactNumber?: string, selectedPlan?: SubscriptionPlan, address?: string, companyEmail?: string, website?: string, vatNumber?: string) => Promise<void>
   logout: () => void
   updateSubscription: (subscription: Subscription) => void
 }
@@ -307,7 +307,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     password: string,
     shopName?: string,
     contactNumber?: string,
-    selectedPlan?: SubscriptionPlan
+    selectedPlan?: SubscriptionPlan,
+    address?: string,
+    companyEmail?: string,
+    website?: string,
+    vatNumber?: string
   ) => {
     try {
       const response = await fetch("/api/auth/register", {
@@ -320,6 +324,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           shopName,
           contactNumber,
           selectedPlan: selectedPlan || "MONTHLY",
+          address,
+          companyEmail,
+          website,
+          vatNumber,
         }),
       })
 

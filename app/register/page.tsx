@@ -61,19 +61,19 @@ export default function RegisterPage() {
     }
 
     try {
-      await register(formData.name, formData.email, formData.password, formData.shopName, formData.contactNumber, formData.selectedPlan)
-      
-      // Save company information to localStorage
-      if (formData.address || formData.companyEmail || formData.website || formData.vatNumber) {
-        const companyInfo = {
-          address: formData.address,
-          email: formData.companyEmail,
-          website: formData.website,
-          vatNumber: formData.vatNumber,
-          phone: formData.contactNumber,
-        }
-        localStorage.setItem("companyInfo", JSON.stringify(companyInfo))
-      }
+      // Register with company information
+      await register(
+        formData.name, 
+        formData.email, 
+        formData.password, 
+        formData.shopName, 
+        formData.contactNumber, 
+        formData.selectedPlan,
+        formData.address,
+        formData.companyEmail,
+        formData.website,
+        formData.vatNumber
+      )
       
       setSuccess(true)
       setTimeout(() => {
