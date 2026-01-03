@@ -2384,7 +2384,9 @@ export async function printReceiptForTickets(
         <div style="display: table; width: 100%; margin: 0 0 4px 0; border-bottom: 1.5px solid #000; padding: 0 0 2px 0; page-break-inside: avoid;">
           <div style="display: table-row;">
             <div style="display: table-cell; width: 50%; vertical-align: top; padding-right: 6px;">
+              <!-- Shop/Company Name (Top) -->
               <div style="font-weight: bold; font-size: 8pt; margin: 0 0 2px 0; padding: 0; color: #000; line-height: 1.6;">${shopName}</div>
+              <!-- Company Information (Below Shop Name) -->
               ${companyAddress ? `<div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">${companyAddress}</div>` : ""}
               ${companyEmail ? `<div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">${companyEmail}</div>` : ""}
               ${companyWebsite ? `<div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">${companyWebsite}</div>` : ""}
@@ -2557,7 +2559,9 @@ export async function printReceiptForTickets(
         <div style="display: table; width: 100%; margin: 0 0 4px 0; border-bottom: 1.5px solid #000; padding: 0 0 2px 0;">
           <div style="display: table-row;">
             <div style="display: table-cell; width: 50%; vertical-align: top; padding-right: 6px;">
+              <!-- Shop/Company Name (Top) -->
               <div style="font-weight: bold; font-size: 8pt; margin: 0 0 2px 0; padding: 0; color: #000; line-height: 1.6;">${shopName}</div>
+              <!-- Company Information (Below Shop Name) -->
               ${companyAddress ? `<div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">${companyAddress}</div>` : ""}
               ${companyEmail ? `<div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">${companyEmail}</div>` : ""}
               ${companyWebsite ? `<div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">${companyWebsite}</div>` : ""}
