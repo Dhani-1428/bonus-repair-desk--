@@ -2282,7 +2282,7 @@ export function printReceiptWithLanguageSelection(
 
 // Exported function to print receipts from anywhere
 // Updated: Uses "Client ID" instead of "Client NIF" and supports multiple languages
-export function printReceiptForTickets(
+export async function printReceiptForTickets(
   tickets: any[], 
   preferredPrinter: string | null = null,
   language: "en" | "pt" | "de" | "fr" | "ur" | "pa" | "hi" = "en"
