@@ -2294,9 +2294,11 @@ export async function printReceiptForTickets(
   }
   
   // Get current user - always fetch fresh data from API to ensure we have latest company information
+  // This works for ALL users including old/existing accounts - fetches from database
   let user = getCurrentUser()
   
-  // Always try to fetch fresh user data from API to get latest company information
+  // Always fetch fresh user data from API to get latest company information from database
+  // This ensures old users and new users both get their company info displayed correctly
   if (user?.id) {
     try {
       const response = await fetch(`/api/users?id=${user.id}`)
@@ -2304,51 +2306,59 @@ export async function printReceiptForTickets(
         const data = await response.json()
         if (data.user) {
           // Merge fresh data from database with existing user data
+          // This includes: shopName, address, companyEmail, website, contactNumber
           user = { ...user, ...data.user }
-          // Update sessionStorage with complete user data
+          // Update sessionStorage with complete user data for future use
           if (typeof window !== "undefined") {
             sessionStorage.setItem("user", JSON.stringify(user))
           }
-          console.log("[printReceiptForTickets] Fetched fresh user data:", {
-            shopName: user?.shopName,
-            address: user?.address,
-            companyEmail: user?.companyEmail,
-            website: user?.website,
-            contactNumber: user?.contactNumber
+          console.log("[printReceiptForTickets] Fetched fresh user data from database:", {
+            shopName: user?.shopName || "(not set)",
+            address: user?.address || "(not set)",
+            companyEmail: user?.companyEmail || "(not set)",
+            website: user?.website || "(not set)",
+            contactNumber: user?.contactNumber || "(not set)"
           })
         }
+      } else {
+        console.warn("[printReceiptForTickets] Failed to fetch user data, status:", response.status)
       }
     } catch (error) {
-      console.error("[printReceiptForTickets] Error fetching fresh user data:", error)
+      console.error("[printReceiptForTickets] Error fetching fresh user data from API:", error)
       // Continue with existing user data if API call fails
     }
+  } else {
+    console.warn("[printReceiptForTickets] No user ID found, cannot fetch company information")
   }
   
   // Get company information from user database record
-  // Display order on receipt: 1. Shop/Company Name, 2. Full Address, 3. Email, 4. Website (if exists), 5. Contact Number
+  // This works for ALL users (old and new) - data is fetched fresh from database above
+  // Display order on receipt: 1. Shop/Company Name, 2. Full Address, 3. Email (companyEmail), 4. Website (if exists), 5. Contact Number
   const shopName = user?.shopName || user?.name || "Your Company Name"
   const contactNumber = user?.contactNumber || ""
   
   // Get company info from user object (from database) - this ensures consistency across devices
   // Priority: user's database fields > fallback to empty strings (no hardcoded defaults)
+  // For old users: if they have this data in database, it will be displayed
+  // For new users: data entered during signup will be displayed
   const companyAddress = user?.address || ""
   const companyPhone1 = contactNumber || ""
   const companyPhone2 = null // Not stored in user object
   const companyEmail = user?.companyEmail || ""
   // Ensure website has https:// prefix if not already present
-  // Website is optional - only displayed if user added it during signup
+  // Website is optional - only displayed if user added it during signup (or if it exists in database for old users)
   let companyWebsite = user?.website || ""
   if (companyWebsite && !companyWebsite.startsWith('http://') && !companyWebsite.startsWith('https://')) {
     companyWebsite = companyWebsite.startsWith('www.') ? 'https://' + companyWebsite : 'https://' + companyWebsite
   }
   
   // Debug: Log company information to help troubleshoot
-  console.log("[printReceiptForTickets] Company information for receipt:", {
-    shopName,
-    companyAddress: companyAddress || "(empty)",
-    companyEmail: companyEmail || "(empty)",
-    companyWebsite: companyWebsite || "(empty)",
-    companyPhone1: companyPhone1 || "(empty)"
+  console.log("[printReceiptForTickets] Company information for receipt (from database):", {
+    shopName: shopName || "(not set)",
+    companyAddress: companyAddress || "(not set)",
+    companyEmail: companyEmail || "(not set)",
+    companyWebsite: companyWebsite || "(not set)",
+    companyPhone1: companyPhone1 || "(not set)"
   })
 
   const printWindow = window.open("", "_blank")
