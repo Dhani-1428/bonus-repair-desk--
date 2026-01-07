@@ -1236,7 +1236,7 @@ export function NewRepairTicketForm() {
 
                   {/* Mobile Conditions (On Arrival) */}
                   <div className="space-y-2 md:col-span-2">
-                    <Label className="text-black">{t("form.mobileConditionsOnArrival")}</Label>
+                    <Label className="text-black">mobile conditions (on arrival)</Label>
                     <Textarea
                       value={device.equipmentObs}
                       onChange={(e) => updateDevice(deviceIndex, "equipmentObs", e.target.value)}
