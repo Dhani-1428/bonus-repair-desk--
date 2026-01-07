@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { execute } from "@/lib/db"
+import { execute } from "@/lib/mysql"
 import { getDaysUntilExpiration, getSubscriptionEndDate } from "@/lib/subscription-utils"
 import { send7DaysReminderEmail, sendFreeTrialEndingEmail, sendAdminSubscriptionEndingNotification } from "@/lib/email-service"
 import type { User, Subscription } from "@/lib/constants"
