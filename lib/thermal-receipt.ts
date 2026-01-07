@@ -32,11 +32,13 @@ export interface CompanyInfo {
  * Generate thermal receipt text for ESC/POS printer
  * @param tickets Array of ticket objects
  * @param companyInfo Company information to display on receipt
+ * @param copyType 'CLIENT' | 'ADMIN' | 'BOTH' - Type of receipt to generate
  * @returns Formatted receipt string ready for ESC/POS printing
  */
 export function generateThermalReceipt(
   tickets: ThermalTicket[],
-  companyInfo?: CompanyInfo
+  companyInfo?: CompanyInfo,
+  copyType: 'CLIENT' | 'ADMIN' | 'BOTH' = 'BOTH'
 ): string {
   if (!tickets || tickets.length === 0) {
     return ""
@@ -69,114 +71,130 @@ export function generateThermalReceipt(
     minute: "2-digit",
   })
 
-  let receipt = ""
+  // Generate single receipt copy
+  const generateReceiptCopy = (copyLabel: string): string => {
+    let receipt = ""
 
-  // Header
-  receipt += "=".repeat(32) + "\n"
-  receipt += "CLIENT COPY\n"
-  receipt += "=".repeat(32) + "\n\n"
+    // Header
+    receipt += "=".repeat(32) + "\n"
+    receipt += centerText(copyLabel, 32) + "\n"
+    receipt += "=".repeat(32) + "\n\n"
 
-  // Company Information
-  receipt += centerText(shopName, 32) + "\n"
-  if (address) receipt += address + "\n"
-  if (email) receipt += email + "\n"
-  if (website) receipt += website + "\n"
-  if (phone) receipt += phone + "\n"
-  receipt += "\n"
-
-  receipt += "-".repeat(32) + "\n"
-
-  // Client Information
-  receipt += `Client ID: ${clientId}\n`
-  receipt += `Name: ${clientName}\n`
-  receipt += `Phone: ${contact}\n`
-  receipt += `Received By: ${receivedBy}\n`
-  receipt += `Date: ${formattedDate} ${formattedTime}\n`
-  receipt += "\n"
-
-  receipt += "-".repeat(32) + "\n"
-
-  // Device Information
-  if (tickets.length === 1) {
-    // Single device receipt
-    const ticket = tickets[0]
-    receipt += `Repair #: ${ticket.repairNumber || "N/A"}\n`
-    receipt += `IMEI: ${ticket.imeiNo || "N/A"}\n`
-    receipt += `Device: ${ticket.brand || "N/A"} ${ticket.model || "N/A"}\n`
-    if (ticket.warranty) {
-      receipt += `Warranty: ${ticket.warranty}\n`
-    }
-
+    // Company Information
+    receipt += centerText(shopName, 32) + "\n"
+    if (address) receipt += address + "\n"
+    if (email) receipt += email + "\n"
+    if (website) receipt += website + "\n"
+    if (phone) receipt += phone + "\n"
     receipt += "\n"
 
-    // Services
-    if (ticket.services) {
-      const services = Array.isArray(ticket.services)
-        ? ticket.services.join(", ")
-        : ticket.services
-      receipt += `Services: ${services}\n`
-    }
+    receipt += "-".repeat(32) + "\n"
 
-    // Problem
-    if (ticket.problem && ticket.problem !== "N/A") {
-      receipt += `Problem: ${ticket.problem}\n`
-    }
-
-    // Equipment Observations
-    if (ticket.equipmentObs) {
-      receipt += `Conditions: ${ticket.equipmentObs}\n`
-    }
-
+    // Client Information
+    receipt += `Client ID: ${clientId}\n`
+    receipt += `Name: ${clientName}\n`
+    receipt += `Phone: ${contact}\n`
+    receipt += `Received By: ${receivedBy}\n`
+    receipt += `Date: ${formattedDate} ${formattedTime}\n`
     receipt += "\n"
-    receipt += `Price: €${Number.parseFloat(ticket.price?.toString() || "0").toFixed(2)}\n`
-  } else {
-    // Multiple devices receipt
-    receipt += `Number of Devices: ${tickets.length}\n`
-    receipt += `Entry Date: ${formattedDate} ${formattedTime}\n\n`
 
-    tickets.forEach((ticket, index) => {
-      receipt += `Device ${index + 1}:\n`
-      receipt += `  Repair #: ${ticket.repairNumber || "N/A"}\n`
-      receipt += `  IMEI: ${ticket.imeiNo || "N/A"}\n`
-      receipt += `  Device: ${ticket.brand || "N/A"} ${ticket.model || "N/A"}\n`
+    receipt += "-".repeat(32) + "\n"
+
+    // Device Information
+    if (tickets.length === 1) {
+      // Single device receipt
+      const ticket = tickets[0]
+      receipt += `Repair #: ${ticket.repairNumber || "N/A"}\n`
+      receipt += `IMEI: ${ticket.imeiNo || "N/A"}\n`
+      receipt += `Device: ${ticket.brand || "N/A"} ${ticket.model || "N/A"}\n`
       if (ticket.warranty) {
-        receipt += `  Warranty: ${ticket.warranty}\n`
+        receipt += `Warranty: ${ticket.warranty}\n`
       }
+
+      receipt += "\n"
+
+      // Services
       if (ticket.services) {
         const services = Array.isArray(ticket.services)
           ? ticket.services.join(", ")
           : ticket.services
-        receipt += `  Services: ${services}\n`
+        receipt += `Services: ${services}\n`
       }
-      receipt += `  Price: €${Number.parseFloat(ticket.price?.toString() || "0").toFixed(2)}\n`
+
+      // Problem
+      if (ticket.problem && ticket.problem !== "N/A") {
+        receipt += `Problem: ${ticket.problem}\n`
+      }
+
+      // Equipment Observations
+      if (ticket.equipmentObs) {
+        receipt += `Conditions: ${ticket.equipmentObs}\n`
+      }
+
       receipt += "\n"
-    })
+      receipt += `Price: €${Number.parseFloat(ticket.price?.toString() || "0").toFixed(2)}\n`
+    } else {
+      // Multiple devices receipt
+      receipt += `Number of Devices: ${tickets.length}\n`
+      receipt += `Entry Date: ${formattedDate} ${formattedTime}\n\n`
 
-    // Total Price
-    const totalPrice = tickets.reduce(
-      (sum, ticket) => sum + Number.parseFloat(ticket.price?.toString() || "0"),
-      0
-    )
-    receipt += `Total Price: €${totalPrice.toFixed(2)}\n`
+      tickets.forEach((ticket, index) => {
+        receipt += `Device ${index + 1}:\n`
+        receipt += `  Repair #: ${ticket.repairNumber || "N/A"}\n`
+        receipt += `  IMEI: ${ticket.imeiNo || "N/A"}\n`
+        receipt += `  Device: ${ticket.brand || "N/A"} ${ticket.model || "N/A"}\n`
+        if (ticket.warranty) {
+          receipt += `  Warranty: ${ticket.warranty}\n`
+        }
+        if (ticket.services) {
+          const services = Array.isArray(ticket.services)
+            ? ticket.services.join(", ")
+            : ticket.services
+          receipt += `  Services: ${services}\n`
+        }
+        receipt += `  Price: €${Number.parseFloat(ticket.price?.toString() || "0").toFixed(2)}\n`
+        receipt += "\n"
+      })
+
+      // Total Price
+      const totalPrice = tickets.reduce(
+        (sum, ticket) => sum + Number.parseFloat(ticket.price?.toString() || "0"),
+        0
+      )
+      receipt += `Total Price: €${totalPrice.toFixed(2)}\n`
+    }
+
+    receipt += "\n"
+    receipt += "-".repeat(32) + "\n"
+
+    // Footer
+    receipt += "Thank you for your business!\n"
+    receipt += "Keep this receipt for reference.\n"
+    receipt += "\n"
+
+    // Repair Reference
+    if (tickets.length === 1) {
+      receipt += `Repair Reference: ${tickets[0].repairNumber || "N/A"}\n`
+    }
+
+    receipt += "\n"
+    receipt += "=".repeat(32) + "\n"
+
+    return receipt
   }
 
-  receipt += "\n"
-  receipt += "-".repeat(32) + "\n"
-
-  // Footer
-  receipt += "Thank you for your business!\n"
-  receipt += "Keep this receipt for reference.\n"
-  receipt += "\n"
-
-  // Repair Reference
-  if (tickets.length === 1) {
-    receipt += `Repair Reference: ${tickets[0].repairNumber || "N/A"}\n`
+  // Generate receipts based on copyType
+  if (copyType === 'CLIENT') {
+    return generateReceiptCopy("CLIENT COPY")
+  } else if (copyType === 'ADMIN') {
+    return generateReceiptCopy("ADMIN COPY")
+  } else {
+    // BOTH - return Client copy, then Admin copy (they will be separated by paper cut in API)
+    const clientCopy = generateReceiptCopy("CLIENT COPY")
+    const adminCopy = generateReceiptCopy("ADMIN COPY")
+    // Return both with a clear separator marker
+    return `${clientCopy}\n\n---PAPER_CUT_HERE---\n\n${adminCopy}`
   }
-
-  receipt += "\n"
-  receipt += "=".repeat(32) + "\n"
-
-  return receipt
 }
 
 /**

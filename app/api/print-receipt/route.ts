@@ -45,14 +45,44 @@ export async function POST(request: NextRequest) {
         width: 48, // 80mm printer width (58mm = 42)
       })
 
-      // Print receipt with proper formatting
-      printer
-        .font("a")
-        .align("ct")
-        .style("bu")
-        .size(1, 1)
-        .text(receipt)
-        .cut()
+      // Check if receipt contains both Client and Admin copies
+      if (receipt.includes("---PAPER_CUT_HERE---")) {
+        // Split into Client and Admin copies
+        const [clientReceipt, adminReceipt] = receipt.split("---PAPER_CUT_HERE---")
+        
+        // Print Client Copy
+        printer
+          .font("a")
+          .align("ct")
+          .style("bu")
+          .size(1, 1)
+          .text(clientReceipt.trim())
+          .feed(3) // Feed 3 lines for spacing
+          .cut() // Cut paper after Client copy
+        
+        // Small delay to ensure first cut completes
+        await new Promise(resolve => setTimeout(resolve, 500))
+        
+        // Print Admin Copy
+        printer
+          .font("a")
+          .align("ct")
+          .style("bu")
+          .size(1, 1)
+          .text(adminReceipt.trim())
+          .feed(3) // Feed 3 lines for spacing
+          .cut() // Final cut after Admin copy
+      } else {
+        // Single receipt (Client or Admin only)
+        printer
+          .font("a")
+          .align("ct")
+          .style("bu")
+          .size(1, 1)
+          .text(receipt)
+          .feed(3) // Feed 3 lines for spacing
+          .cut()
+      }
       
       // Close printer connection
       await new Promise<void>((resolve, reject) => {

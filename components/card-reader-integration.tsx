@@ -150,8 +150,8 @@ export function CardReaderIntegration() {
           }
         }
 
-        // Generate thermal receipt text
-        const receiptText = generateThermalReceipt(tickets, companyInfo)
+        // Generate thermal receipt text (both Client and Admin copies)
+        const receiptText = generateThermalReceipt(tickets, companyInfo, 'BOTH')
 
         // Send to printer via API
         const printResponse = await fetch("/api/print-receipt", {
