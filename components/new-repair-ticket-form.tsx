@@ -2171,7 +2171,9 @@ function LanguageSelectionDialog({
 // Wrapper function that shows language selection dialog first
 export async function printReceiptWithLanguageSelection(
   tickets: any[], 
-  preferredPrinter: string | null = null
+  preferredPrinter: string | null = null,
+  language: "en" | "pt" | "de" | "fr" | "ur" | "pa" | "hi" = "en",
+  printerType: "thermal" | "a4" = "a4"
 ) {
   // Validate tickets
   if (!tickets || !Array.isArray(tickets) || tickets.length === 0) {
@@ -2274,7 +2276,7 @@ export async function printReceiptWithLanguageSelection(
         document.body.removeChild(dialog)
       }
       if (lang) {
-        await printReceiptForTickets(tickets, preferredPrinter, lang)
+        await printReceiptForTickets(tickets, preferredPrinter, lang, printerType)
       }
     })
   })
@@ -2285,7 +2287,8 @@ export async function printReceiptWithLanguageSelection(
 export async function printReceiptForTickets(
   tickets: any[], 
   preferredPrinter: string | null = null,
-  language: "en" | "pt" | "de" | "fr" | "ur" | "pa" | "hi" = "en"
+  language: "en" | "pt" | "de" | "fr" | "ur" | "pa" | "hi" = "en",
+  printerType: "thermal" | "a4" = "a4"
 ) {
   // Validate tickets parameter
   if (!tickets || !Array.isArray(tickets) || tickets.length === 0) {
@@ -2370,6 +2373,15 @@ export async function printReceiptForTickets(
   // Get translations for the selected language
   const t = getReceiptTranslations(language)
   
+  // Adjust font sizes and layout for thermal printer
+  const baseFontSize = printerType === "thermal" ? "9pt" : "6.5pt"
+  const titleFontSize = printerType === "thermal" ? "10pt" : "8pt"
+  const smallFontSize = printerType === "thermal" ? "8pt" : "6.5pt"
+  const headerFontSize = printerType === "thermal" ? "9pt" : "7pt"
+  const cellWidth = printerType === "thermal" ? "100%" : "50%"
+  const cellLayout = printerType === "thermal" ? "block" : "table-cell"
+  const lineHeight = printerType === "thermal" ? "1.4" : "1.6"
+  
   // Function to generate receipt HTML for multiple devices added together
   const generateReceiptHTMLForMultipleDevices = (tickets: any[], copyType: 'CLIENT' | 'ADMIN' = 'CLIENT') => {
     if (tickets.length === 0) return ''
@@ -2404,37 +2416,37 @@ export async function printReceiptForTickets(
     console.log(`[generateReceiptHTMLForMultipleDevices] Generated HTML for ${tickets.length} device(s)`)
     
     return `
-      <div style="font-family: Arial, sans-serif; width: 100%; font-size: 6.5pt; line-height: 1.6; page-break-inside: avoid !important; margin: 0; padding: 0;">
-        <div style="text-align: center; font-weight: bold; font-size: 7pt; margin: 0 0 3px 0; padding: 2px; background-color: #e0e0e0; border: 1px solid #999;">
+      <div style="font-family: Arial, sans-serif; width: 100%; font-size: ${baseFontSize}; line-height: ${lineHeight}; page-break-inside: avoid !important; margin: 0; padding: 0;">
+        <div style="text-align: center; font-weight: bold; font-size: ${headerFontSize}; margin: 0 0 3px 0; padding: 2px; background-color: #e0e0e0; border: 1px solid #999;">
           ${copyLabel}
         </div>
-        <div style="display: table; width: 100%; margin: 0 0 4px 0; border-bottom: 1.5px solid #000; padding: 0 0 2px 0; page-break-inside: avoid;">
-          <div style="display: table-row;">
-            <div style="display: table-cell; width: 50%; vertical-align: top; padding-right: 6px;">
+        <div style="display: ${printerType === "thermal" ? "block" : "table"}; width: 100%; margin: 0 0 4px 0; border-bottom: 1.5px solid #000; padding: 0 0 2px 0; page-break-inside: avoid;">
+          <div style="display: ${printerType === "thermal" ? "block" : "table-row"};">
+            <div style="display: ${cellLayout}; width: ${cellWidth}; vertical-align: top; padding-right: ${printerType === "thermal" ? "0" : "6px"}; margin-bottom: ${printerType === "thermal" ? "4px" : "0"};">
               <!-- Shop/Company Name (Top) -->
-              <div style="font-weight: bold; font-size: 8pt; margin: 0 0 2px 0; padding: 0; color: #000; line-height: 1.6;">${shopName}</div>
+              <div style="font-weight: bold; font-size: ${titleFontSize}; margin: 0 0 2px 0; padding: 0; color: #000; line-height: ${lineHeight};">${shopName}</div>
               <!-- Company Information (Below Shop Name) -->
-              ${companyAddress ? `<div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">${companyAddress}</div>` : ""}
-              ${companyEmail ? `<div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">${companyEmail}</div>` : ""}
-              ${companyWebsite ? `<div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">${companyWebsite}</div>` : ""}
-              ${companyPhone1 && companyPhone1 !== "N/A" ? `<div style="margin: 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">${companyPhone1}</div>` : ""}
+              ${companyAddress ? `<div style="margin: 0 0 2px 0; padding: 0; font-size: ${smallFontSize}; color: #000; line-height: ${lineHeight};">${companyAddress}</div>` : ""}
+              ${companyEmail ? `<div style="margin: 0 0 2px 0; padding: 0; font-size: ${smallFontSize}; color: #000; line-height: ${lineHeight};">${companyEmail}</div>` : ""}
+              ${companyWebsite ? `<div style="margin: 0 0 2px 0; padding: 0; font-size: ${smallFontSize}; color: #000; line-height: ${lineHeight};">${companyWebsite}</div>` : ""}
+              ${companyPhone1 && companyPhone1 !== "N/A" ? `<div style="margin: 0; padding: 0; font-size: ${smallFontSize}; color: #000; line-height: ${lineHeight};">${companyPhone1}</div>` : ""}
             </div>
-            <div style="display: table-cell; width: 50%; vertical-align: top; padding-left: 6px;">
-              <div style="font-weight: bold; font-size: 7pt; margin: 0 0 2px 0; padding: 0; color: #000; line-height: 1.6;">${t["receipt.clientId"]}: ${ticketClientId}</div>
-              <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;"><strong>${t["receipt.name"]}:</strong> ${ticketCustomerName}</div>
-              <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;"><strong>${t["receipt.clientPhone"]}:</strong> ${ticketContact}</div>
-              <div style="margin: 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;"><strong>${t["receipt.receivedBy"] || "Device Received By"}:</strong> ${ticketReceivedBy}</div>
+            <div style="display: ${cellLayout}; width: ${cellWidth}; vertical-align: top; padding-left: ${printerType === "thermal" ? "0" : "6px"}; margin-top: ${printerType === "thermal" ? "4px" : "0"}; border-top: ${printerType === "thermal" ? "1px solid #ccc" : "none"}; padding-top: ${printerType === "thermal" ? "4px" : "0"};">
+              <div style="font-weight: bold; font-size: ${headerFontSize}; margin: 0 0 2px 0; padding: 0; color: #000; line-height: ${lineHeight};">${t["receipt.clientId"]}: ${ticketClientId}</div>
+              <div style="margin: 0 0 2px 0; padding: 0; font-size: ${baseFontSize}; color: #000; line-height: ${lineHeight};"><strong>${t["receipt.name"]}:</strong> ${ticketCustomerName}</div>
+              <div style="margin: 0 0 2px 0; padding: 0; font-size: ${baseFontSize}; color: #000; line-height: ${lineHeight};"><strong>${t["receipt.clientPhone"]}:</strong> ${ticketContact}</div>
+              <div style="margin: 0; padding: 0; font-size: ${baseFontSize}; color: #000; line-height: ${lineHeight};"><strong>${t["receipt.receivedBy"] || "Device Received By"}:</strong> ${ticketReceivedBy}</div>
             </div>
           </div>
         </div>
         
         <div style="margin: 3px 0; page-break-inside: avoid;">
-          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.entryDate"]}:</span> ${formattedDate} ${formattedTime}</div>
-          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">Number of Devices:</span> ${tickets.length}</div>
+          <div style="margin: 0 0 2px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.entryDate"]}:</span> ${formattedDate} ${formattedTime}</div>
+          <div style="margin: 0 0 2px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">Number of Devices:</span> ${tickets.length}</div>
         </div>
         
         <div style="margin: 3px 0; page-break-inside: avoid;">
-          <div style="font-weight: bold; margin: 0 0 3px 0; padding: 0; font-size: 7pt; line-height: 1.6;">Devices Information:</div>
+          <div style="font-weight: bold; margin: 0 0 3px 0; padding: 0; font-size: ${headerFontSize}; line-height: ${lineHeight};">Devices Information:</div>
           ${(() => {
             // Generate device list HTML - use table format for multiple devices
             if (tickets.length > 1) {
@@ -2487,39 +2499,39 @@ export async function printReceiptForTickets(
               
               return `
                 <div style="margin: 6px 0; padding: 5px 0; border-bottom: 1.5px solid #ccc; background-color: #f5f5f5; page-break-inside: avoid;">
-                  <div style="font-weight: bold; margin: 0 0 4px 0; padding: 3px 6px; font-size: 7.5pt; line-height: 1.6; color: #000; background-color: #d0d0d0; border-left: 3px solid #0066cc;">Device 1:</div>
-                  <div style="margin: 2px 0; padding: 1px 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.repairN"]}:</span> ${ticketRepairNumber}</div>
-                  <div style="margin: 2px 0; padding: 1px 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.imei"]}:</span> ${ticketImeiNo}</div>
-                  <div style="margin: 2px 0; padding: 1px 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.brandModel"]}:</span> ${ticketBrand} - ${ticketModel}</div>
-                  <div style="margin: 2px 0; padding: 1px 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.laptopSerialN"]}:</span> ${ticketSerialNo}</div>
-                  <div style="margin: 2px 0; padding: 1px 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.warranty"]}:</span> ${ticketWarrantyText}</div>
-                  <div style="margin: 2px 0; padding: 1px 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.price"]}:</span> €${ticketPrice}</div>
+                  <div style="font-weight: bold; margin: 0 0 4px 0; padding: 3px 6px; font-size: ${headerFontSize}; line-height: ${lineHeight}; color: #000; background-color: #d0d0d0; border-left: 3px solid #0066cc;">Device 1:</div>
+                  <div style="margin: 2px 0; padding: 1px 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.repairN"]}:</span> ${ticketRepairNumber}</div>
+                  <div style="margin: 2px 0; padding: 1px 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.imei"]}:</span> ${ticketImeiNo}</div>
+                  <div style="margin: 2px 0; padding: 1px 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.brandModel"]}:</span> ${ticketBrand} - ${ticketModel}</div>
+                  <div style="margin: 2px 0; padding: 1px 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.laptopSerialN"]}:</span> ${ticketSerialNo}</div>
+                  <div style="margin: 2px 0; padding: 1px 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.warranty"]}:</span> ${ticketWarrantyText}</div>
+                  <div style="margin: 2px 0; padding: 1px 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.price"]}:</span> €${ticketPrice}</div>
                 </div>
               `
             }
           })()}
         </div>
         
-        <div style="margin: 5px 0; padding: 4px; background-color: #f0f0f0; text-align: center; font-weight: bold; font-size: 7pt; border: 1px solid #ddd; page-break-inside: avoid;">
-          <div style="font-size: 7pt; font-weight: bold;">Total Price: €${totalPrice.toFixed(2)}</div>
+        <div style="margin: 5px 0; padding: 4px; background-color: #f0f0f0; text-align: center; font-weight: bold; font-size: ${headerFontSize}; border: 1px solid #ddd; page-break-inside: avoid;">
+          <div style="font-size: ${headerFontSize}; font-weight: bold;">Total Price: €${totalPrice.toFixed(2)}</div>
         </div>
         
         <!-- Gap between device information and footer -->
         <div style="margin: 8px 0; height: 8px; page-break-inside: avoid;"></div>
         
-        <div style="margin: 3px 0; padding: 3px; background-color: #f0f0f0; text-align: center; font-weight: bold; font-size: 6.5pt; border: 1px solid #ddd; page-break-inside: avoid;">
+        <div style="margin: 3px 0; padding: 3px; background-color: #f0f0f0; text-align: center; font-weight: bold; font-size: ${baseFontSize}; border: 1px solid #ddd; page-break-inside: avoid;">
           ${t["receipt.responsibleText"]}
         </div>
         
-        <div style="margin-top: 3px; padding: 3px; background-color: #f9f9f9; font-size: 6pt; line-height: 1.3; border: 1px solid #ddd; page-break-inside: avoid;">
-          <div style="font-weight: bold; margin-bottom: 2px; font-size: 6.5pt;">${t["receipt.storageTitle"]}</div>
-          <div style="text-align: justify; margin-bottom: 2px; font-size: 6pt;">
+        <div style="margin-top: 3px; padding: 3px; background-color: #f9f9f9; font-size: ${smallFontSize}; line-height: 1.3; border: 1px solid #ddd; page-break-inside: avoid;">
+          <div style="font-weight: bold; margin-bottom: 2px; font-size: ${baseFontSize};">${t["receipt.storageTitle"]}</div>
+          <div style="text-align: justify; margin-bottom: 2px; font-size: ${smallFontSize};">
             ${t["receipt.storageText1"]} <strong>${shopName}</strong>.
           </div>
-          <div style="text-align: justify; margin-bottom: 2px; font-size: 6pt;">
+          <div style="text-align: justify; margin-bottom: 2px; font-size: ${smallFontSize};">
             ${t["receipt.storageText2"]}
           </div>
-          <div style="text-align: justify; margin-bottom: 2px; font-size: 6pt;">
+          <div style="text-align: justify; margin-bottom: 2px; font-size: ${smallFontSize};">
             ${t["receipt.storageText3"]}
           </div>
         </div>
@@ -2579,71 +2591,71 @@ export async function printReceiptForTickets(
     const formattedTime = entryDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
     
     return `
-      <div style="font-family: Arial, sans-serif; width: 100%; font-size: 6.5pt; line-height: 1.6; page-break-inside: avoid !important; margin: 0; padding: 0;">
-        <div style="text-align: center; font-weight: bold; font-size: 7pt; margin: 0 0 3px 0; padding: 2px; background-color: #e0e0e0; border: 1px solid #999;">
+      <div style="font-family: Arial, sans-serif; width: 100%; font-size: ${baseFontSize}; line-height: ${lineHeight}; page-break-inside: avoid !important; margin: 0; padding: 0;">
+        <div style="text-align: center; font-weight: bold; font-size: ${headerFontSize}; margin: 0 0 3px 0; padding: 2px; background-color: #e0e0e0; border: 1px solid #999;">
           ${copyLabel}
         </div>
-        <div style="display: table; width: 100%; margin: 0 0 4px 0; border-bottom: 1.5px solid #000; padding: 0 0 2px 0;">
-          <div style="display: table-row;">
-            <div style="display: table-cell; width: 50%; vertical-align: top; padding-right: 6px;">
+        <div style="display: ${printerType === "thermal" ? "block" : "table"}; width: 100%; margin: 0 0 4px 0; border-bottom: 1.5px solid #000; padding: 0 0 2px 0;">
+          <div style="display: ${printerType === "thermal" ? "block" : "table-row"};">
+            <div style="display: ${cellLayout}; width: ${cellWidth}; vertical-align: top; padding-right: ${printerType === "thermal" ? "0" : "6px"}; margin-bottom: ${printerType === "thermal" ? "4px" : "0"};">
               <!-- Shop/Company Name (Top) -->
-              <div style="font-weight: bold; font-size: 8pt; margin: 0 0 2px 0; padding: 0; color: #000; line-height: 1.6;">${shopName}</div>
+              <div style="font-weight: bold; font-size: ${titleFontSize}; margin: 0 0 2px 0; padding: 0; color: #000; line-height: ${lineHeight};">${shopName}</div>
               <!-- Company Information (Below Shop Name) -->
-              ${companyAddress ? `<div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">${companyAddress}</div>` : ""}
-              ${companyEmail ? `<div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">${companyEmail}</div>` : ""}
-              ${companyWebsite ? `<div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">${companyWebsite}</div>` : ""}
-              ${companyPhone1 && companyPhone1 !== "N/A" ? `<div style="margin: 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;">${companyPhone1}</div>` : ""}
+              ${companyAddress ? `<div style="margin: 0 0 2px 0; padding: 0; font-size: ${smallFontSize}; color: #000; line-height: ${lineHeight};">${companyAddress}</div>` : ""}
+              ${companyEmail ? `<div style="margin: 0 0 2px 0; padding: 0; font-size: ${smallFontSize}; color: #000; line-height: ${lineHeight};">${companyEmail}</div>` : ""}
+              ${companyWebsite ? `<div style="margin: 0 0 2px 0; padding: 0; font-size: ${smallFontSize}; color: #000; line-height: ${lineHeight};">${companyWebsite}</div>` : ""}
+              ${companyPhone1 && companyPhone1 !== "N/A" ? `<div style="margin: 0; padding: 0; font-size: ${smallFontSize}; color: #000; line-height: ${lineHeight};">${companyPhone1}</div>` : ""}
             </div>
-            <div style="display: table-cell; width: 50%; vertical-align: top; padding-left: 6px;">
-              <div style="font-weight: bold; font-size: 7pt; margin: 0 0 2px 0; padding: 0; color: #000; line-height: 1.6;">${t["receipt.clientId"]}: ${ticketClientId}</div>
-              <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;"><strong>${t["receipt.name"]}:</strong> ${ticketCustomerName}</div>
-              <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;"><strong>${t["receipt.clientPhone"]}:</strong> ${ticketContact}</div>
-              <div style="margin: 0; padding: 0; font-size: 6.5pt; color: #000; line-height: 1.6;"><strong>${t["receipt.receivedBy"] || "Device Received By"}:</strong> ${ticketReceivedBy}</div>
+            <div style="display: ${cellLayout}; width: ${cellWidth}; vertical-align: top; padding-left: ${printerType === "thermal" ? "0" : "6px"}; margin-top: ${printerType === "thermal" ? "4px" : "0"}; border-top: ${printerType === "thermal" ? "1px solid #ccc" : "none"}; padding-top: ${printerType === "thermal" ? "4px" : "0"};">
+              <div style="font-weight: bold; font-size: ${headerFontSize}; margin: 0 0 2px 0; padding: 0; color: #000; line-height: ${lineHeight};">${t["receipt.clientId"]}: ${ticketClientId}</div>
+              <div style="margin: 0 0 2px 0; padding: 0; font-size: ${baseFontSize}; color: #000; line-height: ${lineHeight};"><strong>${t["receipt.name"]}:</strong> ${ticketCustomerName}</div>
+              <div style="margin: 0 0 2px 0; padding: 0; font-size: ${baseFontSize}; color: #000; line-height: ${lineHeight};"><strong>${t["receipt.clientPhone"]}:</strong> ${ticketContact}</div>
+              <div style="margin: 0; padding: 0; font-size: ${baseFontSize}; color: #000; line-height: ${lineHeight};"><strong>${t["receipt.receivedBy"] || "Device Received By"}:</strong> ${ticketReceivedBy}</div>
             </div>
           </div>
         </div>
         
         <div style="margin: 3px 0;">
-          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.entryDate"]}:</span> ${formattedDate} ${formattedTime}</div>
-          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.repairN"]}:</span> ${ticketRepairNumber}</div>
-          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.imei"]}:</span> ${ticketImeiNo}</div>
-          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.brandModel"]}:</span> ${ticketBrand} - ${ticketModel}</div>
-          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.laptopSerialN"]}:</span> ${ticketSerialNo}</div>
-          <div style="margin: 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.warranty"]}:</span> ${ticketWarrantyText}</div>
+          <div style="margin: 0 0 2px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.entryDate"]}:</span> ${formattedDate} ${formattedTime}</div>
+          <div style="margin: 0 0 2px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.repairN"]}:</span> ${ticketRepairNumber}</div>
+          <div style="margin: 0 0 2px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.imei"]}:</span> ${ticketImeiNo}</div>
+          <div style="margin: 0 0 2px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.brandModel"]}:</span> ${ticketBrand} - ${ticketModel}</div>
+          <div style="margin: 0 0 2px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.laptopSerialN"]}:</span> ${ticketSerialNo}</div>
+          <div style="margin: 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.warranty"]}:</span> ${ticketWarrantyText}</div>
         </div>
         
         <div style="margin: 3px 0;">
-          <div style="font-weight: bold; margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;">${t["receipt.equipmentCheck"]}:</div>
-          <div style="margin: 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["form.simCard"]}:</span> ${ticketSimCard} | <span style="font-weight: bold;">${t["form.simTray"]}:</span> ${ticketSimTray} | <span style="font-weight: bold;">${t["form.memoryCard"]}:</span> ${ticketMemoryCard} | <span style="font-weight: bold;">${t["form.charger"]}:</span> ${ticketCharger} | <span style="font-weight: bold;">${t["form.battery"]}:</span> ${ticketBattery} | <span style="font-weight: bold;">${t["form.waterDamaged"]}:</span> ${ticketWaterDamaged}</div>
+          <div style="font-weight: bold; margin: 0 0 2px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};">${t["receipt.equipmentCheck"]}:</div>
+          <div style="margin: 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["form.simCard"]}:</span> ${ticketSimCard} | <span style="font-weight: bold;">${t["form.simTray"]}:</span> ${ticketSimTray} | <span style="font-weight: bold;">${t["form.memoryCard"]}:</span> ${ticketMemoryCard} | <span style="font-weight: bold;">${t["form.charger"]}:</span> ${ticketCharger} | <span style="font-weight: bold;">${t["form.battery"]}:</span> ${ticketBattery} | <span style="font-weight: bold;">${t["form.waterDamaged"]}:</span> ${ticketWaterDamaged}</div>
         </div>
         
         <div style="margin: 3px 0;">
-          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.equipmentObs"]}:</span> ${ticketEquipmentObs}</div>
-          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.repairObs"]}:</span> ${ticketRepairObs}</div>
-          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.services"]}:</span> ${services}</div>
-          <div style="margin: 0 0 2px 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.problem"]}:</span> ${ticketProblem}</div>
-          <div style="margin: 0; padding: 0; font-size: 6.5pt; line-height: 1.6;"><span style="font-weight: bold;">${t["receipt.price"]}:</span> €${ticketPrice}</div>
+          <div style="margin: 0 0 2px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.equipmentObs"]}:</span> ${ticketEquipmentObs}</div>
+          <div style="margin: 0 0 2px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.repairObs"]}:</span> ${ticketRepairObs}</div>
+          <div style="margin: 0 0 2px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.services"]}:</span> ${services}</div>
+          <div style="margin: 0 0 2px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.problem"]}:</span> ${ticketProblem}</div>
+          <div style="margin: 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.price"]}:</span> €${ticketPrice}</div>
         </div>
         
         <!-- Gap between device information and footer -->
         <div style="margin: 8px 0; height: 8px;"></div>
         
-        <div style="margin: 3px 0; padding: 3px; background-color: #f0f0f0; text-align: center; font-weight: bold; font-size: 6.5pt; border: 1px solid #ddd;">
+        <div style="margin: 3px 0; padding: 3px; background-color: #f0f0f0; text-align: center; font-weight: bold; font-size: ${baseFontSize}; border: 1px solid #ddd;">
           ${t["receipt.responsibleText"]}
         </div>
         
-        <div style="margin-top: 3px; padding: 3px; background-color: #f9f9f9; font-size: 6pt; line-height: 1.3; border: 1px solid #ddd;">
-          <div style="font-weight: bold; margin-bottom: 2px; font-size: 6.5pt;">${t["receipt.storageTitle"]}</div>
-          <div style="text-align: justify; margin-bottom: 2px; font-size: 6pt;">
+        <div style="margin-top: 3px; padding: 3px; background-color: #f9f9f9; font-size: ${smallFontSize}; line-height: 1.3; border: 1px solid #ddd;">
+          <div style="font-weight: bold; margin-bottom: 2px; font-size: ${baseFontSize};">${t["receipt.storageTitle"]}</div>
+          <div style="text-align: justify; margin-bottom: 2px; font-size: ${smallFontSize};">
             ${t["receipt.storageText1"]} <strong>${shopName}</strong>.
           </div>
-          <div style="text-align: justify; margin-bottom: 2px; font-size: 6pt;">
+          <div style="text-align: justify; margin-bottom: 2px; font-size: ${smallFontSize};">
             ${t["receipt.storageText2"]}
           </div>
-          <div style="text-align: justify; margin-bottom: 2px; font-size: 6pt;">
+          <div style="text-align: justify; margin-bottom: 2px; font-size: ${smallFontSize};">
             ${t["receipt.storageText3"]}
           </div>
-          <div style="margin-top: 2px; font-weight: bold; font-size: 6.5pt;">${t["receipt.repairReference"]}: ${ticketRepairNumber}</div>
+          <div style="margin-top: 2px; font-weight: bold; font-size: ${baseFontSize};">${t["receipt.repairReference"]}: ${ticketRepairNumber}</div>
         </div>
       </div>
     `
@@ -2770,6 +2782,13 @@ export async function printReceiptForTickets(
   
   const ticketsHTML = receiptsHTML
   
+  // Determine page size based on printer type
+  const pageSize = printerType === "thermal" ? "80mm" : "A4 portrait"
+  const pageMargin = printerType === "thermal" ? "0" : "3mm 0"
+  const bodyPadding = printerType === "thermal" ? "0 5mm" : "0 30px"
+  const maxWidth = printerType === "thermal" ? "80mm" : "100%"
+  const fontSize = printerType === "thermal" ? "8pt" : "6.5pt"
+  
   const printHTML = `
     <!DOCTYPE html>
     <html>
@@ -2778,17 +2797,17 @@ export async function printReceiptForTickets(
         <title>Repair Ticket Receipt</title>
           <style>
             @page {
-              size: A4 portrait;
-              margin: 3mm 0;
+              size: ${pageSize};
+              margin: ${pageMargin};
             }
             @media print {
               @page {
-                size: A4 portrait;
-                margin: 3mm 0;
+                size: ${pageSize};
+                margin: ${pageMargin};
               }
               body {
                 margin: 0;
-                padding: 0 30px;
+                padding: ${bodyPadding};
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
                 overflow: hidden;
@@ -2796,6 +2815,7 @@ export async function printReceiptForTickets(
                 align-items: center;
                 justify-content: center;
                 min-height: 100vh;
+                max-width: ${maxWidth};
               }
               .no-print {
                 display: none !important;
@@ -2842,12 +2862,13 @@ export async function printReceiptForTickets(
             }
             body {
               font-family: Arial, sans-serif;
-              font-size: 6.5pt;
-              line-height: 1.1;
+              font-size: ${fontSize};
+              line-height: ${printerType === "thermal" ? "1.3" : "1.1"};
               margin: 0;
-              padding: 0 30px;
+              padding: ${bodyPadding};
               color: #000;
               width: 100%;
+              max-width: ${maxWidth};
               height: 100vh;
               box-sizing: border-box;
               display: flex;
@@ -2857,6 +2878,7 @@ export async function printReceiptForTickets(
             }
             .ticket-container {
               width: 100%;
+              max-width: ${maxWidth};
               box-sizing: border-box;
               display: flex;
               flex-direction: column;

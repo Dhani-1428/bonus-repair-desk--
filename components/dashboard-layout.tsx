@@ -9,6 +9,7 @@ import { useTranslation } from "@/components/language-provider"
 import { useAuth } from "@/hooks/use-auth"
 import { scheduleSubscriptionChecks } from "@/lib/subscription-notifications"
 import { AlertCircle, CheckCircle, Clock, X } from "lucide-react"
+import { CardReaderIntegration } from "@/components/card-reader-integration"
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
@@ -177,7 +178,9 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const shopName = user.shopName || user.name || "Admin Panel"
 
   return (
-    <div className="min-h-screen w-full relative bg-blue-50">
+    <>
+      <CardReaderIntegration />
+      <div className="min-h-screen w-full relative bg-blue-50">
       {/* Light Blue Background with Top Glow */}
       <div
         className="absolute inset-0 z-0"
@@ -507,6 +510,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         </main>
       </div>
     </div>
+    </>
   )
 }
 
