@@ -1,9 +1,20 @@
 "use client"
 
+import { useState } from "react"
 import { useCardReader } from "@/hooks/use-card-reader"
 import { getCurrentUser } from "@/lib/storage"
 import { generateThermalReceipt } from "@/lib/thermal-receipt"
 import { toast } from "sonner"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 /**
  * Card Reader Integration Component
@@ -12,6 +23,9 @@ import { toast } from "sonner"
  */
 export function CardReaderIntegration() {
   const user = getCurrentUser()
+  const [showAdminReceiptDialog, setShowAdminReceiptDialog] = useState(false)
+  const [pendingTickets, setPendingTickets] = useState<any[]>([])
+  const [pendingCompanyInfo, setPendingCompanyInfo] = useState<any>(undefined)
   
   // Function to get tickets based on card data
   // Card data could be client ID, repair number, or customer name
@@ -121,6 +135,44 @@ export function CardReaderIntegration() {
     }
   }
 
+  // Print Admin receipt
+  const handlePrintAdminReceipt = async () => {
+    if (pendingTickets.length === 0) {
+      setShowAdminReceiptDialog(false)
+      return
+    }
+
+    try {
+      // Generate Admin receipt only
+      const adminReceiptText = generateThermalReceipt(pendingTickets, pendingCompanyInfo, 'ADMIN')
+
+      // Send to printer via API
+      const printResponse = await fetch("/api/print-receipt", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ receipt: adminReceiptText }),
+      })
+
+      const printResult = await printResponse.json()
+
+      if (printResult.success) {
+        toast.success(`Admin receipt printed for ${pendingTickets.length} device(s)`)
+      } else {
+        console.error("[CardReader] Admin print error:", printResult.error)
+        toast.error(`Admin print failed: ${printResult.error || "Unknown error"}`)
+      }
+    } catch (error: any) {
+      console.error("[CardReader] Error printing admin receipt:", error)
+      toast.error(`Failed to print admin receipt: ${error.message || "Unknown error"}`)
+    } finally {
+      setShowAdminReceiptDialog(false)
+      setPendingTickets([])
+      setPendingCompanyInfo(undefined)
+    }
+  }
+
   // Handle card swipe
   const handleCardSwipe = async (cardData: string) => {
     console.log("[CardReader] Card swiped, fetching tickets...")
@@ -150,22 +202,29 @@ export function CardReaderIntegration() {
           }
         }
 
-        // Generate thermal receipt text (both Client and Admin copies)
-        const receiptText = generateThermalReceipt(tickets, companyInfo, 'BOTH')
+        // Generate and print Client receipt first
+        const clientReceiptText = generateThermalReceipt(tickets, companyInfo, 'CLIENT')
 
-        // Send to printer via API
+        // Send Client receipt to printer via API
         const printResponse = await fetch("/api/print-receipt", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ receipt: receiptText }),
+          body: JSON.stringify({ receipt: clientReceiptText }),
         })
 
         const printResult = await printResponse.json()
 
         if (printResult.success) {
-          toast.success(`Receipt printed for ${tickets.length} device(s)`)
+          toast.success(`Client receipt printed for ${tickets.length} device(s)`)
+          
+          // Store tickets and company info for potential Admin receipt printing
+          setPendingTickets(tickets)
+          setPendingCompanyInfo(companyInfo)
+          
+          // Show dialog asking if user wants Admin receipt
+          setShowAdminReceiptDialog(true)
         } else {
           console.error("[CardReader] Print error:", printResult.error)
           toast.error(`Print failed: ${printResult.error || "Unknown error"}`)
@@ -187,6 +246,38 @@ export function CardReaderIntegration() {
     getTicketsForCard,
   })
 
-  return null // This component doesn't render anything visible
+  return (
+    <>
+      {/* Admin Receipt Confirmation Dialog */}
+      <AlertDialog open={showAdminReceiptDialog} onOpenChange={setShowAdminReceiptDialog}>
+        <AlertDialogContent className="bg-white border-blue-200 text-black">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-black">Admin Receipt</AlertDialogTitle>
+            <AlertDialogDescription className="text-black">
+              Do you need admin receipt?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel 
+              onClick={() => {
+                setShowAdminReceiptDialog(false)
+                setPendingTickets([])
+                setPendingCompanyInfo(undefined)
+              }}
+              className="bg-white border-blue-300 text-black hover:bg-blue-50"
+            >
+              No
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handlePrintAdminReceipt}
+              className="bg-green-600 text-white hover:bg-green-700"
+            >
+              Yes, Print Admin Receipt
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
+  )
 }
 

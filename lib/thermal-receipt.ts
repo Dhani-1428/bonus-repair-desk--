@@ -189,11 +189,8 @@ export function generateThermalReceipt(
   } else if (copyType === 'ADMIN') {
     return generateReceiptCopy("ADMIN COPY")
   } else {
-    // BOTH - return Client copy, then Admin copy (they will be separated by paper cut in API)
-    const clientCopy = generateReceiptCopy("CLIENT COPY")
-    const adminCopy = generateReceiptCopy("ADMIN COPY")
-    // Return both with a clear separator marker
-    return `${clientCopy}\n\n---PAPER_CUT_HERE---\n\n${adminCopy}`
+    // BOTH - return Client copy only (Admin will be printed separately on user confirmation)
+    return generateReceiptCopy("CLIENT COPY")
   }
 }
 
