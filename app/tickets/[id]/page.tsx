@@ -20,6 +20,7 @@ export default function DeviceDetailPage() {
   const [ticket, setTicket] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [relatedDevicesCount, setRelatedDevicesCount] = useState(1)
+  const [allDevicesForClientIdCount, setAllDevicesForClientIdCount] = useState(1)
   const printContentRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -39,13 +40,40 @@ export default function DeviceDetailPage() {
           
           if (foundTicket) {
             setTicket(foundTicket)
-            // Count related devices (same clientId and customerName)
+            
+            // Normalize client ID for comparison (same logic as in printReceiptForTickets)
+            const normalizeClientId = (id: string): string => {
+              if (!id) return ""
+              const match = id.match(/CLI-?(\d+)/i) || id.match(/(\d+)/)
+              if (match) {
+                const num = parseInt(match[1], 10)
+                if (!isNaN(num) && num >= 1) {
+                  return `CLI-${String(num).padStart(4, "0")}`
+                }
+              }
+              return id.toUpperCase()
+            }
+            
+            // Count related devices (same clientId and customerName and batchId)
             const relatedDevices = data.tickets.filter((t: any) => 
               t.clientId === foundTicket.clientId && 
               t.customerName === foundTicket.customerName &&
               (t.batchId === foundTicket.batchId || (!t.batchId && !foundTicket.batchId))
             )
             setRelatedDevicesCount(relatedDevices.length)
+            
+            // Count ALL devices with the same normalized clientId (regardless of customerName or batchId)
+            if (foundTicket.clientId) {
+              const normalizedClientId = normalizeClientId(foundTicket.clientId)
+              const allDevicesForClientId = data.tickets.filter((t: any) => {
+                if (!t.clientId) return false
+                const normalizedTicketClientId = normalizeClientId(t.clientId)
+                return normalizedTicketClientId === normalizedClientId
+              })
+              setAllDevicesForClientIdCount(allDevicesForClientId.length)
+            } else {
+              setAllDevicesForClientIdCount(1)
+            }
           } else {
             router.push("/tickets")
           }
@@ -117,7 +145,7 @@ export default function DeviceDetailPage() {
     }
   }
 
-  // Print all devices in the group
+  // Print all devices in the group (same clientId, customerName, and batchId)
   const handlePrintAllDevices = async () => {
     if (typeof window !== "undefined" && ticket && user?.id) {
       try {
@@ -140,6 +168,51 @@ export default function DeviceDetailPage() {
         printReceiptWithLanguageSelection(normalizedTickets)
       } catch (error) {
         console.error("[DeviceDetailPage] Error loading tickets for print:", error)
+        // Fallback to printing just the current ticket
+        const normalizedTicket = normalizeTicket(ticket)
+        printReceiptWithLanguageSelection([normalizedTicket])
+      }
+    }
+  }
+
+  // Print ALL devices with the same client ID (normalized, regardless of customerName or batchId)
+  const handlePrintAllDevicesForClientId = async () => {
+    if (typeof window !== "undefined" && ticket && user?.id && ticket.clientId) {
+      try {
+        // Fetch all tickets
+        const response = await fetch(`/api/repairs?userId=${user.id}`)
+        const data = await response.json()
+        
+        // Normalize client ID for comparison (same logic as in printReceiptForTickets)
+        const normalizeClientId = (id: string): string => {
+          if (!id) return ""
+          const match = id.match(/CLI-?(\d+)/i) || id.match(/(\d+)/)
+          if (match) {
+            const num = parseInt(match[1], 10)
+            if (!isNaN(num) && num >= 1) {
+              return `CLI-${String(num).padStart(4, "0")}`
+            }
+          }
+          return id.toUpperCase()
+        }
+        
+        const normalizedClientId = normalizeClientId(ticket.clientId)
+        
+        // Find ALL devices with the same normalized client ID
+        const allDevicesForClientId = (data.tickets || []).filter((t: any) => {
+          if (!t.clientId) return false
+          const normalizedTicketClientId = normalizeClientId(t.clientId)
+          return normalizedTicketClientId === normalizedClientId
+        })
+        
+        console.log(`[DeviceDetailPage] Printing receipt for ${allDevicesForClientId.length} device(s) with normalized clientId: ${normalizedClientId}`)
+        
+        // Normalize all devices
+        const normalizedTickets = allDevicesForClientId.map((device: any) => normalizeTicket(device))
+        
+        printReceiptWithLanguageSelection(normalizedTickets)
+      } catch (error) {
+        console.error("[DeviceDetailPage] Error loading tickets for print all devices:", error)
         // Fallback to printing just the current ticket
         const normalizedTicket = normalizeTicket(ticket)
         printReceiptWithLanguageSelection([normalizedTicket])
@@ -173,28 +246,32 @@ export default function DeviceDetailPage() {
               {t("page.tickets.subtitle")}
             </p>
           </div>
-          <div className="flex gap-2">
-            {relatedDevicesCount > 1 ? (
-              <>
-                <Button variant="outline" onClick={handlePrintSingleDevice} className="border-blue-500 bg-blue-50 text-blue-700 hover:bg-blue-100 hover:border-blue-600">
-                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                  </svg>
-                  Print This Device
-                </Button>
-                <Button variant="outline" onClick={handlePrintAllDevices} className="border-blue-300 bg-white text-black hover:bg-blue-50">
-                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                  </svg>
-                  Print All Devices ({relatedDevicesCount})
-                </Button>
-              </>
-            ) : (
-              <Button variant="outline" onClick={handlePrintSingleDevice} className="border-blue-300 bg-white text-black hover:bg-blue-50">
+          <div className="flex gap-2 flex-wrap">
+            {/* Always show Print This Device button */}
+            <Button variant="outline" onClick={handlePrintSingleDevice} className="border-blue-500 bg-blue-50 text-blue-700 hover:bg-blue-100 hover:border-blue-600">
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+              </svg>
+              {t("page.tickets.print")}
+            </Button>
+            
+            {/* Show Print All Devices (same batch) if there are multiple devices in the same batch */}
+            {relatedDevicesCount > 1 && (
+              <Button variant="outline" onClick={handlePrintAllDevices} className="border-green-500 bg-green-50 text-green-700 hover:bg-green-100 hover:border-green-600">
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
                 </svg>
-                {t("page.tickets.print")}
+                Print All Devices ({relatedDevicesCount})
+              </Button>
+            )}
+            
+            {/* Show Print All Devices for Client ID if there are multiple devices with same client ID */}
+            {allDevicesForClientIdCount > 1 && (
+              <Button variant="outline" onClick={handlePrintAllDevicesForClientId} className="border-purple-500 bg-purple-50 text-purple-700 hover:bg-purple-100 hover:border-purple-600">
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                </svg>
+                Print All Devices for Client ID ({allDevicesForClientIdCount})
               </Button>
             )}
           </div>
