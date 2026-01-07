@@ -834,6 +834,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                     <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[10%]">{t("table.contact")}</th>
                     <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[12%]">{t("table.model")}</th>
                     <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[11%]">{t("table.imei")}</th>
+                    <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[11%]">Problem</th>
                     <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[11%]">{t("table.service")}</th>
                     <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[9%]">{t("table.status")}</th>
                     <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[8%]">{t("table.price")}</th>
@@ -843,7 +844,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                 <tbody className="divide-y divide-blue-200">
                   {filteredTickets.length === 0 ? (
                     <tr>
-                      <td colSpan={10} className="px-4 py-8 text-center text-black">
+                      <td colSpan={11} className="px-4 py-8 text-center text-black">
                         No devices found
                       </td>
                     </tr>
@@ -885,6 +886,9 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                           {ticket.imeiNo || "-"}
                         </td>
                         <td className="border-r border-blue-300 px-1 py-1.5 text-[11px] text-black break-words">
+                          {ticket.problem || "-"}
+                        </td>
+                        <td className="border-r border-blue-300 px-1 py-1.5 text-[11px] text-black break-words">
                           {(() => {
                             let services = ticket.serviceName || ""
                             if (ticket.selectedServices) {
@@ -908,8 +912,9 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                             onValueChange={(value) => {
                               updateTicketStatus(ticket.id, value)
                             }}
+                            disabled={ticket.status === "DELIVERED" || ticket.status === "delivered" || ticket.status === "OUT" || ticket.status === "out"}
                           >
-                            <SelectTrigger className={`${getStatusColor(ticket.status)} text-[10px] px-1.5 py-0.5 h-auto w-full cursor-pointer !bg-opacity-100`} style={{ backgroundColor: ticket.status?.toLowerCase() === 'pending' ? '#eab308' : ticket.status?.toLowerCase() === 'not_ok' ? '#ef4444' : ticket.status?.toLowerCase() === 'completed' ? '#22c55e' : ticket.status?.toLowerCase() === 'delivered' ? '#3b82f6' : '#6b7280', color: 'white', borderColor: ticket.status?.toLowerCase() === 'pending' ? '#ca8a04' : ticket.status?.toLowerCase() === 'not_ok' ? '#dc2626' : ticket.status?.toLowerCase() === 'completed' ? '#16a34a' : ticket.status?.toLowerCase() === 'delivered' ? '#2563eb' : '#4b5563' }}>
+                            <SelectTrigger className={`${getStatusColor(ticket.status)} text-[10px] px-1.5 py-0.5 h-auto w-full cursor-pointer !bg-opacity-100 ${(ticket.status === "DELIVERED" || ticket.status === "delivered" || ticket.status === "OUT" || ticket.status === "out") ? "opacity-50 cursor-not-allowed" : ""}`} style={{ backgroundColor: ticket.status?.toLowerCase() === 'pending' ? '#eab308' : ticket.status?.toLowerCase() === 'not_ok' ? '#ef4444' : ticket.status?.toLowerCase() === 'completed' ? '#22c55e' : ticket.status?.toLowerCase() === 'delivered' ? '#3b82f6' : '#6b7280', color: 'white', borderColor: ticket.status?.toLowerCase() === 'pending' ? '#ca8a04' : ticket.status?.toLowerCase() === 'not_ok' ? '#dc2626' : ticket.status?.toLowerCase() === 'completed' ? '#16a34a' : ticket.status?.toLowerCase() === 'delivered' ? '#2563eb' : '#4b5563' }}>
                               <SelectValue>
                                 {ticket.status === "pending" || ticket.status === "PENDING" ? t("status.pending") :
                                  ticket.status === "not_ok" || ticket.status === "NOT_OK" ? (t("status.notOk") || "Not OK") :
@@ -1132,19 +1137,19 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="edit-equipmentObs" className="text-black">{t("form.equipmentObservations")}</Label>
-              <Textarea id="edit-equipmentObs" value={editFormData.equipmentObs || ""} onChange={(e) => setEditFormData({ ...editFormData, equipmentObs: e.target.value })} className="bg-white border-blue-300 text-black min-h-[80px]" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="edit-problem" className="text-black">{t("form.technicianNotes")}</Label>
-              <Textarea id="edit-problem" value={editFormData.problem || ""} onChange={(e) => setEditFormData({ ...editFormData, problem: e.target.value })} className="bg-white border-blue-300 text-black min-h-[100px]" />
-            </div>
-            <div className="space-y-2">
               <Label htmlFor="edit-selectedServices" className="text-black">{t("form.serviceNames")}</Label>
               <Input id="edit-selectedServices" value={Array.isArray(editFormData.selectedServices) ? editFormData.selectedServices.join(", ") : editFormData.selectedServices || ""} onChange={(e) => {
                 const services = e.target.value.split(",").map(s => s.trim()).filter(s => s)
                 setEditFormData({ ...editFormData, selectedServices: services })
               }} className="bg-white border-blue-300 text-black" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-equipmentObs" className="text-black">Mobile Conditions (On Arrival)</Label>
+              <Textarea id="edit-equipmentObs" value={editFormData.equipmentObs || ""} onChange={(e) => setEditFormData({ ...editFormData, equipmentObs: e.target.value })} className="bg-white border-blue-300 text-black min-h-[80px]" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-problem" className="text-black">{t("form.technicianNotes")}</Label>
+              <Textarea id="edit-problem" value={editFormData.problem || ""} onChange={(e) => setEditFormData({ ...editFormData, problem: e.target.value })} className="bg-white border-blue-300 text-black min-h-[100px]" />
             </div>
             <div className="flex justify-end gap-2 pt-4">
               <Button type="button" variant="outline" onClick={() => { setIsEditDialogOpen(false); setEditingTicket(null) }} className="border-blue-300 bg-white text-black hover:bg-blue-50">{t("form.cancel")}</Button>
