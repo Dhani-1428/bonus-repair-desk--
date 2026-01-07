@@ -1,9 +1,8 @@
 "use client"
 
-import { useEffect, useRef } from "react"
 import { useCardReader } from "@/hooks/use-card-reader"
 import { getCurrentUser } from "@/lib/storage"
-import { printReceiptWithLanguageSelection } from "@/components/new-repair-ticket-form"
+import { generateThermalReceipt } from "@/lib/thermal-receipt"
 import { toast } from "sonner"
 
 /**
@@ -128,9 +127,53 @@ export function CardReaderIntegration() {
     const tickets = await getTicketsForCard(cardData)
     
     if (tickets.length > 0) {
-      // Print receipt for client (thermal format)
-      await printReceiptWithLanguageSelection(tickets, null, "en", "thermal")
-      toast.success(`Receipt printed for ${tickets.length} device(s)`)
+      try {
+        // Fetch company information
+        let companyInfo = undefined
+        if (user?.id) {
+          try {
+            const userResponse = await fetch(`/api/users?id=${user.id}`)
+            if (userResponse.ok) {
+              const userData = await userResponse.json()
+              if (userData.user) {
+                companyInfo = {
+                  shopName: userData.user.shopName || userData.user.name || "",
+                  address: userData.user.address || "",
+                  companyEmail: userData.user.companyEmail || "",
+                  website: userData.user.website || "",
+                  contactNumber: userData.user.contactNumber || "",
+                }
+              }
+            }
+          } catch (error) {
+            console.error("[CardReader] Error fetching company info:", error)
+          }
+        }
+
+        // Generate thermal receipt text
+        const receiptText = generateThermalReceipt(tickets, companyInfo)
+
+        // Send to printer via API
+        const printResponse = await fetch("/api/print-receipt", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ receipt: receiptText }),
+        })
+
+        const printResult = await printResponse.json()
+
+        if (printResult.success) {
+          toast.success(`Receipt printed for ${tickets.length} device(s)`)
+        } else {
+          console.error("[CardReader] Print error:", printResult.error)
+          toast.error(`Print failed: ${printResult.error || "Unknown error"}`)
+        }
+      } catch (error: any) {
+        console.error("[CardReader] Error printing receipt:", error)
+        toast.error(`Failed to print receipt: ${error.message || "Unknown error"}`)
+      }
     } else {
       toast.info("No tickets found for this card")
     }
