@@ -934,8 +934,8 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                         <td className="border-r border-blue-300 px-1 py-1.5 text-[11px] text-black whitespace-nowrap">
                           €{Number.parseFloat(ticket.price || 0).toFixed(2)}
                         </td>
-                        <td className="px-0.5 py-1.5 text-center whitespace-nowrap overflow-hidden" onClick={(e) => e.stopPropagation()}>
-                          <div className="flex items-center justify-center gap-0.5 flex-nowrap max-w-full">
+                        <td className="px-0 py-1.5 text-center whitespace-nowrap overflow-hidden" onClick={(e) => e.stopPropagation()}>
+                          <div className="flex items-center justify-center gap-0 flex-nowrap max-w-full">
                             <Button
                               variant="ghost"
                               size="sm"
