@@ -934,8 +934,8 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                         <td className="border-r border-blue-300 px-1 py-1.5 text-[11px] text-black whitespace-nowrap">
                           €{Number.parseFloat(ticket.price || 0).toFixed(2)}
                         </td>
-                        <td className="px-0.5 py-1.5 text-center whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
-                          <div className="flex items-center justify-center gap-0.5 flex-nowrap">
+                        <td className="px-0.5 py-1.5 text-center whitespace-nowrap overflow-hidden" onClick={(e) => e.stopPropagation()}>
+                          <div className="flex items-center justify-center gap-0.5 flex-nowrap max-w-full">
                             <Button
                               variant="ghost"
                               size="sm"
@@ -948,7 +948,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                                 handleEditClick(ticket)
                               }}
                               disabled={ticket.status === "DELIVERED" || ticket.status === "delivered" || ticket.status === "CANCELLED" || ticket.status === "cancelled"}
-                              className="text-blue-600 hover:text-blue-800 hover:bg-blue-100 h-6 w-6 p-0 flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="text-blue-600 hover:text-blue-800 hover:bg-blue-100 h-6 w-6 p-0 flex-shrink-0 min-w-0 disabled:opacity-50 disabled:cursor-not-allowed"
                               title="Edit"
                             >
                               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -962,7 +962,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                                 e.stopPropagation()
                                 printReceiptWithLanguageSelection([ticket])
                               }}
-                              className="text-green-600 hover:text-green-800 hover:bg-green-100 h-6 w-6 p-0 flex-shrink-0"
+                              className="text-green-600 hover:text-green-800 hover:bg-green-100 h-6 w-6 p-0 flex-shrink-0 min-w-0"
                               title="Print Receipt"
                             >
                               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -982,7 +982,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                                     }
                                   }}
                                   disabled={ticket.status === "DELIVERED" || ticket.status === "delivered" || ticket.status === "CANCELLED" || ticket.status === "cancelled"}
-                                  className="text-red-600 hover:text-red-800 hover:bg-red-100 h-6 w-6 p-0 flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                                  className="text-red-600 hover:text-red-800 hover:bg-red-100 h-6 w-6 p-0 flex-shrink-0 min-w-0 disabled:opacity-50 disabled:cursor-not-allowed"
                                   title="Delete"
                                 >
                                   <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
