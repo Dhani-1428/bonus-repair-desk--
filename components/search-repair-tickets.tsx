@@ -886,7 +886,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                           {ticket.imeiNo || "-"}
                         </td>
                         <td className="border-r border-blue-300 px-1 py-1.5 text-[11px] text-black break-words">
-                          {ticket.problem || "-"}
+                          {ticket.equipmentObs || "-"}
                         </td>
                         <td className="border-r border-blue-300 px-1 py-1.5 text-[11px] text-black break-words">
                           {(() => {
@@ -934,8 +934,8 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                         <td className="border-r border-blue-300 px-1 py-1.5 text-[11px] text-black whitespace-nowrap">
                           €{Number.parseFloat(ticket.price || 0).toFixed(2)}
                         </td>
-                        <td className="px-0.5 py-1.5 text-center whitespace-nowrap border-r border-blue-300" onClick={(e) => e.stopPropagation()}>
-                          <div className="flex items-center justify-center gap-0 flex-nowrap">
+                        <td className="px-0.5 py-1.5 text-center whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
+                          <div className="flex items-center justify-center gap-0.5 flex-nowrap">
                             <Button
                               variant="ghost"
                               size="sm"
