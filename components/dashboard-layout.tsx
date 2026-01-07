@@ -150,8 +150,8 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       
       window.addEventListener("subscriptionUpdated", handleSubscriptionUpdate)
       
-      // Also poll every 10 seconds for updates
-      const interval = setInterval(loadSubscription, 10000)
+      // Also poll every 30 seconds for updates (reduced frequency for better performance)
+      const interval = setInterval(loadSubscription, 30000)
       
       return () => {
         window.removeEventListener("subscriptionUpdated", handleSubscriptionUpdate)

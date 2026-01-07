@@ -56,77 +56,26 @@ export async function sendSubscriptionExpiryNotification(
 
 /**
  * Check and send notifications for all expiring subscriptions
+ * Now uses server-side API for proper email sending
  */
 export async function checkAndSendExpiryNotifications(): Promise<void> {
   if (typeof window === "undefined") return
 
   try {
-    const users = JSON.parse(localStorage.getItem("users") || "[]")
-    
-    for (const user of users) {
-      const subData = localStorage.getItem(`subscription_${user.id}`)
-      if (!subData) continue
+    // Call server-side API to check and send emails
+    const response = await fetch("/api/check-subscription-expiry", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({}),
+    })
 
-      try {
-        const subscription = JSON.parse(subData) as Subscription
-        const daysUntilExpiration = getDaysUntilExpiration(subscription)
-        const endDate = new Date(subscription.endDate)
-        const startDate = new Date(subscription.startDate)
-        const isFreeTrial = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) <= 31 // 30-31 days = free trial
-        
-        // Check if it's a free trial ending
-        if (isFreeTrial && daysUntilExpiration <= 7 && daysUntilExpiration >= 0) {
-          const notificationKey = `trial_ending_${subscription.id}`
-          const alreadySent = localStorage.getItem(notificationKey)
-          if (!alreadySent) {
-            await sendFreeTrialEndingEmail(user, subscription)
-            // Send admin notification
-            try {
-              await sendAdminSubscriptionEndingNotification(user, subscription, daysUntilExpiration)
-            } catch (error) {
-              console.error("Error sending admin subscription ending notification:", error)
-            }
-            localStorage.setItem(notificationKey, new Date().toISOString())
-          }
-        }
-        
-        // Check for 7 days left reminder
-        if (daysUntilExpiration === 7) {
-          const notificationKey = `7days_reminder_${subscription.id}`
-          const alreadySent = localStorage.getItem(notificationKey)
-          if (!alreadySent) {
-            await send7DaysReminderEmail(user, subscription)
-            // Send admin notification
-            try {
-              await sendAdminSubscriptionEndingNotification(user, subscription, daysUntilExpiration)
-            } catch (error) {
-              console.error("Error sending admin subscription ending notification:", error)
-            }
-            localStorage.setItem(notificationKey, new Date().toISOString())
-          }
-        }
-        
-        // Send admin notification for any subscription ending within 7 days
-        if (daysUntilExpiration <= 7 && daysUntilExpiration >= 0) {
-          const adminNotificationKey = `admin_notification_${subscription.id}_${daysUntilExpiration}`
-          const adminAlreadySent = localStorage.getItem(adminNotificationKey)
-          if (!adminAlreadySent) {
-            try {
-              await sendAdminSubscriptionEndingNotification(user, subscription, daysUntilExpiration)
-              localStorage.setItem(adminNotificationKey, new Date().toISOString())
-            } catch (error) {
-              console.error("Error sending admin subscription ending notification:", error)
-            }
-          }
-        }
-        
-        // Legacy: Send general expiry notification if expiring soon
-        if (isExpiringSoon(subscription, 7) && daysUntilExpiration !== 7) {
-          await sendSubscriptionExpiryNotification(subscription, user)
-        }
-      } catch (error) {
-        console.error(`Error processing subscription for user ${user.id}:`, error)
-      }
+    if (response.ok) {
+      const data = await response.json()
+      console.log("[SubscriptionNotifications] Checked subscriptions:", data)
+    } else {
+      console.error("[SubscriptionNotifications] Failed to check subscriptions")
     }
   } catch (error) {
     console.error("Error checking expiry notifications:", error)
@@ -238,9 +187,9 @@ export function scheduleSubscriptionChecks(): void {
   // Check immediately
   checkAndSendExpiryNotifications()
 
-  // Check daily (every 24 hours)
+  // Check every hour (more frequent checks for better reliability)
   setInterval(() => {
     checkAndSendExpiryNotifications()
-  }, 24 * 60 * 60 * 1000)
+  }, 60 * 60 * 1000) // 1 hour
 }
 

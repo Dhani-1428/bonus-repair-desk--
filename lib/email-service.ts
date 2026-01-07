@@ -364,7 +364,9 @@ Bonus Repair Desk Team
 ${FROM_EMAIL}
   `.trim()
 
-  return sendEmail(user.email, "7 Days Left - Subscription Reminder", html, text)
+  // Use companyEmail if available, otherwise use user.email
+  const emailToSend = user.companyEmail || user.email
+  return sendEmail(emailToSend, "7 Days Left - Subscription Reminder", html, text)
 }
 
 /**
@@ -446,7 +448,9 @@ Bonus Repair Desk Team
 ${FROM_EMAIL}
   `.trim()
 
-  return sendEmail(user.email, "Free Trial Ending Soon - Subscribe Now", html, text)
+  // Use companyEmail if available, otherwise use user.email
+  const emailToSend = user.companyEmail || user.email
+  return sendEmail(emailToSend, "Free Trial Ending Soon - Subscribe Now", html, text)
 }
 
 /**

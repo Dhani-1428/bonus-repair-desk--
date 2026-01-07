@@ -59,8 +59,8 @@ export default function SubscriptionPage() {
     // Refresh immediately
     refreshSubscription()
     
-    // Then refresh every 5 seconds
-    const interval = setInterval(refreshSubscription, 5000)
+    // Then refresh every 30 seconds (reduced frequency for better performance)
+    const interval = setInterval(refreshSubscription, 30000)
     
     return () => clearInterval(interval)
   }, [user?.id, updateSubscription])
