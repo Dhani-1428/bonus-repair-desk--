@@ -2414,7 +2414,7 @@ export async function printReceiptForTickets(
     console.log(`[generateReceiptHTMLForMultipleDevices] Generated HTML for ${tickets.length} device(s)`)
     
     return `
-      <div style="font-family: Arial, sans-serif; width: 100%; font-size: ${baseFontSize}; line-height: ${lineHeight}; page-break-inside: avoid !important; margin: 0; padding: 0;">
+      <div style="font-family: Arial, sans-serif; width: 100%; font-size: ${baseFontSize}; line-height: ${lineHeight}; page-break-inside: avoid !important; page-break-after: avoid !important; page-break-before: avoid !important; break-inside: avoid !important; break-after: avoid !important; break-before: avoid !important; margin: 0; padding: 0;">
         <div style="display: ${printerType === "thermal" ? "block" : "table"}; width: 100%; margin: 0 0 4px 0; border-bottom: 1.5px solid #000; padding: 0 0 2px 0; page-break-inside: avoid;">
           <div style="display: ${printerType === "thermal" ? "block" : "table-row"};">
             <div style="display: ${cellLayout}; width: ${cellWidth}; vertical-align: top; padding-right: ${printerType === "thermal" ? "0" : "6px"}; margin-bottom: ${printerType === "thermal" ? "4px" : "0"};">
@@ -2584,7 +2584,7 @@ export async function printReceiptForTickets(
     const formattedTime = entryDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
     
     return `
-      <div style="font-family: Arial, sans-serif; width: 100%; font-size: ${baseFontSize}; line-height: ${lineHeight}; page-break-inside: avoid !important; margin: 0; padding: 0;">
+      <div style="font-family: Arial, sans-serif; width: 100%; font-size: ${baseFontSize}; line-height: ${lineHeight}; page-break-inside: avoid !important; page-break-after: avoid !important; page-break-before: avoid !important; break-inside: avoid !important; break-after: avoid !important; break-before: avoid !important; margin: 0; padding: 0;">
         <div style="display: ${printerType === "thermal" ? "block" : "table"}; width: 100%; margin: 0 0 4px 0; border-bottom: 1.5px solid #000; padding: 0 0 2px 0;">
           <div style="display: ${printerType === "thermal" ? "block" : "table-row"};">
             <div style="display: ${cellLayout}; width: ${cellWidth}; vertical-align: top; padding-right: ${printerType === "thermal" ? "0" : "6px"}; margin-bottom: ${printerType === "thermal" ? "4px" : "0"};">
@@ -2706,7 +2706,7 @@ export async function printReceiptForTickets(
       const receipt = generateReceiptHTMLForMultipleDevices(sortedTickets, 'CLIENT')
       
       return `
-        <div class="ticket-container" style="page-break-inside: avoid !important; margin: 0 auto; padding: 0; width: 100%; display: flex; flex-direction: column; box-sizing: border-box;">
+        <div class="ticket-container" style="page-break-inside: avoid !important; page-break-after: avoid !important; page-break-before: avoid !important; break-inside: avoid !important; break-after: avoid !important; break-before: avoid !important; margin: 0 auto; padding: 0; width: 100%; display: block; box-sizing: border-box;">
           ${receipt}
         </div>
       `
@@ -2716,7 +2716,7 @@ export async function printReceiptForTickets(
       const receipt = generateReceiptHTML(ticket, 'CLIENT')
       
       return `
-        <div class="ticket-container" style="page-break-inside: avoid !important; margin: 0 auto; padding: 0; width: 100%; display: flex; flex-direction: column; box-sizing: border-box;">
+        <div class="ticket-container" style="page-break-inside: avoid !important; page-break-after: avoid !important; page-break-before: avoid !important; break-inside: avoid !important; break-after: avoid !important; break-before: avoid !important; margin: 0 auto; padding: 0; width: 100%; display: block; box-sizing: border-box;">
           ${receipt}
         </div>
       `
@@ -2770,6 +2770,7 @@ export async function printReceiptForTickets(
               html, body {
                 overflow: hidden;
                 page-break-after: avoid;
+                height: 100vh;
               }
               /* Hide all links and URLs in print */
               a {
@@ -2782,12 +2783,18 @@ export async function printReceiptForTickets(
               a[href]::after {
                 content: "" !important;
               }
-              /* Prevent page breaks inside receipt */
+              /* Prevent page breaks - keep receipt on single page */
               .ticket-container {
                 page-break-inside: avoid !important;
+                page-break-after: avoid !important;
+                page-break-before: avoid !important;
                 break-inside: avoid !important;
+                break-after: avoid !important;
+                break-before: avoid !important;
                 display: block !important;
                 margin: 0 auto !important;
+                width: 100% !important;
+                max-width: ${maxWidth} !important;
               }
               /* Prevent any element from breaking across pages */
               div, table, tr, td {
@@ -2808,9 +2815,12 @@ export async function printReceiptForTickets(
               color: #000;
               width: 100%;
               max-width: ${maxWidth};
-              min-height: auto;
+              min-height: 100vh;
               box-sizing: border-box;
-              display: block;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
             }
             .ticket-container {
               width: 100%;
@@ -2818,6 +2828,7 @@ export async function printReceiptForTickets(
               box-sizing: border-box;
               display: block;
               margin: 0 auto;
+              flex-shrink: 0;
             }
             .print-button {
               position: fixed;
