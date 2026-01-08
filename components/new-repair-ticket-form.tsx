@@ -1872,7 +1872,7 @@ function getReceiptTranslations(lang: "en" | "pt" | "de" | "fr" | "ur" | "pa" | 
       "receipt.problem": "Problem",
       "receipt.price": "Price",
       "receipt.responsibleText": "WE ARE RESPONSIBLE FOR THE ASSISTANCE / REPAIRING OF THE DESCRIBED ANOMALIES.",
-      "receipt.storageTitle": "Storage and Collection Conditions",
+      "receipt.storageTitle": "We are responsible for resolving and repairing the reported anomalies.",
       "receipt.storageText1": "The item must be collected within 60 days of repair notice.",
       "receipt.storageText2": "From day 61, a storage charge of €0.95 per day applies, for a maximum of 120 days, even if the repair is not carried out.",
       "receipt.storageText3": "Acceptance of this document confirms agreement to these terms.",
@@ -2644,7 +2644,6 @@ export async function printReceiptForTickets(
           <div style="text-align: justify; margin-bottom: 4px; font-size: ${smallFontSize};">
             ${t["receipt.storageText3"]}
           </div>
-          <div style="margin-top: 6px; font-weight: bold; font-size: ${baseFontSize};">${t["receipt.repairReference"]}: ${ticketRepairNumber}</div>
         </div>
       </div>
     `
