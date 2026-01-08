@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { query, queryOne, execute } from "@/lib/mysql"
 import bcrypt from "bcryptjs"
 import { v4 as uuidv4 } from "uuid"
+import { sendCredentialChangeNotification } from "@/lib/email-service"
 
 // GET all users or single user by ID
 export async function GET(request: NextRequest) {
@@ -114,16 +115,60 @@ export async function PUT(request: NextRequest) {
       )
     }
 
+    // Get old user data before updating
+    const oldUser = await queryOne(
+      `SELECT id, name, email, role, shopName, contactNumber, tenantId, address, companyEmail, website, createdAt, updatedAt
+       FROM users WHERE id = ?`,
+      [id]
+    )
+
+    if (!oldUser) {
+      return NextResponse.json(
+        { error: "User not found" },
+        { status: 404 }
+      )
+    }
+
+    // Update user
     await execute(
       `UPDATE users SET name = ?, email = ?, shopName = ?, contactNumber = ?, address = ?, companyEmail = ?, website = ? WHERE id = ?`,
       [name, email, shopName, contactNumber, address || null, companyEmail || null, website || null, id]
     )
 
+    // Get updated user data
     const user = await queryOne(
       `SELECT id, name, email, role, shopName, contactNumber, tenantId, address, companyEmail, website, createdAt, updatedAt
        FROM users WHERE id = ?`,
       [id]
     )
+
+    // Send email notifications if data changed
+    try {
+      await sendCredentialChangeNotification(
+        user as any,
+        {
+          name: oldUser.name,
+          email: oldUser.email,
+          shopName: oldUser.shopName,
+          contactNumber: oldUser.contactNumber,
+          address: oldUser.address,
+          companyEmail: oldUser.companyEmail,
+          website: oldUser.website,
+        },
+        {
+          name: user.name,
+          email: user.email,
+          shopName: user.shopName,
+          contactNumber: user.contactNumber,
+          address: user.address,
+          companyEmail: user.companyEmail,
+          website: user.website,
+        }
+      )
+    } catch (emailError) {
+      console.error("[API] Error sending credential change notification:", emailError)
+      // Don't fail the update if email fails
+    }
 
     return NextResponse.json({ user })
   } catch (error) {

@@ -1136,6 +1136,157 @@ Note: This user has been granted a 15-day FREE trial. They will need to subscrib
 }
 
 /**
+ * Send credential change notification to user and admin
+ */
+export async function sendCredentialChangeNotification(
+  user: User,
+  oldData: Partial<User>,
+  newData: Partial<User>
+) {
+  // Find what changed
+  const changes: string[] = []
+  if (oldData.name !== newData.name) changes.push(`Name: "${oldData.name}" → "${newData.name}"`)
+  if (oldData.email !== newData.email) changes.push(`Email: "${oldData.email}" → "${newData.email}"`)
+  if (oldData.shopName !== newData.shopName) changes.push(`Shop Name: "${oldData.shopName || "N/A"}" → "${newData.shopName || "N/A"}"`)
+  if (oldData.contactNumber !== newData.contactNumber) changes.push(`Contact Number: "${oldData.contactNumber || "N/A"}" → "${newData.contactNumber || "N/A"}"`)
+  if (oldData.address !== newData.address) changes.push(`Address: "${oldData.address || "N/A"}" → "${newData.address || "N/A"}"`)
+  if (oldData.companyEmail !== newData.companyEmail) changes.push(`Company Email: "${oldData.companyEmail || "N/A"}" → "${newData.companyEmail || "N/A"}"`)
+  if (oldData.website !== newData.website) changes.push(`Website: "${oldData.website || "N/A"}" → "${newData.website || "N/A"}"`)
+
+  if (changes.length === 0) return true
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+          .header { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+          .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
+          .changes-box { background: #dbeafe; border-left: 4px solid #3b82f6; padding: 15px; margin: 20px 0; }
+          .change-item { padding: 8px 0; border-bottom: 1px solid #bfdbfe; }
+          .change-item:last-child { border-bottom: none; }
+          .timestamp { color: #6b7280; font-size: 14px; margin-top: 20px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>🔐 Account Credentials Updated</h1>
+          </div>
+          <div class="content">
+            <p>Dear ${user.name || "User"},</p>
+            
+            <p>Your account credentials have been successfully updated. The following changes were made:</p>
+            
+            <div class="changes-box">
+              <h3 style="margin-top: 0; color: #1e40af;">Changes Made:</h3>
+              ${changes.map(change => `<div class="change-item"><strong>${change}</strong></div>`).join("")}
+            </div>
+            
+            <p><strong>Important:</strong> These changes will be reflected on all future receipts and invoices.</p>
+            
+            <p>If you did not make these changes, please contact support immediately.</p>
+            
+            <p class="timestamp">Change made on: ${new Date().toLocaleString()}</p>
+            
+            <p>Best regards,<br><strong>Bonus Repair Desk Team</strong></p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `
+
+  const text = `
+Account Credentials Updated
+
+Dear ${user.name || "User"},
+
+Your account credentials have been successfully updated. The following changes were made:
+
+${changes.map(change => `- ${change}`).join("\n")}
+
+Important: These changes will be reflected on all future receipts and invoices.
+
+If you did not make these changes, please contact support immediately.
+
+Change made on: ${new Date().toLocaleString()}
+
+Best regards,
+Bonus Repair Desk Team
+  `.trim()
+
+  // Send to user
+  const userEmail = newData.companyEmail || newData.email || user.email
+  await sendEmail(userEmail, "Account Credentials Updated", html, text)
+
+  // Send to admin
+  const adminHtml = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+          .header { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+          .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
+          .info-box { background: #d1fae5; border-left: 4px solid #10b981; padding: 15px; margin: 20px 0; }
+          .change-item { padding: 8px 0; border-bottom: 1px solid #a7f3d0; }
+          .change-item:last-child { border-bottom: none; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>📝 User Credentials Changed</h1>
+          </div>
+          <div class="content">
+            <p>A user has updated their account credentials.</p>
+            
+            <div class="info-box">
+              <h3 style="margin-top: 0;">User Information:</h3>
+              <div class="change-item"><strong>Name:</strong> ${user.name || "N/A"}</div>
+              <div class="change-item"><strong>Email:</strong> ${user.email || "N/A"}</div>
+              <div class="change-item"><strong>User ID:</strong> ${user.id}</div>
+            </div>
+            
+            <div class="info-box">
+              <h3 style="margin-top: 0;">Changes Made:</h3>
+              ${changes.map(change => `<div class="change-item"><strong>${change}</strong></div>`).join("")}
+            </div>
+            
+            <p class="timestamp">Change made on: ${new Date().toLocaleString()}</p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `
+
+  const adminText = `
+User Credentials Changed
+
+A user has updated their account credentials.
+
+User Information:
+- Name: ${user.name || "N/A"}
+- Email: ${user.email || "N/A"}
+- User ID: ${user.id}
+
+Changes Made:
+${changes.map(change => `- ${change}`).join("\n")}
+
+Change made on: ${new Date().toLocaleString()}
+  `.trim()
+
+  await sendEmail(ADMIN_EMAIL, `User Credentials Changed: ${user.name || user.email}`, adminHtml, adminText)
+
+  return true
+}
+
+/**
  * Send login confirmation email to user
  */
 export async function sendLoginEmail(user: User) {
