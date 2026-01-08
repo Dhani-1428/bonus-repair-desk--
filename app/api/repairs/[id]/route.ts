@@ -390,6 +390,7 @@ export async function DELETE(
   try {
     const { searchParams } = new URL(request.url)
     const userId = searchParams.get("userId")
+    const deleted = searchParams.get("deleted") === "true"
 
     if (!userId) {
       return NextResponse.json(
@@ -419,55 +420,64 @@ export async function DELETE(
     const repairTable = escapeId(tables.repairTickets)
     const deletedTable = escapeId(tables.deletedTickets)
 
-    // Move to deleted tickets before deleting
-    const ticket = await queryOne(
-      `SELECT * FROM ${repairTable} WHERE id = ?`,
-      [ticketId]
-    )
-
-    if (ticket) {
+    if (deleted) {
+      // Permanently delete from deleted tickets table
       await execute(
-        `INSERT INTO ${deletedTable} (id, userId, repairNumber, clientId, customerName, contact, receivedBy, imeiNo,
-          brand, model, serialNo, softwareVersion, warranty, battery, charger,
-          simCard, memoryCard, loanEquipment, equipmentObs, repairObs,
-          selectedServices, \`condition\`, problem, price, status)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [
-          ticket.id,
-          ticket.userId,
-          ticket.repairNumber,
-          ticket.clientId,
-          ticket.customerName,
-          ticket.contact,
-          ticket.receivedBy || null,
-          ticket.imeiNo,
-          ticket.brand,
-          ticket.model,
-          ticket.serialNo,
-          ticket.softwareVersion,
-          ticket.warranty,
-          ticket.battery,
-          ticket.charger,
-          ticket.simCard,
-          ticket.memoryCard,
-          ticket.loanEquipment,
-          ticket.equipmentObs,
-          ticket.repairObs,
-          ticket.selectedServices,
-          ticket.condition,
-          ticket.problem,
-          ticket.price,
-          ticket.status
-        ]
+        `DELETE FROM ${deletedTable} WHERE id = ? AND userId = ?`,
+        [ticketId, userId]
       )
+      return NextResponse.json({ message: "Ticket permanently deleted" })
+    } else {
+      // Move to deleted tickets before deleting from main table
+      const ticket = await queryOne(
+        `SELECT * FROM ${repairTable} WHERE id = ?`,
+        [ticketId]
+      )
+
+      if (ticket) {
+        await execute(
+          `INSERT INTO ${deletedTable} (id, userId, repairNumber, clientId, customerName, contact, receivedBy, imeiNo,
+            brand, model, serialNo, softwareVersion, warranty, battery, charger,
+            simCard, memoryCard, loanEquipment, equipmentObs, repairObs,
+            selectedServices, \`condition\`, problem, price, status)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          [
+            ticket.id,
+            ticket.userId,
+            ticket.repairNumber,
+            ticket.clientId,
+            ticket.customerName,
+            ticket.contact,
+            ticket.receivedBy || null,
+            ticket.imeiNo,
+            ticket.brand,
+            ticket.model,
+            ticket.serialNo,
+            ticket.softwareVersion,
+            ticket.warranty,
+            ticket.battery,
+            ticket.charger,
+            ticket.simCard,
+            ticket.memoryCard,
+            ticket.loanEquipment,
+            ticket.equipmentObs,
+            ticket.repairObs,
+            ticket.selectedServices,
+            ticket.condition,
+            ticket.problem,
+            ticket.price,
+            ticket.status
+          ]
+        )
+      }
+
+      await execute(
+        `DELETE FROM ${repairTable} WHERE id = ?`,
+        [ticketId]
+      )
+
+      return NextResponse.json({ message: "Ticket deleted successfully" })
     }
-
-    await execute(
-      `DELETE FROM ${repairTable} WHERE id = ?`,
-      [ticketId]
-    )
-
-    return NextResponse.json({ message: "Ticket deleted successfully" })
   } catch (error) {
     console.error("[API] Error deleting repair ticket:", error)
     return NextResponse.json(

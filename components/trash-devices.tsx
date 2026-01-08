@@ -28,26 +28,49 @@ export function TrashDevices() {
 
     const loadDeletedItems = async () => {
       try {
-        // Try to get from localStorage first (fallback for deleted items)
-        if (typeof window !== "undefined") {
-          const storedTicketsStr = localStorage.getItem("deletedTickets")
-          const storedMembersStr = localStorage.getItem("deletedMembers")
-          
-          if (storedTicketsStr) {
-            try {
-              const storedTickets = JSON.parse(storedTicketsStr)
-              const sortedTickets = storedTickets.sort((a: any, b: any) => 
-                new Date(b.deletedAt || 0).getTime() - new Date(a.deletedAt || 0).getTime()
-              )
-              setDeletedTickets(sortedTickets)
-            } catch (error) {
-              console.error("Error parsing deleted tickets:", error)
-              setDeletedTickets([])
-            }
+        const userData = typeof window !== "undefined" ? localStorage.getItem("user") : null
+        if (!userData) {
+          setDeletedTickets([])
+          setDeletedMembers([])
+          return
+        }
+
+        const user = JSON.parse(userData)
+        const userId = user?.id
+
+        if (!userId) {
+          setDeletedTickets([])
+          setDeletedMembers([])
+          return
+        }
+
+        // Fetch deleted tickets from API
+        try {
+          const response = await fetch(`/api/repairs?userId=${userId}&deleted=true`)
+          if (response.ok) {
+            const data = await response.json()
+            const tickets = data.tickets || []
+            // Add deletedAt timestamp if not present
+            const ticketsWithDeletedAt = tickets.map((ticket: any) => ({
+              ...ticket,
+              deletedAt: ticket.deletedAt || ticket.createdAt
+            }))
+            const sortedTickets = ticketsWithDeletedAt.sort((a: any, b: any) => 
+              new Date(b.deletedAt || 0).getTime() - new Date(a.deletedAt || 0).getTime()
+            )
+            setDeletedTickets(sortedTickets)
           } else {
+            console.error("Failed to fetch deleted tickets:", response.statusText)
             setDeletedTickets([])
           }
+        } catch (error) {
+          console.error("Error fetching deleted tickets:", error)
+          setDeletedTickets([])
+        }
 
+        // Try to get deleted members from localStorage (fallback)
+        if (typeof window !== "undefined") {
+          const storedMembersStr = localStorage.getItem("deletedMembers")
           if (storedMembersStr) {
             try {
               const storedMembers = JSON.parse(storedMembersStr)
@@ -80,7 +103,21 @@ export function TrashDevices() {
     if (!ticketToRestore) return
 
     try {
-      // Restore via API
+      const userData = typeof window !== "undefined" ? localStorage.getItem("user") : null
+      if (!userData) {
+        toast.error(t("error.userNotFound"))
+        return
+      }
+
+      const user = JSON.parse(userData)
+      const userId = user?.id
+
+      if (!userId) {
+        toast.error(t("error.userNotFound"))
+        return
+      }
+
+      // Restore via API - POST to create the ticket again
       const { deletedAt, ...ticketWithoutDeletedDate } = ticketToRestore
       const response = await fetch("/api/repairs", {
         method: "POST",
@@ -92,12 +129,17 @@ export function TrashDevices() {
         throw new Error("Failed to restore device")
       }
 
-      // Update localStorage for deleted tickets
-      if (typeof window !== "undefined") {
-        const updatedDeleted = deletedTickets.filter((t: any) => String(t.id) !== String(ticketId))
-        localStorage.setItem("deletedTickets", JSON.stringify(updatedDeleted))
-        setDeletedTickets(updatedDeleted)
+      // Delete from deleted tickets table via API
+      const deleteResponse = await fetch(`/api/repairs/${ticketId}?userId=${userId}&deleted=true`, {
+        method: "DELETE",
+      })
+
+      if (!deleteResponse.ok) {
+        console.warn("Failed to remove from deleted tickets table, but ticket was restored")
       }
+
+      // Update local state
+      setDeletedTickets(prev => prev.filter((t: any) => String(t.id) !== String(ticketId)))
 
       toast.success(t("trash.deviceRestored"))
     } catch (error) {
@@ -137,7 +179,7 @@ export function TrashDevices() {
     }
   }
 
-  const handlePermanentDelete = (ticketId: string, customerName: string) => {
+  const handlePermanentDelete = async (ticketId: string, customerName: string) => {
     if (typeof window === "undefined") return
     
     const confirmed = window.confirm(
@@ -146,9 +188,31 @@ export function TrashDevices() {
     if (!confirmed) return
 
     try {
-      const updatedDeleted = deletedTickets.filter((t: any) => String(t.id) !== String(ticketId))
-      localStorage.setItem("deletedTickets", JSON.stringify(updatedDeleted))
-      setDeletedTickets(updatedDeleted)
+      const userData = typeof window !== "undefined" ? localStorage.getItem("user") : null
+      if (!userData) {
+        toast.error(t("error.userNotFound"))
+        return
+      }
+
+      const user = JSON.parse(userData)
+      const userId = user?.id
+
+      if (!userId) {
+        toast.error(t("error.userNotFound"))
+        return
+      }
+
+      // Permanently delete from database
+      const response = await fetch(`/api/repairs/${ticketId}?userId=${userId}&deleted=true`, {
+        method: "DELETE",
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to permanently delete device")
+      }
+
+      // Update local state
+      setDeletedTickets(prev => prev.filter((t: any) => String(t.id) !== String(ticketId)))
       toast.success(t("trash.devicePermanentlyDeleted"))
     } catch (error) {
       console.error("Error deleting device:", error)

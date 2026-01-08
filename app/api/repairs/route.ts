@@ -9,6 +9,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const userId = searchParams.get("userId")
     const tenantId = searchParams.get("tenantId")
+    const deleted = searchParams.get("deleted") === "true"
 
     if (!userId) {
       return NextResponse.json(
@@ -53,18 +54,26 @@ export async function GET(request: NextRequest) {
     }
 
     const tables = getTenantTableNames(userTenantId)
-    const tableName = escapeId(tables.repairTickets)
+    const tableName = deleted ? escapeId(tables.deletedTickets) : escapeId(tables.repairTickets)
     
-    console.log(`[API] Fetching repair tickets from table: ${tableName} for userId: ${userId}, tenantId: ${userTenantId}`)
+    console.log(`[API] Fetching ${deleted ? 'deleted ' : ''}repair tickets from table: ${tableName} for userId: ${userId}, tenantId: ${userTenantId}`)
     console.log(`[API] Database: ${process.env.DB_NAME || "admin_panel_db"}`)
     
     let tickets
     try {
-      tickets = await query(
-        `SELECT * FROM ${tableName} WHERE userId = ? ORDER BY createdAt DESC`,
-        [userId]
-      )
-      console.log(`[API] ✅ Found ${tickets.length} repair ticket(s) for user ${userId}`)
+      if (deleted) {
+        // For deleted tickets, order by deletedAt if available, otherwise createdAt
+        tickets = await query(
+          `SELECT *, createdAt as deletedAt FROM ${tableName} WHERE userId = ? ORDER BY createdAt DESC`,
+          [userId]
+        )
+      } else {
+        tickets = await query(
+          `SELECT * FROM ${tableName} WHERE userId = ? ORDER BY createdAt DESC`,
+          [userId]
+        )
+      }
+      console.log(`[API] ✅ Found ${tickets.length} ${deleted ? 'deleted ' : ''}repair ticket(s) for user ${userId}`)
     } catch (queryError: any) {
       console.error(`[API] ❌ Error querying table ${tableName}:`, queryError?.message || queryError)
       console.error(`[API] Error details:`, {
@@ -92,6 +101,10 @@ export async function GET(request: NextRequest) {
           console.error("[API] Error parsing selectedServices:", e)
           ticket.selectedServices = []
         }
+      }
+      // Add serviceName for compatibility
+      if (ticket.selectedServices && Array.isArray(ticket.selectedServices) && ticket.selectedServices.length > 0) {
+        ticket.serviceName = ticket.selectedServices.join(", ")
       }
       return ticket
     })
