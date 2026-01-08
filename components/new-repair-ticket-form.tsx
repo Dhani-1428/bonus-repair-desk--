@@ -2520,11 +2520,10 @@ export async function printReceiptForTickets(
         <div style="margin: 8px 0; height: 8px; page-break-inside: avoid;"></div>
         
         <div style="margin: 3px 0; padding: 3px; background-color: #f0f0f0; text-align: center; font-weight: bold; font-size: ${baseFontSize}; border: 1px solid #ddd; page-break-inside: avoid;">
-          ${t["receipt.responsibleText"]}
+          ${t["receipt.storageTitle"]}
         </div>
         
         <div style="margin-top: 3px; padding: 3px; background-color: #f9f9f9; font-size: ${smallFontSize}; line-height: 1.3; border: 1px solid #ddd; page-break-inside: avoid;">
-          <div style="font-weight: bold; margin-bottom: 2px; font-size: ${baseFontSize};">${t["receipt.storageTitle"]}</div>
           <div style="text-align: justify; margin-bottom: 2px; font-size: ${smallFontSize};">
             ${t["receipt.storageText1"]}
           </div>
@@ -2641,11 +2640,10 @@ export async function printReceiptForTickets(
         <div style="margin: 8px 0; height: 8px;"></div>
         
         <div style="margin: 3px 0; padding: 3px; background-color: #f0f0f0; text-align: center; font-weight: bold; font-size: ${baseFontSize}; border: 1px solid #ddd;">
-          ${t["receipt.responsibleText"]}
+          ${t["receipt.storageTitle"]}
         </div>
         
         <div style="margin-top: 3px; padding: 3px; background-color: #f9f9f9; font-size: ${smallFontSize}; line-height: 1.3; border: 1px solid #ddd;">
-          <div style="font-weight: bold; margin-bottom: 2px; font-size: ${baseFontSize};">${t["receipt.storageTitle"]}</div>
           <div style="text-align: justify; margin-bottom: 2px; font-size: ${smallFontSize};">
             ${t["receipt.storageText1"]}
           </div>
