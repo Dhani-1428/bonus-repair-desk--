@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { DashboardLayout } from "@/components/dashboard-layout"
-import { RepairTicketList } from "@/components/repair-ticket-list"
 import { StatsCards } from "@/components/stats-cards"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useTranslation } from "@/components/language-provider"
@@ -55,7 +54,6 @@ export default function DashboardPage() {
           </p>
         </div>
         <StatsCards />
-        <RepairTicketList />
         
         <div className="flex justify-between items-start pt-4">
           <div className="space-y-2">
