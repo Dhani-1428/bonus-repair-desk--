@@ -2405,8 +2405,6 @@ export async function printReceiptForTickets(
     const formattedDate = entryDate.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })
     const formattedTime = entryDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
     
-    const copyLabel = copyType === 'CLIENT' ? t["receipt.clientCopy"] : t["receipt.adminCopy"]
-    
     // Calculate total price
     const totalPrice = tickets.reduce((sum, ticket) => sum + (Number.parseFloat(ticket.price || 0)), 0)
     
@@ -2417,9 +2415,6 @@ export async function printReceiptForTickets(
     
     return `
       <div style="font-family: Arial, sans-serif; width: 100%; font-size: ${baseFontSize}; line-height: ${lineHeight}; page-break-inside: avoid !important; margin: 0; padding: 0;">
-        <div style="text-align: center; font-weight: bold; font-size: ${headerFontSize}; margin: 0 0 3px 0; padding: 2px; background-color: #e0e0e0; border: 1px solid #999;">
-          ${copyLabel}
-        </div>
         <div style="display: ${printerType === "thermal" ? "block" : "table"}; width: 100%; margin: 0 0 4px 0; border-bottom: 1.5px solid #000; padding: 0 0 2px 0; page-break-inside: avoid;">
           <div style="display: ${printerType === "thermal" ? "block" : "table-row"};">
             <div style="display: ${cellLayout}; width: ${cellWidth}; vertical-align: top; padding-right: ${printerType === "thermal" ? "0" : "6px"}; margin-bottom: ${printerType === "thermal" ? "4px" : "0"};">
@@ -2584,16 +2579,12 @@ export async function printReceiptForTickets(
       ? servicesArray.join(", ") 
       : (servicesArray || ticket.serviceName || t["common.notAvailable"] || "N/A")
     
-    const copyLabel = copyType === 'CLIENT' ? t["receipt.clientCopy"] : t["receipt.adminCopy"]
     const entryDate = new Date(ticket?.createdAt || Date.now())
     const formattedDate = entryDate.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })
     const formattedTime = entryDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
     
     return `
       <div style="font-family: Arial, sans-serif; width: 100%; font-size: ${baseFontSize}; line-height: ${lineHeight}; page-break-inside: avoid !important; margin: 0; padding: 0;">
-        <div style="text-align: center; font-weight: bold; font-size: ${headerFontSize}; margin: 0 0 3px 0; padding: 2px; background-color: #e0e0e0; border: 1px solid #999;">
-          ${copyLabel}
-        </div>
         <div style="display: ${printerType === "thermal" ? "block" : "table"}; width: 100%; margin: 0 0 4px 0; border-bottom: 1.5px solid #000; padding: 0 0 2px 0;">
           <div style="display: ${printerType === "thermal" ? "block" : "table-row"};">
             <div style="display: ${cellLayout}; width: ${cellWidth}; vertical-align: top; padding-right: ${printerType === "thermal" ? "0" : "6px"}; margin-bottom: ${printerType === "thermal" ? "4px" : "0"};">
@@ -2713,66 +2704,21 @@ export async function printReceiptForTickets(
     if (sortedTickets.length > 1) {
       // Multiple devices added together - show on one receipt
       console.log(`[printReceiptForTickets] Generating multi-device receipt for ${sortedTickets.length} devices`)
-      const firstTicket = sortedTickets[0]
-      const clientCopy = generateReceiptHTMLForMultipleDevices(sortedTickets, 'CLIENT')
-      const adminCopy = generateReceiptHTMLForMultipleDevices(sortedTickets, 'ADMIN')
+      const receipt = generateReceiptHTMLForMultipleDevices(sortedTickets, 'CLIENT')
       
       return `
-        <div class="ticket-container" style="page-break-inside: avoid !important; margin: 0 auto; padding: 0; width: 100%; display: flex; flex-direction: column; box-sizing: border-box; justify-content: center;">
-          <!-- Client's Copy (Top) -->
-          <div class="client-receipt" style="width: 100%; flex: 0 0 auto; margin-bottom: 0; padding-bottom: 0; page-break-inside: avoid !important; break-inside: avoid !important; page-break-after: always !important; break-after: page !important;">
-            ${clientCopy}
-          </div>
-          
-          <!-- Tearing Line and Gap (Center) -->
-          <div style="width: 100%; flex: 0 0 auto; margin: 4mm 0; padding: 2mm 0; text-align: center; position: relative; page-break-inside: avoid !important; break-inside: avoid !important; page-break-after: always !important; break-after: page !important;">
-            <!-- Cutting line with dotted pattern -->
-            <div style="width: 100%; margin: 0; padding: 0.5mm 0; position: relative;">
-              <!-- Dotted cutting line -->
-              <div style="border-top: 2px dotted #000; border-bottom: 2px dotted #000; margin: 0 auto; padding: 1mm 0; width: 100%; position: relative;">
-                <div style="text-align: center; font-size: 6pt; color: #000; margin: 0.3mm 0; font-weight: bold; letter-spacing: 2px;"> ${t["receipt.cutHere"]} </div>
-              </div>
-              <!-- Additional dotted line for better visibility -->
-              <div style="border-top: 1px dotted #666; margin: 0.3mm auto 0; width: 100%;"></div>
-            </div>
-          </div>
-          
-          <!-- Admin's Copy (Bottom) -->
-          <div class="admin-receipt" style="width: 100%; flex: 0 0 auto; margin-top: 0; padding-top: 0; margin-bottom: 0; page-break-inside: avoid !important; break-inside: avoid !important; page-break-before: always !important; break-before: page !important;">
-            ${adminCopy}
-          </div>
+        <div class="ticket-container" style="page-break-inside: avoid !important; margin: 0 auto; padding: 0; width: 100%; display: flex; flex-direction: column; box-sizing: border-box;">
+          ${receipt}
         </div>
       `
     } else {
       // Single device - show individual receipt
       const ticket = sortedTickets[0]
-      const clientCopy = generateReceiptHTML(ticket, 'CLIENT')
-      const adminCopy = generateReceiptHTML(ticket, 'ADMIN')
+      const receipt = generateReceiptHTML(ticket, 'CLIENT')
       
       return `
-        <div class="ticket-container" style="page-break-inside: avoid !important; margin: 0 auto; padding: 0; width: 100%; display: flex; flex-direction: column; box-sizing: border-box; justify-content: center;">
-          <!-- Client's Copy (Top) -->
-          <div class="client-receipt" style="width: 100%; flex: 0 0 auto; margin-bottom: 0; padding-bottom: 0; page-break-inside: avoid !important; break-inside: avoid !important; page-break-after: always !important; break-after: page !important;">
-            ${clientCopy}
-          </div>
-          
-          <!-- Tearing Line and Gap (Center) -->
-          <div style="width: 100%; flex: 0 0 auto; margin: 4mm 0; padding: 2mm 0; text-align: center; position: relative; page-break-inside: avoid !important; break-inside: avoid !important; page-break-after: always !important; break-after: page !important;">
-            <!-- Cutting line with dotted pattern -->
-            <div style="width: 100%; margin: 0; padding: 0.5mm 0; position: relative;">
-              <!-- Dotted cutting line -->
-              <div style="border-top: 2px dotted #000; border-bottom: 2px dotted #000; margin: 0 auto; padding: 1mm 0; width: 100%; position: relative;">
-                <div style="text-align: center; font-size: 6pt; color: #000; margin: 0.3mm 0; font-weight: bold; letter-spacing: 2px;"> ${t["receipt.cutHere"]} </div>
-              </div>
-              <!-- Additional dotted line for better visibility -->
-              <div style="border-top: 1px dotted #666; margin: 0.3mm auto 0; width: 100%;"></div>
-            </div>
-          </div>
-          
-          <!-- Admin's Copy (Bottom) -->
-          <div class="admin-receipt" style="width: 100%; flex: 0 0 auto; margin-top: 0; padding-top: 0; margin-bottom: 0; page-break-inside: avoid !important; break-inside: avoid !important; page-break-before: always !important; break-before: page !important;">
-            ${adminCopy}
-          </div>
+        <div class="ticket-container" style="page-break-inside: avoid !important; margin: 0 auto; padding: 0; width: 100%; display: flex; flex-direction: column; box-sizing: border-box;">
+          ${receipt}
         </div>
       `
     }
@@ -2780,12 +2726,12 @@ export async function printReceiptForTickets(
   
   const ticketsHTML = receiptsHTML
   
-  // Determine page size based on printer type
-  const pageSize = printerType === "thermal" ? "80mm" : "A4 portrait"
-  const pageMargin = printerType === "thermal" ? "0" : "3mm 0"
-  const bodyPadding = printerType === "thermal" ? "0 5mm" : "0 30px"
-  const maxWidth = printerType === "thermal" ? "80mm" : "100%"
-  const fontSize = printerType === "thermal" ? "8pt" : "6.5pt"
+  // Determine page size - use long bill format (narrow width, auto height)
+  const pageSize = printerType === "thermal" ? "80mm" : "80mm"
+  const pageMargin = "0"
+  const bodyPadding = printerType === "thermal" ? "0 5mm" : "0 5mm"
+  const maxWidth = printerType === "thermal" ? "80mm" : "80mm"
+  const fontSize = printerType === "thermal" ? "8pt" : "8pt"
   
   const printHTML = `
     <!DOCTYPE html>
@@ -2837,28 +2783,12 @@ export async function printReceiptForTickets(
               a[href]::after {
                 content: "" !important;
               }
-              /* Allow page breaks between client and admin receipts */
+              /* Prevent page breaks inside receipt */
               .ticket-container {
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
-                display: flex !important;
-                flex-direction: column !important;
-                justify-content: center !important;
+                display: block !important;
                 margin: 0 auto !important;
-              }
-              /* Force page break after client receipt */
-              .client-receipt {
-                page-break-after: always !important;
-                break-after: page !important;
-                page-break-inside: avoid !important;
-                break-inside: avoid !important;
-              }
-              /* Force page break before admin receipt */
-              .admin-receipt {
-                page-break-before: always !important;
-                break-before: page !important;
-                page-break-inside: avoid !important;
-                break-inside: avoid !important;
               }
               /* Prevent any element from breaking across pages */
               div, table, tr, td {
@@ -2873,26 +2803,21 @@ export async function printReceiptForTickets(
             body {
               font-family: Arial, sans-serif;
               font-size: ${fontSize};
-              line-height: ${printerType === "thermal" ? "1.3" : "1.1"};
+              line-height: ${printerType === "thermal" ? "1.3" : "1.3"};
               margin: 0;
               padding: ${bodyPadding};
               color: #000;
               width: 100%;
               max-width: ${maxWidth};
-              height: 100vh;
+              min-height: auto;
               box-sizing: border-box;
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              justify-content: center;
+              display: block;
             }
             .ticket-container {
               width: 100%;
               max-width: ${maxWidth};
               box-sizing: border-box;
-              display: flex;
-              flex-direction: column;
-              justify-content: center;
+              display: block;
               margin: 0 auto;
             }
             .print-button {
