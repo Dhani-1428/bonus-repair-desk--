@@ -1872,11 +1872,11 @@ function getReceiptTranslations(lang: "en" | "pt" | "de" | "fr" | "ur" | "pa" | 
       "receipt.problem": "Problem",
       "receipt.price": "Price",
       "receipt.responsibleText": "WE ARE RESPONSIBLE FOR THE ASSISTANCE / REPAIRING OF THE DESCRIBED ANOMALIES.",
-      "receipt.storageTitle": "Condies de Armazenamento e Levantamento",
-      "receipt.storageText1": "O equipamento dever ser levantado no prazo mximo de sessenta (60) dias aps a concluso da reparao e respetiva notificao por",
-      "receipt.storageText2": "Decorrido este prazo, ser aplicada uma taxa de armazenamento de 0,95  por dia, a partir do 61. dia, at ao limite mximo de cento e vinte (120) dias, aplicvel independentemente de a reparao ter sido realizada ou de o oramento ter sido recusado.",
-      "receipt.storageText3": "Ao aceitar o presente documento, o cliente declara que leu, compreendeu e aceita os termos e condies de reparao.",
-      "receipt.repairReference": "Referncia da Reparao",
+      "receipt.storageTitle": "Storage and Collection Conditions",
+      "receipt.storageText1": "The item must be collected within 60 days of repair notice.",
+      "receipt.storageText2": "From day 61, a storage charge of €0.95 per day applies, for a maximum of 120 days, even if the repair is not carried out.",
+      "receipt.storageText3": "Acceptance of this document confirms agreement to these terms.",
+      "receipt.repairReference": "Repair Reference",
       "receipt.cutHere": "CUT HERE",
       "common.yes": "Yes",
       "common.no": "No",
@@ -2526,7 +2526,7 @@ export async function printReceiptForTickets(
         <div style="margin-top: 3px; padding: 3px; background-color: #f9f9f9; font-size: ${smallFontSize}; line-height: 1.3; border: 1px solid #ddd; page-break-inside: avoid;">
           <div style="font-weight: bold; margin-bottom: 2px; font-size: ${baseFontSize};">${t["receipt.storageTitle"]}</div>
           <div style="text-align: justify; margin-bottom: 2px; font-size: ${smallFontSize};">
-            ${t["receipt.storageText1"]} <strong>${shopName}</strong>.
+            ${t["receipt.storageText1"]}
           </div>
           <div style="text-align: justify; margin-bottom: 2px; font-size: ${smallFontSize};">
             ${t["receipt.storageText2"]}
@@ -2647,7 +2647,7 @@ export async function printReceiptForTickets(
         <div style="margin-top: 3px; padding: 3px; background-color: #f9f9f9; font-size: ${smallFontSize}; line-height: 1.3; border: 1px solid #ddd;">
           <div style="font-weight: bold; margin-bottom: 2px; font-size: ${baseFontSize};">${t["receipt.storageTitle"]}</div>
           <div style="text-align: justify; margin-bottom: 2px; font-size: ${smallFontSize};">
-            ${t["receipt.storageText1"]} <strong>${shopName}</strong>.
+            ${t["receipt.storageText1"]}
           </div>
           <div style="text-align: justify; margin-bottom: 2px; font-size: ${smallFontSize};">
             ${t["receipt.storageText2"]}
@@ -2720,14 +2720,14 @@ export async function printReceiptForTickets(
       const adminCopy = generateReceiptHTMLForMultipleDevices(sortedTickets, 'ADMIN')
       
       return `
-        <div class="ticket-container" style="page-break-inside: avoid !important; page-break-after: avoid !important; break-inside: avoid !important; break-after: avoid !important; margin: 0 auto; padding: 0; width: 100%; display: flex; flex-direction: column; box-sizing: border-box; justify-content: center;">
+        <div class="ticket-container" style="page-break-inside: avoid !important; margin: 0 auto; padding: 0; width: 100%; display: flex; flex-direction: column; box-sizing: border-box; justify-content: center;">
           <!-- Client's Copy (Top) -->
-          <div style="width: 100%; flex: 0 0 auto; margin-bottom: 0; padding-bottom: 0; page-break-inside: avoid !important; break-inside: avoid !important;">
+          <div class="client-receipt" style="width: 100%; flex: 0 0 auto; margin-bottom: 0; padding-bottom: 0; page-break-inside: avoid !important; break-inside: avoid !important; page-break-after: always !important; break-after: page !important;">
             ${clientCopy}
           </div>
           
           <!-- Tearing Line and Gap (Center) -->
-          <div style="width: 100%; flex: 0 0 auto; margin: 4mm 0; padding: 2mm 0; text-align: center; position: relative; page-break-inside: avoid !important; break-inside: avoid !important;">
+          <div style="width: 100%; flex: 0 0 auto; margin: 4mm 0; padding: 2mm 0; text-align: center; position: relative; page-break-inside: avoid !important; break-inside: avoid !important; page-break-after: always !important; break-after: page !important;">
             <!-- Cutting line with dotted pattern -->
             <div style="width: 100%; margin: 0; padding: 0.5mm 0; position: relative;">
               <!-- Dotted cutting line -->
@@ -2740,7 +2740,7 @@ export async function printReceiptForTickets(
           </div>
           
           <!-- Admin's Copy (Bottom) -->
-          <div style="width: 100%; flex: 0 0 auto; margin-top: 0; padding-top: 0; margin-bottom: 0; page-break-inside: avoid !important; break-inside: avoid !important;">
+          <div class="admin-receipt" style="width: 100%; flex: 0 0 auto; margin-top: 0; padding-top: 0; margin-bottom: 0; page-break-inside: avoid !important; break-inside: avoid !important; page-break-before: always !important; break-before: page !important;">
             ${adminCopy}
           </div>
         </div>
@@ -2752,14 +2752,14 @@ export async function printReceiptForTickets(
       const adminCopy = generateReceiptHTML(ticket, 'ADMIN')
       
       return `
-        <div class="ticket-container" style="page-break-inside: avoid !important; page-break-after: avoid !important; break-inside: avoid !important; break-after: avoid !important; margin: 0 auto; padding: 0; width: 100%; display: flex; flex-direction: column; box-sizing: border-box; justify-content: center;">
+        <div class="ticket-container" style="page-break-inside: avoid !important; margin: 0 auto; padding: 0; width: 100%; display: flex; flex-direction: column; box-sizing: border-box; justify-content: center;">
           <!-- Client's Copy (Top) -->
-          <div style="width: 100%; flex: 0 0 auto; margin-bottom: 0; padding-bottom: 0; page-break-inside: avoid !important; break-inside: avoid !important;">
+          <div class="client-receipt" style="width: 100%; flex: 0 0 auto; margin-bottom: 0; padding-bottom: 0; page-break-inside: avoid !important; break-inside: avoid !important; page-break-after: always !important; break-after: page !important;">
             ${clientCopy}
           </div>
           
           <!-- Tearing Line and Gap (Center) -->
-          <div style="width: 100%; flex: 0 0 auto; margin: 4mm 0; padding: 2mm 0; text-align: center; position: relative; page-break-inside: avoid !important; break-inside: avoid !important;">
+          <div style="width: 100%; flex: 0 0 auto; margin: 4mm 0; padding: 2mm 0; text-align: center; position: relative; page-break-inside: avoid !important; break-inside: avoid !important; page-break-after: always !important; break-after: page !important;">
             <!-- Cutting line with dotted pattern -->
             <div style="width: 100%; margin: 0; padding: 0.5mm 0; position: relative;">
               <!-- Dotted cutting line -->
@@ -2772,7 +2772,7 @@ export async function printReceiptForTickets(
           </div>
           
           <!-- Admin's Copy (Bottom) -->
-          <div style="width: 100%; flex: 0 0 auto; margin-top: 0; padding-top: 0; margin-bottom: 0; page-break-inside: avoid !important; break-inside: avoid !important;">
+          <div class="admin-receipt" style="width: 100%; flex: 0 0 auto; margin-top: 0; padding-top: 0; margin-bottom: 0; page-break-inside: avoid !important; break-inside: avoid !important; page-break-before: always !important; break-before: page !important;">
             ${adminCopy}
           </div>
         </div>
@@ -2839,16 +2839,28 @@ export async function printReceiptForTickets(
               a[href]::after {
                 content: "" !important;
               }
-              /* Prevent page breaks - force everything on one page */
+              /* Allow page breaks between client and admin receipts */
               .ticket-container {
                 page-break-inside: avoid !important;
-                page-break-after: avoid !important;
                 break-inside: avoid !important;
-                break-after: avoid !important;
                 display: flex !important;
                 flex-direction: column !important;
                 justify-content: center !important;
                 margin: 0 auto !important;
+              }
+              /* Force page break after client receipt */
+              .client-receipt {
+                page-break-after: always !important;
+                break-after: page !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+              }
+              /* Force page break before admin receipt */
+              .admin-receipt {
+                page-break-before: always !important;
+                break-before: page !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
               }
               /* Prevent any element from breaking across pages */
               div, table, tr, td {
