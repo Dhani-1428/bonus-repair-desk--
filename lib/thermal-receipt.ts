@@ -75,10 +75,10 @@ export function generateThermalReceipt(
   const generateReceiptCopy = (copyLabel: string): string => {
     let receipt = ""
 
-    // Header
+    // Header (no leading newlines to avoid top spacing)
     receipt += "=".repeat(32) + "\n"
     receipt += centerText(copyLabel, 32) + "\n"
-    receipt += "=".repeat(32) + "\n\n"
+    receipt += "=".repeat(32) + "\n"
 
     // Company Information
     receipt += centerText(shopName, 32) + "\n"
@@ -86,7 +86,6 @@ export function generateThermalReceipt(
     if (email) receipt += email + "\n"
     if (website) receipt += website + "\n"
     if (phone) receipt += phone + "\n"
-    receipt += "\n"
 
     receipt += "-".repeat(32) + "\n"
 
@@ -96,7 +95,6 @@ export function generateThermalReceipt(
     receipt += `Phone: ${contact}\n`
     receipt += `Received By: ${receivedBy}\n`
     receipt += `Date: ${formattedDate} ${formattedTime}\n`
-    receipt += "\n"
 
     receipt += "-".repeat(32) + "\n"
 
@@ -110,8 +108,6 @@ export function generateThermalReceipt(
       if (ticket.warranty) {
         receipt += `Warranty: ${ticket.warranty}\n`
       }
-
-      receipt += "\n"
 
       // Services
       if (ticket.services) {
@@ -131,12 +127,11 @@ export function generateThermalReceipt(
         receipt += `Conditions: ${ticket.equipmentObs}\n`
       }
 
-      receipt += "\n"
       receipt += `Price: €${Number.parseFloat(ticket.price?.toString() || "0").toFixed(2)}\n`
     } else {
       // Multiple devices receipt
       receipt += `Number of Devices: ${tickets.length}\n`
-      receipt += `Entry Date: ${formattedDate} ${formattedTime}\n\n`
+      receipt += `Entry Date: ${formattedDate} ${formattedTime}\n`
 
       tickets.forEach((ticket, index) => {
         receipt += `Device ${index + 1}:\n`
@@ -153,7 +148,9 @@ export function generateThermalReceipt(
           receipt += `  Services: ${services}\n`
         }
         receipt += `  Price: €${Number.parseFloat(ticket.price?.toString() || "0").toFixed(2)}\n`
-        receipt += "\n"
+        if (index < tickets.length - 1) {
+          receipt += "\n"
+        }
       })
 
       // Total Price
@@ -164,20 +161,17 @@ export function generateThermalReceipt(
       receipt += `Total Price: €${totalPrice.toFixed(2)}\n`
     }
 
-    receipt += "\n"
     receipt += "-".repeat(32) + "\n"
 
     // Footer
     receipt += "Thank you for your business!\n"
     receipt += "Keep this receipt for reference.\n"
-    receipt += "\n"
 
     // Repair Reference
     if (tickets.length === 1) {
       receipt += `Repair Reference: ${tickets[0].repairNumber || "N/A"}\n`
     }
 
-    receipt += "\n"
     receipt += "=".repeat(32) + "\n"
 
     return receipt

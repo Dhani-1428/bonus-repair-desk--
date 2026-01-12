@@ -47,13 +47,16 @@ export async function POST(request: NextRequest) {
 
       // Print single receipt (Client or Admin only)
       // Each receipt is printed separately on its own page
+      // Remove leading/trailing whitespace and extra newlines
+      const cleanedReceipt = receipt.trim().replace(/^\n+/, '').replace(/\n+$/, '')
+      
       printer
         .font("a")
-        .align("ct")
-        .style("bu")
+        .align("lt") // Left align to avoid extra margins
+        .style("NORMAL") // Normal style (no bold/underline)
         .size(1, 1)
-        .text(receipt.trim())
-        .feed(3) // Feed 3 lines for spacing
+        .text(cleanedReceipt)
+        .feed(1) // Minimal feed before cut
         .cut() // Cut paper after receipt
       
       // Close printer connection
