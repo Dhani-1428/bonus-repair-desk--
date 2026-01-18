@@ -982,7 +982,7 @@ export function NewRepairTicketForm() {
                       placeholder="CLI-0001"
                       className="bg-white border-blue-200 text-black focus:border-blue-500 h-12 text-lg font-mono"
                     />
-                    <p className="text-xs text-gray-500 mt-1">Enter existing Client ID or leave for new client</p>
+                    <p className="text-xs text-gray-500 mt-1">{t("form.clientIdHintNew") || "Enter existing Client ID or leave for new client"}</p>
                   </div>
                 ) : (
                   <div className="bg-white border border-blue-200 rounded-md px-4 py-3 h-12 text-lg text-black flex items-center font-mono">
@@ -1040,7 +1040,7 @@ export function NewRepairTicketForm() {
                         ))}
                       </div>
                     )}
-                    <p className="text-xs text-gray-500 mt-1">Type to search existing clients or enter new client name</p>
+                    <p className="text-xs text-gray-500 mt-1">{t("form.clientNameHint") || "Type to search existing clients or enter new client name"}</p>
                   </div>
                 ) : (
                   <div className="bg-white border border-blue-200 rounded-md px-4 py-3 h-12 text-lg text-black flex items-center">
