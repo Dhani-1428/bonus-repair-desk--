@@ -61,7 +61,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
     waterDamaged: false,
     equipmentObs: "",
     repairObs: "",
-    selectedServices: [],
+    selectedServices: "" as string | string[],
     condition: "",
     problem: "",
     price: "",
@@ -457,12 +457,12 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
       servicesArray = ticket.serviceName ? [ticket.serviceName] : []
     }
     
-    // If repairObs exists, use it for Services field (convert to array format)
+    // If repairObs exists, use it for Services field (store as string to preserve formatting)
     // Priority: repairObs > selectedServices > serviceName
-    let servicesForField = servicesArray
+    let servicesForField: string | string[] = servicesArray
     if (ticket.repairObs && ticket.repairObs.trim() !== "") {
-      // Convert repairObs string to array format for the Services field
-      servicesForField = [ticket.repairObs]
+      // Store repairObs as string to preserve multi-line and formatting
+      servicesForField = ticket.repairObs
     } else if (servicesArray.length === 0 && ticket.serviceName) {
       servicesForField = [ticket.serviceName]
     }
@@ -534,10 +534,10 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
         waterDamaged: editFormData.waterDamaged ?? false,
         equipmentObs: editFormData.equipmentObs || null,
         repairObs: editFormData.repairObs || null,
-        // Save services: if array, join with comma; if string, use as is; otherwise empty array
-        selectedServices: Array.isArray(editFormData.selectedServices) 
-          ? editFormData.selectedServices 
-          : (typeof editFormData.selectedServices === 'string' ? [editFormData.selectedServices] : []),
+        // Save services: preserve string format for repair observations, convert to array if needed
+        selectedServices: typeof editFormData.selectedServices === 'string' 
+          ? (editFormData.selectedServices.trim() ? [editFormData.selectedServices.trim()] : [])
+          : (Array.isArray(editFormData.selectedServices) ? editFormData.selectedServices : []),
         condition: editFormData.condition || null,
         problem: editFormData.problem || null,
         price: editFormData.price ? Number.parseFloat(editFormData.price) : null,
@@ -1153,22 +1153,24 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
               <Label htmlFor="edit-selectedServices" className="text-black">{t("form.serviceNames")}</Label>
               <Textarea 
                 id="edit-selectedServices" 
-                value={Array.isArray(editFormData.selectedServices) ? editFormData.selectedServices.join(", ") : (editFormData.selectedServices || "")} 
+                value={(() => {
+                  // Get value - handle both string and array formats
+                  if (typeof editFormData.selectedServices === 'string') {
+                    return editFormData.selectedServices
+                  } else if (Array.isArray(editFormData.selectedServices)) {
+                    return editFormData.selectedServices.join(", ")
+                  }
+                  return ""
+                })()}
                 onChange={(e) => {
                   const value = e.target.value
-                  // Allow free text input - save as string for repair observations
-                  // Convert to array only if needed for backward compatibility
-                  if (value.trim() === "") {
-                    setEditFormData({ ...editFormData, selectedServices: [] })
-                  } else {
-                    // Store as string to allow unlimited text input
-                    // When saving, we'll handle it appropriately
-                    const servicesArray = value.split(",").map(s => s.trim()).filter(s => s)
-                    setEditFormData({ ...editFormData, selectedServices: servicesArray.length > 0 ? servicesArray : [value] })
-                  }
+                  // Store as string to allow unlimited text input with formatting preserved
+                  setEditFormData({ ...editFormData, selectedServices: value })
                 }} 
-                className="bg-white border-blue-300 text-black min-h-[100px] resize-y" 
+                className="bg-white border-blue-300 text-black min-h-[120px] resize-y w-full" 
                 placeholder="Enter services or repair observations (comma-separated or multiple lines)"
+                disabled={false}
+                readOnly={false}
               />
             </div>
             <div className="space-y-2">
