@@ -533,6 +533,7 @@ const translations: Record<Language, Record<string, string>> = {
 
     // NewRepairTicketForm labels
     "form.customerName": "Nome do cliente",
+    "form.clientName": "Nome do Cliente",
     "form.contactNumber": "Número de contacto",
     "form.model": "Modelo",
     "form.imei": "Número IMEI",
@@ -554,6 +555,7 @@ const translations: Record<Language, Record<string, string>> = {
     "form.repairNumberHint": "O número único de reparação será gerado no servidor",
     "form.repairObservations": "Observações de Reparação",
     "form.repairObservationsPlaceholder": "Observações de Reparação",
+    "form.clientName": "Nome do Cliente",
     "form.clientId": "ID do Cliente (Gerado automaticamente)",
     "form.clientIdHint": "O ID do cliente é gerado automaticamente",
     "form.clientIdHintNew": "Digite o ID do cliente existente ou deixe em branco para novo cliente",
@@ -982,6 +984,7 @@ const translations: Record<Language, Record<string, string>> = {
 
     // NewRepairTicketForm labels
     "form.customerName": "Kundenname",
+    "form.clientName": "Kundenname",
     "form.contactNumber": "Kontaktnummer",
     "form.model": "Modell",
     "form.imei": "IMEI-Nummer",
@@ -1756,6 +1759,7 @@ const translations: Record<Language, Record<string, string>> = {
 
     // NewRepairTicketForm labels
     "form.customerName": "کسٹمر کا نام",
+    "form.clientName": "کلائنٹ کا نام",
     "form.contactNumber": "رابطہ نمبر",
     "form.model": "ماڈل",
     "form.imei": "IMEI نمبر",
@@ -2143,6 +2147,7 @@ const translations: Record<Language, Record<string, string>> = {
 
     // NewRepairTicketForm labels
     "form.customerName": "ਗ੍ਰਾਹਕ ਦਾ ਨਾਮ",
+    "form.clientName": "ਕਲਾਇੰਟ ਦਾ ਨਾਮ",
     "form.contactNumber": "ਸੰਪਰਕ ਨੰਬਰ",
     "form.model": "ਮਾਡਲ",
     "form.imei": "IMEI ਨੰਬਰ",
@@ -2531,6 +2536,7 @@ const translations: Record<Language, Record<string, string>> = {
 
     // NewRepairTicketForm labels
     "form.customerName": "ग्राहक का नाम",
+    "form.clientName": "क्लाइंट का नाम",
     "form.contactNumber": "संपर्क नंबर",
     "form.model": "मॉडल",
     "form.imei": "IMEI नंबर",
