@@ -889,7 +889,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                           {ticket.equipmentObs || "-"}
                         </td>
                         <td className="border-r border-blue-300 px-1 py-1.5 text-[11px] text-black break-words">
-                          {(() => {
+                          {ticket.repairObs || (() => {
                             let services = ticket.serviceName || ""
                             if (ticket.selectedServices) {
                               try {

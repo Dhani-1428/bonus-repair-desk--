@@ -158,7 +158,7 @@ export function RepairTicketList() {
                       {ticket.imeiNo}
                     </td>
                     <td className="px-4 py-3 text-sm text-black border-r border-blue-100 max-w-xs truncate">
-                      {(() => {
+                      {ticket.repairObs || (() => {
                         let services = ticket.serviceName || ""
                         if (ticket.selectedServices) {
                           try {
