@@ -457,6 +457,16 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
       servicesArray = ticket.serviceName ? [ticket.serviceName] : []
     }
     
+    // If repairObs exists, use it for Services field (convert to array format)
+    // Priority: repairObs > selectedServices > serviceName
+    let servicesForField = servicesArray
+    if (ticket.repairObs && ticket.repairObs.trim() !== "") {
+      // Convert repairObs string to array format for the Services field
+      servicesForField = [ticket.repairObs]
+    } else if (servicesArray.length === 0 && ticket.serviceName) {
+      servicesForField = [ticket.serviceName]
+    }
+    
     setEditFormData({
       customerName: ticket.customerName || "",
       contact: ticket.contact || "",
@@ -474,7 +484,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
       waterDamaged: ticket.waterDamaged ?? false,
       equipmentObs: ticket.equipmentObs || "",
       repairObs: ticket.repairObs || "",
-      selectedServices: servicesArray,
+      selectedServices: servicesForField,
       condition: ticket.condition || "",
       problem: ticket.problem || "",
       price: ticket.price || "",
