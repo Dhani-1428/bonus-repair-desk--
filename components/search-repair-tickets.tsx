@@ -533,8 +533,12 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
         battery: editFormData.battery ?? false,
         waterDamaged: editFormData.waterDamaged ?? false,
         equipmentObs: editFormData.equipmentObs || null,
-        repairObs: editFormData.repairObs || null,
-        // Save services: preserve string format for repair observations, convert to array if needed
+        // When Services field is edited, save it to repairObs so it shows in Services column
+        // If Services field has value, use it; otherwise use repairObs field value
+        repairObs: (typeof editFormData.selectedServices === 'string' && editFormData.selectedServices.trim()) 
+          ? editFormData.selectedServices.trim() 
+          : (editFormData.repairObs || null),
+        // Also save to selectedServices for backward compatibility
         selectedServices: typeof editFormData.selectedServices === 'string' 
           ? (editFormData.selectedServices.trim() ? [editFormData.selectedServices.trim()] : [])
           : (Array.isArray(editFormData.selectedServices) ? editFormData.selectedServices : []),
