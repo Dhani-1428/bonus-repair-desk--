@@ -1860,6 +1860,7 @@ function getReceiptTranslations(lang: "en" | "pt" | "de" | "fr" | "ur" | "pa" | 
       "receipt.clientPhone": "Client Phone",
       "receipt.receivedBy": "Device Received By",
       "receipt.entryDate": "Entry Date",
+      "receipt.outDate": "Out Date",
       "receipt.repairN": "Repair n",
       "receipt.imei": "IMEI",
       "receipt.brandModel": "Brand-Model",
@@ -1897,6 +1898,7 @@ function getReceiptTranslations(lang: "en" | "pt" | "de" | "fr" | "ur" | "pa" | 
       "receipt.clientPhone": "Telefone do Cliente",
       "receipt.receivedBy": "Dispositivo Recebido Por",
       "receipt.entryDate": "Data de Entrada",
+      "receipt.outDate": "Data de Saída",
       "receipt.repairN": "Reparação n",
       "receipt.imei": "IMEI",
       "receipt.brandModel": "Marca-Modelo",
@@ -1934,6 +1936,7 @@ function getReceiptTranslations(lang: "en" | "pt" | "de" | "fr" | "ur" | "pa" | 
       "receipt.clientPhone": "Kundentelefon",
       "receipt.receivedBy": "Gerät erhalten von",
       "receipt.entryDate": "Eingangsdatum",
+      "receipt.outDate": "Ausgangsdatum",
       "receipt.repairN": "Reparatur Nr.",
       "receipt.imei": "IMEI",
       "receipt.brandModel": "Marke-Modell",
@@ -1971,6 +1974,7 @@ function getReceiptTranslations(lang: "en" | "pt" | "de" | "fr" | "ur" | "pa" | 
       "receipt.clientPhone": "Téléphone client",
       "receipt.receivedBy": "Appareil reçu par",
       "receipt.entryDate": "Date d'entrée",
+      "receipt.outDate": "Date de sortie",
       "receipt.repairN": "Réparation n",
       "receipt.imei": "IMEI",
       "receipt.brandModel": "Marque-Modèle",
@@ -2045,6 +2049,7 @@ function getReceiptTranslations(lang: "en" | "pt" | "de" | "fr" | "ur" | "pa" | 
       "receipt.clientPhone": "ਕਲਾਇੰਟ ਫੋਨ",
       "receipt.receivedBy": "ਡਿਵਾਈਸ ਕਿਸਨੇ ਪ੍ਰਾਪਤ ਕੀਤੀ",
       "receipt.entryDate": "ਐਂਟਰੀ ਦੀ ਤਾਰੀਖ",
+      "receipt.outDate": "ਬਾਹਰ ਦੀ ਤਾਰੀਖ",
       "receipt.repairN": "ਮੁਰੰਮਤ ਨੰਬਰ",
       "receipt.imei": "IMEI",
       "receipt.brandModel": "ਬ੍ਰਾਂਡ-ਮਾਡਲ",
@@ -2084,6 +2089,7 @@ function getReceiptTranslations(lang: "en" | "pt" | "de" | "fr" | "ur" | "pa" | 
       "receipt.clientPhone": "क्लाइंट फोन",
       "receipt.receivedBy": "डिवाइस किसने प्राप्त किया",
       "receipt.entryDate": "प्रविष्टि की तारीख",
+      "receipt.outDate": "बाहर की तारीख",
       "receipt.repairN": "मरम्मत नंबर",
       "receipt.imei": "IMEI",
       "receipt.brandModel": "ब्रांड-मॉडल",
@@ -2405,6 +2411,16 @@ export async function printReceiptForTickets(
     const formattedDate = entryDate.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })
     const formattedTime = entryDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
     
+    // Format out date (deliveredDate) if available - check all tickets for delivered date
+    let outDateDisplay = ""
+    const deliveredTicket = tickets.find(t => t.deliveredDate)
+    if (deliveredTicket?.deliveredDate) {
+      const outDate = new Date(deliveredTicket.deliveredDate)
+      const formattedOutDate = outDate.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })
+      const formattedOutTime = outDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+      outDateDisplay = `<div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.outDate"] || "Out Date"}:</span> ${formattedOutDate} ${formattedOutTime}</div>`
+    }
+    
     // Calculate total price
     const totalPrice = tickets.reduce((sum, ticket) => sum + (Number.parseFloat(ticket.price || 0)), 0)
     
@@ -2437,6 +2453,7 @@ export async function printReceiptForTickets(
         
         <div style="margin: 6px 0; page-break-inside: avoid;">
           <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.entryDate"]}:</span> ${formattedDate} ${formattedTime}</div>
+          ${outDateDisplay}
           <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">Number of Devices:</span> ${tickets.length}</div>
         </div>
         
@@ -2583,6 +2600,15 @@ export async function printReceiptForTickets(
     const formattedDate = entryDate.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })
     const formattedTime = entryDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
     
+    // Format out date (deliveredDate) if available
+    let outDateDisplay = ""
+    if (ticket?.deliveredDate) {
+      const outDate = new Date(ticket.deliveredDate)
+      const formattedOutDate = outDate.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })
+      const formattedOutTime = outDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+      outDateDisplay = `<div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.outDate"] || "Out Date"}:</span> ${formattedOutDate} ${formattedOutTime}</div>`
+    }
+    
     return `
       <div style="font-family: Arial, sans-serif; width: 100%; font-size: ${baseFontSize}; line-height: ${lineHeight}; page-break-inside: avoid !important; page-break-after: avoid !important; page-break-before: avoid !important; break-inside: avoid !important; break-after: avoid !important; break-before: avoid !important; margin: 0; padding: 0;">
         <div style="display: ${printerType === "thermal" ? "block" : "table"}; width: 100%; margin: 0 0 4px 0; border-bottom: 1.5px solid #000; padding: 0 0 2px 0;">
@@ -2607,6 +2633,7 @@ export async function printReceiptForTickets(
         
         <div style="margin: 6px 0;">
           <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.entryDate"]}:</span> ${formattedDate} ${formattedTime}</div>
+          ${outDateDisplay}
           <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.repairN"]}:</span> ${ticketRepairNumber}</div>
           <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.imei"]}:</span> ${ticketImeiNo}</div>
           <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.brandModel"]}:</span> ${ticketBrand} - ${ticketModel}</div>

@@ -70,6 +70,22 @@ export function generateThermalReceipt(
     hour: "2-digit",
     minute: "2-digit",
   })
+  
+  // Format out date (deliveredDate) if available
+  let outDateLine = ""
+  if (firstTicket.deliveredDate) {
+    const outDate = new Date(firstTicket.deliveredDate)
+    const formattedOutDate = outDate.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    })
+    const formattedOutTime = outDate.toLocaleTimeString("en-GB", {
+      hour: "2-digit",
+      minute: "2-digit",
+    })
+    outDateLine = `Out Date: ${formattedOutDate} ${formattedOutTime}\n`
+  }
 
   // Generate single receipt copy
   const generateReceiptCopy = (copyLabel: string): string => {
@@ -95,6 +111,9 @@ export function generateThermalReceipt(
     receipt += `Phone: ${contact}\n`
     receipt += `Received By: ${receivedBy}\n`
     receipt += `Date: ${formattedDate} ${formattedTime}\n`
+    if (outDateLine) {
+      receipt += outDateLine
+    }
 
     receipt += "-".repeat(32) + "\n"
 
