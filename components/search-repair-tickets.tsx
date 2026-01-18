@@ -534,14 +534,27 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
         waterDamaged: editFormData.waterDamaged ?? false,
         equipmentObs: editFormData.equipmentObs || null,
         // When Services field is edited, save it to repairObs so it shows in Services column
-        // If Services field has value, use it; otherwise use repairObs field value
-        repairObs: (typeof editFormData.selectedServices === 'string' && editFormData.selectedServices.trim()) 
-          ? editFormData.selectedServices.trim() 
-          : (editFormData.repairObs || null),
+        // Priority: If Services field has value, use it; otherwise use repairObs field value
+        repairObs: (() => {
+          // Get value from selectedServices field
+          const servicesValue = typeof editFormData.selectedServices === 'string' 
+            ? editFormData.selectedServices.trim() 
+            : (Array.isArray(editFormData.selectedServices) && editFormData.selectedServices.length > 0)
+            ? editFormData.selectedServices.join(", ")
+            : ""
+          
+          // If Services field has value, use it; otherwise keep existing repairObs
+          return servicesValue || editFormData.repairObs || null
+        })(),
         // Also save to selectedServices for backward compatibility
-        selectedServices: typeof editFormData.selectedServices === 'string' 
-          ? (editFormData.selectedServices.trim() ? [editFormData.selectedServices.trim()] : [])
-          : (Array.isArray(editFormData.selectedServices) ? editFormData.selectedServices : []),
+        selectedServices: (() => {
+          if (typeof editFormData.selectedServices === 'string') {
+            return editFormData.selectedServices.trim() ? [editFormData.selectedServices.trim()] : []
+          } else if (Array.isArray(editFormData.selectedServices)) {
+            return editFormData.selectedServices
+          }
+          return []
+        })(),
         condition: editFormData.condition || null,
         problem: editFormData.problem || null,
         price: editFormData.price ? Number.parseFloat(editFormData.price) : null,
@@ -557,15 +570,32 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
       })
 
       if (response.ok) {
-        // Reload tickets from API
+        // Close form first
+        setIsEditDialogOpen(false)
+        setEditingTicket(null)
+        
+        // Reload tickets from API to show updated data
         const reloadResponse = await fetch(`/api/repairs?userId=${userId}`)
         if (reloadResponse.ok) {
           const data = await reloadResponse.json()
-            const ticketsArray = Array.isArray(data.tickets) ? data.tickets : []
-            setTickets(sortTicketsByClientId(ticketsArray))
+          const ticketsArray = Array.isArray(data.tickets) ? data.tickets : []
           
-          // Update filtered tickets
-          setFilteredTickets(ticketsArray.filter((t: any) => {
+          // Parse selectedServices JSON strings if needed
+          const parsedTickets = ticketsArray.map((t: any) => {
+            if (t.selectedServices && typeof t.selectedServices === 'string') {
+              try {
+                t.selectedServices = JSON.parse(t.selectedServices)
+              } catch {
+                // Keep as is if parsing fails
+              }
+            }
+            return t
+          })
+          
+          setTickets(sortTicketsByClientId(parsedTickets))
+          
+          // Update filtered tickets with parsed data
+          setFilteredTickets(parsedTickets.filter((t: any) => {
             if (statusFilter !== "all" && t.status?.toLowerCase() !== statusFilter.toLowerCase()) return false
             if (searchTerm.trim()) {
               const term = searchTerm.toLowerCase()
@@ -575,8 +605,6 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
           }))
         }
         toast.success(t("success.deviceUpdated") || "Device updated successfully")
-        setIsEditDialogOpen(false)
-        setEditingTicket(null)
       } else {
         const data = await response.json()
         throw new Error(data.error || t("error.deviceUpdateFailed"))
