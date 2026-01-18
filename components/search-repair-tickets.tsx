@@ -534,16 +534,17 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
         waterDamaged: editFormData.waterDamaged ?? false,
         equipmentObs: editFormData.equipmentObs || null,
         // When Services field is edited, save it to repairObs so it shows in Services column
-        // Priority: If Services field has value, use it; otherwise use repairObs field value
+        // Always use Services field value if it exists, otherwise keep repairObs
         repairObs: (() => {
-          // Get value from selectedServices field
-          const servicesValue = typeof editFormData.selectedServices === 'string' 
-            ? editFormData.selectedServices.trim() 
-            : (Array.isArray(editFormData.selectedServices) && editFormData.selectedServices.length > 0)
-            ? editFormData.selectedServices.join(", ")
-            : ""
+          // Get value from selectedServices field (stored as string in Textarea)
+          let servicesValue = ""
+          if (typeof editFormData.selectedServices === 'string') {
+            servicesValue = editFormData.selectedServices.trim()
+          } else if (Array.isArray(editFormData.selectedServices) && editFormData.selectedServices.length > 0) {
+            servicesValue = editFormData.selectedServices.join(", ").trim()
+          }
           
-          // If Services field has value, use it; otherwise keep existing repairObs
+          // If Services field has value, use it; otherwise keep existing repairObs value
           return servicesValue || editFormData.repairObs || null
         })(),
         // Also save to selectedServices for backward compatibility
@@ -1197,6 +1198,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                 onChange={(e) => {
                   const value = e.target.value
                   // Store as string to allow unlimited text input with formatting preserved
+                  // This will be saved to repairObs when form is submitted
                   setEditFormData({ ...editFormData, selectedServices: value })
                 }} 
                 className="bg-white border-blue-300 text-black min-h-[120px] resize-y w-full" 
