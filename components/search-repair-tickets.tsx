@@ -534,7 +534,10 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
         waterDamaged: editFormData.waterDamaged ?? false,
         equipmentObs: editFormData.equipmentObs || null,
         repairObs: editFormData.repairObs || null,
-        selectedServices: Array.isArray(editFormData.selectedServices) ? editFormData.selectedServices : [],
+        // Save services: if array, join with comma; if string, use as is; otherwise empty array
+        selectedServices: Array.isArray(editFormData.selectedServices) 
+          ? editFormData.selectedServices 
+          : (typeof editFormData.selectedServices === 'string' ? [editFormData.selectedServices] : []),
         condition: editFormData.condition || null,
         problem: editFormData.problem || null,
         price: editFormData.price ? Number.parseFloat(editFormData.price) : null,
@@ -1148,10 +1151,25 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
 
             <div className="space-y-2">
               <Label htmlFor="edit-selectedServices" className="text-black">{t("form.serviceNames")}</Label>
-              <Input id="edit-selectedServices" value={Array.isArray(editFormData.selectedServices) ? editFormData.selectedServices.join(", ") : editFormData.selectedServices || ""} onChange={(e) => {
-                const services = e.target.value.split(",").map(s => s.trim()).filter(s => s)
-                setEditFormData({ ...editFormData, selectedServices: services })
-              }} className="bg-white border-blue-300 text-black" />
+              <Textarea 
+                id="edit-selectedServices" 
+                value={Array.isArray(editFormData.selectedServices) ? editFormData.selectedServices.join(", ") : (editFormData.selectedServices || "")} 
+                onChange={(e) => {
+                  const value = e.target.value
+                  // Allow free text input - save as string for repair observations
+                  // Convert to array only if needed for backward compatibility
+                  if (value.trim() === "") {
+                    setEditFormData({ ...editFormData, selectedServices: [] })
+                  } else {
+                    // Store as string to allow unlimited text input
+                    // When saving, we'll handle it appropriately
+                    const servicesArray = value.split(",").map(s => s.trim()).filter(s => s)
+                    setEditFormData({ ...editFormData, selectedServices: servicesArray.length > 0 ? servicesArray : [value] })
+                  }
+                }} 
+                className="bg-white border-blue-300 text-black min-h-[100px] resize-y" 
+                placeholder="Enter services or repair observations (comma-separated or multiple lines)"
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="edit-equipmentObs" className="text-black">Mobile Conditions (On Arrival)</Label>
