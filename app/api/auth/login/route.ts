@@ -155,20 +155,35 @@ export async function POST(request: NextRequest) {
       stack: error?.stack?.substring(0, 500),
     })
     
-    // Determine error message
+    // Determine error message with helpful guidance
     let errorMessage = "Internal server error"
+    let helpUrl = ""
+    
     if (error?.code === "ENOTFOUND" || error?.message?.includes("ENOTFOUND") || error?.message?.includes("getaddrinfo")) {
-      errorMessage = `Database connection failed: Cannot resolve database hostname '${process.env.DB_HOST || "unknown"}'. Please check your database configuration in Vercel environment variables.`
+      errorMessage = `Database connection failed: Cannot resolve database hostname '${process.env.DB_HOST || "unknown"}'. `
+      if (process.env.VERCEL) {
+        errorMessage += "Please check your database configuration in Vercel environment variables. Visit /api/diagnose-db for detailed setup instructions."
+      } else {
+        errorMessage += "Please check your .env file. Visit /api/diagnose-db for detailed setup instructions."
+      }
+      helpUrl = "/api/diagnose-db"
     } else if (error?.code === "ECONNREFUSED" || error?.code === "ETIMEDOUT") {
-      errorMessage = "Database connection failed. Please try again later."
+      errorMessage = "Database connection failed. Please try again later or check if your database server is running."
     } else if (error?.code === "ER_ACCESS_DENIED_ERROR") {
-      errorMessage = "Database authentication failed. Please check your database credentials."
+      errorMessage = "Database authentication failed. Please verify your database username and password in environment variables."
     } else if (error?.code === "ER_BAD_DB_ERROR") {
-      errorMessage = `Database '${process.env.DB_NAME}' not found. Please check your database configuration.`
+      errorMessage = `Database '${process.env.DB_NAME || "unknown"}' not found. Please check your DB_NAME environment variable.`
     } else if (error?.code === "ER_NO_SUCH_TABLE") {
       errorMessage = "Database table not found. Please run the database initialization script."
     } else if (error?.code === "ENV_MISSING") {
-      errorMessage = `Database configuration missing: ${(error as any)?.missing?.join(", ") || "unknown variables"}. Please set environment variables in Vercel project settings.`
+      const missing = (error as any)?.missing || []
+      errorMessage = `Database configuration missing: ${missing.join(", ")}. `
+      if (process.env.VERCEL) {
+        errorMessage += "Please set these environment variables in Vercel project settings → Environment Variables. Visit /api/diagnose-db for step-by-step instructions."
+      } else {
+        errorMessage += "Please add these to your .env file. Visit /api/diagnose-db for step-by-step instructions."
+      }
+      helpUrl = "/api/diagnose-db"
     } else if (error?.message) {
       errorMessage = error.message
     }
@@ -179,7 +194,9 @@ export async function POST(request: NextRequest) {
         { 
           error: errorMessage,
           details: process.env.NODE_ENV === "development" ? error?.message : undefined,
-          code: process.env.NODE_ENV === "development" ? error?.code : undefined
+          code: process.env.NODE_ENV === "development" ? error?.code : undefined,
+          helpUrl: helpUrl || (error?.code === "ENOTFOUND" || error?.code === "ENV_MISSING" ? "/api/diagnose-db" : undefined),
+          diagnoseUrl: "/api/diagnose-db",
         },
         { status: 500 }
       )
