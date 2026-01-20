@@ -180,26 +180,59 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       if (!response.ok) {
+        // Safely get response properties
+        const status = typeof response?.status === "number" ? response.status : "unknown"
+        const statusText = response?.statusText || "unknown"
+        
         // Try to extract error message from various possible fields
         const errorMessage = 
           data?.error || 
           data?.message || 
           data?.details || 
           (typeof data === "string" ? data : null) ||
-          `Login failed (${response.status} ${response.statusText})`
+          `Login failed (${status} ${statusText})`
         
+        // Build error details object with explicit property assignment to ensure serialization
+        const errorDetails: Record<string, string> = {}
+        errorDetails.status = String(status)
+        errorDetails.statusText = String(statusText)
+        errorDetails.error = String(errorMessage || "Unknown error")
+        
+        // Safely add data if available
+        if (data !== null && data !== undefined) {
+          if (typeof data === "object") {
+            try {
+              errorDetails.data = JSON.stringify(data, null, 2)
+            } catch (e) {
+              errorDetails.data = String(data)
+            }
+          } else {
+            errorDetails.data = String(data)
+          }
+        } else {
+          errorDetails.data = "No data"
+        }
+        
+        // Safely add raw response text if available
+        if (responseText && typeof responseText === "string" && responseText.trim()) {
+          errorDetails.rawResponse = responseText.substring(0, 500)
+        } else {
+          errorDetails.rawResponse = "No response text"
+        }
+        
+        // Log with explicit values to ensure visibility
         console.error("[Login] API Error:", {
-          status: response.status,
-          statusText: response.statusText,
-          error: errorMessage,
-          data: data && typeof data === "object" ? JSON.stringify(data, null, 2) : (data || "No data"),
-          rawResponse: responseText ? responseText.substring(0, 500) : "No response text"
+          status: errorDetails.status,
+          statusText: errorDetails.statusText,
+          error: errorDetails.error,
+          data: errorDetails.data,
+          rawResponse: errorDetails.rawResponse
         })
         
         // Provide more specific error messages based on status code
-        if (response.status === 401) {
+        if (status === 401) {
           throw new Error("Invalid email or password. Please check your credentials and try again.")
-        } else if (response.status === 500) {
+        } else if (status === 500) {
           throw new Error(errorMessage || "Server error. Please try again later.")
         } else {
           throw new Error(errorMessage)
@@ -286,10 +319,50 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (error: any) {
       // If error is already an Error object with a message, log and throw it as is
       if (error instanceof Error) {
+        // Handle database hostname resolution errors
+        if (
+          error.message.includes("Cannot resolve database hostname") ||
+          error.message.includes("ENOTFOUND") ||
+          error.message.includes("getaddrinfo") ||
+          error.message.includes("database hostname") ||
+          error.message.includes("Database connection failed")
+        ) {
+          console.warn("[Login] Database configuration issue detected:", {
+            message: error.message,
+            suggestion: "Please check your database configuration (DB_HOST environment variable) and ensure the database server is accessible.",
+            diagnosticUrl: "/api/diagnose-db"
+          })
+          // Provide a more helpful error message with guidance
+          const helpfulMessage = error.message.includes("Cannot resolve") || error.message.includes("hostname")
+            ? "Database connection failed: Cannot resolve database hostname. Please check your database configuration in Vercel environment variables. Visit /api/diagnose-db for detailed setup instructions."
+            : "Database connection failed. Please check your database configuration and ensure the database server is accessible. Visit /api/diagnose-db for diagnostic information."
+          throw new Error(helpfulMessage)
+        }
         // Handle connection reset errors with a user-friendly message
         if (error.message.includes("ECONNRESET") || error.message.includes("Connection lost")) {
-          console.error("[Login] Database connection error:", error.message)
+          console.warn("[Login] Database connection reset:", {
+            message: error.message,
+            suggestion: "This may be a temporary issue. Please try again in a moment."
+          })
           throw new Error("Database connection was lost. Please try again in a moment.")
+        }
+        // Handle generic database connection errors
+        if (
+          error.message.includes("Database connection") ||
+          error.message.includes("database connection") ||
+          error.message.includes("ECONNREFUSED") ||
+          error.message.includes("ETIMEDOUT")
+        ) {
+          console.warn("[Login] Database connection issue:", {
+            message: error.message,
+            suggestion: "Please check your database configuration or contact support.",
+            diagnosticUrl: "/api/diagnose-db"
+          })
+          // Check if the error already contains helpful information
+          if (error.message.includes("diagnose-db") || error.message.includes("Vercel")) {
+            throw error // Use the original error if it already has helpful info
+          }
+          throw new Error("Unable to connect to the database. Please check your database configuration. Visit /api/diagnose-db for diagnostic information.")
         }
         console.error("[Login] Error:", error.message, error)
         throw error
