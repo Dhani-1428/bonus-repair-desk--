@@ -35,6 +35,15 @@ export async function POST(request: NextRequest) {
         [email.trim()]
       )
     } catch (dbError: any) {
+      // Handle DNS resolution errors (ENOTFOUND)
+      if (dbError?.code === "ENOTFOUND" || dbError?.message?.includes("ENOTFOUND") || dbError?.message?.includes("getaddrinfo")) {
+        console.error("[API] Database hostname cannot be resolved:", {
+          code: dbError?.code,
+          message: dbError?.message,
+          host: process.env.DB_HOST,
+        })
+        throw new Error("Database connection failed: Cannot resolve database hostname. Please check your database configuration.")
+      }
       // If it's a connection error, log it but provide a helpful message
       if (dbError?.code === "ECONNRESET" || dbError?.message?.includes("ECONNRESET")) {
         console.error("[API] Database connection reset during login query")
@@ -148,14 +157,18 @@ export async function POST(request: NextRequest) {
     
     // Determine error message
     let errorMessage = "Internal server error"
-    if (error?.code === "ECONNREFUSED" || error?.code === "ETIMEDOUT") {
+    if (error?.code === "ENOTFOUND" || error?.message?.includes("ENOTFOUND") || error?.message?.includes("getaddrinfo")) {
+      errorMessage = `Database connection failed: Cannot resolve database hostname '${process.env.DB_HOST || "unknown"}'. Please check your database configuration in Vercel environment variables.`
+    } else if (error?.code === "ECONNREFUSED" || error?.code === "ETIMEDOUT") {
       errorMessage = "Database connection failed. Please try again later."
     } else if (error?.code === "ER_ACCESS_DENIED_ERROR") {
-      errorMessage = "Database authentication failed."
+      errorMessage = "Database authentication failed. Please check your database credentials."
     } else if (error?.code === "ER_BAD_DB_ERROR") {
       errorMessage = `Database '${process.env.DB_NAME}' not found. Please check your database configuration.`
     } else if (error?.code === "ER_NO_SUCH_TABLE") {
       errorMessage = "Database table not found. Please run the database initialization script."
+    } else if (error?.code === "ENV_MISSING") {
+      errorMessage = `Database configuration missing: ${(error as any)?.missing?.join(", ") || "unknown variables"}. Please set environment variables in Vercel project settings.`
     } else if (error?.message) {
       errorMessage = error.message
     }

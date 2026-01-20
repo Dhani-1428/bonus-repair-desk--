@@ -157,6 +157,7 @@ export async function query(sql: string, params?: any[], retries = 2): Promise<a
       return results
     } catch (error: any) {
       const isConnectionError = 
+        error?.code === "ENOTFOUND" ||
         error?.code === "ECONNRESET" ||
         error?.code === "ETIMEDOUT" ||
         error?.code === "ECONNREFUSED" ||
@@ -164,6 +165,8 @@ export async function query(sql: string, params?: any[], retries = 2): Promise<a
         error?.code === "PROTOCOL_ENQUEUE_AFTER_QUIT" ||
         error?.code === "ER_ACCESS_DENIED_ERROR" ||
         error?.code === "ER_BAD_DB_ERROR" ||
+        error?.message?.includes("ENOTFOUND") ||
+        error?.message?.includes("getaddrinfo") ||
         error?.message?.includes("Connection lost") ||
         error?.message?.includes("read ECONNRESET") ||
         error?.message?.includes("connect ECONNREFUSED")
