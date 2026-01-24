@@ -668,17 +668,17 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
   return (
     <div className="space-y-6">
       <Card className="shadow-xl border border-blue-200 bg-white">
-        <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-100 border-b-2 border-blue-300 rounded-t-lg p-6 shadow-sm">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-2xl font-bold text-black flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center ring-2 ring-blue-200 shadow-lg">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-100 border-b-2 border-blue-300 rounded-t-lg p-4 sm:p-6 shadow-sm">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <CardTitle className="text-xl sm:text-2xl font-bold text-black flex items-center gap-2 sm:gap-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center ring-2 ring-blue-200 shadow-lg">
+                <svg className="w-4 h-4 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </div>
               {t("search.title")}
             </CardTitle>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <Button
                 onClick={migrateClientIds}
                 className="bg-orange-600 hover:bg-orange-700 text-white shadow-md hover:shadow-lg text-xs px-3 py-1.5"
@@ -740,8 +740,8 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
             </div>
           </div>
         </CardHeader>
-        <CardContent className="p-6 text-black">
-          <div className="grid gap-4 md:grid-cols-3">
+        <CardContent className="p-4 sm:p-6 text-black">
+          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             <div className="space-y-2">
               <Label htmlFor="search" className="font-medium text-black">{t("search.searchLabel")}</Label>
               <div className="relative">
@@ -870,8 +870,9 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
               </p>
             </div>
           ) : (
-            <div className="overflow-x-hidden">
-              <table className="w-full border-collapse table-fixed text-xs">
+            <div className="overflow-x-auto -mx-4 sm:mx-0">
+              <div className="inline-block min-w-full align-middle">
+                <table className="w-full border-collapse table-fixed text-xs min-w-[800px]">
                 <thead>
                   <tr className="bg-blue-50 border-b-2 border-blue-300">
                     <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[8%]">{t("table.date")}</th>
@@ -1067,12 +1068,12 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
       </Card>
 
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-white border-blue-200 text-black" style={{ backgroundColor: 'white' }}>
+        <DialogContent className="max-w-[95vw] sm:max-w-3xl max-h-[90vh] overflow-y-auto bg-white border-blue-200 text-black" style={{ backgroundColor: 'white' }}>
           <DialogHeader>
-            <DialogTitle className="text-black text-2xl font-bold">{t("ticket.edit")}</DialogTitle>
+            <DialogTitle className="text-black text-xl sm:text-2xl font-bold">{t("ticket.edit")}</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleEditSubmit} className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="edit-customerName" className="text-black">{t("form.clientName")}</Label>
                 <Input id="edit-customerName" value={editFormData.customerName || ""} onChange={(e) => setEditFormData({ ...editFormData, customerName: e.target.value })} className="bg-white border-blue-300 text-black" />
@@ -1154,7 +1155,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
             {/* Equipment Check */}
             <div className="space-y-2">
               <Label className="text-black">{t("form.equipmentCheck")}</Label>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 <label className="flex items-center gap-2 p-2 bg-white rounded border border-blue-200 hover:border-blue-500 cursor-pointer">
                   <input type="checkbox" checked={editFormData.simCard} onChange={(e) => setEditFormData({ ...editFormData, simCard: e.target.checked })} className="h-4 w-4" />
                   <span className="text-sm text-black">{t("form.simCard")}</span>

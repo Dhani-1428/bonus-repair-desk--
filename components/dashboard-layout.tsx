@@ -16,6 +16,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { user, logout, loading, subscription, updateSubscription } = useAuth()
   const { language, setLanguage, t } = useTranslation()
   const [showPaymentBanner, setShowPaymentBanner] = useState(true)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   // Check if payment notification has been dismissed
   useEffect(() => {
@@ -190,7 +191,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       />
       
       {/* Header */}
-      <header className="sticky top-2 z-[9999] mx-auto w-full flex-row items-center justify-between self-start rounded-full bg-white backdrop-blur-md border border-blue-200 shadow-lg transition-all duration-300 max-w-7xl px-4 py-2 mt-2"
+      <header className="sticky top-2 z-[9999] mx-auto w-full flex-row items-center justify-between self-start rounded-full bg-white backdrop-blur-md border border-blue-200 shadow-lg transition-all duration-300 max-w-7xl px-2 sm:px-4 py-2 mt-2"
         style={{
           willChange: "transform",
           transform: "translateZ(0)",
@@ -198,36 +199,55 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           perspective: "1000px",
         }}
       >
-        <div className="w-full flex items-center justify-between">
-          <Link href={isSuperAdmin ? "/super-admin" : "/dashboard"} className="z-50 flex items-center justify-center gap-3 transition-all duration-300 group">
+        <div className="w-full flex items-center justify-between gap-2">
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="lg:hidden flex items-center justify-center w-10 h-10 rounded-lg bg-blue-100 hover:bg-blue-200 transition-colors"
+            aria-label="Toggle menu"
+          >
+            <div className="flex flex-col items-center justify-center w-5 h-5 space-y-1">
+              <span
+                className={`block w-4 h-0.5 bg-blue-600 transition-all duration-300 ${isMobileMenuOpen ? "rotate-45 translate-y-1.5" : ""}`}
+              ></span>
+              <span
+                className={`block w-4 h-0.5 bg-blue-600 transition-all duration-300 ${isMobileMenuOpen ? "opacity-0" : ""}`}
+              ></span>
+              <span
+                className={`block w-4 h-0.5 bg-blue-600 transition-all duration-300 ${isMobileMenuOpen ? "-rotate-45 -translate-y-1.5" : ""}`}
+              ></span>
+            </div>
+          </button>
+
+          <Link href={isSuperAdmin ? "/super-admin" : "/dashboard"} className="z-50 flex items-center justify-center gap-2 sm:gap-3 transition-all duration-300 group flex-shrink-0">
             <div className="relative">
               <div className="absolute inset-0 bg-blue-400 rounded-xl blur opacity-50 group-hover:opacity-75 transition-opacity duration-300"></div>
-              <div className="relative bg-blue-500 p-2.5 rounded-xl shadow-md transform group-hover:scale-105 transition-transform duration-300">
-                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="relative bg-blue-500 p-2 sm:p-2.5 rounded-xl shadow-md transform group-hover:scale-105 transition-transform duration-300">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                 </svg>
               </div>
             </div>
             <div className="flex flex-col">
-              <span className="text-black font-bold text-lg tracking-tight group-hover:text-blue-600 transition-colors duration-300">
+              <span className="text-black font-bold text-sm sm:text-lg tracking-tight group-hover:text-blue-600 transition-colors duration-300 truncate max-w-[120px] sm:max-w-none">
                 {shopName}
               </span>
               {isSuperAdmin && (
-                <span className="text-xs text-black font-medium">Super Admin</span>
+                <span className="text-xs text-black font-medium hidden sm:block">Super Admin</span>
               )}
             </div>
           </Link>
-          <div className="flex items-center gap-4 relative z-10">
-            <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-4 relative z-10">
+            <div className="hidden sm:flex items-center gap-3">
               <label className="text-sm text-black flex items-center gap-2 font-medium">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 hidden md:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
                 </svg>
-                <span>{t("header.language")}:</span>
+                <span className="hidden md:inline">{t("header.language")}:</span>
                 <select
                   value={language}
                   onChange={(e) => setLanguage(e.target.value as "en" | "pt" | "de" | "fr" | "ur" | "pa" | "hi")}
-                  className="border border-blue-300 rounded-lg text-sm px-3 py-1.5 bg-white text-black hover:border-blue-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all font-medium"
+                  className="border border-blue-300 rounded-lg text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-1.5 bg-white text-black hover:border-blue-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all font-medium"
                 >
                   <option value="en">{t("header.english")}</option>
                   <option value="pt">{t("header.portuguese")}</option>
@@ -239,12 +259,12 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                 </select>
               </label>
             </div>
-            <div className="h-8 w-px bg-blue-200"></div>
-            <div className="flex items-center gap-3">
+            <div className="h-8 w-px bg-blue-200 hidden sm:block"></div>
+            <div className="flex items-center gap-2 sm:gap-3">
               <div className="relative group">
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl blur opacity-50 group-hover:opacity-75 transition-opacity duration-300"></div>
-                <div className="relative w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg ring-2 ring-blue-200 group-hover:ring-blue-400 transition-all duration-300">
-                  <span className="text-white font-bold text-sm">
+                <div className="relative w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg ring-2 ring-blue-200 group-hover:ring-blue-400 transition-all duration-300">
+                  <span className="text-white font-bold text-xs sm:text-sm">
                     {user?.name?.charAt(0).toUpperCase() || "U"}
                   </span>
                 </div>
@@ -258,20 +278,30 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               variant="outline" 
               size="sm" 
               onClick={logout}
-              className="border-blue-300 bg-white text-black hover:bg-red-50 hover:border-red-400 hover:text-red-600 font-medium transition-all duration-300 hover:shadow-lg hover:shadow-red-200 transform hover:scale-105"
+              className="border-blue-300 bg-white text-black hover:bg-red-50 hover:border-red-400 hover:text-red-600 font-medium transition-all duration-300 hover:shadow-lg hover:shadow-red-200 transform hover:scale-105 text-xs sm:text-sm px-2 sm:px-3"
             >
-              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
               </svg>
-              {t("header.logout")}
+              <span className="hidden sm:inline">{t("header.logout")}</span>
             </Button>
           </div>
         </div>
       </header>
 
       <div className="flex relative z-10 mt-4">
+        {/* Mobile Menu Overlay */}
+        {isMobileMenuOpen && (
+          <div 
+            className="fixed inset-0 z-[9998] bg-black/50 backdrop-blur-sm lg:hidden"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+        )}
+
         {/* Sidebar */}
-        <aside className="w-72 bg-blue-500 border-r border-blue-600 min-h-[calc(100vh-140px)] p-6 shadow-lg">
+        <aside className={`fixed lg:static inset-y-0 left-0 z-[9999] w-72 bg-blue-500 border-r border-blue-600 min-h-[calc(100vh-140px)] p-4 sm:p-6 shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+          isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+        }`}>
           <nav className="space-y-2 animate-fade-in">
             {(user?.role === "super_admin" || (typeof user?.role === "string" && user.role.toUpperCase() === "SUPER_ADMIN") || user?.email === "superadmin@admin.com") ? (
               <>
@@ -449,47 +479,47 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
         {/* Payment Status Banner */}
         {!isSuperAdmin && subscription && subscription.paymentStatus && showPaymentBanner && (
-          <div className="flex-1 px-8 pt-8 pb-0">
+          <div className="flex-1 px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 lg:pt-8 pb-0">
             <div className="container mx-auto max-w-7xl">
               {(subscription.paymentStatus === "REJECTED" || (typeof subscription.paymentStatus === "string" && subscription.paymentStatus.toLowerCase() === "rejected")) ? (
-                <div className="bg-red-50 border-2 border-red-300 rounded-lg p-4 mb-4 flex items-center justify-between shadow-md">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-                      <X className="w-6 h-6 text-red-600" />
+                <div className="bg-red-50 border-2 border-red-300 rounded-lg p-3 sm:p-4 mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md">
+                  <div className="flex items-center gap-2 sm:gap-3 flex-1">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                      <X className="w-5 h-5 sm:w-6 sm:h-6 text-red-600" />
                     </div>
                     <div>
-                      <p className="text-black font-semibold text-lg">{t("payment.declined")}</p>
-                      <p className="text-black text-sm">{t("payment.declinedMessage")}</p>
+                      <p className="text-black font-semibold text-base sm:text-lg">{t("payment.declined")}</p>
+                      <p className="text-black text-xs sm:text-sm">{t("payment.declinedMessage")}</p>
                     </div>
                   </div>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={dismissPaymentNotification}
-                    className="text-red-600 hover:text-red-700"
+                    className="text-red-600 hover:text-red-700 self-end sm:self-auto"
                   >
-                    <X className="w-5 h-5" />
+                    <X className="w-4 h-4 sm:w-5 sm:h-5" />
                   </Button>
                 </div>
               ) : (subscription.paymentStatus === "APPROVED" || (typeof subscription.paymentStatus === "string" && subscription.paymentStatus.toLowerCase() === "approved")) ? (
                 (subscription.status === "ACTIVE" || (typeof subscription.status === "string" && subscription.status.toLowerCase() === "active")) ? (
-                  <div className="bg-green-50 border-2 border-green-300 rounded-lg p-4 mb-4 flex items-center justify-between shadow-md">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                        <CheckCircle className="w-6 h-6 text-green-600" />
+                  <div className="bg-green-50 border-2 border-green-300 rounded-lg p-3 sm:p-4 mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md">
+                    <div className="flex items-center gap-2 sm:gap-3 flex-1">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                        <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
                       </div>
                       <div>
-                        <p className="text-black font-semibold text-lg">{t("payment.successful")}</p>
-                        <p className="text-black text-sm">{t("payment.successfulMessage")}</p>
+                        <p className="text-black font-semibold text-base sm:text-lg">{t("payment.successful")}</p>
+                        <p className="text-black text-xs sm:text-sm">{t("payment.successfulMessage")}</p>
                       </div>
                     </div>
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={dismissPaymentNotification}
-                      className="text-green-600 hover:text-green-700"
+                      className="text-green-600 hover:text-green-700 self-end sm:self-auto"
                     >
-                      <X className="w-5 h-5" />
+                      <X className="w-4 h-4 sm:w-5 sm:h-5" />
                     </Button>
                   </div>
                 ) : null
@@ -497,23 +527,23 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                 const ps = subscription.paymentStatus as string | undefined
                 return ps === "PENDING" || (ps && typeof ps === "string" && ps.toLowerCase() === "pending")
               })() ? (
-                <div className="bg-yellow-50 border-2 border-yellow-300 rounded-lg p-4 mb-4 flex items-center justify-between shadow-md">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
-                      <Clock className="w-6 h-6 text-yellow-600" />
+                <div className="bg-yellow-50 border-2 border-yellow-300 rounded-lg p-3 sm:p-4 mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md">
+                  <div className="flex items-center gap-2 sm:gap-3 flex-1">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-yellow-100 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-600" />
                     </div>
                     <div>
-                      <p className="text-black font-semibold text-lg">{t("payment.inProcess")}</p>
-                      <p className="text-black text-sm">{t("payment.inProcessMessage")}</p>
+                      <p className="text-black font-semibold text-base sm:text-lg">{t("payment.inProcess")}</p>
+                      <p className="text-black text-xs sm:text-sm">{t("payment.inProcessMessage")}</p>
                     </div>
                   </div>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={dismissPaymentNotification}
-                    className="text-yellow-600 hover:text-yellow-700"
+                    className="text-yellow-600 hover:text-yellow-700 self-end sm:self-auto"
                   >
-                    <X className="w-5 h-5" />
+                    <X className="w-4 h-4 sm:w-5 sm:h-5" />
                   </Button>
                 </div>
               ) : null}
@@ -522,7 +552,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         )}
 
         {/* Main Content */}
-        <main className="flex-1 p-8 text-black relative z-10">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 text-black relative z-10">
           <div className="container mx-auto max-w-7xl animate-fade-in">{children}</div>
         </main>
       </div>

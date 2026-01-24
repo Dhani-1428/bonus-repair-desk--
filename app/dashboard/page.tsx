@@ -44,28 +44,28 @@ export default function DashboardPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-8 text-black">
+      <div className="space-y-6 sm:space-y-8 text-black">
         <div className="space-y-2">
-          <h1 className="text-4xl font-bold tracking-tight text-black">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-black">
             {t("dashboard.welcomeBack")} {user.name}!
           </h1>
-          <p className="text-black text-lg font-medium">
+          <p className="text-black text-base sm:text-lg font-medium">
             {t("dashboard.whatsHappening")}
           </p>
         </div>
         <StatsCards />
         
-        <div className="flex justify-between items-start pt-4">
+        <div className="flex flex-col sm:flex-row justify-between items-start gap-4 pt-4">
           <div className="space-y-2">
-            <h2 className="text-2xl font-bold tracking-tight text-black">
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-black">
               Your Account Credentials
             </h2>
-            <p className="text-black">
+            <p className="text-black text-sm sm:text-base">
               These details are used on your receipts and invoices
             </p>
           </div>
           <Link href="/settings">
-            <Button className="bg-blue-600 hover:bg-blue-700">
+            <Button className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto">
               <Settings className="w-4 h-4 mr-2" />
               Edit Credentials
             </Button>
@@ -73,14 +73,14 @@ export default function DashboardPage() {
         </div>
 
         <Card className="shadow-xl border border-blue-200 bg-white">
-          <CardHeader className="bg-blue-50 border-b border-blue-200 rounded-t-lg">
-            <CardTitle className="text-2xl text-black">Account Information</CardTitle>
-            <CardDescription className="text-black">
+          <CardHeader className="bg-blue-50 border-b border-blue-200 rounded-t-lg p-4 sm:p-6">
+            <CardTitle className="text-xl sm:text-2xl text-black">Account Information</CardTitle>
+            <CardDescription className="text-black text-sm sm:text-base">
               These details are used on your receipts and invoices
             </CardDescription>
           </CardHeader>
-          <CardContent className="p-6">
-            <div className="grid gap-6 md:grid-cols-2">
+          <CardContent className="p-4 sm:p-6">
+            <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2">
               <div className="flex items-start gap-4">
                 <div className="p-3 bg-blue-100 rounded-lg">
                   <User className="w-6 h-6 text-blue-600" />
