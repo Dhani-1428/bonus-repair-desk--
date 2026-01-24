@@ -87,7 +87,7 @@ export default function CreateTicketScreen({ navigation }: any) {
         <FormInput
           label="Client ID"
           value={formData.clientId}
-          onChangeText={(text) => setFormData({ ...formData, clientId: text }))}
+          onChangeText={(text) => setFormData({ ...formData, clientId: text })}
           placeholder="CLI-0001"
         />
       </View>
