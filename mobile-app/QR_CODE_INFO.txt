@@ -1,0 +1,45 @@
+===========================================
+YOUR QR CODE IS GENERATING!
+===========================================
+
+The Expo server is starting. In about 10-30 seconds, you should see:
+
+1. A QR CODE in your terminal (square black and white pattern)
+2. Text like "Metro waiting on exp://..."
+3. Options: Press i for iOS | Press a for Android
+
+===========================================
+HOW TO SCAN THE QR CODE:
+===========================================
+
+STEP 1: Install Expo Go on your phone
+   - iPhone: App Store → Search "Expo Go" → Install
+   - Android: Google Play → Search "Expo Go" → Install
+
+STEP 2: Scan the QR code
+   - iPhone: Open Camera app → Point at QR code → Tap notification
+   - Android: Open Expo Go app → Tap "Scan QR code" → Point at QR code
+
+STEP 3: Make sure:
+   - Phone and computer are on SAME WiFi network
+   - Your website server is running (npm run dev in main folder)
+
+===========================================
+IF YOU DON'T SEE QR CODE:
+===========================================
+
+Check your terminal window - it should be showing the Expo server output.
+
+The QR code appears in the TERMINAL where you ran npm start or START_APP.bat
+
+===========================================
+QUICK START COMMAND:
+===========================================
+
+If you need to restart, just run:
+cd mobile-app
+npm start
+
+The QR code will appear in that terminal window!
+
+===========================================

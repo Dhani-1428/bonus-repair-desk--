@@ -18,12 +18,16 @@ export default function Home() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   useEffect(() => {
-    const root = window.document.documentElement
-    root.classList.remove("light", "system")
-    root.classList.add("dark")
+    if (typeof window !== "undefined") {
+      const root = window.document.documentElement
+      root.classList.remove("light", "system")
+      root.classList.add("dark")
+    }
   }, [])
 
   useEffect(() => {
+    if (typeof window === "undefined") return
+    
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 100)
     }

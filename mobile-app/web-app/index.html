@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Bonus Repair Desk">
+    <link rel="manifest" href="manifest.json">
+    <title>Bonus Repair Desk - Mobile App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #e78a53;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Loading Bonus Repair Desk...</p>
+    </div>
+    <iframe 
+        id="appFrame"
+        src="http://172.20.10.6:3000"
+        allow="camera; microphone; geolocation; fullscreen"
+        style="display: none;"
+        sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals"
+    ></iframe>
+    <script>
+        const iframe = document.getElementById('appFrame');
+        const loading = document.getElementById('loading');
+        
+        iframe.onload = function() {
+            loading.style.display = 'none';
+            iframe.style.display = 'block';
+        };
+        
+        // Fallback if iframe fails
+        setTimeout(function() {
+            if (loading.style.display !== 'none') {
+                loading.innerHTML = '<p>Unable to connect. Make sure your website is running at http://172.20.10.6:3000</p>';
+            }
+        }, 10000);
+    </script>
+</body>
+</html>

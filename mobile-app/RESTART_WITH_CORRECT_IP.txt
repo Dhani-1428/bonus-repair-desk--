@@ -1,0 +1,27 @@
+========================================
+QUICK FIX - DO THIS NOW:
+========================================
+
+In your Expo terminal window:
+
+1. Press Ctrl+C (to stop the server)
+
+2. Then type this command:
+   npx expo start --lan
+
+3. Wait for new QR code with IP: 172.20.10.6
+
+4. Scan THAT QR code - it will work!
+
+========================================
+OR USE THIS URL MANUALLY:
+========================================
+
+If QR code still doesn't work:
+
+1. Open Expo Go app on your phone
+2. Tap "Enter URL manually"
+3. Type: exp://172.20.10.6:8081
+4. Tap "Connect"
+
+This will work!

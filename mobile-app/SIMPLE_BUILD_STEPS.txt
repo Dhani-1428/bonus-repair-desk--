@@ -1,0 +1,56 @@
+========================================
+SIMPLE STEPS TO BUILD AND UPLOAD APP
+========================================
+
+YOU CANNOT UPLOAD THE FOLDER DIRECTLY!
+
+You need to BUILD it first into an app file.
+
+========================================
+STEP 1: BUILD THE APP
+========================================
+
+Open terminal in mobile-app folder and run:
+
+1. npm install -g eas-cli
+2. eas login
+3. eas build --platform android --profile production
+
+Wait 10-30 minutes for build to complete.
+
+========================================
+STEP 2: DOWNLOAD THE APP FILE
+========================================
+
+1. Go to https://expo.dev
+2. Login with your Expo account
+3. Find your build
+4. Download the .aab file (Android) or .ipa file (iOS)
+
+========================================
+STEP 3: UPLOAD TO STORE
+========================================
+
+PLAY STORE:
+1. Go to https://play.google.com/console
+2. Create new app
+3. Upload the .aab file you downloaded
+4. Complete store listing
+5. Submit
+
+APP STORE:
+1. Go to https://appstoreconnect.apple.com
+2. Create new app
+3. Upload the .ipa file you downloaded
+4. Complete store listing
+5. Submit
+
+========================================
+OR USE THE BATCH FILE:
+========================================
+
+Just double-click: BUILD_AND_PUBLISH.bat
+
+It will guide you through everything!
+
+========================================

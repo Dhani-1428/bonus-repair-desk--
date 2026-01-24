@@ -1,0 +1,43 @@
+========================================
+HOW TO CONNECT YOUR PHONE - SIMPLE STEPS
+========================================
+
+METHOD 1: Manual URL Entry (EASIEST!)
+
+1. Look at the Expo terminal window
+2. Find the URL that says: exp://...
+3. Copy that URL
+4. Open Expo Go app on phone
+5. Tap "Enter URL manually"
+6. Paste the URL
+7. Tap "Connect"
+
+That's it! This ALWAYS works!
+
+========================================
+
+METHOD 2: Use Tunnel Mode
+
+1. Run: .\WORKING_SOLUTION.bat
+2. Wait 30-60 seconds
+3. You'll see: exp://u.expo.dev/xxxxx
+4. Enter that URL manually in Expo Go
+
+Tunnel mode works even if WiFi is different!
+
+========================================
+
+METHOD 3: Test in Browser First
+
+1. In Expo terminal, press 'w'
+2. App opens in browser
+3. If it works, app is fine - just connection issue
+
+========================================
+
+IMPORTANT:
+- Make sure website server is running (npm run dev)
+- Make sure Expo server is running (see "Metro waiting on...")
+- Phone and computer on same WiFi (for LAN mode)
+
+========================================

@@ -1,0 +1,41 @@
+========================================
+YOUR MOBILE APP TEST LINK
+========================================
+
+OPEN THIS LINK TO TEST YOUR APP:
+
+http://172.20.10.6:3001
+
+OR on your computer:
+
+http://localhost:3001
+
+========================================
+HOW TO USE:
+========================================
+
+1. Make sure your website is running:
+   - Run: npm run dev (in main folder)
+   - Should see: http://localhost:3000
+
+2. Open the test link above in:
+   - Browser on computer: http://localhost:3001
+   - Phone browser: http://172.20.10.6:3001
+
+3. Your website will load inside the app!
+
+4. To make it an app icon:
+   - iPhone: Share → Add to Home Screen
+   - Android: Menu → Add to Home Screen
+
+========================================
+TO START TEST SERVER:
+========================================
+
+Double-click: TEST_APP_LOCALLY.bat
+
+OR run:
+  cd mobile-app
+  node web-server.js
+
+========================================

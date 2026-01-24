@@ -1,0 +1,47 @@
+========================================
+YOUR MOBILE APP LINK
+========================================
+
+OPEN THIS LINK ON YOUR PHONE:
+
+http://172.20.10.6:3000
+
+========================================
+HOW TO USE:
+========================================
+
+1. Open Safari (iPhone) or Chrome (Android)
+
+2. Type this link in address bar:
+   http://172.20.10.6:3000
+
+3. Press Enter
+
+4. Your website opens like an app!
+
+========================================
+TO MAKE IT AN APP ICON:
+========================================
+
+iPhone:
+- Tap Share button (square with arrow)
+- Tap "Add to Home Screen"
+- Tap "Add"
+
+Android:
+- Tap Menu (3 dots)
+- Tap "Add to Home Screen"
+- Tap "Add"
+
+Now you have an app icon!
+
+========================================
+IMPORTANT:
+========================================
+
+Make sure your website is running:
+- Open terminal
+- Run: npm run dev
+- You should see: Local: http://localhost:3000
+
+========================================

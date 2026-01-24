@@ -20,6 +20,8 @@ export default function Hero() {
   const [isScriptLoaded, setIsScriptLoaded] = useState(false)
 
   useEffect(() => {
+    if (typeof window === "undefined") return
+    
     // Use Intersection Observer to load the script only when the component is in view
     const observer = new IntersectionObserver(
       (entries) => {

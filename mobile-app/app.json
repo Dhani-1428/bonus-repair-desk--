@@ -1,0 +1,49 @@
+{
+  "expo": {
+    "name": "Bonus Repair Desk",
+    "slug": "bonus-repair-desk",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#000000"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.bonusrepairdesk.app",
+      "buildNumber": "1",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#000000"
+      },
+      "package": "com.bonusrepairdesk.app",
+      "versionCode": 1,
+      "permissions": [
+        "INTERNET",
+        "ACCESS_NETWORK_STATE"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "./app.plugin.js"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "a4e1253d-1c1b-4990-ac64-2d4b19cf5c72"
+      }
+    },
+    "owner": "sheetalexpo"
+  }
+}

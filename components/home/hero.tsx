@@ -14,7 +14,7 @@ export default function Hero() {
   }, [])
 
   if (!mounted) {
-    return null
+    return <div className="min-h-screen" /> // Return placeholder instead of null
   }
 
   return (
