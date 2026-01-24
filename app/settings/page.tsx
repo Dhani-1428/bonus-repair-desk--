@@ -130,16 +130,16 @@ export default function SettingsPage() {
       <DashboardLayout>
         <div className="max-w-md mx-auto mt-20">
           <Card className="shadow-xl border border-blue-200 bg-white">
-            <CardHeader className="bg-blue-50 border-b border-blue-200 rounded-t-lg">
-              <CardTitle className="text-2xl flex items-center gap-2 text-black">
-                <Lock className="w-6 h-6" />
+            <CardHeader className="bg-blue-50 border-b border-blue-200 rounded-t-lg p-4 sm:p-6">
+              <CardTitle className="text-xl sm:text-2xl flex items-center gap-2 text-black">
+                <Lock className="w-5 h-5 sm:w-6 sm:h-6" />
                 Password Required
               </CardTitle>
-              <CardDescription className="text-black">
+              <CardDescription className="text-black text-sm sm:text-base">
                 Enter your password to view and edit your account credentials
               </CardDescription>
             </CardHeader>
-            <CardContent className="p-6">
+            <CardContent className="p-4 sm:p-6">
               <form onSubmit={handlePasswordSubmit} className="space-y-4">
                 <div>
                   <Label htmlFor="password" className="text-black">Password</Label>
@@ -175,26 +175,26 @@ export default function SettingsPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6 text-black">
+      <div className="space-y-4 sm:space-y-6 text-black">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-black">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-black">
             Account Settings
           </h1>
-          <p className="text-black mt-2">
+          <p className="text-black mt-2 text-sm sm:text-base">
             Update your account credentials. Changes will be reflected on receipts and you'll receive email notifications.
           </p>
         </div>
 
         <Card className="shadow-xl border border-blue-200 bg-white">
-          <CardHeader className="bg-blue-50 border-b border-blue-200 rounded-t-lg">
-            <CardTitle className="text-2xl text-black">Account Credentials</CardTitle>
-            <CardDescription className="text-black">
+          <CardHeader className="bg-blue-50 border-b border-blue-200 rounded-t-lg p-4 sm:p-6">
+            <CardTitle className="text-xl sm:text-2xl text-black">Account Credentials</CardTitle>
+            <CardDescription className="text-black text-sm sm:text-base">
               These details will appear on your receipts
             </CardDescription>
           </CardHeader>
-          <CardContent className="p-6">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid gap-4 md:grid-cols-2">
+          <CardContent className="p-4 sm:p-6">
+            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+              <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
                 <div>
                   <Label htmlFor="name" className="text-black">Name</Label>
                   <Input
@@ -270,7 +270,7 @@ export default function SettingsPage() {
                   />
                 </div>
               </div>
-              <div className="flex justify-end gap-4">
+              <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4">
                 <Button
                   type="button"
                   variant="outline"
