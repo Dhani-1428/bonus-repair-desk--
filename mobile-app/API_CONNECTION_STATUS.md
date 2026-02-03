@@ -41,15 +41,15 @@ The mobile app is configured to connect to the following backend APIs:
 - `app/api/repairs/create/route.ts`
 
 ### 4. **Team Management APIs** ✅
-- `GET /api/team?userId={userId}` - Get team members
-- `POST /api/team` - Create team member
-- `PUT /api/team/{memberId}` - Update team member
-- `DELETE /api/team/{memberId}` - Delete team member
+- `GET /api/team-members?userId={userId}` - Get team members
+- `POST /api/team-members` - Create team member
+- `PUT /api/team-members/{memberId}` - Update team member
+- `DELETE /api/team-members/{memberId}` - Delete team member
 
 **Status:** ✅ **CONNECTED** - Backend endpoint exists at:
 - `app/api/team-members/route.ts`
 
-**Note:** Mobile app uses `/api/team` but backend uses `/api/team-members`. This needs to be fixed!
+**Note:** ✅ **FIXED** - Mobile app now uses `/api/team-members` to match backend
 
 ### 5. **Payments/Subscriptions APIs** ✅
 - `GET /api/payments?userId={userId}` - Get subscriptions
@@ -67,12 +67,7 @@ The mobile app is configured to connect to the following backend APIs:
 
 ## 🔧 Issues to Fix
 
-### 1. **Team API Endpoint Mismatch** ⚠️
-- **Mobile App Uses:** `/api/team`
-- **Backend Has:** `/api/team-members`
-- **Fix Needed:** Update mobile app to use `/api/team-members` OR add route alias in backend
-
-### 2. **Analytics Endpoint** ⚠️
+### 1. **Analytics Endpoint** ⚠️
 - **Mobile App Uses:** `/api/analytics?userId={userId}`
 - **Backend Status:** Need to verify if this endpoint exists
 
@@ -113,12 +108,12 @@ const API_BASE_URL = __DEV__
 - ✅ Authentication APIs: Connected
 - ✅ User Management APIs: Connected
 - ✅ Repair Tickets APIs: Connected
-- ⚠️ Team Management APIs: Connected (but endpoint path mismatch)
+- ✅ Team Management APIs: Connected (FIXED - now uses `/api/team-members`)
 - ✅ Payments APIs: Connected
 - ⚠️ Analytics APIs: Needs verification
 
 **Action Items:**
-1. Fix team API endpoint path (`/api/team` → `/api/team-members`)
+1. ✅ Fixed team API endpoint path (`/api/team` → `/api/team-members`)
 2. Verify/create analytics endpoint
 3. Update production API URL when ready
 
