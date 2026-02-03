@@ -66,9 +66,18 @@ class ApiService {
 
   private async fetchRequest<T>(
     url: string,
-    options: RequestInit = {}
+    options: RequestInit = {},
+    skipAuth: boolean = false
   ): Promise<T> {
-    const headers = await this.getHeaders();
+    let headers: any = {
+      'Content-Type': 'application/json',
+    };
+    
+    if (!skipAuth) {
+      const authHeaders = await this.getHeaders();
+      headers = { ...headers, ...authHeaders };
+    }
+    
     const response = await fetch(url, {
       ...options,
       headers: {
@@ -84,11 +93,11 @@ class ApiService {
     try {
       console.log('[API] Attempting login to:', `${this.baseURL}/auth/login`);
       
-      // Try the auth/login endpoint first
+      // Try the auth/login endpoint first (skip auth headers for login)
       const data = await this.fetchRequest<any>(`${this.baseURL}/auth/login`, {
         method: 'POST',
         body: JSON.stringify({ email, password }),
-      });
+      }, true);
       
       console.log('[API] Login response:', data);
       
@@ -112,7 +121,7 @@ class ApiService {
           const data = await this.fetchRequest<any>(`${this.baseURL}/users/login`, {
             method: 'POST',
             body: JSON.stringify({ email, password }),
-          });
+          }, true);
           return {
             user: data.user || data,
             token: data.token || data.accessToken || '',
@@ -129,11 +138,11 @@ class ApiService {
     try {
       console.log('[API] Attempting registration to:', `${this.baseURL}/auth/register`);
       
-      // Try the auth/register endpoint first
+      // Try the auth/register endpoint first (skip auth headers for register)
       const data = await this.fetchRequest<any>(`${this.baseURL}/auth/register`, {
         method: 'POST',
         body: JSON.stringify({ name, email, password, shopName }),
-      });
+      }, true);
       
       console.log('[API] Register response:', data);
       
@@ -157,7 +166,7 @@ class ApiService {
           const data = await this.fetchRequest<any>(`${this.baseURL}/users`, {
             method: 'POST',
             body: JSON.stringify({ name, email, password, shopName }),
-          });
+          }, true);
           return {
             user: data.user || data,
             token: data.token || data.accessToken || '',
