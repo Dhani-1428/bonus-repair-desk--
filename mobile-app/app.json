@@ -3,6 +3,7 @@
     "name": "Bonus Repair Desk",
     "slug": "bonus-repair-desk",
     "version": "1.0.0",
+    "sdkVersion": "54.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
