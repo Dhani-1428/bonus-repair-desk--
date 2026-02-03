@@ -1,4 +1,3 @@
-import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Update this to your website's API base URL
@@ -25,50 +24,76 @@ class ApiService {
   }
 
   private async handleRequest<T>(
-    request: Promise<any>
+    request: Promise<Response>
   ): Promise<T> {
     try {
       const response = await request;
-      return response.data;
-    } catch (error: any) {
-      if (error.response) {
+      const data = await response.json();
+      
+      if (!response.ok) {
         throw new Error(
-          error.response.data?.error || error.response.data?.message || 'Request failed'
+          data?.error || data?.message || `Request failed with status ${response.status}`
         );
-      } else if (error.request) {
-        throw new Error('Network error. Please check your connection.');
-      } else {
-        throw new Error(error.message || 'An unexpected error occurred');
       }
+      
+      return data;
+    } catch (error: any) {
+      if (error.message) {
+        throw error;
+      }
+      throw new Error('Network error. Please check your connection.');
     }
+  }
+
+  private async fetchRequest<T>(
+    url: string,
+    options: RequestInit = {}
+  ): Promise<T> {
+    const headers = await this.getHeaders();
+    const response = await fetch(url, {
+      ...options,
+      headers: {
+        ...headers,
+        ...options.headers,
+      },
+    });
+    return this.handleRequest<T>(Promise.resolve(response));
   }
 
   // Authentication
   async login(email: string, password: string) {
     try {
       // Try the auth/login endpoint first
-      const response = await axios.post(`${this.baseURL}/auth/login`, { email, password });
+      const data = await this.fetchRequest<any>(`${this.baseURL}/auth/login`, {
+        method: 'POST',
+        body: JSON.stringify({ email, password }),
+      });
       
       // If successful, return the response
-      if (response.data.user) {
+      if (data.user) {
         return {
-          user: response.data.user,
-          token: response.data.token || response.data.accessToken || '',
+          user: data.user,
+          token: data.token || data.accessToken || '',
         };
       }
       
       // Fallback: try register endpoint format
       return {
-        user: response.data,
+        user: data,
         token: '',
       };
     } catch (error: any) {
       // If auth/login doesn't exist, try alternative endpoints
-      if (error.response?.status === 404) {
+      if (error.message?.includes('404') || error.message?.includes('Not Found')) {
         // Try alternative login endpoint
-        return this.handleRequest(
-          axios.post(`${this.baseURL}/users/login`, { email, password })
-        );
+        const data = await this.fetchRequest<any>(`${this.baseURL}/users/login`, {
+          method: 'POST',
+          body: JSON.stringify({ email, password }),
+        });
+        return {
+          user: data.user || data,
+          token: data.token || data.accessToken || '',
+        };
       }
       throw error;
     }
@@ -77,30 +102,33 @@ class ApiService {
   async register(name: string, email: string, password: string, shopName?: string) {
     try {
       // Try the auth/register endpoint first
-      const response = await axios.post(`${this.baseURL}/auth/register`, {
-        name,
-        email,
-        password,
-        shopName,
+      const data = await this.fetchRequest<any>(`${this.baseURL}/auth/register`, {
+        method: 'POST',
+        body: JSON.stringify({ name, email, password, shopName }),
       });
       
-      if (response.data.user) {
+      if (data.user) {
         return {
-          user: response.data.user,
-          token: response.data.token || response.data.accessToken || '',
+          user: data.user,
+          token: data.token || data.accessToken || '',
         };
       }
       
       return {
-        user: response.data,
+        user: data,
         token: '',
       };
     } catch (error: any) {
       // If auth/register doesn't exist, try users endpoint
-      if (error.response?.status === 404) {
-        return this.handleRequest(
-          axios.post(`${this.baseURL}/users`, { name, email, password, shopName })
-        );
+      if (error.message?.includes('404') || error.message?.includes('Not Found')) {
+        const data = await this.fetchRequest<any>(`${this.baseURL}/users`, {
+          method: 'POST',
+          body: JSON.stringify({ name, email, password, shopName }),
+        });
+        return {
+          user: data.user || data,
+          token: data.token || data.accessToken || '',
+        };
       }
       throw error;
     }
@@ -108,106 +136,86 @@ class ApiService {
 
   // Users
   async getUser(userId: string) {
-    const headers = await this.getHeaders();
-    return this.handleRequest(
-      axios.get(`${this.baseURL}/users?id=${userId}`, { headers })
-    );
+    return this.fetchRequest<any>(`${this.baseURL}/users?id=${userId}`);
   }
 
   async updateUser(userId: string, userData: any) {
-    const headers = await this.getHeaders();
-    return this.handleRequest(
-      axios.put(`${this.baseURL}/users/${userId}`, userData, { headers })
-    );
+    return this.fetchRequest<any>(`${this.baseURL}/users/${userId}`, {
+      method: 'PUT',
+      body: JSON.stringify(userData),
+    });
   }
 
   // Repair Tickets
   async getTickets(userId: string, deleted?: boolean) {
-    const headers = await this.getHeaders();
     const deletedParam = deleted ? '&deleted=true' : '';
-    return this.handleRequest(
-      axios.get(`${this.baseURL}/repairs?userId=${userId}${deletedParam}`, { headers })
-    );
+    return this.fetchRequest<any>(`${this.baseURL}/repairs?userId=${userId}${deletedParam}`);
   }
 
   async getTicket(ticketId: string) {
-    const headers = await this.getHeaders();
-    return this.handleRequest(
-      axios.get(`${this.baseURL}/repairs/${ticketId}`, { headers })
-    );
+    return this.fetchRequest<any>(`${this.baseURL}/repairs/${ticketId}`);
   }
 
   async createTicket(ticketData: any) {
-    const headers = await this.getHeaders();
-    return this.handleRequest(
-      axios.post(`${this.baseURL}/repairs/create`, ticketData, { headers })
-    );
+    return this.fetchRequest<any>(`${this.baseURL}/repairs/create`, {
+      method: 'POST',
+      body: JSON.stringify(ticketData),
+    });
   }
 
   async updateTicket(ticketId: string, ticketData: any) {
-    const headers = await this.getHeaders();
-    return this.handleRequest(
-      axios.put(`${this.baseURL}/repairs/${ticketId}`, ticketData, { headers })
-    );
+    return this.fetchRequest<any>(`${this.baseURL}/repairs/${ticketId}`, {
+      method: 'PUT',
+      body: JSON.stringify(ticketData),
+    });
   }
 
   async deleteTicket(ticketId: string) {
-    const headers = await this.getHeaders();
-    return this.handleRequest(
-      axios.delete(`${this.baseURL}/repairs/${ticketId}`, { headers })
-    );
+    return this.fetchRequest<any>(`${this.baseURL}/repairs/${ticketId}`, {
+      method: 'DELETE',
+    });
   }
 
   // Team Members
   async getTeamMembers(userId: string) {
-    const headers = await this.getHeaders();
-    return this.handleRequest(
-      axios.get(`${this.baseURL}/team?userId=${userId}`, { headers })
-    );
+    return this.fetchRequest<any>(`${this.baseURL}/team?userId=${userId}`);
   }
 
   async createTeamMember(memberData: any) {
-    const headers = await this.getHeaders();
-    return this.handleRequest(
-      axios.post(`${this.baseURL}/team`, memberData, { headers })
-    );
+    return this.fetchRequest<any>(`${this.baseURL}/team`, {
+      method: 'POST',
+      body: JSON.stringify(memberData),
+    });
   }
 
   async updateTeamMember(memberId: string, memberData: any) {
-    const headers = await this.getHeaders();
-    return this.handleRequest(
-      axios.put(`${this.baseURL}/team/${memberId}`, memberData, { headers })
-    );
+    return this.fetchRequest<any>(`${this.baseURL}/team/${memberId}`, {
+      method: 'PUT',
+      body: JSON.stringify(memberData),
+    });
   }
 
   async deleteTeamMember(memberId: string) {
-    const headers = await this.getHeaders();
-    return this.handleRequest(
-      axios.delete(`${this.baseURL}/team/${memberId}`, { headers })
-    );
+    return this.fetchRequest<any>(`${this.baseURL}/team/${memberId}`, {
+      method: 'DELETE',
+    });
   }
 
   // Payments/Subscriptions
   async getSubscriptions(userId: string) {
-    const headers = await this.getHeaders();
-    return this.handleRequest(
-      axios.get(`${this.baseURL}/payments?userId=${userId}`, { headers })
-    );
+    return this.fetchRequest<any>(`${this.baseURL}/payments?userId=${userId}`);
   }
 
   async createPayment(paymentData: any) {
-    const headers = await this.getHeaders();
-    return this.handleRequest(
-      axios.post(`${this.baseURL}/payments`, paymentData, { headers })
-    );
+    return this.fetchRequest<any>(`${this.baseURL}/payments`, {
+      method: 'POST',
+      body: JSON.stringify(paymentData),
+    });
   }
 
   // Analytics
   async getAnalytics(userId: string) {
-    const headers = await this.getHeaders();
-    return this.handleRequest(
-      axios.get(`${this.baseURL}/analytics?userId=${userId}`, { headers })
-    );
+    return this.fetchRequest<any>(`${this.baseURL}/analytics?userId=${userId}`);
   }
 }
 
