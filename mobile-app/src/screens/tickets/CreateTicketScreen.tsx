@@ -139,7 +139,7 @@ export default function CreateTicketScreen({ navigation }: any) {
         <FormInput
           label="Service Name"
           value={formData.serviceName}
-          onChangeText={(text) => setFormData({ ...formData, serviceName: text }))}
+          onChangeText={(text) => setFormData({ ...formData, serviceName: text })}
           placeholder="Service required"
         />
       </View>
@@ -156,7 +156,7 @@ export default function CreateTicketScreen({ navigation }: any) {
         <FormInput
           label="Budget"
           value={formData.budget}
-          onChangeText={(text) => setFormData({ ...formData, budget: text }))}
+          onChangeText={(text) => setFormData({ ...formData, budget: text })}
           placeholder="0.00"
           keyboardType="decimal-pad"
         />
@@ -191,7 +191,7 @@ export default function CreateTicketScreen({ navigation }: any) {
         <FormInput
           label="Equipment Observations"
           value={formData.equipmentObs}
-          onChangeText={(text) => setFormData({ ...formData, equipmentObs: text }))}
+          onChangeText={(text) => setFormData({ ...formData, equipmentObs: text })}
           placeholder="Equipment observations"
           multiline
           numberOfLines={3}
@@ -199,7 +199,7 @@ export default function CreateTicketScreen({ navigation }: any) {
         <FormInput
           label="Repair Observations"
           value={formData.repairObs}
-          onChangeText={(text) => setFormData({ ...formData, repairObs: text }))}
+          onChangeText={(text) => setFormData({ ...formData, repairObs: text })}
           placeholder="Repair observations"
           multiline
           numberOfLines={3}
