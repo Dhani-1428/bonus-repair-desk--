@@ -1,60 +1,97 @@
-# Quick Start Guide
+# 🚀 Quick Start Guide
 
-Get your mobile app running in 5 minutes!
+## Starting the Mobile App
 
-## 1. Install Dependencies
+### 1. **Start Backend Server First** (IMPORTANT!)
+
+The mobile app needs the backend server to be running:
 
 ```bash
+# In the main project directory
+cd "C:\Users\sheet\Downloads\saa-s-admin-panel (1)"
+npm run dev
+```
+
+✅ Backend should be running on: `http://localhost:3000`
+
+### 2. **Start Mobile App**
+
+```bash
+# In the mobile-app directory
 cd mobile-app
-npm install
+npx expo start
 ```
 
-## 2. Update API URL
+### 3. **Connect Your Phone**
 
-Edit `src/services/api.ts` line 5:
+**Option A: Scan QR Code**
+- Open Expo Go app on your phone
+- Scan the QR code shown in terminal
+- App will load on your phone
 
-```typescript
-const API_BASE_URL = __DEV__ 
-  ? 'http://YOUR_COMPUTER_IP:3000/api'  // Use your local IP for physical devices
-  : 'https://your-website.com/api';     // Your production URL
-```
+**Option B: Manual Connection**
+- If QR code doesn't work, look for the connection URL in terminal
+- It will look like: `exp://172.20.10.6:8081`
+- Open Expo Go app
+- Tap "Enter URL manually"
+- Enter the URL
 
-**Find your IP:**
-- Mac/Linux: `ifconfig | grep "inet " | grep -v 127.0.0.1`
-- Windows: `ipconfig` (look for IPv4 Address)
+### 4. **Check IP Address**
 
-## 3. Start the App
+If connection fails, make sure your IP address is correct:
 
-```bash
-npm start
-```
+1. Find your computer's IP:
+   - Windows: Open Command Prompt → `ipconfig`
+   - Look for "IPv4 Address" (e.g., `192.168.1.100`)
 
-Then:
-- Press `i` for iOS Simulator
-- Press `a` for Android Emulator  
-- Scan QR code with Expo Go app on your phone
+2. Update in `mobile-app/src/services/api.ts`:
+   - Line 5: Replace `172.20.10.6` with your current IP
+   - Save the file
+   - Restart Expo: `npx expo start --clear`
 
-## 4. Test It
+## 📱 Testing Login/Register
 
-1. Open the app
-2. Tap "Sign up" to create an account
-3. Log in with your credentials
-4. Explore the dashboard and features!
+1. **Make sure backend is running** (Step 1 above)
+2. Open the app on your phone
+3. Try to **Register** a new account:
+   - Fill in: Name, Email, Password
+   - Click "Sign up"
+4. Or **Login** with existing account:
+   - Enter email and password
+   - Click "Log in"
 
-## Troubleshooting
+## 🔍 Troubleshooting
 
-**Can't connect to API?**
-- Make sure your website server is running
-- Use your computer's IP (not localhost) for physical devices
-- Check that both devices are on the same WiFi
+### App won't connect?
+- ✅ Check backend server is running
+- ✅ Verify IP address is correct
+- ✅ Make sure phone and computer are on same WiFi
+- ✅ Try restarting Expo: `npx expo start --clear`
 
-**Metro bundler issues?**
-```bash
-npm start -- --reset-cache
-```
+### Login/Register not working?
+- ✅ Check backend server logs for errors
+- ✅ Check mobile app console for `[API]` logs
+- ✅ Verify IP address matches your computer
+- ✅ Make sure backend is accessible from phone
 
-**Need help?** Check the full README.md for detailed documentation.
+### Can't see QR code?
+- Try: `npx expo start --tunnel` (slower but more reliable)
+- Or manually enter the connection URL in Expo Go
+
+## 📊 Current Configuration
+
+- **Backend URL:** `http://172.20.10.6:3000/api`
+- **Expo SDK:** 54.0.0
+- **React Native:** 0.81.5
+
+## ✅ Checklist Before Starting
+
+- [ ] Backend server is running (`npm run dev`)
+- [ ] IP address is correct in `api.ts`
+- [ ] Phone and computer on same WiFi
+- [ ] Expo Go app installed on phone
+- [ ] Ready to scan QR code or enter URL
 
 ---
 
-That's it! Your mobile app is ready to use. 🎉
+**Need help?** Check `FIX_LOGIN_REGISTER.md` for detailed troubleshooting.

@@ -7,7 +7,9 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "test-local": "node web-server.js"
+    "test-local": "node web-server.js",
+    "start-backend": "node start-backend.js",
+    "start-all": "concurrently \"npm run start-backend\" \"npm start\""
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
@@ -31,6 +33,7 @@
     "@babel/core": "^7.25.0",
     "@expo/config-plugins": "~9.0.0",
     "@types/react": "~19.0.0",
+    "concurrently": "^9.2.1",
     "jimp": "^1.6.0",
     "qrcode": "^1.5.4",
     "sharp": "^0.34.5",
