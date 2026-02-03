@@ -178,25 +178,25 @@ class ApiService {
 
   // Team Members
   async getTeamMembers(userId: string) {
-    return this.fetchRequest<any>(`${this.baseURL}/team?userId=${userId}`);
+    return this.fetchRequest<any>(`${this.baseURL}/team-members?userId=${userId}`);
   }
 
   async createTeamMember(memberData: any) {
-    return this.fetchRequest<any>(`${this.baseURL}/team`, {
+    return this.fetchRequest<any>(`${this.baseURL}/team-members`, {
       method: 'POST',
       body: JSON.stringify(memberData),
     });
   }
 
   async updateTeamMember(memberId: string, memberData: any) {
-    return this.fetchRequest<any>(`${this.baseURL}/team/${memberId}`, {
+    return this.fetchRequest<any>(`${this.baseURL}/team-members/${memberId}`, {
       method: 'PUT',
       body: JSON.stringify(memberData),
     });
   }
 
   async deleteTeamMember(memberId: string) {
-    return this.fetchRequest<any>(`${this.baseURL}/team/${memberId}`, {
+    return this.fetchRequest<any>(`${this.baseURL}/team-members/${memberId}`, {
       method: 'DELETE',
     });
   }
