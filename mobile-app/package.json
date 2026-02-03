@@ -9,7 +9,8 @@
     "web": "expo start --web",
     "test-local": "node web-server.js",
     "start-backend": "node start-backend-with-check.js",
-    "start-all": "concurrently \"npm run start-backend\" \"npm start\""
+    "start-all": "concurrently \"npm run start-backend\" \"npm start\"",
+    "check-backend": "node check-backend.js"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
