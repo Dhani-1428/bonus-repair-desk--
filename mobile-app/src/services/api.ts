@@ -28,19 +28,38 @@ class ApiService {
   ): Promise<T> {
     try {
       const response = await request;
-      const data = await response.json();
+      
+      // Check if response has content
+      const contentType = response.headers.get('content-type');
+      let data: any;
+      
+      if (contentType && contentType.includes('application/json')) {
+        try {
+          data = await response.json();
+        } catch (jsonError) {
+          const text = await response.text();
+          console.error('[API] Failed to parse JSON response:', text);
+          throw new Error('Invalid response from server');
+        }
+      } else {
+        const text = await response.text();
+        console.error('[API] Non-JSON response:', text);
+        throw new Error('Server returned invalid response format');
+      }
       
       if (!response.ok) {
-        throw new Error(
-          data?.error || data?.message || `Request failed with status ${response.status}`
-        );
+        const errorMessage = data?.error || data?.message || `Request failed with status ${response.status}`;
+        console.error('[API] Request failed:', errorMessage, data);
+        throw new Error(errorMessage);
       }
       
       return data;
     } catch (error: any) {
       if (error.message) {
+        console.error('[API] Request error:', error.message);
         throw error;
       }
+      console.error('[API] Unknown error:', error);
       throw new Error('Network error. Please check your connection.');
     }
   }
@@ -63,13 +82,17 @@ class ApiService {
   // Authentication
   async login(email: string, password: string) {
     try {
+      console.log('[API] Attempting login to:', `${this.baseURL}/auth/login`);
+      
       // Try the auth/login endpoint first
       const data = await this.fetchRequest<any>(`${this.baseURL}/auth/login`, {
         method: 'POST',
         body: JSON.stringify({ email, password }),
       });
       
-      // If successful, return the response
+      console.log('[API] Login response:', data);
+      
+      // Backend returns: { message: "Login successful", user: {...} }
       if (data.user) {
         return {
           user: data.user,
@@ -77,23 +100,26 @@ class ApiService {
         };
       }
       
-      // Fallback: try register endpoint format
-      return {
-        user: data,
-        token: '',
-      };
+      // If no user in response, something went wrong
+      throw new Error('Invalid response: user data not found');
     } catch (error: any) {
+      console.error('[API] Login error:', error.message);
+      
       // If auth/login doesn't exist, try alternative endpoints
       if (error.message?.includes('404') || error.message?.includes('Not Found')) {
-        // Try alternative login endpoint
-        const data = await this.fetchRequest<any>(`${this.baseURL}/users/login`, {
-          method: 'POST',
-          body: JSON.stringify({ email, password }),
-        });
-        return {
-          user: data.user || data,
-          token: data.token || data.accessToken || '',
-        };
+        console.log('[API] Trying alternative login endpoint...');
+        try {
+          const data = await this.fetchRequest<any>(`${this.baseURL}/users/login`, {
+            method: 'POST',
+            body: JSON.stringify({ email, password }),
+          });
+          return {
+            user: data.user || data,
+            token: data.token || data.accessToken || '',
+          };
+        } catch (altError: any) {
+          throw new Error(altError.message || 'Login failed');
+        }
       }
       throw error;
     }
@@ -101,12 +127,17 @@ class ApiService {
 
   async register(name: string, email: string, password: string, shopName?: string) {
     try {
+      console.log('[API] Attempting registration to:', `${this.baseURL}/auth/register`);
+      
       // Try the auth/register endpoint first
       const data = await this.fetchRequest<any>(`${this.baseURL}/auth/register`, {
         method: 'POST',
         body: JSON.stringify({ name, email, password, shopName }),
       });
       
+      console.log('[API] Register response:', data);
+      
+      // Backend returns: { message: "User registered successfully", user: {...} }
       if (data.user) {
         return {
           user: data.user,
@@ -114,21 +145,26 @@ class ApiService {
         };
       }
       
-      return {
-        user: data,
-        token: '',
-      };
+      // If no user in response, something went wrong
+      throw new Error('Invalid response: user data not found');
     } catch (error: any) {
+      console.error('[API] Register error:', error.message);
+      
       // If auth/register doesn't exist, try users endpoint
       if (error.message?.includes('404') || error.message?.includes('Not Found')) {
-        const data = await this.fetchRequest<any>(`${this.baseURL}/users`, {
-          method: 'POST',
-          body: JSON.stringify({ name, email, password, shopName }),
-        });
-        return {
-          user: data.user || data,
-          token: data.token || data.accessToken || '',
-        };
+        console.log('[API] Trying alternative register endpoint...');
+        try {
+          const data = await this.fetchRequest<any>(`${this.baseURL}/users`, {
+            method: 'POST',
+            body: JSON.stringify({ name, email, password, shopName }),
+          });
+          return {
+            user: data.user || data,
+            token: data.token || data.accessToken || '',
+          };
+        } catch (altError: any) {
+          throw new Error(altError.message || 'Registration failed');
+        }
       }
       throw error;
     }
