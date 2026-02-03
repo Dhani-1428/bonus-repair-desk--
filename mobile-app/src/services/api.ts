@@ -64,6 +64,15 @@ class ApiService {
     }
   }
 
+  private async fetchWithTimeout(url: string, options: RequestInit = {}, timeout: number = 30000): Promise<Response> {
+    return Promise.race([
+      fetch(url, options),
+      new Promise<Response>((_, reject) =>
+        setTimeout(() => reject(new Error('Network request timed out. Please check your connection and ensure the backend server is running.')), timeout)
+      ),
+    ]);
+  }
+
   private async fetchRequest<T>(
     url: string,
     options: RequestInit = {},
@@ -78,14 +87,22 @@ class ApiService {
       headers = { ...headers, ...authHeaders };
     }
     
-    const response = await fetch(url, {
-      ...options,
-      headers: {
-        ...headers,
-        ...options.headers,
-      },
-    });
-    return this.handleRequest<T>(Promise.resolve(response));
+    try {
+      const response = await this.fetchWithTimeout(url, {
+        ...options,
+        headers: {
+          ...headers,
+          ...options.headers,
+        },
+      }, 30000); // 30 second timeout
+      return this.handleRequest<T>(Promise.resolve(response));
+    } catch (error: any) {
+      if (error.message?.includes('timed out')) {
+        console.error('[API] Request timeout:', url);
+        throw new Error(`Connection timeout. Please check:\n1. Backend server is running (npm run dev)\n2. IP address is correct: ${this.baseURL}\n3. Phone and computer are on same WiFi`);
+      }
+      throw error;
+    }
   }
 
   // Authentication
@@ -137,6 +154,7 @@ class ApiService {
   async register(name: string, email: string, password: string, shopName?: string) {
     try {
       console.log('[API] Attempting registration to:', `${this.baseURL}/auth/register`);
+      console.log('[API] Base URL:', this.baseURL);
       
       // Try the auth/register endpoint first (skip auth headers for register)
       const data = await this.fetchRequest<any>(`${this.baseURL}/auth/register`, {
@@ -158,6 +176,11 @@ class ApiService {
       throw new Error('Invalid response: user data not found');
     } catch (error: any) {
       console.error('[API] Register error:', error.message);
+      
+      // Provide helpful error message for timeout
+      if (error.message?.includes('timeout') || error.message?.includes('timed out')) {
+        throw new Error(`Connection timeout. Please check:\n\n1. Backend server is running:\n   cd "C:\\Users\\sheet\\Downloads\\saa-s-admin-panel (1)"\n   npm run dev\n\n2. IP address is correct in api.ts:\n   Current: ${this.baseURL}\n   Update if your IP changed\n\n3. Phone and computer are on same WiFi network\n\n4. Firewall is not blocking port 3000`);
+      }
       
       // If auth/register doesn't exist, try users endpoint
       if (error.message?.includes('404') || error.message?.includes('Not Found')) {
