@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Update this to your website's API base URL
 const API_BASE_URL = __DEV__ 
-  ? 'http://172.20.10.6:3000/api'  // Your computer's IP - phone needs this to connect!
+  ? 'http://192.168.0.11:3000/api'  // Your computer's IP - phone needs this to connect!
   : 'https://your-website.com/api'; // Replace with your production URL
 
 class ApiService {
