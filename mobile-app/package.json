@@ -8,7 +8,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "test-local": "node web-server.js",
-    "start-backend": "node start-backend.js",
+    "start-backend": "node start-backend-with-check.js",
     "start-all": "concurrently \"npm run start-backend\" \"npm start\""
   },
   "dependencies": {

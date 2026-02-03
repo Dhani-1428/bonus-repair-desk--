@@ -68,7 +68,10 @@ class ApiService {
     return Promise.race([
       fetch(url, options),
       new Promise<Response>((_, reject) =>
-        setTimeout(() => reject(new Error('Network request timed out. Please check your connection and ensure the backend server is running.')), timeout)
+        setTimeout(() => {
+          const error = new Error(`Network request timed out after ${timeout/1000} seconds.\n\nPlease ensure:\n1. Backend server is running (run: npm run start-backend)\n2. Server is accessible at: ${url}\n3. Phone and computer are on same WiFi network`);
+          reject(error);
+        }, timeout)
       ),
     ]);
   }
