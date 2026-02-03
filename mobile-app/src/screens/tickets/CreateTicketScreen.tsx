@@ -115,7 +115,7 @@ export default function CreateTicketScreen({ navigation }: any) {
         <FormInput
           label="Serial Number"
           value={formData.serialNo}
-          onChangeText={(text) => setFormData({ ...formData, serialNo: text }))}
+          onChangeText={(text) => setFormData({ ...formData, serialNo: text })}
           placeholder="Serial number"
         />
       </View>
