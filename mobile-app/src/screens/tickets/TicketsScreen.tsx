@@ -300,7 +300,8 @@ const createStyles = (theme: any) =>
       flexDirection: 'row',
       alignItems: 'center',
       backgroundColor: theme.colors.surface,
-      margin: theme.spacing.md,
+      marginHorizontal: 20,
+      marginVertical: theme.spacing.md,
       paddingHorizontal: theme.spacing.md,
       borderRadius: theme.borderRadius.md,
       borderWidth: 1,
@@ -317,7 +318,7 @@ const createStyles = (theme: any) =>
     },
     filterContainer: {
       flexDirection: 'row',
-      paddingHorizontal: theme.spacing.md,
+      paddingHorizontal: 20,
       marginBottom: theme.spacing.sm,
     },
     filterButton: {
@@ -342,12 +343,14 @@ const createStyles = (theme: any) =>
       color: '#ffffff',
     },
     listContent: {
-      padding: theme.spacing.md,
+      paddingHorizontal: 20,
+      paddingVertical: theme.spacing.md,
     },
     ticketCard: {
       backgroundColor: theme.colors.surface,
       borderRadius: theme.borderRadius.md,
       marginBottom: theme.spacing.md,
+      marginHorizontal: 0,
       borderWidth: 1,
       borderColor: theme.colors.border,
       flexDirection: 'row',

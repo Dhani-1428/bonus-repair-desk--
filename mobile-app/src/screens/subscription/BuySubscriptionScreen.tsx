@@ -292,7 +292,7 @@ const createStyles = (theme: any) =>
     blurHeader: {
       paddingTop: 60,
       paddingBottom: 20,
-      paddingHorizontal: 20,
+      paddingHorizontal: 24,
       borderBottomWidth: 1,
       borderBottomColor: 'rgba(255, 255, 255, 0.1)',
     },
@@ -315,7 +315,8 @@ const createStyles = (theme: any) =>
       flex: 1,
     },
     scrollContent: {
-      padding: 16,
+      paddingHorizontal: 20,
+      paddingVertical: 16,
     },
     currentSubscriptionCard: {
       borderRadius: 16,

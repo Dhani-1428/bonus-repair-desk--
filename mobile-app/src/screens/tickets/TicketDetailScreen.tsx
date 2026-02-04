@@ -311,7 +311,8 @@ const createStyles = (theme: any) =>
     },
     header: {
       backgroundColor: theme.colors.surface,
-      padding: theme.spacing.lg,
+      paddingHorizontal: 20,
+      paddingVertical: theme.spacing.lg,
       borderBottomWidth: 1,
       borderBottomColor: theme.colors.border,
     },
@@ -342,8 +343,10 @@ const createStyles = (theme: any) =>
     },
     section: {
       backgroundColor: theme.colors.surface,
-      padding: theme.spacing.lg,
+      paddingHorizontal: 20,
+      paddingVertical: theme.spacing.lg,
       marginTop: theme.spacing.md,
+      marginHorizontal: 0,
       borderTopWidth: 1,
       borderBottomWidth: 1,
       borderColor: theme.colors.border,
@@ -398,7 +401,8 @@ const createStyles = (theme: any) =>
     },
     actions: {
       flexDirection: 'row',
-      padding: theme.spacing.lg,
+      paddingHorizontal: 20,
+      paddingVertical: theme.spacing.lg,
       gap: theme.spacing.md,
     },
     actionButton: {
