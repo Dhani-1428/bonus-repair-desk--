@@ -81,7 +81,7 @@ export default function TrashScreen() {
           style: 'destructive',
           onPress: async () => {
             try {
-              await apiService.deleteTicket(ticketId);
+              await apiService.deleteTicket(ticketId, true); // true = permanent delete
               await loadDeletedTickets();
               Alert.alert('Success', 'Ticket permanently deleted');
             } catch (error) {

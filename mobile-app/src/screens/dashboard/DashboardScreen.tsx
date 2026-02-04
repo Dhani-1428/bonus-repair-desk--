@@ -13,6 +13,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { apiService } from '../../services/api';
 import { Ionicons } from '@expo/vector-icons';
 import { format } from 'date-fns';
+import { BlurView } from 'expo-blur';
 
 export default function DashboardScreen({ navigation }: any) {
   const { user } = useAuth();
@@ -92,42 +93,58 @@ export default function DashboardScreen({ navigation }: any) {
   }
 
   return (
-    <ScrollView
-      style={styles.container}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.colors.primary} />
-      }
-    >
-      <View style={styles.header}>
-        <Text style={styles.greeting}>Welcome back, {user?.name}!</Text>
+    <View style={styles.container}>
+      <BlurView intensity={80} tint="dark" style={styles.blurHeader}>
+        <View style={styles.header}>
+          <View>
+            <Text style={styles.greeting}>Welcome back,</Text>
+            <Text style={styles.userName}>{user?.name}!</Text>
+          </View>
+          <Ionicons name="notifications-outline" size={28} color={theme.colors.primary} />
+        </View>
         <Text style={styles.subtitle}>Here's what's happening</Text>
-      </View>
+      </BlurView>
 
-      <View style={styles.statsContainer}>
-        <View style={styles.statCard}>
-          <Ionicons name="document-text" size={24} color={theme.colors.primary} />
-          <Text style={styles.statValue}>{stats.totalTickets}</Text>
-          <Text style={styles.statLabel}>Total Tickets</Text>
-        </View>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.colors.primary} />
+        }
+      >
+        <View style={styles.statsContainer}>
+          <BlurView intensity={60} tint="dark" style={styles.statCard}>
+            <View style={[styles.statIconContainer, { backgroundColor: theme.colors.primary + '20' }]}>
+              <Ionicons name="document-text" size={28} color={theme.colors.primary} />
+            </View>
+            <Text style={styles.statValue}>{stats.totalTickets}</Text>
+            <Text style={styles.statLabel}>Total Tickets</Text>
+          </BlurView>
 
-        <View style={styles.statCard}>
-          <Ionicons name="time-outline" size={24} color={theme.colors.warning} />
-          <Text style={styles.statValue}>{stats.pendingTickets}</Text>
-          <Text style={styles.statLabel}>Pending</Text>
-        </View>
+          <BlurView intensity={60} tint="dark" style={styles.statCard}>
+            <View style={[styles.statIconContainer, { backgroundColor: theme.colors.warning + '20' }]}>
+              <Ionicons name="time-outline" size={28} color={theme.colors.warning} />
+            </View>
+            <Text style={styles.statValue}>{stats.pendingTickets}</Text>
+            <Text style={styles.statLabel}>Pending</Text>
+          </BlurView>
 
-        <View style={styles.statCard}>
-          <Ionicons name="checkmark-circle" size={24} color={theme.colors.success} />
-          <Text style={styles.statValue}>{stats.completedTickets}</Text>
-          <Text style={styles.statLabel}>Completed</Text>
-        </View>
+          <BlurView intensity={60} tint="dark" style={styles.statCard}>
+            <View style={[styles.statIconContainer, { backgroundColor: theme.colors.success + '20' }]}>
+              <Ionicons name="checkmark-circle" size={28} color={theme.colors.success} />
+            </View>
+            <Text style={styles.statValue}>{stats.completedTickets}</Text>
+            <Text style={styles.statLabel}>Completed</Text>
+          </BlurView>
 
-        <View style={styles.statCard}>
-          <Ionicons name="cash" size={24} color={theme.colors.secondary} />
-          <Text style={styles.statValue}>${stats.totalRevenue.toFixed(2)}</Text>
-          <Text style={styles.statLabel}>Revenue</Text>
+          <BlurView intensity={60} tint="dark" style={styles.statCard}>
+            <View style={[styles.statIconContainer, { backgroundColor: theme.colors.secondary + '20' }]}>
+              <Ionicons name="cash" size={28} color={theme.colors.secondary} />
+            </View>
+            <Text style={styles.statValue}>€{stats.totalRevenue.toFixed(2)}</Text>
+            <Text style={styles.statLabel}>Revenue</Text>
+          </BlurView>
         </View>
-      </View>
 
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
@@ -138,8 +155,8 @@ export default function DashboardScreen({ navigation }: any) {
         </View>
 
         {recentTickets.length === 0 ? (
-          <View style={styles.emptyState}>
-            <Ionicons name="document-outline" size={48} color={theme.colors.textSecondary} />
+          <BlurView intensity={60} tint="dark" style={styles.emptyState}>
+            <Ionicons name="document-outline" size={64} color={theme.colors.textSecondary} />
             <Text style={styles.emptyText}>No tickets yet</Text>
             <TouchableOpacity
               style={styles.createButton}
@@ -147,11 +164,11 @@ export default function DashboardScreen({ navigation }: any) {
             >
               <Text style={styles.createButtonText}>Create First Ticket</Text>
             </TouchableOpacity>
-          </View>
+          </BlurView>
         ) : (
           recentTickets.map((ticket) => (
+            <BlurView key={ticket.id} intensity={60} tint="dark" style={styles.ticketCardWrapper}>
             <TouchableOpacity
-              key={ticket.id}
               style={styles.ticketCard}
               onPress={() => navigation.navigate('TicketDetail', { ticketId: ticket.id })}
             >
@@ -195,10 +212,12 @@ export default function DashboardScreen({ navigation }: any) {
                 {format(new Date(ticket.createdAt), 'MMM dd, yyyy')}
               </Text>
             </TouchableOpacity>
+            </BlurView>
           ))
         )}
       </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }
 
