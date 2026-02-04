@@ -120,7 +120,7 @@ export default function DashboardScreen({ navigation }: any) {
               <Ionicons name="document-text" size={28} color={theme.colors.primary} />
             </View>
             <Text style={styles.statValue}>{stats.totalTickets}</Text>
-            <Text style={styles.statLabel}>Total Tickets</Text>
+            <Text style={styles.statLabel}>Total Devices</Text>
           </BlurView>
 
           <BlurView intensity={60} tint="dark" style={styles.statCard}>
@@ -150,7 +150,7 @@ export default function DashboardScreen({ navigation }: any) {
 
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Recent Tickets</Text>
+          <Text style={styles.sectionTitle}>Recent Devices</Text>
           <TouchableOpacity onPress={() => navigation.navigate('Tickets')}>
             <Text style={styles.seeAll}>See All</Text>
           </TouchableOpacity>
@@ -159,12 +159,12 @@ export default function DashboardScreen({ navigation }: any) {
         {recentTickets.length === 0 ? (
           <BlurView intensity={60} tint="dark" style={styles.emptyState}>
             <Ionicons name="document-outline" size={64} color={theme.colors.textSecondary} />
-            <Text style={styles.emptyText}>No tickets yet</Text>
+            <Text style={styles.emptyText}>No devices yet</Text>
             <TouchableOpacity
               style={styles.createButton}
               onPress={() => navigation.navigate('CreateTicket')}
             >
-              <Text style={styles.createButtonText}>Create First Ticket</Text>
+              <Text style={styles.createButtonText}>Create First Device</Text>
             </TouchableOpacity>
           </BlurView>
         ) : (

@@ -128,11 +128,11 @@ export default function EditTicketScreen() {
       };
 
       await apiService.updateTicket(ticketId, updateData);
-      Alert.alert('Success', 'Ticket updated successfully', [
+      Alert.alert('Success', 'Device updated successfully', [
         { text: 'OK', onPress: () => navigation.goBack() },
       ]);
     } catch (error: any) {
-      Alert.alert('Error', error.message || 'Failed to update ticket');
+      Alert.alert('Error', error.message || 'Failed to update device');
     } finally {
       setSaving(false);
     }

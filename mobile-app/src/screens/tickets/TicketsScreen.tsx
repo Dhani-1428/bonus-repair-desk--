@@ -95,8 +95,8 @@ export default function TicketsScreen({ navigation }: any) {
 
   const handleDelete = (ticketId: string) => {
     Alert.alert(
-      'Delete Ticket',
-      'Are you sure you want to delete this ticket?',
+      'Delete Device',
+      'Are you sure you want to delete this device?',
       [
         { text: 'Cancel', style: 'cancel' },
         {
@@ -107,7 +107,7 @@ export default function TicketsScreen({ navigation }: any) {
               await apiService.deleteTicket(ticketId);
               loadTickets();
             } catch (error: any) {
-              Alert.alert('Error', error.message || 'Failed to delete ticket');
+              Alert.alert('Error', error.message || 'Failed to delete device');
             }
           },
         },
@@ -131,7 +131,7 @@ export default function TicketsScreen({ navigation }: any) {
         <Ionicons name="search" size={20} color={theme.colors.textSecondary} style={styles.searchIcon} />
         <TextInput
           style={styles.searchInput}
-          placeholder="Search tickets..."
+          placeholder="Search devices..."
           placeholderTextColor={theme.colors.textSecondary}
           value={searchQuery}
           onChangeText={setSearchQuery}
@@ -247,7 +247,7 @@ export default function TicketsScreen({ navigation }: any) {
         ListEmptyComponent={
           <View style={styles.emptyState}>
             <Ionicons name="document-outline" size={48} color={theme.colors.textSecondary} />
-            <Text style={styles.emptyText}>No tickets found</Text>
+            <Text style={styles.emptyText}>No devices found</Text>
           </View>
         }
         refreshControl={

@@ -39,7 +39,7 @@ export default function TicketDetailScreen() {
       setTicket(response.ticket);
     } catch (error) {
       console.error('Error loading ticket:', error);
-      Alert.alert('Error', 'Failed to load ticket details');
+      Alert.alert('Error', 'Failed to load device details');
     } finally {
       setLoading(false);
     }
@@ -74,7 +74,7 @@ export default function TicketDetailScreen() {
               await apiService.deleteTicket(ticketId);
               navigation.goBack();
             } catch (error: any) {
-              Alert.alert('Error', error.message || 'Failed to delete ticket');
+              Alert.alert('Error', error.message || 'Failed to delete device');
             }
           },
         },
@@ -161,7 +161,7 @@ export default function TicketDetailScreen() {
   if (!ticket) {
     return (
       <View style={styles.loadingContainer}>
-        <Text style={styles.errorText}>Ticket not found</Text>
+        <Text style={styles.errorText}>Device not found</Text>
       </View>
     );
   }

@@ -179,17 +179,17 @@ function AppNavigator() {
           <Stack.Screen 
             name="TicketDetail" 
             component={TicketDetailScreen}
-            options={{ title: 'Ticket Details' }}
+            options={{ title: 'Device Details' }}
           />
-              <Stack.Screen
+          <Stack.Screen
                 name="CreateTicket" 
                 component={CreateTicketScreen}
-                options={{ title: 'New Ticket' }}
+                options={{ title: 'New Device' }}
               />
               <Stack.Screen
                 name="EditTicket" 
                 component={EditTicketScreen}
-                options={{ title: 'Edit Ticket' }}
+                options={{ title: 'Edit Device' }}
               />
                <Stack.Screen 
                  name="Subscription" 

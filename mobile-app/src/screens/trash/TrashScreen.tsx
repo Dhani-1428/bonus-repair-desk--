@@ -59,8 +59,8 @@ export default function TrashScreen() {
 
   const handleRestore = async (ticketId: string) => {
     Alert.alert(
-      'Restore Ticket',
-      'Are you sure you want to restore this ticket?',
+      'Restore Device',
+      'Are you sure you want to restore this device?',
       [
         { text: 'Cancel', style: 'cancel' },
         {
@@ -69,9 +69,9 @@ export default function TrashScreen() {
             try {
               // Note: You may need to add a restore endpoint to your API
               await loadDeletedTickets();
-              Alert.alert('Success', 'Ticket restored successfully');
+              Alert.alert('Success', 'Device restored successfully');
             } catch (error) {
-              Alert.alert('Error', 'Failed to restore ticket');
+              Alert.alert('Error', 'Failed to restore device');
             }
           },
         },
@@ -92,9 +92,9 @@ export default function TrashScreen() {
             try {
               await apiService.deleteTicket(ticketId, true); // true = permanent delete
               await loadDeletedTickets();
-              Alert.alert('Success', 'Ticket permanently deleted');
+              Alert.alert('Success', 'Device permanently deleted');
             } catch (error) {
-              Alert.alert('Error', 'Failed to delete ticket');
+              Alert.alert('Error', 'Failed to delete device');
             }
           },
         },
@@ -118,7 +118,7 @@ export default function TrashScreen() {
         <View style={styles.header}>
           <View>
             <Text style={styles.title}>Trash</Text>
-            <Text style={styles.subtitle}>Deleted tickets and products</Text>
+            <Text style={styles.subtitle}>Deleted devices and products</Text>
           </View>
           <Ionicons name="trash-outline" size={32} color={theme.colors.primary} />
         </View>
@@ -136,9 +136,9 @@ export default function TrashScreen() {
             <BlurView intensity={60} tint="dark" style={styles.emptyCard}>
               <Ionicons name="trash-outline" size={64} color={theme.colors.textSecondary} />
               <Text style={styles.emptyText}>Trash is empty</Text>
-              <Text style={styles.emptySubtext}>
-                Deleted tickets will appear here
-              </Text>
+                  <Text style={styles.emptySubtext}>
+                    Deleted devices will appear here
+                  </Text>
             </BlurView>
           </View>
         ) : (

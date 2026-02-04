@@ -55,11 +55,11 @@ export default function CreateTicketScreen({ navigation }: any) {
         price: parseFloat(formData.price) || 0,
         budget: formData.budget ? parseFloat(formData.budget) : null,
       });
-      Alert.alert('Success', 'Ticket created successfully', [
+      Alert.alert('Success', 'Device created successfully', [
         { text: 'OK', onPress: () => navigation.goBack() },
       ]);
     } catch (error: any) {
-      Alert.alert('Error', error.message || 'Failed to create ticket');
+      Alert.alert('Error', error.message || 'Failed to create device');
     } finally {
       setLoading(false);
     }
@@ -214,7 +214,7 @@ export default function CreateTicketScreen({ navigation }: any) {
         {loading ? (
           <ActivityIndicator color="#ffffff" />
         ) : (
-          <Text style={styles.submitButtonText}>Create Ticket</Text>
+          <Text style={styles.submitButtonText}>Create Device</Text>
         )}
       </TouchableOpacity>
     </ScrollView>
