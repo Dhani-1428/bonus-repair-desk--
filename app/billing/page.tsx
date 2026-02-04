@@ -101,46 +101,22 @@ function BillingContent() {
         throw new Error("Invalid plan selected")
       }
 
-      // Calculate start date: if user has free trial, start after trial ends
-      // Otherwise, start immediately or after current subscription ends
-      let startDate: Date
+      // Calculate start date: Always start from TODAY when purchasing
+      // If subscription is expired (free trial ended), start from today
+      // If subscription is active, start from today (renewal)
       const today = new Date()
       today.setHours(0, 0, 0, 0)
       today.setMinutes(0, 0)
       today.setSeconds(0, 0)
       today.setMilliseconds(0)
       
-      if (subscription && (subscription.isFreeTrial || subscription.status === "FREE_TRIAL" || subscription.status === "free_trial")) {
-        // User is on free trial - subscription starts the day after trial ends
-        const trialEndDate = new Date(subscription.endDate)
-        trialEndDate.setHours(0, 0, 0, 0)
-        trialEndDate.setMinutes(0, 0)
-        trialEndDate.setSeconds(0, 0)
-        trialEndDate.setMilliseconds(0)
-        
-        startDate = new Date(trialEndDate)
-        startDate.setDate(startDate.getDate() + 1) // Start the day after trial ends
-      } else if (subscription && new Date(subscription.endDate) > today) {
-        // User has active subscription - start after current subscription ends
-        const currentEndDate = new Date(subscription.endDate)
-        currentEndDate.setHours(0, 0, 0, 0)
-        currentEndDate.setMinutes(0, 0)
-        currentEndDate.setSeconds(0, 0)
-        currentEndDate.setMilliseconds(0)
-        
-        startDate = new Date(currentEndDate)
-        startDate.setDate(startDate.getDate() + 1) // Start the day after current subscription ends
-      } else {
-        // No active subscription - start immediately
-        startDate = new Date()
-        startDate.setHours(0, 0, 0, 0)
-        startDate.setMinutes(0, 0)
-        startDate.setSeconds(0, 0)
-        startDate.setMilliseconds(0)
-      }
+      // Always start from today when user purchases a subscription
+      const startDate = new Date(today)
       
-      // Calculate end date based on plan duration
-      const endDate = new Date(startDate)
+      // Calculate end date based on plan duration from today
+      // SIX_MONTH (€100) = 6 months from today
+      // TWELVE_MONTH (€150) = 12 months (1 year) from today
+      const endDate = new Date(today)
       endDate.setMonth(endDate.getMonth() + planDetails.months)
       endDate.setHours(23, 59, 59, 999) // End of day
 
