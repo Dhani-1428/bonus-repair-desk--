@@ -119,13 +119,13 @@ export default function AnalyticsScreen() {
         <View style={styles.revenueCard}>
           <Text style={styles.revenueLabel}>Total Revenue</Text>
           <Text style={styles.revenueValue}>
-            ${analytics?.totalRevenue.toFixed(2) || '0.00'}
+            €{analytics?.totalRevenue.toFixed(2) || '0.00'}
           </Text>
         </View>
         <View style={styles.revenueCard}>
           <Text style={styles.revenueLabel}>Average Ticket Value</Text>
           <Text style={styles.revenueValue}>
-            ${analytics?.averageTicketValue.toFixed(2) || '0.00'}
+            €{analytics?.averageTicketValue.toFixed(2) || '0.00'}
           </Text>
         </View>
       </View>

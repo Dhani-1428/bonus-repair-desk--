@@ -270,12 +270,12 @@ export default function TicketDetailScreen() {
         )}
         <View style={styles.priceContainer}>
           <Text style={styles.priceLabel}>Price:</Text>
-          <Text style={styles.priceValue}>${parseFloat(ticket.price || 0).toFixed(2)}</Text>
+          <Text style={styles.priceValue}>€{parseFloat(ticket.price || 0).toFixed(2)}</Text>
         </View>
         {ticket.budget && (
           <View style={styles.priceContainer}>
             <Text style={styles.priceLabel}>Budget:</Text>
-            <Text style={styles.priceValue}>${parseFloat(ticket.budget).toFixed(2)}</Text>
+            <Text style={styles.priceValue}>€{parseFloat(ticket.budget).toFixed(2)}</Text>
           </View>
         )}
       </View>
