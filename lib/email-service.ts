@@ -528,8 +528,8 @@ export async function sendPaymentApprovedEmail(user: User, subscription: Subscri
             </div>
             
             <div class="success-box">
-              <p><strong>✅ Your admin panel access has been activated!</strong></p>
-              <p>You now have full access to all features of your admin panel. Please log in to your account to continue.</p>
+              <p><strong>✅ Your payment has been successfully approved!</strong></p>
+              <p>You can now log in to your admin panel using your credentials and access all features.</p>
             </div>
             
             <p style="text-align: center;">
