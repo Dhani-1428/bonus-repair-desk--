@@ -49,6 +49,8 @@ const translations: Record<Language, Record<string, string>> = {
     'dashboard.totalDevices': 'Total Devices',
     'dashboard.pending': 'Pending',
     'dashboard.completed': 'Completed',
+    'dashboard.cannotRepaired': 'Cannot Repaired',
+    'dashboard.out': 'Out',
     'dashboard.revenue': 'Revenue',
     'dashboard.recentDevices': 'Recent Devices',
     'dashboard.seeAll': 'See All',
