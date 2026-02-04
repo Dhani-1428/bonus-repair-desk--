@@ -9,11 +9,34 @@ import {
   Switch,
   Alert,
   ActivityIndicator,
+  Modal,
+  FlatList,
 } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { apiService } from '../../services/api';
 import { Ionicons } from '@expo/vector-icons';
+
+// Brand and Model data (same as website)
+const BRANDS_AND_MODELS: Record<string, string[]> = {
+  "Apple": ["iPhone 15 Pro Max", "iPhone 15 Pro", "iPhone 15 Plus", "iPhone 15", "iPhone 14 Pro Max", "iPhone 14 Pro", "iPhone 14 Plus", "iPhone 14", "iPhone 13 Pro Max", "iPhone 13 Pro", "iPhone 13", "iPhone 13 mini", "iPhone 12 Pro Max", "iPhone 12 Pro", "iPhone 12", "iPhone 12 mini", "iPhone 11 Pro Max", "iPhone 11 Pro", "iPhone 11", "iPhone XS Max", "iPhone XS", "iPhone XR", "iPhone X", "iPhone 8 Plus", "iPhone 8", "iPhone 7 Plus", "iPhone 7", "iPhone SE (2022)", "iPhone SE (2020)"],
+  "Samsung": ["Galaxy S24 Ultra", "Galaxy S24+", "Galaxy S24", "Galaxy S23 Ultra", "Galaxy S23+", "Galaxy S23", "Galaxy S22 Ultra", "Galaxy S22+", "Galaxy S22", "Galaxy S21 Ultra", "Galaxy S21+", "Galaxy S21", "Galaxy Note 20 Ultra", "Galaxy Note 20", "Galaxy A54", "Galaxy A34", "Galaxy A24", "Galaxy A14", "Galaxy A04", "Galaxy Z Fold 5", "Galaxy Z Flip 5", "Galaxy Z Fold 4", "Galaxy Z Flip 4"],
+  "Xiaomi": ["Mi 13 Pro", "Mi 13", "Mi 12 Pro", "Mi 12", "Redmi Note 13 Pro", "Redmi Note 13", "Redmi Note 12 Pro", "Redmi Note 12", "Redmi Note 11", "Redmi 13C", "Redmi 12C", "POCO X6 Pro", "POCO X5 Pro", "POCO F5", "POCO M5"],
+  "Huawei": ["P60 Pro", "P60", "P50 Pro", "P50", "Mate 60 Pro", "Mate 60", "Mate 50 Pro", "Mate 50", "Nova 12", "Nova 11", "Nova 10"],
+  "Oppo": ["Find X6 Pro", "Find X5 Pro", "Find X5", "Reno 11 Pro", "Reno 11", "Reno 10 Pro", "Reno 10", "A98", "A78", "A58"],
+  "Vivo": ["X100 Pro", "X90 Pro", "X90", "V30 Pro", "V30", "V29", "Y36", "Y27", "Y17"],
+  "OnePlus": ["12", "11", "10 Pro", "10T", "Nord 3", "Nord 2T", "Nord CE 3"],
+  "Realme": ["GT 5 Pro", "GT 5", "GT 3", "11 Pro+", "11 Pro", "11", "10 Pro+", "10 Pro"],
+  "Motorola": ["Edge 40 Pro", "Edge 40", "Edge 30 Pro", "Moto G84", "Moto G73", "Moto G54"],
+  "Nokia": ["G60 5G", "G42 5G", "G22", "X30 5G", "X20"],
+  "Sony": ["Xperia 1 V", "Xperia 5 V", "Xperia 10 V", "Xperia Pro-I"],
+  "Google": ["Pixel 8 Pro", "Pixel 8", "Pixel 7 Pro", "Pixel 7", "Pixel 6a", "Pixel 6"],
+  "Honor": ["Magic 6 Pro", "Magic 5 Pro", "90 Pro", "90", "70"],
+  "Nothing": ["Phone (2)", "Phone (1)"],
+  "Other": []
+};
+
+const ALL_BRANDS = Object.keys(BRANDS_AND_MODELS);
 
 // Generate Client ID - starts from 0001
 const generateClientId = async (userId: string): Promise<string> => {
@@ -57,6 +80,8 @@ export default function CreateTicketScreen({ navigation }: any) {
   const theme = useTheme();
   const [loading, setLoading] = useState(false);
   const [generatingClientId, setGeneratingClientId] = useState(true);
+  const [showBrandModal, setShowBrandModal] = useState(false);
+  const [showModelModal, setShowModelModal] = useState(false);
   const [formData, setFormData] = useState({
     customerName: '',
     contact: '',
@@ -205,18 +230,39 @@ export default function CreateTicketScreen({ navigation }: any) {
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Device Information</Text>
-        <FormInput
-          label="Brand *"
-          value={formData.brand}
-          onChangeText={(text) => setFormData({ ...formData, brand: text })}
-          placeholder="e.g., Apple, Samsung"
-        />
-        <FormInput
-          label="Model *"
-          value={formData.model}
-          onChangeText={(text) => setFormData({ ...formData, model: text })}
-          placeholder="Device model"
-        />
+        <View style={{ marginBottom: theme.spacing.md }}>
+          <Text style={{ fontSize: 14, color: theme.colors.textSecondary, marginBottom: theme.spacing.xs }}>
+            Brand *
+          </Text>
+          <TouchableOpacity
+            style={styles.dropdownButton}
+            onPress={() => setShowBrandModal(true)}
+          >
+            <Text style={[styles.dropdownText, !formData.brand && styles.dropdownPlaceholder]}>
+              {formData.brand || 'Select Brand'}
+            </Text>
+            <Ionicons name="chevron-down" size={20} color={theme.colors.textSecondary} />
+          </TouchableOpacity>
+        </View>
+        <View style={{ marginBottom: theme.spacing.md }}>
+          <Text style={{ fontSize: 14, color: theme.colors.textSecondary, marginBottom: theme.spacing.xs }}>
+            Model *
+          </Text>
+          <TouchableOpacity
+            style={[styles.dropdownButton, !formData.brand && styles.dropdownButtonDisabled]}
+            onPress={() => formData.brand && setShowModelModal(true)}
+            disabled={!formData.brand}
+          >
+            <Text style={[styles.dropdownText, !formData.model && styles.dropdownPlaceholder]}>
+              {formData.model || (formData.brand ? 'Select Model' : 'Select Brand First')}
+            </Text>
+            <Ionicons 
+              name="chevron-down" 
+              size={20} 
+              color={formData.brand ? theme.colors.textSecondary : theme.colors.textSecondary + '60'} 
+            />
+          </TouchableOpacity>
+        </View>
         <FormInput
           label="IMEI Number"
           value={formData.imeiNo}
@@ -393,6 +439,110 @@ export default function CreateTicketScreen({ navigation }: any) {
           <Text style={styles.submitButtonText}>Create Device</Text>
         )}
       </TouchableOpacity>
+
+      {/* Brand Selection Modal */}
+      <Modal
+        visible={showBrandModal}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowBrandModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Select Brand</Text>
+              <TouchableOpacity onPress={() => setShowBrandModal(false)}>
+                <Ionicons name="close" size={24} color={theme.colors.text} />
+              </TouchableOpacity>
+            </View>
+            <FlatList
+              data={ALL_BRANDS}
+              keyExtractor={(item) => item}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={[
+                    styles.modalItem,
+                    formData.brand === item && styles.modalItemSelected,
+                  ]}
+                  onPress={() => {
+                    setFormData({ ...formData, brand: item, model: '' }); // Clear model when brand changes
+                    setShowBrandModal(false);
+                  }}
+                >
+                  <Text
+                    style={[
+                      styles.modalItemText,
+                      formData.brand === item && styles.modalItemTextSelected,
+                    ]}
+                  >
+                    {item}
+                  </Text>
+                  {formData.brand === item && (
+                    <Ionicons name="checkmark" size={20} color={theme.colors.primary} />
+                  )}
+                </TouchableOpacity>
+              )}
+            />
+          </View>
+        </View>
+      </Modal>
+
+      {/* Model Selection Modal */}
+      <Modal
+        visible={showModelModal}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowModelModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Select Model</Text>
+              <TouchableOpacity onPress={() => setShowModelModal(false)}>
+                <Ionicons name="close" size={24} color={theme.colors.text} />
+              </TouchableOpacity>
+            </View>
+            {formData.brand && formData.brand !== 'Other' && BRANDS_AND_MODELS[formData.brand] ? (
+              <FlatList
+                data={BRANDS_AND_MODELS[formData.brand]}
+                keyExtractor={(item) => item}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    style={[
+                      styles.modalItem,
+                      formData.model === item && styles.modalItemSelected,
+                    ]}
+                    onPress={() => {
+                      setFormData({ ...formData, model: item });
+                      setShowModelModal(false);
+                    }}
+                  >
+                    <Text
+                      style={[
+                        styles.modalItemText,
+                        formData.model === item && styles.modalItemTextSelected,
+                      ]}
+                    >
+                      {item}
+                    </Text>
+                    {formData.model === item && (
+                      <Ionicons name="checkmark" size={20} color={theme.colors.primary} />
+                    )}
+                  </TouchableOpacity>
+                )}
+              />
+            ) : (
+              <View style={styles.modalEmpty}>
+                <Text style={styles.modalEmptyText}>
+                  {formData.brand === 'Other' 
+                    ? 'Please enter model manually' 
+                    : 'No models available for this brand'}
+                </Text>
+              </View>
+            )}
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 }
@@ -554,5 +704,82 @@ const createStyles = (theme: any) =>
       fontSize: 16,
       fontWeight: '600',
       fontFamily: 'monospace',
+    },
+    dropdownButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      backgroundColor: '#2a2a2a',
+      borderRadius: theme.borderRadius.md,
+      padding: theme.spacing.md,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      minHeight: 44,
+    },
+    dropdownButtonDisabled: {
+      opacity: 0.5,
+    },
+    dropdownText: {
+      flex: 1,
+      color: theme.colors.text,
+      fontSize: 16,
+    },
+    dropdownPlaceholder: {
+      color: theme.colors.textSecondary,
+    },
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      justifyContent: 'flex-end',
+    },
+    modalContent: {
+      backgroundColor: theme.colors.surface,
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
+      maxHeight: '80%',
+      paddingBottom: 20,
+    },
+    modalHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: theme.spacing.lg,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+    },
+    modalTitle: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: theme.colors.text,
+    },
+    modalItem: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: theme.spacing.md,
+      paddingHorizontal: theme.spacing.lg,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border + '20',
+    },
+    modalItemSelected: {
+      backgroundColor: theme.colors.primary + '20',
+    },
+    modalItemText: {
+      flex: 1,
+      fontSize: 16,
+      color: theme.colors.text,
+    },
+    modalItemTextSelected: {
+      color: theme.colors.primary,
+      fontWeight: '600',
+    },
+    modalEmpty: {
+      padding: theme.spacing.xl,
+      alignItems: 'center',
+    },
+    modalEmptyText: {
+      fontSize: 16,
+      color: theme.colors.textSecondary,
+      textAlign: 'center',
     },
   });
