@@ -90,19 +90,33 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
           const endDate = new Date(subscription.endDate)
           const today = new Date()
-          const isExpired = endDate < today
+          today.setHours(0, 0, 0, 0)
+          today.setMinutes(0, 0, 0)
+          today.setSeconds(0, 0)
+          today.setMilliseconds(0)
+          
+          const endDateNormalized = new Date(endDate)
+          endDateNormalized.setHours(0, 0, 0, 0)
+          endDateNormalized.setMinutes(0, 0, 0)
+          endDateNormalized.setSeconds(0, 0)
+          endDateNormalized.setMilliseconds(0)
+          
+          const isExpired = endDateNormalized < today
           const isFreeTrial = subscription.status === "FREE_TRIAL" || subscription.status === "free_trial" || subscription.isFreeTrial
           const paymentStatus = subscription.paymentStatus || "PENDING"
-          const isPaymentApproved = paymentStatus === "APPROVED"
+          const isPaymentApproved = paymentStatus === "APPROVED" || paymentStatus === "approved"
+          const subscriptionStatus = subscription.status || "PENDING"
+          const isActive = subscriptionStatus === "ACTIVE" || subscriptionStatus === "active"
           
-          // Block access if subscription is expired
+          // Block access if subscription is expired - redirect to subscription page only
           if (isExpired) {
             router.push("/subscription")
             return
           }
           
-          // Block access if payment is not approved (unless it's a free trial)
-          if (!isFreeTrial && !isPaymentApproved) {
+          // Block access if payment is not approved AND subscription is not active (unless it's a free trial)
+          // After superadmin approves payment, subscription becomes ACTIVE and user gets full access
+          if (!isFreeTrial && !isPaymentApproved && !isActive) {
             router.push("/subscription")
             return
           }

@@ -527,6 +527,11 @@ export async function sendPaymentApprovedEmail(user: User, subscription: Subscri
               </div>
             </div>
             
+            <div class="success-box">
+              <p><strong>✅ Your admin panel access has been activated!</strong></p>
+              <p>You now have full access to all features of your admin panel. Please log in to your account to continue.</p>
+            </div>
+            
             <p style="text-align: center;">
               <a href="${typeof window !== "undefined" ? window.location.origin : ""}/dashboard" class="button">Access Admin Panel</a>
             </p>
@@ -560,6 +565,9 @@ Start Date: ${startDate}
 End Date: ${endDate}
 Payment Method: MBWay
 Amount Paid: €${price.toFixed(2)}
+
+✅ Your admin panel access has been activated!
+You now have full access to all features of your admin panel. Please log in to your account to continue.
 
 Access your admin panel: ${typeof window !== "undefined" ? window.location.origin : ""}/dashboard
 

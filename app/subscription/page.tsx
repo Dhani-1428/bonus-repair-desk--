@@ -16,10 +16,17 @@ import { scheduleSubscriptionChecks } from "@/lib/subscription-notifications"
 
 export default function SubscriptionPage() {
   const router = useRouter()
-  const { user, subscription, updateSubscription } = useAuth()
+  const { user, subscription, updateSubscription, loading: authLoading } = useAuth()
   const { t } = useTranslation()
   const [loading, setLoading] = useState(false)
   const [subscriptionHistory, setSubscriptionHistory] = useState<any[]>([])
+
+  // Redirect to login if not authenticated (required for subscription flow)
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push("/login?redirect=/subscription")
+    }
+  }, [user, authLoading, router])
 
   useEffect(() => {
     // Initialize subscription notification checks
@@ -116,6 +123,46 @@ export default function SubscriptionPage() {
 
   const statusInfo = getSubscriptionStatus()
   const daysUntilExpiration = subscription ? getDaysUntilExpiration(subscription) : 0
+
+  // Show loading state while checking authentication
+  if (authLoading) {
+    return (
+      <DashboardLayout>
+        <div className="space-y-6 text-black p-6">
+          <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <h2 className="text-xl font-bold text-black mb-2">Loading...</h2>
+            <p className="text-gray-600">Please wait while we verify your account.</p>
+          </div>
+        </div>
+      </DashboardLayout>
+    )
+  }
+
+  // Show login prompt if not authenticated
+  if (!user) {
+    return (
+      <DashboardLayout>
+        <div className="space-y-6 text-black p-6">
+          <Card className="shadow-xl border border-blue-200 bg-white">
+            <CardHeader className="bg-blue-50 border-b border-blue-200">
+              <CardTitle className="text-xl text-black">Login Required</CardTitle>
+              <CardDescription className="text-black">
+                Please login to view and manage your subscription
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              <Button
+                onClick={() => router.push("/login?redirect=/subscription")}
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              >
+                Go to Login
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </DashboardLayout>
+    )
+  }
 
   return (
     <DashboardLayout>
@@ -443,11 +490,19 @@ export default function SubscriptionPage() {
                     </Button>
                   ) : (
                     <Button
-                      onClick={() => router.push(`/billing?plan=${plan.id}`)}
+                      onClick={() => {
+                        // Ensure user is logged in before proceeding
+                        if (!user) {
+                          router.push(`/login?redirect=/billing?plan=${plan.id}`)
+                        } else {
+                          router.push(`/billing?plan=${plan.id}`)
+                        }
+                      }}
                       variant={plan.popular ? "default" : "outline"}
                       className="w-full"
+                      disabled={!user}
                     >
-                      {t("subscription.subscribe")}
+                      {!user ? t("subscription.loginRequired") || "Login Required" : t("subscription.subscribe")}
                     </Button>
                   )}
                 </CardFooter>
