@@ -28,15 +28,24 @@ export default function TrashScreen() {
   }, [user]);
 
   const loadDeletedTickets = async () => {
-    if (!user?.id) return;
+    if (!user?.id) {
+      setLoading(false);
+      setDeletedTickets([]);
+      return;
+    }
 
     try {
       setLoading(true);
-      const tickets = await apiService.getTickets(user.id, true); // true = deleted tickets
-      setDeletedTickets(tickets.tickets || tickets || []);
+      const response = await apiService.getTickets(user.id, true); // true = deleted tickets
+      const tickets = response?.tickets || response || [];
+      setDeletedTickets(Array.isArray(tickets) ? tickets : []);
     } catch (error: any) {
       console.error('Error loading deleted tickets:', error);
-      Alert.alert('Error', 'Failed to load deleted tickets');
+      setDeletedTickets([]);
+      // Don't show alert for empty trash - it's normal
+      if (error?.message && !error.message.includes('empty')) {
+        Alert.alert('Error', 'Failed to load deleted tickets');
+      }
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -137,8 +146,10 @@ export default function TrashScreen() {
             <BlurView key={ticket.id} intensity={60} tint="dark" style={styles.ticketCard}>
               <View style={styles.ticketHeader}>
                 <View style={styles.ticketInfo}>
-                  <Text style={styles.customerName}>{ticket.customerName || 'Unknown'}</Text>
-                  <Text style={styles.ticketNumber}>
+                  <Text style={styles.customerName} numberOfLines={1} ellipsizeMode="tail">
+                    {ticket.customerName || 'Unknown'}
+                  </Text>
+                  <Text style={styles.ticketNumber} numberOfLines={1} ellipsizeMode="tail">
                     {ticket.repairNumber || ticket.id?.substring(0, 8)}
                   </Text>
                 </View>
@@ -152,13 +163,17 @@ export default function TrashScreen() {
                 {ticket.model && (
                   <View style={styles.detailRow}>
                     <Ionicons name="phone-portrait-outline" size={16} color={theme.colors.textSecondary} />
-                    <Text style={styles.detailText}>{ticket.model}</Text>
+                    <Text style={styles.detailText} numberOfLines={1} ellipsizeMode="tail">
+                      {ticket.model}
+                    </Text>
                   </View>
                 )}
                 {ticket.contact && (
                   <View style={styles.detailRow}>
                     <Ionicons name="call-outline" size={16} color={theme.colors.textSecondary} />
-                    <Text style={styles.detailText}>{ticket.contact}</Text>
+                    <Text style={styles.detailText} numberOfLines={1} ellipsizeMode="tail">
+                      {ticket.contact}
+                    </Text>
                   </View>
                 )}
                 {ticket.deletedAt && (
@@ -282,9 +297,10 @@ const createStyles = (theme: any) =>
     },
     ticketInfo: {
       flex: 1,
+      marginRight: 8,
     },
     customerName: {
-      fontSize: 20,
+      fontSize: 18,
       fontWeight: 'bold',
       color: theme.colors.text,
       marginBottom: 4,
@@ -292,6 +308,11 @@ const createStyles = (theme: any) =>
     ticketNumber: {
       fontSize: 14,
       color: theme.colors.textSecondary,
+    },
+    detailText: {
+      fontSize: 14,
+      color: theme.colors.textSecondary,
+      flex: 1,
     },
     statusBadge: {
       flexDirection: 'row',

@@ -199,8 +199,12 @@ export default function TicketsScreen({ navigation }: any) {
             >
               <View style={styles.ticketHeader}>
                 <View style={styles.ticketInfo}>
-                  <Text style={styles.ticketNumber}>{item.repairNumber || item.id}</Text>
-                  <Text style={styles.ticketCustomer}>{item.customerName || 'N/A'}</Text>
+                  <Text style={styles.ticketNumber} numberOfLines={1} ellipsizeMode="tail">
+                    {item.repairNumber || item.id}
+                  </Text>
+                  <Text style={styles.ticketCustomer} numberOfLines={1} ellipsizeMode="tail">
+                    {item.customerName || 'N/A'}
+                  </Text>
                 </View>
                 <View
                   style={[
@@ -232,9 +236,9 @@ export default function TicketsScreen({ navigation }: any) {
                   </Text>
                 </View>
               </View>
-              <Text style={styles.ticketDevice}>
-                {item.brand} {item.model}
-              </Text>
+            <Text style={styles.ticketDevice} numberOfLines={1} ellipsizeMode="tail">
+              {item.brand} {item.model}
+            </Text>
               <View style={styles.ticketFooter}>
                 <Text style={styles.ticketDate}>
                   {format(new Date(item.createdAt), 'MMM dd, yyyy')}

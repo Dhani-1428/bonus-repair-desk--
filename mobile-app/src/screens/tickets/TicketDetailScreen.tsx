@@ -266,7 +266,11 @@ function InfoRow({ label, value }: { label: string; value: string }) {
       <Text style={{ fontSize: 12, color: theme.colors.textSecondary, marginBottom: 2 }}>
         {label}
       </Text>
-      <Text style={{ fontSize: 16, color: theme.colors.text, fontWeight: '500' }}>
+      <Text 
+        style={{ fontSize: 16, color: theme.colors.text, fontWeight: '500' }}
+        numberOfLines={2}
+        ellipsizeMode="tail"
+      >
         {value}
       </Text>
     </View>

@@ -98,7 +98,9 @@ export default function DashboardScreen({ navigation }: any) {
         <View style={styles.header}>
           <View>
             <Text style={styles.greeting}>Welcome back,</Text>
-            <Text style={styles.userName}>{user?.name}!</Text>
+            <Text style={styles.userName} numberOfLines={1} ellipsizeMode="tail">
+              {user?.name}!
+            </Text>
           </View>
           <Ionicons name="notifications-outline" size={28} color={theme.colors.primary} />
         </View>
