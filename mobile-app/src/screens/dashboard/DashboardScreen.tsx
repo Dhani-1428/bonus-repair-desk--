@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { apiService } from '../../services/api';
 import { Ionicons } from '@expo/vector-icons';
 import { format } from 'date-fns';
@@ -18,6 +19,7 @@ import { BlurView } from 'expo-blur';
 export default function DashboardScreen({ navigation }: any) {
   const { user } = useAuth();
   const theme = useTheme();
+  const { t } = useLanguage();
   const [stats, setStats] = useState({
     totalTickets: 0,
     pendingTickets: 0,
@@ -97,14 +99,13 @@ export default function DashboardScreen({ navigation }: any) {
       <BlurView intensity={80} tint="dark" style={styles.blurHeader}>
         <View style={styles.header}>
           <View>
-            <Text style={styles.greeting}>Welcome back,</Text>
+            <Text style={styles.greeting}>{t('dashboard.welcomeBack')},</Text>
             <Text style={styles.userName} numberOfLines={1} ellipsizeMode="tail">
               {user?.name}!
             </Text>
           </View>
-          <Ionicons name="notifications-outline" size={28} color={theme.colors.primary} />
         </View>
-        <Text style={styles.subtitle}>Here's what's happening</Text>
+        <Text style={styles.subtitle}>{t('dashboard.subtitle')}</Text>
       </BlurView>
 
       <ScrollView
@@ -120,7 +121,7 @@ export default function DashboardScreen({ navigation }: any) {
               <Ionicons name="document-text" size={28} color={theme.colors.primary} />
             </View>
             <Text style={styles.statValue}>{stats.totalTickets}</Text>
-            <Text style={styles.statLabel}>Total Devices</Text>
+            <Text style={styles.statLabel}>{t('dashboard.totalDevices')}</Text>
           </BlurView>
 
           <BlurView intensity={60} tint="dark" style={styles.statCard}>
@@ -128,7 +129,7 @@ export default function DashboardScreen({ navigation }: any) {
               <Ionicons name="time-outline" size={28} color={theme.colors.warning} />
             </View>
             <Text style={styles.statValue}>{stats.pendingTickets}</Text>
-            <Text style={styles.statLabel}>Pending</Text>
+            <Text style={styles.statLabel}>{t('dashboard.pending')}</Text>
           </BlurView>
 
           <BlurView intensity={60} tint="dark" style={styles.statCard}>
@@ -136,7 +137,7 @@ export default function DashboardScreen({ navigation }: any) {
               <Ionicons name="checkmark-circle" size={28} color={theme.colors.success} />
             </View>
             <Text style={styles.statValue}>{stats.completedTickets}</Text>
-            <Text style={styles.statLabel}>Completed</Text>
+            <Text style={styles.statLabel}>{t('dashboard.completed')}</Text>
           </BlurView>
 
           <BlurView intensity={60} tint="dark" style={styles.statCard}>
@@ -144,27 +145,27 @@ export default function DashboardScreen({ navigation }: any) {
               <Ionicons name="cash" size={28} color={theme.colors.secondary} />
             </View>
             <Text style={styles.statValue}>€{stats.totalRevenue.toFixed(2)}</Text>
-            <Text style={styles.statLabel}>Revenue</Text>
+            <Text style={styles.statLabel}>{t('dashboard.revenue')}</Text>
           </BlurView>
         </View>
 
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Recent Devices</Text>
+          <Text style={styles.sectionTitle}>{t('dashboard.recentDevices')}</Text>
           <TouchableOpacity onPress={() => navigation.navigate('Tickets')}>
-            <Text style={styles.seeAll}>See All</Text>
+            <Text style={styles.seeAll}>{t('dashboard.seeAll')}</Text>
           </TouchableOpacity>
         </View>
 
         {recentTickets.length === 0 ? (
           <BlurView intensity={60} tint="dark" style={styles.emptyState}>
             <Ionicons name="document-outline" size={64} color={theme.colors.textSecondary} />
-            <Text style={styles.emptyText}>No devices yet</Text>
+            <Text style={styles.emptyText}>{t('dashboard.noDevices')}</Text>
             <TouchableOpacity
               style={styles.createButton}
               onPress={() => navigation.navigate('CreateTicket')}
             >
-              <Text style={styles.createButtonText}>Create First Device</Text>
+              <Text style={styles.createButtonText}>{t('dashboard.createFirstDevice')}</Text>
             </TouchableOpacity>
           </BlurView>
         ) : (
