@@ -153,7 +153,12 @@ export default function EditTicketScreen() {
   }
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView 
+      style={styles.container}
+      contentContainerStyle={{ paddingBottom: 120 }}
+      showsVerticalScrollIndicator={true}
+      keyboardShouldPersistTaps="handled"
+    >
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Customer Information</Text>
         <FormInput

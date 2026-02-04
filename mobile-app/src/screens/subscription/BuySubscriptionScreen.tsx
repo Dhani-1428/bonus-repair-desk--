@@ -141,7 +141,12 @@ export default function BuySubscriptionScreen() {
         </View>
       </BlurView>
 
-      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
+      <ScrollView 
+        style={styles.scrollView} 
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: 120 }]}
+        showsVerticalScrollIndicator={true}
+        keyboardShouldPersistTaps="handled"
+      >
         {subscription && (
           <BlurView intensity={60} tint="dark" style={styles.currentSubscriptionCard}>
             <View style={styles.currentSubscriptionHeader}>

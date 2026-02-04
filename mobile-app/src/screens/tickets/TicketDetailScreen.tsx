@@ -171,7 +171,12 @@ export default function TicketDetailScreen() {
   }
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView 
+      style={styles.container}
+      contentContainerStyle={{ paddingBottom: 120 }}
+      showsVerticalScrollIndicator={true}
+      keyboardShouldPersistTaps="handled"
+    >
       <View style={styles.header}>
         <View style={styles.headerTop}>
           <Text style={styles.ticketNumber}>{ticket.repairNumber || ticket.id}</Text>

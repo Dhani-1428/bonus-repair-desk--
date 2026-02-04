@@ -253,7 +253,7 @@ export default function TicketsScreen({ navigation }: any) {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.colors.primary} />
         }
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={[styles.listContent, { paddingBottom: 120 }]} // Extra padding for tab bar
       />
 
       <TouchableOpacity

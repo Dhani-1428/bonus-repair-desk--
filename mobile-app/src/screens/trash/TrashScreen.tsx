@@ -125,6 +125,9 @@ export default function TrashScreen() {
       </BlurView>
 
       <ScrollView
+        contentContainerStyle={{ paddingBottom: 120 }}
+        showsVerticalScrollIndicator={true}
+        keyboardShouldPersistTaps="handled"
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         refreshControl={

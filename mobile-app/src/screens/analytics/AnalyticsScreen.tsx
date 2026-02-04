@@ -75,6 +75,9 @@ export default function AnalyticsScreen() {
   return (
     <ScrollView
       style={styles.container}
+      contentContainerStyle={{ paddingBottom: 120, flexGrow: 1 }}
+      showsVerticalScrollIndicator={true}
+      keyboardShouldPersistTaps="handled"
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.colors.primary} />
       }

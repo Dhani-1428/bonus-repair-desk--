@@ -111,6 +111,8 @@ export default function DashboardScreen({ navigation }: any) {
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={true}
+        keyboardShouldPersistTaps="handled"
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.colors.primary} />
         }
@@ -270,6 +272,8 @@ const createStyles = (theme: any) =>
     scrollContent: {
       paddingHorizontal: 20,
       paddingVertical: 16,
+      paddingBottom: 120, // Extra padding for tab bar
+      flexGrow: 1,
     },
     statsContainer: {
       flexDirection: 'row',
