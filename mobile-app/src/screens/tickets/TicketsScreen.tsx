@@ -27,34 +27,16 @@ export default function TicketsScreen({ navigation }: any) {
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<string | null>(null);
+  const [printing, setPrinting] = useState<string | null>(null);
 
   useEffect(() => {
     loadTickets();
-    loadCompanyInfo();
   }, [user]);
-
-  const loadCompanyInfo = async () => {
-    if (!user?.id) return;
-    try {
-      const response = await apiService.getUser(user.id);
-      if (response.user) {
-        setCompanyInfo({
-          shopName: response.user.shopName || response.user.name,
-          address: response.user.address,
-          companyEmail: response.user.companyEmail,
-          website: response.user.website,
-          contactNumber: response.user.contactNumber,
-        });
-      }
-    } catch (error) {
-      console.error('Error loading company info:', error);
-    }
-  };
 
   const handlePrint = async (ticket: any) => {
     try {
       setPrinting(ticket.id);
-      await printTicket(ticket, companyInfo);
+      await printTicket(ticket);
     } catch (error: any) {
       console.error('Error printing:', error);
       Alert.alert('Print Error', error.message || 'Failed to print receipt');
