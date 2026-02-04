@@ -75,6 +75,12 @@ function MainTabs() {
         },
         tabBarActiveTintColor: '#e78a53',
         tabBarInactiveTintColor: '#8e8e93',
+        tabBarShowLabel: true,
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: '500',
+          marginTop: 4,
+        },
         tabBarLabel: ({ children }: { children: string }) => {
           const labelMap: Record<string, string> = {
             'Dashboard': 'Home',
