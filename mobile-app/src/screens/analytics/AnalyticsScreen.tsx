@@ -194,7 +194,7 @@ const createStyles = (theme: any) =>
     statsGrid: {
       flexDirection: 'row',
       flexWrap: 'wrap',
-      paddingHorizontal: theme.spacing.lg,
+      paddingHorizontal: 20,
       marginBottom: theme.spacing.lg,
     },
     statCard: {
@@ -222,7 +222,8 @@ const createStyles = (theme: any) =>
     },
     section: {
       backgroundColor: theme.colors.surface,
-      padding: theme.spacing.lg,
+      paddingHorizontal: 20,
+      paddingVertical: theme.spacing.lg,
       marginTop: theme.spacing.md,
       borderTopWidth: 1,
       borderBottomWidth: 1,
