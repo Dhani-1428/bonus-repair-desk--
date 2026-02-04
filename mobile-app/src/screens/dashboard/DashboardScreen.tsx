@@ -24,6 +24,8 @@ export default function DashboardScreen({ navigation }: any) {
     totalTickets: 0,
     pendingTickets: 0,
     completedTickets: 0,
+    cannotRepairedTickets: 0,
+    outTickets: 0,
     totalRevenue: 0,
   });
   const [recentTickets, setRecentTickets] = useState<any[]>([]);
@@ -52,6 +54,12 @@ export default function DashboardScreen({ navigation }: any) {
       const completedTickets = tickets.filter((t: any) => 
         t.status === 'completed'
       ).length;
+      const cannotRepairedTickets = tickets.filter((t: any) => 
+        t.status === 'cannot_repaired'
+      ).length;
+      const outTickets = tickets.filter((t: any) => 
+        t.status === 'out'
+      ).length;
       const totalRevenue = tickets
         .filter((t: any) => t.status === 'completed')
         .reduce((sum: number, t: any) => sum + (parseFloat(t.price) || 0), 0);
@@ -60,6 +68,8 @@ export default function DashboardScreen({ navigation }: any) {
         totalTickets,
         pendingTickets,
         completedTickets,
+        cannotRepairedTickets,
+        outTickets,
         totalRevenue,
       });
 

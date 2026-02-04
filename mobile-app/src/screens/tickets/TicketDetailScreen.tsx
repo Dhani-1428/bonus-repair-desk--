@@ -112,7 +112,7 @@ export default function TicketDetailScreen() {
   };
 
   const showActionMenu = () => {
-    const statusOptions = ['pending', 'in_progress', 'completed', 'delivered', 'cancelled', 'not_ok'];
+    const statusOptions = ['pending', 'in_progress', 'completed', 'delivered', 'cancelled', 'not_ok', 'cannot_repaired', 'out'];
     
     Alert.alert(
       t('common.status'),
