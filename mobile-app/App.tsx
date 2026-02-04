@@ -73,6 +73,12 @@ function MainTabs() {
         },
         tabBarActiveTintColor: '#e78a53',
         tabBarInactiveTintColor: '#8e8e93',
+        tabBarLabel: ({ route }: { route: any }) => {
+          if (route.name === 'Tickets') {
+            return 'Devices';
+          }
+          return route.name;
+        },
         tabBarStyle: {
           position: 'absolute',
           backgroundColor: 'transparent',
