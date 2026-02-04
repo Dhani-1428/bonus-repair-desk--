@@ -13,6 +13,7 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { apiService } from '../../services/api';
+import { printTicket } from '../../services/printService';
 import { Ionicons } from '@expo/vector-icons';
 import { format } from 'date-fns';
 import { BlurView } from 'expo-blur';
@@ -29,7 +30,38 @@ export default function TicketsScreen({ navigation }: any) {
 
   useEffect(() => {
     loadTickets();
+    loadCompanyInfo();
   }, [user]);
+
+  const loadCompanyInfo = async () => {
+    if (!user?.id) return;
+    try {
+      const response = await apiService.getUser(user.id);
+      if (response.user) {
+        setCompanyInfo({
+          shopName: response.user.shopName || response.user.name,
+          address: response.user.address,
+          companyEmail: response.user.companyEmail,
+          website: response.user.website,
+          contactNumber: response.user.contactNumber,
+        });
+      }
+    } catch (error) {
+      console.error('Error loading company info:', error);
+    }
+  };
+
+  const handlePrint = async (ticket: any) => {
+    try {
+      setPrinting(ticket.id);
+      await printTicket(ticket, companyInfo);
+    } catch (error: any) {
+      console.error('Error printing:', error);
+      Alert.alert('Print Error', error.message || 'Failed to print receipt');
+    } finally {
+      setPrinting(null);
+    }
+  };
 
   useEffect(() => {
     filterTickets();
@@ -160,55 +192,71 @@ export default function TicketsScreen({ navigation }: any) {
         data={filteredTickets}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.ticketCard}
-            onPress={() => navigation.navigate('TicketDetail', { ticketId: item.id })}
-          >
-            <View style={styles.ticketHeader}>
-              <View style={styles.ticketInfo}>
-                <Text style={styles.ticketNumber}>{item.repairNumber || item.id}</Text>
-                <Text style={styles.ticketCustomer}>{item.customerName || 'N/A'}</Text>
-              </View>
-              <View
-                style={[
-                  styles.statusBadge,
-                  {
-                    backgroundColor:
-                      item.status === 'completed'
-                        ? theme.colors.success + '20'
-                        : item.status === 'pending'
-                        ? theme.colors.warning + '20'
-                        : theme.colors.secondary + '20',
-                  },
-                ]}
-              >
-                <Text
+          <View style={styles.ticketCard}>
+            <TouchableOpacity
+              style={styles.ticketContent}
+              onPress={() => navigation.navigate('TicketDetail', { ticketId: item.id })}
+            >
+              <View style={styles.ticketHeader}>
+                <View style={styles.ticketInfo}>
+                  <Text style={styles.ticketNumber}>{item.repairNumber || item.id}</Text>
+                  <Text style={styles.ticketCustomer}>{item.customerName || 'N/A'}</Text>
+                </View>
+                <View
                   style={[
-                    styles.statusText,
+                    styles.statusBadge,
                     {
-                      color:
+                      backgroundColor:
                         item.status === 'completed'
-                          ? theme.colors.success
+                          ? theme.colors.success + '20'
                           : item.status === 'pending'
-                          ? theme.colors.warning
-                          : theme.colors.secondary,
+                          ? theme.colors.warning + '20'
+                          : theme.colors.secondary + '20',
                     },
                   ]}
                 >
-                  {item.status || 'pending'}
-                </Text>
+                  <Text
+                    style={[
+                      styles.statusText,
+                      {
+                        color:
+                          item.status === 'completed'
+                            ? theme.colors.success
+                            : item.status === 'pending'
+                            ? theme.colors.warning
+                            : theme.colors.secondary,
+                      },
+                    ]}
+                  >
+                    {item.status || 'pending'}
+                  </Text>
+                </View>
               </View>
-            </View>
-            <Text style={styles.ticketDevice}>
-              {item.brand} {item.model}
-            </Text>
-            <View style={styles.ticketFooter}>
-              <Text style={styles.ticketDate}>
-                {format(new Date(item.createdAt), 'MMM dd, yyyy')}
+              <Text style={styles.ticketDevice}>
+                {item.brand} {item.model}
               </Text>
-              <Text style={styles.ticketPrice}>${parseFloat(item.price || 0).toFixed(2)}</Text>
-            </View>
-          </TouchableOpacity>
+              <View style={styles.ticketFooter}>
+                <Text style={styles.ticketDate}>
+                  {format(new Date(item.createdAt), 'MMM dd, yyyy')}
+                </Text>
+                <Text style={styles.ticketPrice}>€{parseFloat(item.price || 0).toFixed(2)}</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.printButton}
+              onPress={(e) => {
+                e.stopPropagation();
+                handlePrint(item);
+              }}
+              disabled={printing === item.id}
+            >
+              {printing === item.id ? (
+                <ActivityIndicator size="small" color={theme.colors.primary} />
+              ) : (
+                <Ionicons name="print-outline" size={20} color={theme.colors.primary} />
+              )}
+            </TouchableOpacity>
+          </View>
         )}
         ListEmptyComponent={
           <View style={styles.emptyState}>
