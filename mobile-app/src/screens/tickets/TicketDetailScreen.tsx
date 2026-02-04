@@ -27,12 +27,10 @@ export default function TicketDetailScreen() {
   const [ticket, setTicket] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [printing, setPrinting] = useState(false);
-  const [companyInfo, setCompanyInfo] = useState<any>(null);
   const [showStatusMenu, setShowStatusMenu] = useState(false);
 
   useEffect(() => {
     loadTicket();
-    loadCompanyInfo();
   }, [ticketId, user]);
 
   const loadTicket = async () => {
@@ -47,30 +45,13 @@ export default function TicketDetailScreen() {
     }
   };
 
-  const loadCompanyInfo = async () => {
-    if (!user?.id) return;
-    try {
-      const response = await apiService.getUser(user.id);
-      if (response.user) {
-        setCompanyInfo({
-          shopName: response.user.shopName || response.user.name,
-          address: response.user.address,
-          companyEmail: response.user.companyEmail,
-          website: response.user.website,
-          contactNumber: response.user.contactNumber,
-        });
-      }
-    } catch (error) {
-      console.error('Error loading company info:', error);
-    }
-  };
 
   const handlePrint = async () => {
     if (!ticket) return;
 
     try {
       setPrinting(true);
-      await printTicket(ticket, companyInfo);
+      await printTicket(ticket);
     } catch (error: any) {
       console.error('Error printing:', error);
       Alert.alert('Print Error', error.message || 'Failed to print receipt');
