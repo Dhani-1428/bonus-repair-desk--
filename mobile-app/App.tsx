@@ -73,11 +73,11 @@ function MainTabs() {
         },
         tabBarActiveTintColor: '#e78a53',
         tabBarInactiveTintColor: '#8e8e93',
-        tabBarLabel: ({ route }: { route: any }) => {
-          if (route.name === 'Tickets') {
+        tabBarLabel: ({ children }: { children: string }) => {
+          if (children === 'Tickets') {
             return 'Devices';
           }
-          return route.name;
+          return children;
         },
         tabBarStyle: {
           position: 'absolute',
@@ -114,7 +114,11 @@ function MainTabs() {
       })}
     >
       <Tab.Screen name="Dashboard" component={DashboardScreen} />
-      <Tab.Screen name="Tickets" component={TicketsScreen} />
+      <Tab.Screen 
+        name="Tickets" 
+        component={TicketsScreen}
+        options={{ tabBarLabel: 'Devices' }}
+      />
       <Tab.Screen name="Subscription" component={BuySubscriptionScreen} />
       <Tab.Screen name="Trash" component={TrashScreen} />
       <Tab.Screen name="Analytics" component={AnalyticsScreen} />
