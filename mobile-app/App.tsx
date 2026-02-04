@@ -10,6 +10,7 @@ import { BlurView } from 'expo-blur';
 // Screens
 import LoginScreen from './src/screens/auth/LoginScreen';
 import RegisterScreen from './src/screens/auth/RegisterScreen';
+import GetStartedScreen from './src/screens/onboarding/GetStartedScreen';
 import DashboardScreen from './src/screens/dashboard/DashboardScreen';
 import TicketsScreen from './src/screens/tickets/TicketsScreen';
 import TicketDetailScreen from './src/screens/tickets/TicketDetailScreen';
@@ -29,6 +30,7 @@ import { LanguageProvider } from './src/context/LanguageContext';
 export type RootStackParamList = {
   Auth: undefined;
   Main: undefined;
+  GetStarted: undefined;
   Login: undefined;
   Register: undefined;
   Dashboard: undefined;
