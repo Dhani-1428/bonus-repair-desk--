@@ -97,8 +97,8 @@ function MainTabs() {
           borderTopWidth: 0,
           elevation: 0,
           shadowOpacity: 0,
-          height: Platform.OS === 'ios' ? 90 : 70,
-          paddingBottom: Platform.OS === 'ios' ? 30 : 10,
+          height: Platform.OS === 'ios' ? 90 : 75,
+          paddingBottom: Platform.OS === 'ios' ? 30 : 12,
           paddingTop: 8,
         },
         tabBarBackground: () => (
