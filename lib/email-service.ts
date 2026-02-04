@@ -566,8 +566,8 @@ End Date: ${endDate}
 Payment Method: MBWay
 Amount Paid: €${price.toFixed(2)}
 
-✅ Your admin panel access has been activated!
-You now have full access to all features of your admin panel. Please log in to your account to continue.
+✅ Your payment has been successfully approved!
+You can now log in to your admin panel using your credentials and access all features.
 
 Access your admin panel: ${typeof window !== "undefined" ? window.location.origin : ""}/dashboard
 
