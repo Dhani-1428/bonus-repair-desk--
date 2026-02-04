@@ -223,8 +223,9 @@ class ApiService {
     return this.fetchRequest<any>(`${this.baseURL}/repairs?userId=${userId}${deletedParam}`);
   }
 
-  async getTicket(ticketId: string) {
-    return this.fetchRequest<any>(`${this.baseURL}/repairs/${ticketId}`);
+  async getTicket(ticketId: string, userId?: string) {
+    const userIdParam = userId ? `?userId=${userId}` : '';
+    return this.fetchRequest<any>(`${this.baseURL}/repairs/${ticketId}${userIdParam}`);
   }
 
   async createTicket(ticketData: any) {

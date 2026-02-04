@@ -54,9 +54,13 @@ export default function EditTicketScreen() {
   }, [ticketId]);
 
   const loadTicket = async () => {
+    if (!user?.id) {
+      setLoading(false);
+      return;
+    }
     try {
       setLoading(true);
-      const response = await apiService.getTicket(ticketId);
+      const response = await apiService.getTicket(ticketId, user.id);
       const ticket = response.ticket;
       
       setFormData({

@@ -34,8 +34,12 @@ export default function TicketDetailScreen() {
   }, [ticketId, user]);
 
   const loadTicket = async () => {
+    if (!user?.id) {
+      setLoading(false);
+      return;
+    }
     try {
-      const response = await apiService.getTicket(ticketId);
+      const response = await apiService.getTicket(ticketId, user.id);
       setTicket(response.ticket);
     } catch (error) {
       console.error('Error loading ticket:', error);
