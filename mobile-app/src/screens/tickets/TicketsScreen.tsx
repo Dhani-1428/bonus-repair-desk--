@@ -15,6 +15,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { apiService } from '../../services/api';
 import { Ionicons } from '@expo/vector-icons';
 import { format } from 'date-fns';
+import { BlurView } from 'expo-blur';
 
 export default function TicketsScreen({ navigation }: any) {
   const { user } = useAuth();
