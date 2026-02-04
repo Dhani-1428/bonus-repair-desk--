@@ -343,10 +343,23 @@ const createStyles = (theme: any) =>
     ticketCard: {
       backgroundColor: theme.colors.surface,
       borderRadius: theme.borderRadius.md,
-      padding: theme.spacing.md,
       marginBottom: theme.spacing.md,
       borderWidth: 1,
       borderColor: theme.colors.border,
+      flexDirection: 'row',
+      overflow: 'hidden',
+    },
+    ticketContent: {
+      flex: 1,
+      padding: theme.spacing.md,
+    },
+    printButton: {
+      padding: theme.spacing.md,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderLeftWidth: 1,
+      borderLeftColor: theme.colors.border,
+      backgroundColor: theme.colors.surface,
     },
     ticketHeader: {
       flexDirection: 'row',
