@@ -108,6 +108,12 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           const subscriptionStatus = subscription.status || "PENDING"
           const isActive = subscriptionStatus === "ACTIVE" || subscriptionStatus === "active"
           
+          // If subscription is ACTIVE and payment is APPROVED, allow full access immediately
+          if (isActive && isPaymentApproved) {
+            // Subscription is active - allow access to all pages
+            return
+          }
+          
           // Block access if subscription is expired - redirect to subscription page only
           if (isExpired) {
             router.push("/subscription")

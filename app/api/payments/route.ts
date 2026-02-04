@@ -554,9 +554,22 @@ export async function PUT(request: NextRequest) {
       }
 
       // Update or create subscription
+      // When payment is approved, start subscription IMMEDIATELY (today)
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+      today.setMinutes(0, 0, 0)
+      today.setSeconds(0, 0)
+      today.setMilliseconds(0)
+      
+      // Calculate end date based on plan months from today
+      const planMonths = payment.months || 6 // Default to 6 months if not specified
+      const subscriptionEndDate = new Date(today)
+      subscriptionEndDate.setMonth(subscriptionEndDate.getMonth() + planMonths)
+      subscriptionEndDate.setHours(23, 59, 59, 999) // End of day
+      
       // Convert dates to MySQL format
-      const subscriptionStartDate = toMySQLDateTime(payment.startDate) || ""
-      const subscriptionEndDate = toMySQLDateTime(payment.endDate) || ""
+      const subscriptionStartDate = toMySQLDateTime(today.toISOString()) || ""
+      const subscriptionEndDateMySQL = toMySQLDateTime(subscriptionEndDate.toISOString()) || ""
       
       let subscriptionId: string
       if (existing) {
@@ -565,21 +578,17 @@ export async function PUT(request: NextRequest) {
            plan = ?, status = 'ACTIVE', startDate = ?, endDate = ?, price = ?, 
            paymentStatus = 'APPROVED', paymentId = ?, isFreeTrial = FALSE
            WHERE id = ?`,
-          [payment.plan, subscriptionStartDate, subscriptionEndDate, payment.price, id, existing.id]
+          [payment.plan, subscriptionStartDate, subscriptionEndDateMySQL, payment.price, id, existing.id]
         )
         subscriptionId = existing.id
       } else {
         subscriptionId = uuidv4()
-          // Convert dates to MySQL format
-          const newSubscriptionStartDate = toMySQLDateTime(payment.startDate) || ""
-          const newSubscriptionEndDate = toMySQLDateTime(payment.endDate) || ""
-          
-          await execute(
-            `INSERT INTO subscriptions 
-             (id, userId, tenantId, plan, status, startDate, endDate, price, paymentStatus, paymentId, isFreeTrial)
-             VALUES (?, ?, ?, ?, 'ACTIVE', ?, ?, ?, 'APPROVED', ?, FALSE)`,
-            [subscriptionId, payment.userId, payment.tenantId, payment.plan, newSubscriptionStartDate, newSubscriptionEndDate, payment.price, id]
-          )
+        await execute(
+          `INSERT INTO subscriptions 
+           (id, userId, tenantId, plan, status, startDate, endDate, price, paymentStatus, paymentId, isFreeTrial)
+           VALUES (?, ?, ?, ?, 'ACTIVE', ?, ?, ?, 'APPROVED', ?, FALSE)`,
+          [subscriptionId, payment.userId, payment.tenantId, payment.plan, subscriptionStartDate, subscriptionEndDateMySQL, payment.price, id]
+        )
       }
 
       // Send email to user about payment approval

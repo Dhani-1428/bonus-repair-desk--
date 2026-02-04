@@ -99,6 +99,14 @@ export default function SubscriptionPage() {
 
   const getSubscriptionStatus = () => {
     if (!subscription) return { status: "none", message: t("subscription.noActive"), color: "gray" }
+    
+    // If subscription is ACTIVE and payment is APPROVED, show as active (don't check start date)
+    const isActive = subscription.status === "ACTIVE" || subscription.status === "active"
+    const isPaymentApproved = subscription.paymentStatus === "APPROVED" || subscription.paymentStatus === "approved"
+    if (isActive && isPaymentApproved) {
+      return { status: "active", message: t("subscription.active"), color: "green" }
+    }
+    
     if (subscription.status === "free_trial" || subscription.isFreeTrial || subscription.status === "FREE_TRIAL") {
       const days = getDaysUntilExpiration(subscription)
       return { status: "free_trial", message: t("subscription.freePlanDaysLeft").replace("{days}", days.toString()), color: "blue" }
@@ -106,8 +114,8 @@ export default function SubscriptionPage() {
     if (subscription.status === "pending" || subscription.status === "PENDING") {
       return { status: "pending", message: t("subscription.paymentPending"), color: "yellow" }
     }
-    // Check if subscription hasn't started yet
-    if (isNotStarted(subscription)) {
+    // Check if subscription hasn't started yet (but only if not ACTIVE)
+    if (!isActive && isNotStarted(subscription)) {
       return { status: "not_started", message: t("subscription.notStarted"), color: "gray" }
     }
     // Check if expired (only if end date has passed)

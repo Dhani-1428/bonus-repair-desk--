@@ -94,6 +94,23 @@ export async function GET(request: NextRequest) {
     }
 
     // Update or create subscription
+    // When payment is approved, start subscription IMMEDIATELY (today)
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    today.setMinutes(0, 0, 0)
+    today.setSeconds(0, 0)
+    today.setMilliseconds(0)
+    
+    // Calculate end date based on plan months from today
+    const planMonths = payment.months || 6 // Default to 6 months if not specified
+    const subscriptionEndDate = new Date(today)
+    subscriptionEndDate.setMonth(subscriptionEndDate.getMonth() + planMonths)
+    subscriptionEndDate.setHours(23, 59, 59, 999) // End of day
+    
+    // Convert to MySQL datetime format
+    const startDateMySQL = today.toISOString().slice(0, 19).replace('T', ' ')
+    const endDateMySQL = subscriptionEndDate.toISOString().slice(0, 19).replace('T', ' ')
+    
     let subscriptionId: string
     if (existing) {
       await execute(
@@ -101,7 +118,7 @@ export async function GET(request: NextRequest) {
          plan = ?, status = 'ACTIVE', startDate = ?, endDate = ?, price = ?, 
          paymentStatus = 'APPROVED', paymentId = ?, isFreeTrial = FALSE
          WHERE id = ?`,
-        [payment.plan, payment.startDate, payment.endDate, payment.price, paymentId, existing.id]
+        [payment.plan, startDateMySQL, endDateMySQL, payment.price, paymentId, existing.id]
       )
       subscriptionId = existing.id
     } else {
@@ -110,7 +127,7 @@ export async function GET(request: NextRequest) {
         `INSERT INTO subscriptions 
          (id, userId, tenantId, plan, status, startDate, endDate, price, paymentStatus, paymentId, isFreeTrial)
          VALUES (?, ?, ?, ?, 'ACTIVE', ?, ?, ?, 'APPROVED', ?, FALSE)`,
-        [subscriptionId, payment.userId, payment.tenantId, payment.plan, payment.startDate, payment.endDate, payment.price, paymentId]
+        [subscriptionId, payment.userId, payment.tenantId, payment.plan, startDateMySQL, endDateMySQL, payment.price, paymentId]
       )
     }
 
