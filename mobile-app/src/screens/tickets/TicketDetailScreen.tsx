@@ -12,6 +12,7 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { apiService } from '../../services/api';
+import { printTicket } from '../../services/printService';
 import { Ionicons } from '@expo/vector-icons';
 import { format } from 'date-fns';
 
@@ -23,10 +24,13 @@ export default function TicketDetailScreen() {
   const theme = useTheme();
   const [ticket, setTicket] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [printing, setPrinting] = useState(false);
+  const [companyInfo, setCompanyInfo] = useState<any>(null);
 
   useEffect(() => {
     loadTicket();
-  }, [ticketId]);
+    loadCompanyInfo();
+  }, [ticketId, user]);
 
   const loadTicket = async () => {
     try {
@@ -37,6 +41,38 @@ export default function TicketDetailScreen() {
       Alert.alert('Error', 'Failed to load ticket details');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadCompanyInfo = async () => {
+    if (!user?.id) return;
+    try {
+      const response = await apiService.getUser(user.id);
+      if (response.user) {
+        setCompanyInfo({
+          shopName: response.user.shopName || response.user.name,
+          address: response.user.address,
+          companyEmail: response.user.companyEmail,
+          website: response.user.website,
+          contactNumber: response.user.contactNumber,
+        });
+      }
+    } catch (error) {
+      console.error('Error loading company info:', error);
+    }
+  };
+
+  const handlePrint = async () => {
+    if (!ticket) return;
+
+    try {
+      setPrinting(true);
+      await printTicket(ticket, companyInfo);
+    } catch (error: any) {
+      console.error('Error printing:', error);
+      Alert.alert('Print Error', error.message || 'Failed to print receipt');
+    } finally {
+      setPrinting(false);
     }
   };
 
@@ -186,6 +222,20 @@ export default function TicketDetailScreen() {
       </View>
 
       <View style={styles.actions}>
+        <TouchableOpacity
+          style={[styles.actionButton, styles.printButton]}
+          onPress={handlePrint}
+          disabled={printing}
+        >
+          {printing ? (
+            <ActivityIndicator size="small" color="#ffffff" />
+          ) : (
+            <>
+              <Ionicons name="print-outline" size={20} color="#ffffff" />
+              <Text style={styles.actionButtonText}>Print</Text>
+            </>
+          )}
+        </TouchableOpacity>
         <TouchableOpacity
           style={[styles.actionButton, styles.editButton]}
           onPress={() => {
@@ -355,6 +405,9 @@ const createStyles = (theme: any) =>
       padding: theme.spacing.md,
       borderRadius: theme.borderRadius.md,
       gap: theme.spacing.sm,
+    },
+    printButton: {
+      backgroundColor: theme.colors.primary,
     },
     editButton: {
       backgroundColor: theme.colors.secondary,
