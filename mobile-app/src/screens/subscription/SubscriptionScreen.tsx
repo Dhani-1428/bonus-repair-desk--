@@ -116,7 +116,7 @@ export default function SubscriptionScreen() {
             </View>
 
             <View style={styles.subscriptionDetails}>
-              <DetailRow label="Price" value={`$${parseFloat(subscription.price || 0).toFixed(2)}`} />
+              <DetailRow label="Price" value={`€${parseFloat(subscription.price || 0).toFixed(2)}`} />
               {subscription.startDate && (
                 <DetailRow
                   label="Start Date"
