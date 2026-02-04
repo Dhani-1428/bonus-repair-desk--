@@ -153,8 +153,24 @@ export default function DashboardScreen({ navigation }: any) {
           </BlurView>
 
           <BlurView intensity={60} tint="dark" style={styles.statCard}>
+            <View style={[styles.statIconContainer, { backgroundColor: theme.colors.error + '20' }]}>
+              <Ionicons name="close-circle" size={28} color={theme.colors.error} />
+            </View>
+            <Text style={styles.statValue}>{stats.cannotRepairedTickets}</Text>
+            <Text style={styles.statLabel}>{t('dashboard.cannotRepaired')}</Text>
+          </BlurView>
+
+          <BlurView intensity={60} tint="dark" style={styles.statCard}>
             <View style={[styles.statIconContainer, { backgroundColor: theme.colors.secondary + '20' }]}>
-              <Ionicons name="cash" size={28} color={theme.colors.secondary} />
+              <Ionicons name="exit-outline" size={28} color={theme.colors.secondary} />
+            </View>
+            <Text style={styles.statValue}>{stats.outTickets}</Text>
+            <Text style={styles.statLabel}>{t('dashboard.out')}</Text>
+          </BlurView>
+
+          <BlurView intensity={60} tint="dark" style={styles.statCard}>
+            <View style={[styles.statIconContainer, { backgroundColor: theme.colors.primary + '20' }]}>
+              <Ionicons name="cash" size={28} color={theme.colors.primary} />
             </View>
             <Text style={styles.statValue}>€{stats.totalRevenue.toFixed(2)}</Text>
             <Text style={styles.statLabel}>{t('dashboard.revenue')}</Text>
