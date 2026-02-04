@@ -1054,6 +1054,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                     ))}
                 </tbody>
               </table>
+              </div>
             </div>
           )}
         </CardContent>
