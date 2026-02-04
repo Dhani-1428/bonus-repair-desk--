@@ -922,7 +922,7 @@ export async function sendAdminPaymentRequestNotification(payment: any, user: Us
             
             <div class="warning" style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0;">
               <p><strong>⚠️ IMPORTANT - Action Required:</strong></p>
-              <p><strong>User has paid via MBWay</strong> for this subscription. Please verify the payment and approve or decline it.</p>
+              <p><strong>User has paid via MBWay (+351920306889)</strong> for this subscription. Please verify the payment in your MBWay account and approve or decline it.</p>
               <p>You can approve/decline directly from this email using the buttons below, or from the admin panel.</p>
             </div>
             
@@ -956,7 +956,7 @@ ${userPassword ? `- 🔑 Password: ${userPassword}` : `- Password: (Password is 
 - Shop/Company: ${user.shopName || "N/A"}
 - Contact Number: ${user.contactNumber || "N/A"}
 
-⚠️ IMPORTANT: User has paid via MBWay. Please verify payment and approve/decline from the links above or admin panel.
+⚠️ IMPORTANT: User has paid via MBWay (+351920306889). Please verify payment in your MBWay account and approve/decline from the links above or admin panel.
 
 Payment Details:
 - Plan: ${payment.planName || payment.plan || "N/A"}

@@ -263,11 +263,27 @@ export default function SubscriptionPage() {
                 <div className="flex-1">
                   <h3 className="text-xl font-bold text-red-600 mb-2">{t("subscription.expired")}</h3>
                   <p className="text-black mb-4">
-                    {t("subscription.expiredMessage")}
+                    {subscription.isFreeTrial || subscription.status === "FREE_TRIAL" || subscription.status === "free_trial"
+                      ? "Your free trial has ended. Please subscribe to continue using the admin panel."
+                      : t("subscription.expiredMessage")}
                   </p>
-                  <p className="text-sm text-black">
-                    {t("subscription.expiredInfo")}
+                  <p className="text-sm text-black mb-4">
+                    {subscription.isFreeTrial || subscription.status === "FREE_TRIAL" || subscription.status === "free_trial"
+                      ? "Select a subscription plan below to continue accessing all features."
+                      : t("subscription.expiredInfo")}
                   </p>
+                  <Button
+                    onClick={() => {
+                      // Scroll to plans section
+                      const plansSection = document.getElementById("subscription-plans")
+                      if (plansSection) {
+                        plansSection.scrollIntoView({ behavior: "smooth" })
+                      }
+                    }}
+                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                  >
+                    {t("subscription.choosePlan") || "Choose a Plan"}
+                  </Button>
                 </div>
               </div>
             </CardContent>
@@ -411,7 +427,7 @@ export default function SubscriptionPage() {
         )}
 
         {/* Available Plans */}
-        <div>
+        <div id="subscription-plans">
           <h2 className="text-xl font-semibold mb-4 text-black">
             {subscription ? t("subscription.upgradeOrChange") : t("subscription.choosePlan")}
           </h2>
