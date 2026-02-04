@@ -125,11 +125,10 @@ export default function TrashScreen() {
       </BlurView>
 
       <ScrollView
-        contentContainerStyle={{ paddingBottom: 120 }}
+        style={styles.scrollView}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: 120 }]}
         showsVerticalScrollIndicator={true}
         keyboardShouldPersistTaps="handled"
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.colors.primary} />
         }
