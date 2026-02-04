@@ -85,7 +85,7 @@ export default function EditTicketScreen() {
       });
     } catch (error) {
       console.error('Error loading ticket:', error);
-      Alert.alert('Error', 'Failed to load ticket details');
+      Alert.alert('Error', 'Failed to load device details');
     } finally {
       setLoading(false);
     }
