@@ -142,7 +142,13 @@ function AuthStack() {
           fontWeight: 'bold',
         },
       }}
+      initialRouteName="GetStarted"
     >
+      <Stack.Screen 
+        name="GetStarted" 
+        component={GetStartedScreen}
+        options={{ headerShown: false }}
+      />
       <Stack.Screen 
         name="Login" 
         component={LoginScreen}
