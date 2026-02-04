@@ -75,13 +75,14 @@ function MainTabs() {
           backgroundColor: 'transparent',
           borderTopWidth: 0,
           elevation: 0,
+          shadowOpacity: 0,
           height: Platform.OS === 'ios' ? 90 : 70,
           paddingBottom: Platform.OS === 'ios' ? 30 : 10,
           paddingTop: 8,
         },
         tabBarBackground: () => (
           <BlurView
-            intensity={80}
+            intensity={100}
             tint="dark"
             style={{
               position: 'absolute',
@@ -90,7 +91,7 @@ function MainTabs() {
               bottom: 0,
               right: 0,
               borderTopWidth: 1,
-              borderTopColor: 'rgba(255, 255, 255, 0.1)',
+              borderTopColor: 'rgba(255, 255, 255, 0.15)',
             }}
           />
         ),
