@@ -125,16 +125,31 @@ function MainTabs() {
         },
       })}
     >
-      <Tab.Screen name="Dashboard" component={DashboardScreen} />
+      <Tab.Screen 
+        name="Dashboard" 
+        component={DashboardScreen}
+        options={{ tabBarLabel: 'Home' }}
+      />
       <Tab.Screen 
         name="Tickets" 
         component={TicketsScreen}
         options={{ tabBarLabel: 'Devices' }}
       />
-      <Tab.Screen name="Subscription" component={BuySubscriptionScreen} />
-      <Tab.Screen name="Trash" component={TrashScreen} />
-      <Tab.Screen name="Analytics" component={AnalyticsScreen} />
-      <Tab.Screen name="Settings" component={SettingsScreen} />
+      <Tab.Screen 
+        name="Subscription" 
+        component={BuySubscriptionScreen}
+        options={{ tabBarLabel: 'Subscription' }}
+      />
+      <Tab.Screen 
+        name="Analytics" 
+        component={AnalyticsScreen}
+        options={{ tabBarLabel: 'Analytics' }}
+      />
+      <Tab.Screen 
+        name="Settings" 
+        component={SettingsScreen}
+        options={{ tabBarLabel: 'Settings' }}
+      />
     </Tab.Navigator>
   );
 }
