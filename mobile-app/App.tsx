@@ -76,10 +76,14 @@ function MainTabs() {
         tabBarActiveTintColor: '#e78a53',
         tabBarInactiveTintColor: '#8e8e93',
         tabBarLabel: ({ children }: { children: string }) => {
-          if (children === 'Tickets') {
-            return 'Devices';
-          }
-          return children;
+          const labelMap: Record<string, string> = {
+            'Dashboard': 'Home',
+            'Tickets': 'Devices',
+            'Subscription': 'Subscription',
+            'Analytics': 'Analytics',
+            'Settings': 'Settings',
+          };
+          return labelMap[children] || children;
         },
         tabBarStyle: {
           position: 'absolute',
