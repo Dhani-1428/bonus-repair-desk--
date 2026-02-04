@@ -23,10 +23,12 @@ export default function CreateTicketScreen({ navigation }: any) {
     customerName: '',
     contact: '',
     clientId: '',
+    receivedBy: '',
     brand: '',
     model: '',
     imeiNo: '',
     serialNo: '',
+    softwareVersion: '',
     problem: '',
     condition: '',
     price: '',
@@ -35,25 +37,57 @@ export default function CreateTicketScreen({ navigation }: any) {
     battery: false,
     charger: false,
     simCard: false,
+    simTray: false,
     memoryCard: false,
+    waterDamaged: false,
+    loanEquipment: false,
     equipmentObs: '',
     repairObs: '',
     serviceName: '',
   });
 
   const handleSubmit = async () => {
-    if (!formData.customerName || !formData.contact || !formData.brand || !formData.model) {
-      Alert.alert('Error', 'Please fill in all required fields');
+    // Validate required fields (matching website requirements)
+    if (!formData.customerName || !formData.receivedBy) {
+      Alert.alert('Error', 'Customer Name and Received By are required fields');
+      return;
+    }
+
+    // Validate IMEI if provided (must be exactly 15 digits)
+    if (formData.imeiNo && formData.imeiNo.trim() !== '' && !/^\d{15}$/.test(formData.imeiNo)) {
+      Alert.alert('Error', 'IMEI must be exactly 15 digits (if provided)');
       return;
     }
 
     setLoading(true);
     try {
       await apiService.createTicket({
-        ...formData,
         userId: user?.id,
+        clientId: formData.clientId || null,
+        customerName: formData.customerName,
+        contact: formData.contact || null,
+        receivedBy: formData.receivedBy,
+        imeiNo: formData.imeiNo && formData.imeiNo.trim() !== '' ? formData.imeiNo.trim() : null,
+        brand: formData.brand || null,
+        model: formData.model || null,
+        serialNo: formData.serialNo || null,
+        softwareVersion: formData.softwareVersion || null,
+        warranty: formData.warranty,
+        simCard: formData.simCard,
+        simTray: formData.simTray,
+        memoryCard: formData.memoryCard,
+        charger: formData.charger,
+        battery: formData.battery,
+        waterDamaged: formData.waterDamaged,
+        loanEquipment: formData.loanEquipment,
+        equipmentObs: formData.equipmentObs || null,
+        repairObs: formData.repairObs || null,
+        selectedServices: formData.serviceName ? [formData.serviceName] : [],
+        condition: formData.condition || null,
+        problem: formData.problem || null,
         price: parseFloat(formData.price) || 0,
         budget: formData.budget ? parseFloat(formData.budget) : null,
+        status: 'PENDING',
       });
       Alert.alert('Success', 'Device created successfully', [
         { text: 'OK', onPress: () => navigation.goBack() },
@@ -90,6 +124,12 @@ export default function CreateTicketScreen({ navigation }: any) {
           onChangeText={(text) => setFormData({ ...formData, clientId: text })}
           placeholder="CLI-0001"
         />
+        <FormInput
+          label="Received By *"
+          value={formData.receivedBy}
+          onChangeText={(text) => setFormData({ ...formData, receivedBy: text })}
+          placeholder="Enter your name"
+        />
       </View>
 
       <View style={styles.section}>
@@ -109,8 +149,15 @@ export default function CreateTicketScreen({ navigation }: any) {
         <FormInput
           label="IMEI Number"
           value={formData.imeiNo}
-          onChangeText={(text) => setFormData({ ...formData, imeiNo: text })}
-          placeholder="15-digit IMEI"
+          onChangeText={(text) => {
+            const digitsOnly = text.replace(/\D/g, '');
+            if (digitsOnly.length <= 15) {
+              setFormData({ ...formData, imeiNo: digitsOnly });
+            }
+          }}
+          placeholder="15-digit IMEI (optional)"
+          keyboardType="numeric"
+          maxLength={15}
         />
         <FormInput
           label="Serial Number"
@@ -118,12 +165,55 @@ export default function CreateTicketScreen({ navigation }: any) {
           onChangeText={(text) => setFormData({ ...formData, serialNo: text })}
           placeholder="Serial number"
         />
+        <FormInput
+          label="Software Version"
+          value={formData.softwareVersion}
+          onChangeText={(text) => setFormData({ ...formData, softwareVersion: text })}
+          placeholder="e.g., iOS 17.0, Android 14"
+        />
+        <View style={styles.warrantyContainer}>
+          <Text style={styles.warrantyLabel}>Warranty</Text>
+          <View style={styles.warrantyButtons}>
+            <TouchableOpacity
+              style={[
+                styles.warrantyButton,
+                formData.warranty === 'Without Warranty' && styles.warrantyButtonActive,
+              ]}
+              onPress={() => setFormData({ ...formData, warranty: 'Without Warranty' })}
+            >
+              <Text
+                style={[
+                  styles.warrantyButtonText,
+                  formData.warranty === 'Without Warranty' && styles.warrantyButtonTextActive,
+                ]}
+              >
+                Without Warranty
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.warrantyButton,
+                formData.warranty === 'Warranty Until 30 days' && styles.warrantyButtonActive,
+              ]}
+              onPress={() => setFormData({ ...formData, warranty: 'Warranty Until 30 days' })}
+            >
+              <Text
+                style={[
+                  styles.warrantyButtonText,
+                  formData.warranty === 'Warranty Until 30 days' && styles.warrantyButtonTextActive,
+                ]}
+              >
+                30 Days
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Repair Details</Text>
         <FormInput
-          label="Problem Description *"
+          label="Problem Description"
           value={formData.problem}
           onChangeText={(text) => setFormData({ ...formData, problem: text })}
           placeholder="Describe the problem"
@@ -180,9 +270,24 @@ export default function CreateTicketScreen({ navigation }: any) {
           onValueChange={(value) => setFormData({ ...formData, simCard: value })}
         />
         <SwitchRow
+          label="SIM Tray"
+          value={formData.simTray}
+          onValueChange={(value) => setFormData({ ...formData, simTray: value })}
+        />
+        <SwitchRow
           label="Memory Card"
           value={formData.memoryCard}
           onValueChange={(value) => setFormData({ ...formData, memoryCard: value })}
+        />
+        <SwitchRow
+          label="Water Damaged"
+          value={formData.waterDamaged}
+          onValueChange={(value) => setFormData({ ...formData, waterDamaged: value })}
+        />
+        <SwitchRow
+          label="Loan Equipment"
+          value={formData.loanEquipment}
+          onValueChange={(value) => setFormData({ ...formData, loanEquipment: value })}
         />
       </View>
 
@@ -326,6 +431,40 @@ const createStyles = (theme: any) =>
     submitButtonText: {
       color: '#ffffff',
       fontSize: 16,
+      fontWeight: '600',
+    },
+    warrantyContainer: {
+      marginBottom: theme.spacing.md,
+    },
+    warrantyLabel: {
+      fontSize: 14,
+      color: theme.colors.textSecondary,
+      marginBottom: theme.spacing.sm,
+    },
+    warrantyButtons: {
+      flexDirection: 'row',
+      gap: theme.spacing.sm,
+    },
+    warrantyButton: {
+      flex: 1,
+      paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.md,
+      borderRadius: theme.borderRadius.md,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      backgroundColor: theme.colors.surface,
+      alignItems: 'center',
+    },
+    warrantyButtonActive: {
+      backgroundColor: theme.colors.primary,
+      borderColor: theme.colors.primary,
+    },
+    warrantyButtonText: {
+      color: theme.colors.text,
+      fontSize: 14,
+    },
+    warrantyButtonTextActive: {
+      color: '#ffffff',
       fontWeight: '600',
     },
   });
