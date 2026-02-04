@@ -13,10 +13,10 @@ import DashboardScreen from './src/screens/dashboard/DashboardScreen';
 import TicketsScreen from './src/screens/tickets/TicketsScreen';
 import TicketDetailScreen from './src/screens/tickets/TicketDetailScreen';
 import CreateTicketScreen from './src/screens/tickets/CreateTicketScreen';
-import TeamScreen from './src/screens/team/TeamScreen';
 import SettingsScreen from './src/screens/settings/SettingsScreen';
 import AnalyticsScreen from './src/screens/analytics/AnalyticsScreen';
-import SubscriptionScreen from './src/screens/subscription/SubscriptionScreen';
+import BuySubscriptionScreen from './src/screens/subscription/BuySubscriptionScreen';
+import TrashScreen from './src/screens/trash/TrashScreen';
 
 // Context
 import { AuthProvider, useAuth } from './src/context/AuthContext';
@@ -32,10 +32,10 @@ export type RootStackParamList = {
   Tickets: undefined;
   TicketDetail: { ticketId: string };
   CreateTicket: undefined;
-  Team: undefined;
   Settings: undefined;
   Analytics: undefined;
   Subscription: undefined;
+  Trash: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -53,8 +53,10 @@ function MainTabs() {
             iconName = focused ? 'home' : 'home-outline';
           } else if (route.name === 'Tickets') {
             iconName = focused ? 'document-text' : 'document-text-outline';
-          } else if (route.name === 'Team') {
-            iconName = focused ? 'people' : 'people-outline';
+          } else if (route.name === 'Subscription') {
+            iconName = focused ? 'card' : 'card-outline';
+          } else if (route.name === 'Trash') {
+            iconName = focused ? 'trash' : 'trash-outline';
           } else if (route.name === 'Analytics') {
             iconName = focused ? 'analytics' : 'analytics-outline';
           } else if (route.name === 'Settings') {
@@ -68,8 +70,12 @@ function MainTabs() {
         tabBarActiveTintColor: '#e78a53',
         tabBarInactiveTintColor: '#8e8e93',
         tabBarStyle: {
-          backgroundColor: '#1a1a1a',
-          borderTopColor: '#2a2a2a',
+          backgroundColor: 'rgba(26, 26, 26, 0.95)',
+          borderTopColor: 'rgba(255, 255, 255, 0.1)',
+          borderTopWidth: 1,
+          height: 60,
+          paddingBottom: 8,
+          paddingTop: 8,
         },
         headerStyle: {
           backgroundColor: '#1a1a1a',
@@ -82,7 +88,8 @@ function MainTabs() {
     >
       <Tab.Screen name="Dashboard" component={DashboardScreen} />
       <Tab.Screen name="Tickets" component={TicketsScreen} />
-      <Tab.Screen name="Team" component={TeamScreen} />
+      <Tab.Screen name="Subscription" component={BuySubscriptionScreen} />
+      <Tab.Screen name="Trash" component={TrashScreen} />
       <Tab.Screen name="Analytics" component={AnalyticsScreen} />
       <Tab.Screen name="Settings" component={SettingsScreen} />
     </Tab.Navigator>
@@ -160,7 +167,7 @@ function AppNavigator() {
           />
           <Stack.Screen 
             name="Subscription" 
-            component={SubscriptionScreen}
+            component={BuySubscriptionScreen}
             options={{ title: 'Subscription' }}
           />
         </>

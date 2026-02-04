@@ -241,8 +241,11 @@ class ApiService {
     });
   }
 
-  async deleteTicket(ticketId: string) {
-    return this.fetchRequest<any>(`${this.baseURL}/repairs/${ticketId}`, {
+  async deleteTicket(ticketId: string, permanent: boolean = false) {
+    const url = permanent 
+      ? `${this.baseURL}/repairs/${ticketId}?permanent=true`
+      : `${this.baseURL}/repairs/${ticketId}`;
+    return this.fetchRequest<any>(url, {
       method: 'DELETE',
     });
   }
@@ -274,7 +277,14 @@ class ApiService {
 
   // Payments/Subscriptions
   async getSubscriptions(userId: string) {
-    return this.fetchRequest<any>(`${this.baseURL}/payments?userId=${userId}`);
+    try {
+      // Try subscriptions endpoint first
+      const data = await this.fetchRequest<any>(`${this.baseURL}/subscriptions?userId=${userId}`);
+      return data;
+    } catch (error) {
+      // Fallback to payments endpoint
+      return this.fetchRequest<any>(`${this.baseURL}/payments?userId=${userId}`);
+    }
   }
 
   async createPayment(paymentData: any) {
