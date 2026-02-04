@@ -11,12 +11,14 @@ import {
 } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { apiService } from '../../services/api';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function SettingsScreen() {
   const { user, logout, updateUser } = useAuth();
   const theme = useTheme();
+  const { language, setLanguage, t } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState({
     name: user?.name || '',
@@ -85,6 +87,36 @@ export default function SettingsScreen() {
 
   return (
     <ScrollView style={styles.container}>
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>{t('settings.language')}</Text>
+        <View style={{ marginBottom: theme.spacing.md }}>
+          <Text style={{ fontSize: 14, color: theme.colors.textSecondary, marginBottom: theme.spacing.xs }}>
+            {t('settings.selectLanguage')}
+          </Text>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+            {(['en', 'pt', 'de', 'fr', 'ur', 'pa', 'hi'] as const).map((lang) => (
+              <TouchableOpacity
+                key={lang}
+                style={[
+                  styles.languageButton,
+                  language === lang && styles.languageButtonActive,
+                ]}
+                onPress={() => setLanguage(lang)}
+              >
+                <Text
+                  style={[
+                    styles.languageButtonText,
+                    language === lang && styles.languageButtonTextActive,
+                  ]}
+                >
+                  {t(`header.${lang === 'en' ? 'english' : lang === 'pt' ? 'portuguese' : lang === 'de' ? 'german' : lang === 'fr' ? 'french' : lang === 'ur' ? 'urdu' : lang === 'pa' ? 'punjabi' : 'hindi'}`)}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      </View>
+
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Account Information</Text>
         <FormInput
@@ -265,5 +297,26 @@ const createStyles = (theme: any) =>
     footerText: {
       color: theme.colors.textSecondary,
       fontSize: 12,
+    },
+    languageButton: {
+      paddingHorizontal: 16,
+      paddingVertical: 10,
+      borderRadius: theme.borderRadius.md,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      backgroundColor: theme.colors.surface,
+    },
+    languageButtonActive: {
+      backgroundColor: theme.colors.primary,
+      borderColor: theme.colors.primary,
+    },
+    languageButtonText: {
+      color: theme.colors.text,
+      fontSize: 14,
+      fontWeight: '500',
+    },
+    languageButtonTextActive: {
+      color: '#ffffff',
+      fontWeight: '600',
     },
   });

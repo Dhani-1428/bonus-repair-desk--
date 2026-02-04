@@ -18,10 +18,12 @@ import SettingsScreen from './src/screens/settings/SettingsScreen';
 import AnalyticsScreen from './src/screens/analytics/AnalyticsScreen';
 import BuySubscriptionScreen from './src/screens/subscription/BuySubscriptionScreen';
 import TrashScreen from './src/screens/trash/TrashScreen';
+import EditTicketScreen from './src/screens/tickets/EditTicketScreen';
 
 // Context
 import { AuthProvider, useAuth } from './src/context/AuthContext';
 import { ThemeProvider } from './src/context/ThemeContext';
+import { LanguageProvider } from './src/context/LanguageContext';
 
 // Types
 export type RootStackParamList = {
@@ -33,6 +35,7 @@ export type RootStackParamList = {
   Tickets: undefined;
   TicketDetail: { ticketId: string };
   CreateTicket: undefined;
+  EditTicket: { ticketId: string };
   Settings: undefined;
   Analytics: undefined;
   Subscription: undefined;
@@ -178,16 +181,21 @@ function AppNavigator() {
             component={TicketDetailScreen}
             options={{ title: 'Ticket Details' }}
           />
-          <Stack.Screen 
-            name="CreateTicket" 
-            component={CreateTicketScreen}
-            options={{ title: 'New Ticket' }}
-          />
-          <Stack.Screen 
-            name="Subscription" 
-            component={BuySubscriptionScreen}
-            options={{ title: 'Subscription' }}
-          />
+              <Stack.Screen
+                name="CreateTicket" 
+                component={CreateTicketScreen}
+                options={{ title: 'New Ticket' }}
+              />
+              <Stack.Screen
+                name="EditTicket" 
+                component={EditTicketScreen}
+                options={{ title: 'Edit Ticket' }}
+              />
+               <Stack.Screen 
+                 name="Subscription" 
+                 component={BuySubscriptionScreen}
+                 options={{ title: 'Subscription' }}
+               />
         </>
       ) : (
         <Stack.Screen 
@@ -202,13 +210,15 @@ function AppNavigator() {
 
 export default function App() {
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <NavigationContainer>
-          <StatusBar style="light" />
-          <AppNavigator />
-        </NavigationContainer>
-      </AuthProvider>
-    </ThemeProvider>
+    <LanguageProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <NavigationContainer>
+            <StatusBar style="light" />
+            <AppNavigator />
+          </NavigationContainer>
+        </AuthProvider>
+      </ThemeProvider>
+    </LanguageProvider>
   );
 }

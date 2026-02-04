@@ -11,6 +11,7 @@ import {
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { apiService } from '../../services/api';
 import { printTicket } from '../../services/printService';
 import { Ionicons } from '@expo/vector-icons';
@@ -22,10 +23,12 @@ export default function TicketDetailScreen() {
   const { ticketId } = route.params as { ticketId: string };
   const { user } = useAuth();
   const theme = useTheme();
+  const { t } = useLanguage();
   const [ticket, setTicket] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [printing, setPrinting] = useState(false);
   const [companyInfo, setCompanyInfo] = useState<any>(null);
+  const [showStatusMenu, setShowStatusMenu] = useState(false);
 
   useEffect(() => {
     loadTicket();
@@ -78,12 +81,12 @@ export default function TicketDetailScreen() {
 
   const handleDelete = () => {
     Alert.alert(
-      'Delete Ticket',
-      'Are you sure you want to delete this ticket?',
+      t('ticket.delete'),
+      t('common.deleteConfirmation'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Delete',
+          text: t('common.delete'),
           style: 'destructive',
           onPress: async () => {
             try {
@@ -94,6 +97,72 @@ export default function TicketDetailScreen() {
             }
           },
         },
+      ]
+    );
+  };
+
+  const handleChangeStatus = (newStatus: string) => {
+    Alert.alert(
+      t('ticket.changeStatus'),
+      `Change status to ${newStatus}?`,
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        {
+          text: t('common.confirm'),
+          onPress: async () => {
+            try {
+              await apiService.updateTicket(ticketId, {
+                userId: user?.id,
+                status: newStatus,
+              });
+              await loadTicket();
+              setShowStatusMenu(false);
+            } catch (error: any) {
+              Alert.alert('Error', error.message || 'Failed to update status');
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const showActionMenu = () => {
+    const statusOptions = ['pending', 'in_progress', 'completed', 'delivered', 'cancelled', 'not_ok'];
+    
+    Alert.alert(
+      t('common.status'),
+      'Select an action',
+      [
+        {
+          text: t('ticket.edit'),
+          onPress: () => navigation.navigate('EditTicket', { ticketId }),
+        },
+        {
+          text: t('ticket.changeStatus'),
+          onPress: () => {
+            Alert.alert(
+              t('ticket.changeStatus'),
+              'Select new status',
+              [
+                ...statusOptions.map((status) => ({
+                  text: t(`ticket.status.${status}`) || status,
+                  onPress: () => handleChangeStatus(status),
+                })),
+                { text: t('common.cancel'), style: 'cancel' },
+              ]
+            );
+          },
+        },
+        {
+          text: t('ticket.printReceipt'),
+          onPress: handlePrint,
+        },
+        {
+          text: t('ticket.delete'),
+          style: 'destructive',
+          onPress: handleDelete,
+        },
+        { text: t('common.cancel'), style: 'cancel' },
       ]
     );
   };
@@ -223,35 +292,11 @@ export default function TicketDetailScreen() {
 
       <View style={styles.actions}>
         <TouchableOpacity
-          style={[styles.actionButton, styles.printButton]}
-          onPress={handlePrint}
-          disabled={printing}
+          style={[styles.actionButton, styles.menuButton]}
+          onPress={showActionMenu}
         >
-          {printing ? (
-            <ActivityIndicator size="small" color="#ffffff" />
-          ) : (
-            <>
-              <Ionicons name="print-outline" size={20} color="#ffffff" />
-              <Text style={styles.actionButtonText}>Print</Text>
-            </>
-          )}
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.actionButton, styles.editButton]}
-          onPress={() => {
-            // Navigate to edit screen (you can implement this)
-            Alert.alert('Info', 'Edit functionality coming soon');
-          }}
-        >
-          <Ionicons name="create-outline" size={20} color="#ffffff" />
-          <Text style={styles.actionButtonText}>Edit</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.actionButton, styles.deleteButton]}
-          onPress={handleDelete}
-        >
-          <Ionicons name="trash-outline" size={20} color="#ffffff" />
-          <Text style={styles.actionButtonText}>Delete</Text>
+          <Ionicons name="ellipsis-horizontal" size={24} color="#ffffff" />
+          <Text style={styles.actionButtonText}>{t('common.status')}</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -414,14 +459,8 @@ const createStyles = (theme: any) =>
       borderRadius: theme.borderRadius.md,
       gap: theme.spacing.sm,
     },
-    printButton: {
+    menuButton: {
       backgroundColor: theme.colors.primary,
-    },
-    editButton: {
-      backgroundColor: theme.colors.secondary,
-    },
-    deleteButton: {
-      backgroundColor: theme.colors.error,
     },
     actionButtonText: {
       color: '#ffffff',
