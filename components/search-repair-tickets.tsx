@@ -889,14 +889,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-blue-200">
-                  {filteredTickets.length === 0 ? (
-                    <tr>
-                      <td colSpan={11} className="px-4 py-8 text-center text-black">
-                        No devices found
-                      </td>
-                    </tr>
-                  ) : (
-                    filteredTickets.map((ticket, index) => (
+                  {filteredTickets.map((ticket, index) => (
                       <tr
                         key={ticket.id}
                         data-ticket-row
@@ -1058,8 +1051,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                           </div>
                         </td>
                       </tr>
-                    ))
-                  )}
+                    ))}
                 </tbody>
               </table>
             </div>
