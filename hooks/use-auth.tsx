@@ -281,22 +281,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             const paymentStatus = sub.paymentStatus || "PENDING"
             const isPaymentApproved = paymentStatus === "APPROVED"
             
-            // Block login if subscription is expired
+            // Don't block login if subscription is expired - allow them to access subscription page
+            // The dashboard layout will redirect them to subscription page
+            // Just store the subscription info so they can see it on subscription page
             if (isExpired) {
-              if (isFreeTrial) {
-                throw new Error("Your free trial has ended. Please subscribe to continue using the admin panel.")
-              } else {
-                throw new Error("Your subscription has expired. Please renew your subscription to continue using the admin panel.")
-              }
-            }
-
-            // Block login if payment is not approved (unless it's a free trial)
-            if (!isFreeTrial && !isPaymentApproved) {
-              throw new Error("Your payment is pending approval. Please wait for admin approval or contact support.")
+              // Allow login but subscription will be marked as expired
+              // Dashboard layout will handle redirect to subscription page
+              console.log("[Login] Subscription expired, allowing login to access subscription page")
+            } else if (!isFreeTrial && !isPaymentApproved) {
+              // Don't block login if payment is pending - allow them to see status on subscription page
+              console.log("[Login] Payment pending, allowing login to access subscription page")
             }
           } else {
-            // No subscription found - block login and redirect to subscription
-            throw new Error("No active subscription found. Please subscribe to access the admin panel.")
+            // No subscription found - allow login but they'll be redirected to subscription page
+            console.log("[Login] No subscription found, allowing login to access subscription page")
           }
         }
       } catch (subError: any) {
