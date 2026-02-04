@@ -227,7 +227,8 @@ const createStyles = (theme: any) =>
     },
     saveButton: {
       backgroundColor: theme.colors.primary,
-      margin: theme.spacing.lg,
+      marginHorizontal: 20,
+      marginVertical: theme.spacing.lg,
       padding: theme.spacing.md,
       borderRadius: theme.borderRadius.md,
       alignItems: 'center',

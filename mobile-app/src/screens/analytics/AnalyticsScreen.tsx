@@ -178,7 +178,8 @@ const createStyles = (theme: any) =>
       backgroundColor: theme.colors.background,
     },
     header: {
-      padding: theme.spacing.lg,
+      paddingHorizontal: 24,
+      paddingVertical: theme.spacing.lg,
     },
     title: {
       fontSize: 28,

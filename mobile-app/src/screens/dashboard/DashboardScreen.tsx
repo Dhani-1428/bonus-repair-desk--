@@ -235,6 +235,13 @@ const createStyles = (theme: any) =>
       alignItems: 'center',
       backgroundColor: theme.colors.background,
     },
+    blurHeader: {
+      paddingTop: 60,
+      paddingBottom: 20,
+      paddingHorizontal: 24,
+      borderBottomWidth: 1,
+      borderBottomColor: 'rgba(255, 255, 255, 0.1)',
+    },
     header: {
       flexDirection: 'row',
       justifyContent: 'space-between',
@@ -255,6 +262,13 @@ const createStyles = (theme: any) =>
       fontSize: 16,
       color: theme.colors.textSecondary,
       marginTop: 8,
+    },
+    scrollView: {
+      flex: 1,
+    },
+    scrollContent: {
+      paddingHorizontal: 20,
+      paddingVertical: 16,
     },
     statsContainer: {
       flexDirection: 'row',
@@ -294,6 +308,7 @@ const createStyles = (theme: any) =>
     },
     section: {
       marginTop: 8,
+      paddingHorizontal: 20,
     },
     sectionHeader: {
       flexDirection: 'row',
