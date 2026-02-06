@@ -154,15 +154,35 @@ class ApiService {
     }
   }
 
-  async register(name: string, email: string, password: string, shopName?: string) {
+  async register(
+    name: string,
+    email: string,
+    password: string,
+    shopName?: string,
+    contactNumber?: string,
+    address?: string,
+    companyEmail?: string,
+    website?: string
+  ) {
     try {
       console.log('[API] Attempting registration to:', `${this.baseURL}/auth/register`);
       console.log('[API] Base URL:', this.baseURL);
       
+      const registerData = {
+        name,
+        email,
+        password,
+        shopName,
+        contactNumber,
+        address,
+        companyEmail,
+        website,
+      };
+      
       // Try the auth/register endpoint first (skip auth headers for register)
       const data = await this.fetchRequest<any>(`${this.baseURL}/auth/register`, {
         method: 'POST',
-        body: JSON.stringify({ name, email, password, shopName }),
+        body: JSON.stringify(registerData),
       }, true);
       
       console.log('[API] Register response:', data);
@@ -189,9 +209,19 @@ class ApiService {
       if (error.message?.includes('404') || error.message?.includes('Not Found')) {
         console.log('[API] Trying alternative register endpoint...');
         try {
+          const registerData = {
+            name,
+            email,
+            password,
+            shopName,
+            contactNumber,
+            address,
+            companyEmail,
+            website,
+          };
           const data = await this.fetchRequest<any>(`${this.baseURL}/users`, {
             method: 'POST',
-            body: JSON.stringify({ name, email, password, shopName }),
+            body: JSON.stringify(registerData),
           }, true);
           return {
             user: data.user || data,

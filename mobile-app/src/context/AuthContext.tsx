@@ -18,7 +18,16 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<User>;
-  register: (name: string, email: string, password: string, shopName?: string) => Promise<User>;
+  register: (
+    name: string,
+    email: string,
+    password: string,
+    shopName?: string,
+    contactNumber?: string,
+    address?: string,
+    companyEmail?: string,
+    website?: string
+  ) => Promise<User>;
   logout: () => Promise<void>;
   updateUser: (userData: Partial<User>) => Promise<void>;
 }
@@ -65,10 +74,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     name: string,
     email: string,
     password: string,
-    shopName?: string
+    shopName?: string,
+    contactNumber?: string,
+    address?: string,
+    companyEmail?: string,
+    website?: string
   ): Promise<User> => {
     try {
-      const response = await apiService.register(name, email, password, shopName);
+      const response = await apiService.register(
+        name,
+        email,
+        password,
+        shopName,
+        contactNumber,
+        address,
+        companyEmail,
+        website
+      );
       const userData = response.user;
       
       await AsyncStorage.setItem('user', JSON.stringify(userData));

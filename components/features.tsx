@@ -87,10 +87,10 @@ export default function Features() {
                 style={{ transition: "all 0.3s ease-in-out" }}
               >
                 <div className="flex flex-col gap-4">
-                  <h3 className="text-2xl leading-none font-semibold tracking-tight">Repair Ticket Management</h3>
+                  <h3 className="text-2xl leading-none font-semibold tracking-tight">Repair Device Management</h3>
                   <div className="text-md text-muted-foreground flex flex-col gap-2 text-sm">
                     <p className="max-w-[460px]">
-                      Create, track, and manage repair tickets with ease. Organize by status, priority, and customer for seamless workflow management.
+                      Create, track, and manage repair devices with ease. Organize by status, priority, and customer for seamless workflow management.
                     </p>
                   </div>
                 </div>
@@ -165,7 +165,7 @@ export default function Features() {
                         {/* Left Column */}
                         <div className="flex flex-col gap-3">
                           {[
-                            { icon: "📋", text: "Create Tickets" },
+                            { icon: "📋", text: "Create Devices" },
                             { icon: "🔍", text: "Search Devices" },
                             { icon: "📊", text: "Track Status" }
                           ].map((item, index) => (

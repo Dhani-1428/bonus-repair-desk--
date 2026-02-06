@@ -55,7 +55,7 @@ export default function Hero() {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="mx-auto mb-12 max-w-2xl text-lg text-muted-foreground"
             >
-              Streamline your repair shop operations with our comprehensive management system. Track tickets, manage customers, handle payments, and grow your business all in one place.
+              Streamline your repair shop operations with our comprehensive management system. Track devices, manage customers, handle payments, and grow your business all in one place.
             </motion.p>
 
             <motion.div

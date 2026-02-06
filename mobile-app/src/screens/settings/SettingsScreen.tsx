@@ -62,19 +62,19 @@ export default function SettingsScreen() {
     try {
       await apiService.updateUser(user.id, userData);
       updateUser(userData as any);
-      Alert.alert('Success', 'Profile updated successfully');
+      Alert.alert(t('common.success'), t('settings.profileUpdatedSuccess'));
     } catch (error: any) {
-      Alert.alert('Error', error.message || 'Failed to update profile');
+      Alert.alert(t('common.error'), error.message || t('settings.profileUpdateFailed'));
     } finally {
       setLoading(false);
     }
   };
 
   const handleLogout = () => {
-    Alert.alert('Logout', 'Are you sure you want to logout?', [
-      { text: 'Cancel', style: 'cancel' },
+    Alert.alert(t('settings.logout'), t('settings.logoutConfirmation'), [
+      { text: t('common.cancel'), style: 'cancel' },
       {
-        text: 'Logout',
+        text: t('settings.logout'),
         style: 'destructive',
         onPress: async () => {
           await logout();
@@ -118,14 +118,14 @@ export default function SettingsScreen() {
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Account Information</Text>
+        <Text style={styles.sectionTitle}>{t('settings.accountInformation')}</Text>
         <FormInput
-          label="Name"
+          label={t('settings.name')}
           value={userData.name}
           onChangeText={(text) => setUserData({ ...userData, name: text })}
         />
         <FormInput
-          label="Email"
+          label={t('settings.email')}
           value={userData.email}
           onChangeText={(text) => setUserData({ ...userData, email: text })}
           keyboardType="email-address"
@@ -134,33 +134,33 @@ export default function SettingsScreen() {
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Business Information</Text>
+        <Text style={styles.sectionTitle}>{t('settings.businessInformation')}</Text>
         <FormInput
-          label="Shop Name"
+          label={t('settings.shopName')}
           value={userData.shopName}
           onChangeText={(text) => setUserData({ ...userData, shopName: text })}
         />
         <FormInput
-          label="Contact Number"
+          label={t('settings.contactNumber')}
           value={userData.contactNumber}
           onChangeText={(text) => setUserData({ ...userData, contactNumber: text })}
           keyboardType="phone-pad"
         />
         <FormInput
-          label="Address"
+          label={t('settings.address')}
           value={userData.address}
           onChangeText={(text) => setUserData({ ...userData, address: text })}
           multiline
           numberOfLines={2}
         />
         <FormInput
-          label="Company Email"
+          label={t('settings.companyEmail')}
           value={userData.companyEmail}
           onChangeText={(text) => setUserData({ ...userData, companyEmail: text })}
           keyboardType="email-address"
         />
         <FormInput
-          label="Website"
+          label={t('settings.website')}
           value={userData.website}
           onChangeText={(text) => setUserData({ ...userData, website: text })}
           keyboardType="url"
@@ -175,13 +175,13 @@ export default function SettingsScreen() {
         {loading ? (
           <ActivityIndicator color="#ffffff" />
         ) : (
-          <Text style={styles.saveButtonText}>Save Changes</Text>
+          <Text style={styles.saveButtonText}>{t('common.saveChanges')}</Text>
         )}
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <Ionicons name="log-out-outline" size={20} color={theme.colors.error} />
-        <Text style={styles.logoutButtonText}>Logout</Text>
+        <Text style={styles.logoutButtonText}>{t('settings.logout')}</Text>
       </TouchableOpacity>
 
       <View style={styles.footer}>

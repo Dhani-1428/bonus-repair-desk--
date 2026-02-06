@@ -6,15 +6,18 @@ import {
   ScrollView,
   ActivityIndicator,
   RefreshControl,
+  TouchableOpacity,
 } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { apiService } from '../../services/api';
 import { Ionicons } from '@expo/vector-icons';
 
-export default function AnalyticsScreen() {
+export default function AnalyticsScreen({ navigation }: any) {
   const { user } = useAuth();
   const theme = useTheme();
+  const { t } = useLanguage();
   const [analytics, setAnalytics] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -83,47 +86,73 @@ export default function AnalyticsScreen() {
       }
     >
       <View style={styles.header}>
-        <Text style={styles.title}>Analytics Overview</Text>
-        <Text style={styles.subtitle}>Your business insights</Text>
+        <Text style={styles.title}>{t('analytics.overview')}</Text>
+        <Text style={styles.subtitle}>{t('analytics.subtitle')}</Text>
       </View>
 
       <View style={styles.statsGrid}>
         <StatCard
           icon="document-text"
-          label="Total Tickets"
+          label={t('analytics.totalTickets')}
           value={analytics?.totalTickets || 0}
           color={theme.colors.primary}
+          onPress={() => navigation.navigate('DeviceList', {
+            filterType: 'all',
+            title: t('analytics.totalTickets'),
+          })}
         />
         <StatCard
           icon="checkmark-circle"
-          label="Completed"
+          label={t('analytics.completed')}
           value={analytics?.completedTickets || 0}
           color={theme.colors.success}
+          onPress={() => navigation.navigate('DeviceList', {
+            filterType: 'status',
+            filterValue: 'completed',
+            title: t('analytics.completed'),
+          })}
         />
         <StatCard
           icon="time-outline"
-          label="Pending"
+          label={t('analytics.pending')}
           value={analytics?.pendingTickets || 0}
           color={theme.colors.warning}
+          onPress={() => navigation.navigate('DeviceList', {
+            filterType: 'status',
+            filterValue: 'pending',
+            title: t('analytics.pending'),
+          })}
         />
         <StatCard
           icon="hourglass-outline"
-          label="In Progress"
+          label={t('analytics.inProgress')}
           value={analytics?.inProgressTickets || 0}
           color={theme.colors.secondary}
+          onPress={() => navigation.navigate('DeviceList', {
+            filterType: 'status',
+            filterValue: 'in_progress',
+            title: t('analytics.inProgress'),
+          })}
         />
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Revenue</Text>
+        <Text style={styles.sectionTitle}>{t('analytics.revenue')}</Text>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('DeviceList', {
+            filterType: 'revenue',
+            title: t('analytics.totalRevenue'),
+          })}
+        >
+          <View style={styles.revenueCard}>
+            <Text style={styles.revenueLabel}>{t('analytics.totalRevenue')}</Text>
+            <Text style={styles.revenueValue}>
+              €{analytics?.totalRevenue.toFixed(2) || '0.00'}
+            </Text>
+          </View>
+        </TouchableOpacity>
         <View style={styles.revenueCard}>
-          <Text style={styles.revenueLabel}>Total Revenue</Text>
-          <Text style={styles.revenueValue}>
-            €{analytics?.totalRevenue.toFixed(2) || '0.00'}
-          </Text>
-        </View>
-        <View style={styles.revenueCard}>
-          <Text style={styles.revenueLabel}>Average Ticket Value</Text>
+          <Text style={styles.revenueLabel}>{t('analytics.averageTicketValue')}</Text>
           <Text style={styles.revenueValue}>
             €{analytics?.averageTicketValue.toFixed(2) || '0.00'}
           </Text>
@@ -131,13 +160,13 @@ export default function AnalyticsScreen() {
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Performance Metrics</Text>
+        <Text style={styles.sectionTitle}>{t('analytics.performanceMetrics')}</Text>
         <MetricRow
-          label="Completion Rate"
+          label={t('analytics.completionRate')}
           value={`${analytics?.totalTickets > 0 ? ((analytics.completedTickets / analytics.totalTickets) * 100).toFixed(1) : 0}%`}
         />
         <MetricRow
-          label="Pending Rate"
+          label={t('analytics.pendingRate')}
           value={`${analytics?.totalTickets > 0 ? ((analytics.pendingTickets / analytics.totalTickets) * 100).toFixed(1) : 0}%`}
         />
       </View>
@@ -145,9 +174,22 @@ export default function AnalyticsScreen() {
   );
 }
 
-function StatCard({ icon, label, value, color }: { icon: string; label: string; value: number; color: string }) {
+function StatCard({ icon, label, value, color, onPress }: { icon: string; label: string; value: number; color: string; onPress?: () => void }) {
   const theme = useTheme();
   const cardStyles = createStyles(theme);
+  
+  if (onPress) {
+    return (
+      <TouchableOpacity onPress={onPress} activeOpacity={0.7} style={cardStyles.statCardWrapper}>
+        <View style={cardStyles.statCard}>
+          <Ionicons name={icon as any} size={32} color={color} />
+          <Text style={cardStyles.statValue}>{value}</Text>
+          <Text style={cardStyles.statLabel}>{label}</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  }
+  
   return (
     <View style={cardStyles.statCard}>
       <Ionicons name={icon as any} size={32} color={color} />
@@ -200,13 +242,16 @@ const createStyles = (theme: any) =>
       paddingHorizontal: 20,
       marginBottom: theme.spacing.lg,
     },
-    statCard: {
+    statCardWrapper: {
       width: '48%',
+      marginRight: '2%',
+      marginBottom: theme.spacing.md,
+    },
+    statCard: {
+      width: '100%',
       backgroundColor: theme.colors.surface,
       borderRadius: theme.borderRadius.lg,
       padding: theme.spacing.md,
-      marginBottom: theme.spacing.md,
-      marginRight: '2%',
       alignItems: 'center',
       borderWidth: 1,
       borderColor: theme.colors.border,

@@ -12,7 +12,7 @@ import "./globals.css"
 export const metadata: Metadata = {
   title: "Bonus Repair Desk - Professional Repair Management System",
   description:
-    "Streamline your repair shop operations with our comprehensive management system. Track tickets, manage customers, handle payments, and grow your business.",
+    "Streamline your repair shop operations with our comprehensive management system. Track devices, manage customers, handle payments, and grow your business.",
   generator: "v0.app",
   icons: {
     icon: [

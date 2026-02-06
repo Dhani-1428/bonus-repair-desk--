@@ -29,6 +29,30 @@ export default function TicketDetailScreen() {
   const [printing, setPrinting] = useState(false);
   const [showStatusMenu, setShowStatusMenu] = useState(false);
 
+  const getStatusTranslation = (status: string) => {
+    const statusMap: Record<string, string> = {
+      'pending': 'ticket.status.pending',
+      'completed': 'ticket.status.completed',
+      'cannot_repaired': 'ticket.status.cannot_repaired',
+      'out': 'ticket.status.out',
+    };
+    return t(statusMap[status?.toLowerCase()] || 'ticket.status.pending');
+  };
+
+  const getStatusColor = (status: string) => {
+    const statusLower = status?.toLowerCase();
+    if (statusLower === 'completed') {
+      return theme.colors.success;
+    } else if (statusLower === 'pending') {
+      return theme.colors.warning;
+    } else if (statusLower === 'cannot_repaired') {
+      return theme.colors.error;
+    } else if (statusLower === 'out') {
+      return theme.colors.secondary;
+    }
+    return theme.colors.warning;
+  };
+
   useEffect(() => {
     loadTicket();
   }, [ticketId, user]);
@@ -43,7 +67,7 @@ export default function TicketDetailScreen() {
       setTicket(response.ticket);
     } catch (error) {
       console.error('Error loading ticket:', error);
-      Alert.alert('Error', 'Failed to load device details');
+      Alert.alert(t('common.error'), t('error.loadDeviceFailed'));
     } finally {
       setLoading(false);
     }
@@ -58,7 +82,7 @@ export default function TicketDetailScreen() {
       await printTicket(ticket);
     } catch (error: any) {
       console.error('Error printing:', error);
-      Alert.alert('Print Error', error.message || 'Failed to print receipt');
+      Alert.alert(t('common.error'), error.message || t('common.printFailed'));
     } finally {
       setPrinting(false);
     }
@@ -78,7 +102,7 @@ export default function TicketDetailScreen() {
               await apiService.deleteTicket(ticketId);
               navigation.goBack();
             } catch (error: any) {
-              Alert.alert('Error', error.message || 'Failed to delete device');
+              Alert.alert(t('common.error'), error.message || t('common.deleteFailed'));
             }
           },
         },
@@ -89,21 +113,37 @@ export default function TicketDetailScreen() {
   const handleChangeStatus = (newStatus: string) => {
     Alert.alert(
       t('ticket.changeStatus'),
-      `Change status to ${newStatus}?`,
+      t('ticket.status.changeConfirmation')?.replace('{status}', t(`ticket.status.${newStatus}`) || newStatus) || `Change status to ${t(`ticket.status.${newStatus}`) || newStatus}?`,
       [
         { text: t('common.cancel'), style: 'cancel' },
         {
           text: t('common.confirm'),
           onPress: async () => {
             try {
-              await apiService.updateTicket(ticketId, {
+              console.log('[TicketDetailScreen] Updating status:', {
+                ticketId,
+                newStatus,
+                userId: user?.id,
+              });
+              
+              const result = await apiService.updateTicket(ticketId, {
                 userId: user?.id,
                 status: newStatus,
               });
+              
+              console.log('[TicketDetailScreen] Status update result:', result);
+              
               await loadTicket();
               setShowStatusMenu(false);
+              
+              Alert.alert(
+                t('common.success'),
+                t('ticket.status.updatedSuccess') || 'Status updated successfully',
+                [{ text: t('common.ok') }]
+              );
             } catch (error: any) {
-              Alert.alert('Error', error.message || 'Failed to update status');
+              console.error('[TicketDetailScreen] Status update error:', error);
+              Alert.alert(t('common.error'), error.message || t('ticket.status.updateFailed') || 'Failed to update status');
             }
           },
         },
@@ -112,11 +152,12 @@ export default function TicketDetailScreen() {
   };
 
   const showActionMenu = () => {
-    const statusOptions = ['pending', 'in_progress', 'completed', 'delivered', 'cancelled', 'not_ok', 'cannot_repaired', 'out'];
+    // Only allow these 4 statuses: pending, completed, cannot_repaired, out
+    const statusOptions = ['pending', 'completed', 'cannot_repaired', 'out'];
     
     Alert.alert(
       t('common.status'),
-      'Select an action',
+      t('ticket.selectAction') || 'Select an action',
       [
         {
           text: t('ticket.edit'),
@@ -127,7 +168,7 @@ export default function TicketDetailScreen() {
           onPress: () => {
             Alert.alert(
               t('ticket.changeStatus'),
-              'Select new status',
+              t('ticket.selectStatus') || 'Select new status',
               [
                 ...statusOptions.map((status) => ({
                   text: t(`ticket.status.${status}`) || status,
@@ -165,7 +206,7 @@ export default function TicketDetailScreen() {
   if (!ticket) {
     return (
       <View style={styles.loadingContainer}>
-        <Text style={styles.errorText}>Device not found</Text>
+        <Text style={styles.errorText}>{t('error.deviceNotFound') || 'Device not found'}</Text>
       </View>
     );
   }
@@ -184,12 +225,7 @@ export default function TicketDetailScreen() {
             style={[
               styles.statusBadge,
               {
-                backgroundColor:
-                  ticket.status === 'completed'
-                    ? theme.colors.success + '20'
-                    : ticket.status === 'pending'
-                    ? theme.colors.warning + '20'
-                    : theme.colors.secondary + '20',
+                backgroundColor: getStatusColor(ticket.status || 'pending') + '20',
               },
             ]}
           >
@@ -197,70 +233,65 @@ export default function TicketDetailScreen() {
               style={[
                 styles.statusText,
                 {
-                  color:
-                    ticket.status === 'completed'
-                      ? theme.colors.success
-                      : ticket.status === 'pending'
-                      ? theme.colors.warning
-                      : theme.colors.secondary,
+                  color: getStatusColor(ticket.status || 'pending'),
                 },
               ]}
             >
-              {ticket.status || 'pending'}
+              {getStatusTranslation(ticket.status || 'pending')}
             </Text>
           </View>
         </View>
         <Text style={styles.date}>
-          Created: {format(new Date(ticket.createdAt), 'MMM dd, yyyy HH:mm')}
+          {t('ticket.created') || 'Created'}: {format(new Date(ticket.createdAt), 'MMM dd, yyyy HH:mm')}
         </Text>
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Customer Information</Text>
-        <InfoRow label="Name" value={ticket.customerName || 'N/A'} />
-        <InfoRow label="Contact" value={ticket.contact || 'N/A'} />
-        <InfoRow label="Client ID" value={ticket.clientId || 'N/A'} />
+        <Text style={styles.sectionTitle}>{t('ticket.customerInfo') || 'Customer Information'}</Text>
+        <InfoRow label={t('form.customerName')} value={ticket.customerName || 'N/A'} />
+        <InfoRow label={t('form.contact')} value={ticket.contact || 'N/A'} />
+        <InfoRow label={t('form.clientId')} value={ticket.clientId || 'N/A'} />
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Device Information</Text>
-        <InfoRow label="Brand" value={ticket.brand || 'N/A'} />
-        <InfoRow label="Model" value={ticket.model || 'N/A'} />
-        <InfoRow label="IMEI" value={ticket.imeiNo || 'N/A'} />
-        <InfoRow label="Serial No" value={ticket.serialNo || 'N/A'} />
-        <InfoRow label="Warranty" value={ticket.warranty || 'Without Warranty'} />
+        <Text style={styles.sectionTitle}>{t('ticket.deviceInfo') || 'Device Information'}</Text>
+        <InfoRow label={t('form.brand')} value={ticket.brand || 'N/A'} />
+        <InfoRow label={t('form.model')} value={ticket.model || 'N/A'} />
+        <InfoRow label={t('form.imeiNumber')} value={ticket.imeiNo || 'N/A'} />
+        <InfoRow label={t('form.serialNumber')} value={ticket.serialNo || 'N/A'} />
+        <InfoRow label={t('form.warranty')} value={ticket.warranty || t('form.withoutWarranty')} />
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Repair Details</Text>
-        <InfoRow label="Problem" value={ticket.problem || 'N/A'} />
-        <InfoRow label="Condition" value={ticket.condition || 'N/A'} />
+        <Text style={styles.sectionTitle}>{t('ticket.repairDetails') || 'Repair Details'}</Text>
+        <InfoRow label={t('form.problemDescription')} value={ticket.problem || 'N/A'} />
+        <InfoRow label={t('form.condition')} value={ticket.condition || 'N/A'} />
         {ticket.equipmentObs && (
           <View style={styles.observationContainer}>
-            <Text style={styles.observationLabel}>Equipment Observations:</Text>
+            <Text style={styles.observationLabel}>{t('form.equipmentObs')}:</Text>
             <Text style={styles.observationText}>{ticket.equipmentObs}</Text>
           </View>
         )}
         {ticket.repairObs && (
           <View style={styles.observationContainer}>
-            <Text style={styles.observationLabel}>Repair Observations:</Text>
+            <Text style={styles.observationLabel}>{t('form.repairObs')}:</Text>
             <Text style={styles.observationText}>{ticket.repairObs}</Text>
           </View>
         )}
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Accessories</Text>
+        <Text style={styles.sectionTitle}>{t('form.accessories')}</Text>
         <View style={styles.accessoriesContainer}>
-          <AccessoryItem label="Battery" checked={ticket.battery} />
-          <AccessoryItem label="Charger" checked={ticket.charger} />
-          <AccessoryItem label="SIM Card" checked={ticket.simCard} />
-          <AccessoryItem label="Memory Card" checked={ticket.memoryCard} />
+          <AccessoryItem label={t('form.battery')} checked={ticket.battery} />
+          <AccessoryItem label={t('form.charger')} checked={ticket.charger} />
+          <AccessoryItem label={t('form.simCard')} checked={ticket.simCard} />
+          <AccessoryItem label={t('form.memoryCard')} checked={ticket.memoryCard} />
         </View>
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Services & Pricing</Text>
+        <Text style={styles.sectionTitle}>{t('ticket.servicesPricing') || 'Services & Pricing'}</Text>
         {ticket.selectedServices && ticket.selectedServices.length > 0 ? (
           ticket.selectedServices.map((service: string, index: number) => (
             <Text key={index} style={styles.serviceItem}>• {service}</Text>
@@ -268,13 +299,9 @@ export default function TicketDetailScreen() {
         ) : (
           <Text style={styles.serviceItem}>• {ticket.serviceName || 'N/A'}</Text>
         )}
-        <View style={styles.priceContainer}>
-          <Text style={styles.priceLabel}>Price:</Text>
-          <Text style={styles.priceValue}>€{parseFloat(ticket.price || 0).toFixed(2)}</Text>
-        </View>
         {ticket.budget && (
           <View style={styles.priceContainer}>
-            <Text style={styles.priceLabel}>Budget:</Text>
+            <Text style={styles.priceLabel}>{t('form.budget')}:</Text>
             <Text style={styles.priceValue}>€{parseFloat(ticket.budget).toFixed(2)}</Text>
           </View>
         )}

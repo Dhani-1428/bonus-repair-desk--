@@ -203,9 +203,9 @@ const translations: Record<Language, Record<string, string>> = {
     "success.statusUpdated": "Status updated successfully!",
     "error.deviceUpdateFailed": "Failed to update device",
     "error.deviceDeleteFailed": "Failed to delete device",
-    "error.ticketStatusUpdateFailed": "Failed to update ticket status",
-    "error.cannotEditDelivered": "Cannot edit tickets that are delivered or cancelled",
-    "error.cannotDeleteDelivered": "Cannot delete tickets that are delivered or cancelled",
+    "error.ticketStatusUpdateFailed": "Failed to update device status",
+    "error.cannotEditDelivered": "Cannot edit devices that are delivered or cancelled",
+    "error.cannotDeleteDelivered": "Cannot delete devices that are delivered or cancelled",
     "success.deviceMovedToTrash": "Device moved to trash",
 
     // Payment status banners
@@ -289,7 +289,7 @@ const translations: Record<Language, Record<string, string>> = {
     "dashboard.noRepairDevicesYet": "No repair devices yet. Create your first device!",
     "dashboard.createFirstDevice": "Create your first device entry to get started",
     "dashboard.noDevicesRegistered": "No devices registered yet.",
-    "dashboard.createNewTicketToStart": "Create a new repair ticket above to get started.",
+    "dashboard.createNewTicketToStart": "Create a new repair device above to get started.",
 
     // Stats cards
     "stats.total.title": "Total Devices",
@@ -419,7 +419,7 @@ const translations: Record<Language, Record<string, string>> = {
     "plan.twelveMonths": "12 Months",
 
     // Plan features
-    "feature.repairTicketManagement": "Repair Ticket Management",
+    "feature.repairTicketManagement": "Repair Device Management",
     "feature.customerDatabase": "Customer Database",
     "feature.paymentProcessing": "Payment Processing",
     "feature.analyticsReports": "Analytics & Reports",
@@ -432,7 +432,7 @@ const translations: Record<Language, Record<string, string>> = {
     "feature.apiAccess": "API Access",
     "feature.dataExport": "Data Export",
     "feature.everythingIn6Months": "Everything in 6 Months",
-    "feature.unlimitedTickets": "Unlimited Tickets",
+    "feature.unlimitedTickets": "Unlimited Devices",
     "feature.dedicatedSupport": "Dedicated Support",
     "feature.customIntegrations": "Custom Integrations",
     "feature.whiteLabelOptions": "White Label Options",
@@ -870,7 +870,7 @@ const translations: Record<Language, Record<string, string>> = {
     "plan.twelveMonths": "12 Meses",
 
     // Plan features
-    "feature.repairTicketManagement": "Gestão de Bilhetes de Reparação",
+    "feature.repairTicketManagement": "Gestão de Dispositivos de Reparação",
     "feature.customerDatabase": "Base de Dados de Clientes",
     "feature.paymentProcessing": "Processamento de Pagamentos",
     "feature.analyticsReports": "Análises e Relatórios",
@@ -1156,7 +1156,7 @@ const translations: Record<Language, Record<string, string>> = {
     "dashboard.noRepairDevicesYet": "Noch keine Reparaturgeräte. Erstellen Sie Ihr erstes Gerät!",
     "dashboard.createFirstDevice": "Erstellen Sie Ihren ersten Geräteeintrag, um zu beginnen",
     "dashboard.noDevicesRegistered": "Noch keine Geräte registriert.",
-    "dashboard.createNewTicketToStart": "Erstellen Sie oben ein neues Reparaturticket, um zu beginnen.",
+    "dashboard.createNewTicketToStart": "Erstellen Sie oben ein neues Reparaturgerät, um zu beginnen.",
 
     // Stats cards
     "stats.total.title": "Gesamtgeräte",
@@ -1287,7 +1287,7 @@ const translations: Record<Language, Record<string, string>> = {
     "plan.twelveMonths": "12 Monate",
 
     // Plan features
-    "feature.repairTicketManagement": "Reparaturticket-Verwaltung",
+    "feature.repairTicketManagement": "Reparaturgerät-Verwaltung",
     "feature.customerDatabase": "Kundendatenbank",
     "feature.paymentProcessing": "Zahlungsabwicklung",
     "feature.analyticsReports": "Analysen & Berichte",
@@ -1300,7 +1300,7 @@ const translations: Record<Language, Record<string, string>> = {
     "feature.apiAccess": "API-Zugriff",
     "feature.dataExport": "Datenexport",
     "feature.everythingIn6Months": "Alles in 6 Monaten",
-    "feature.unlimitedTickets": "Unbegrenzte Tickets",
+    "feature.unlimitedTickets": "Unbegrenzte Geräte",
     "feature.dedicatedSupport": "Dedizierter Support",
     "feature.customIntegrations": "Benutzerdefinierte Integrationen",
     "feature.whiteLabelOptions": "White-Label-Optionen",
@@ -1543,7 +1543,7 @@ const translations: Record<Language, Record<string, string>> = {
     "dashboard.noRepairDevicesYet": "Aucun appareil de réparation pour le moment. Créez votre premier appareil!",
     "dashboard.createFirstDevice": "Créez votre première entrée d'appareil pour commencer",
     "dashboard.noDevicesRegistered": "Aucun appareil enregistré pour le moment.",
-    "dashboard.createNewTicketToStart": "Créez un nouveau ticket de réparation ci-dessus pour commencer.",
+    "dashboard.createNewTicketToStart": "Créez un nouveau dispositif de réparation ci-dessus pour commencer.",
 
     // Stats cards
     "stats.total.title": "Total des Appareils",
@@ -1674,7 +1674,7 @@ const translations: Record<Language, Record<string, string>> = {
     "plan.twelveMonths": "12 Mois",
 
     // Plan features
-    "feature.repairTicketManagement": "Gestion des Tickets de Réparation",
+    "feature.repairTicketManagement": "Gestion des Dispositifs de Réparation",
     "feature.customerDatabase": "Base de Données Clients",
     "feature.paymentProcessing": "Traitement des Paiements",
     "feature.analyticsReports": "Analyses & Rapports",
@@ -1687,7 +1687,7 @@ const translations: Record<Language, Record<string, string>> = {
     "feature.apiAccess": "Accès API",
     "feature.dataExport": "Exportation de Données",
     "feature.everythingIn6Months": "Tout en 6 Mois",
-    "feature.unlimitedTickets": "Tickets Illimités",
+    "feature.unlimitedTickets": "Dispositifs Illimités",
     "feature.dedicatedSupport": "Support Dédié",
     "feature.customIntegrations": "Intégrations Personnalisées",
     "feature.whiteLabelOptions": "Options de Marque Blanche",
@@ -1931,7 +1931,7 @@ const translations: Record<Language, Record<string, string>> = {
     "dashboard.noRepairDevicesYet": "ابھی تک کوئی مرمت کا آلہ نہیں۔ اپنا پہلا آلہ بنائیں!",
     "dashboard.createFirstDevice": "شروع کرنے کے لیے اپنی پہلی آلہ انٹری بنائیں",
     "dashboard.noDevicesRegistered": "ابھی تک کوئی آلہ رجسٹرڈ نہیں۔",
-    "dashboard.createNewTicketToStart": "شروع کرنے کے لیے اوپر ایک نیا مرمت ٹکٹ بنائیں۔",
+    "dashboard.createNewTicketToStart": "شروع کرنے کے لیے اوپر ایک نیا مرمت آلہ بنائیں۔",
 
     // Stats cards
     "stats.total.title": "کل آلات",
@@ -2062,7 +2062,7 @@ const translations: Record<Language, Record<string, string>> = {
     "plan.twelveMonths": "12 ماہ",
 
     // Plan features
-    "feature.repairTicketManagement": "مرمت ٹکٹ مینجمنٹ",
+    "feature.repairTicketManagement": "مرمت آلہ مینجمنٹ",
     "feature.customerDatabase": "کسٹمر ڈیٹا بیس",
     "feature.paymentProcessing": "ادائیگی کی پروسیسنگ",
     "feature.analyticsReports": "تجزیات اور رپورٹس",
@@ -2075,7 +2075,7 @@ const translations: Record<Language, Record<string, string>> = {
     "feature.apiAccess": "API رسائی",
     "feature.dataExport": "ڈیٹا ایکسپورٹ",
     "feature.everythingIn6Months": "6 ماہ میں سب کچھ",
-    "feature.unlimitedTickets": "لامحدود ٹکٹس",
+    "feature.unlimitedTickets": "لامحدود آلات",
     "feature.dedicatedSupport": "مختص سپورٹ",
     "feature.customIntegrations": "حسب ضرورت انٹیگریشنز",
     "feature.whiteLabelOptions": "وائٹ لیبل آپشنز",
@@ -2309,7 +2309,7 @@ const translations: Record<Language, Record<string, string>> = {
     "dashboard.noRepairDevicesYet": "ਅਜੇ ਤੱਕ ਕੋਈ ਮੁਰੰਮਤ ਡਿਵਾਈਸ ਨਹੀਂ। ਆਪਣਾ ਪਹਿਲਾ ਡਿਵਾਈਸ ਬਣਾਓ!",
     "dashboard.createFirstDevice": "ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਆਪਣੀ ਪਹਿਲੀ ਡਿਵਾਈਸ ਐਂਟਰੀ ਬਣਾਓ",
     "dashboard.noDevicesRegistered": "ਅਜੇ ਤੱਕ ਕੋਈ ਡਿਵਾਈਸ ਰਜਿਸਟਰਡ ਨਹੀਂ।",
-    "dashboard.createNewTicketToStart": "ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਉੱਪਰ ਇੱਕ ਨਵਾਂ ਮੁਰੰਮਤ ਟਿਕਟ ਬਣਾਓ।",
+    "dashboard.createNewTicketToStart": "ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਉੱਪਰ ਇੱਕ ਨਵਾਂ ਮੁਰੰਮਤ ਡਿਵਾਈਸ ਬਣਾਓ।",
 
     // Stats cards
     "stats.total.title": "ਕੁੱਲ ਡਿਵਾਈਸ",
@@ -2440,7 +2440,7 @@ const translations: Record<Language, Record<string, string>> = {
     "plan.twelveMonths": "12 ਮਹੀਨੇ",
 
     // Plan features
-    "feature.repairTicketManagement": "ਮੁਰੰਮਤ ਟਿਕਟ ਪ੍ਰਬੰਧਨ",
+    "feature.repairTicketManagement": "ਮੁਰੰਮਤ ਡਿਵਾਈਸ ਪ੍ਰਬੰਧਨ",
     "feature.customerDatabase": "ਗ੍ਰਾਹਕ ਡੇਟਾਬੇਸ",
     "feature.paymentProcessing": "ਭੁਗਤਾਨ ਪ੍ਰੋਸੈਸਿੰਗ",
     "feature.analyticsReports": "ਵਿਸ਼ਲੇਸ਼ਣ ਅਤੇ ਰਿਪੋਰਟਾਂ",
@@ -2453,7 +2453,7 @@ const translations: Record<Language, Record<string, string>> = {
     "feature.apiAccess": "API ਪਹੁੰਚ",
     "feature.dataExport": "ਡੇਟਾ ਨਿਰਯਾਤ",
     "feature.everythingIn6Months": "6 ਮਹੀਨਿਆਂ ਵਿੱਚ ਸਭ ਕੁਝ",
-    "feature.unlimitedTickets": "ਅਸੀਮਿਤ ਟਿਕਟਾਂ",
+    "feature.unlimitedTickets": "ਅਸੀਮਿਤ ਡਿਵਾਈਸ",
     "feature.dedicatedSupport": "ਸਮਰਪਿਤ ਸਹਾਇਤਾ",
     "feature.customIntegrations": "ਕਸਟਮ ਏਕੀਕਰਣ",
     "feature.whiteLabelOptions": "ਵ੍ਹਾਈਟ ਲੇਬਲ ਵਿਕਲਪ",
@@ -2698,7 +2698,7 @@ const translations: Record<Language, Record<string, string>> = {
     "dashboard.noRepairDevicesYet": "अभी तक कोई मरम्मत उपकरण नहीं। अपना पहला उपकरण बनाएं!",
     "dashboard.createFirstDevice": "शुरू करने के लिए अपनी पहली उपकरण प्रविष्टि बनाएं",
     "dashboard.noDevicesRegistered": "अभी तक कोई उपकरण पंजीकृत नहीं।",
-    "dashboard.createNewTicketToStart": "शुरू करने के लिए ऊपर एक नया मरम्मत टिकट बनाएं।",
+    "dashboard.createNewTicketToStart": "शुरू करने के लिए ऊपर एक नया मरम्मत उपकरण बनाएं।",
 
     // Stats cards
     "stats.total.title": "कुल उपकरण",
@@ -2829,7 +2829,7 @@ const translations: Record<Language, Record<string, string>> = {
     "plan.twelveMonths": "12 महीने",
 
     // Plan features
-    "feature.repairTicketManagement": "मरम्मत टिकट प्रबंधन",
+    "feature.repairTicketManagement": "मरम्मत उपकरण प्रबंधन",
     "feature.customerDatabase": "ग्राहक डेटाबेस",
     "feature.paymentProcessing": "भुगतान प्रसंस्करण",
     "feature.analyticsReports": "विश्लेषण और रिपोर्ट",
@@ -2842,7 +2842,7 @@ const translations: Record<Language, Record<string, string>> = {
     "feature.apiAccess": "API पहुंच",
     "feature.dataExport": "डेटा निर्यात",
     "feature.everythingIn6Months": "6 महीने में सब कुछ",
-    "feature.unlimitedTickets": "असीमित टिकट",
+    "feature.unlimitedTickets": "असीमित उपकरण",
     "feature.dedicatedSupport": "समर्पित सहायता",
     "feature.customIntegrations": "कस्टम एकीकरण",
     "feature.whiteLabelOptions": "व्हाइट लेबल विकल्प",

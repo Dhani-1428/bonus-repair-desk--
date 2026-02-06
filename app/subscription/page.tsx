@@ -473,7 +473,7 @@ export default function SubscriptionPage() {
                     {PLAN_PRICING[plan.id]?.features.map((feature) => {
                       // Map feature names to translation keys
                       const featureKeyMap: Record<string, string> = {
-                        "Repair Ticket Management": "repairTicketManagement",
+                        "Repair Device Management": "repairTicketManagement",
                         "Customer Database": "customerDatabase",
                         "Payment Processing": "paymentProcessing",
                         "Analytics & Reports": "analyticsReports",
@@ -486,7 +486,7 @@ export default function SubscriptionPage() {
                         "API Access": "apiAccess",
                         "Data Export": "dataExport",
                         "Everything in 6 Months": "everythingIn6Months",
-                        "Unlimited Tickets": "unlimitedTickets",
+                        "Unlimited Devices": "unlimitedTickets",
                         "Dedicated Support": "dedicatedSupport",
                         "Custom Integrations": "customIntegrations",
                         "White Label Options": "whiteLabelOptions",

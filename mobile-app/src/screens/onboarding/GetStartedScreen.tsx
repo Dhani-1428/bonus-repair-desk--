@@ -10,11 +10,13 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
+import { useLanguage } from '../../context/LanguageContext';
 
 const { width, height } = Dimensions.get('window');
 
 export default function GetStartedScreen() {
   const navigation = useNavigation();
+  const { t } = useLanguage();
 
   const handleGetStarted = () => {
     navigation.navigate('Register' as never);
@@ -28,26 +30,26 @@ export default function GetStartedScreen() {
           <View style={styles.logoCircle}>
             <Ionicons name="construct" size={80} color="#e78a53" />
           </View>
-          <Text style={styles.appName}>Bonus Repair Desk</Text>
-          <Text style={styles.tagline}>Professional Repair Management</Text>
+          <Text style={styles.appName}>{t('onboarding.appName')}</Text>
+          <Text style={styles.tagline}>{t('onboarding.tagline')}</Text>
         </View>
 
         {/* Features Section */}
         <View style={styles.featuresContainer}>
           <FeatureItem
             icon="document-text-outline"
-            text="Manage Devices"
-            description="Track all your repair devices efficiently"
+            text={t('onboarding.manageDevices')}
+            description={t('onboarding.manageDevicesDesc')}
           />
           <FeatureItem
             icon="analytics-outline"
-            text="Analytics Dashboard"
-            description="Monitor your business performance"
+            text={t('onboarding.analytics')}
+            description={t('onboarding.analyticsDesc')}
           />
           <FeatureItem
             icon="print-outline"
-            text="Print Receipts"
-            description="Generate professional receipts instantly"
+            text={t('onboarding.printReceipts')}
+            description={t('onboarding.printReceiptsDesc')}
           />
         </View>
 
@@ -57,7 +59,7 @@ export default function GetStartedScreen() {
           onPress={handleGetStarted}
           activeOpacity={0.8}
         >
-          <Text style={styles.getStartedButtonText}>Get Started</Text>
+          <Text style={styles.getStartedButtonText}>{t('onboarding.getStarted')}</Text>
           <Ionicons name="arrow-forward" size={24} color="#ffffff" style={styles.arrowIcon} />
         </TouchableOpacity>
 
@@ -67,7 +69,7 @@ export default function GetStartedScreen() {
           onPress={() => navigation.navigate('Login' as never)}
         >
           <Text style={styles.loginLinkText}>
-            Already have an account? <Text style={styles.loginLinkBold}>Login</Text>
+            {t('auth.haveAccount')} <Text style={styles.loginLinkBold}>{t('auth.loginLink')}</Text>
           </Text>
         </TouchableOpacity>
       </View>

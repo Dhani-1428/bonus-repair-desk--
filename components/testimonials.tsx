@@ -24,14 +24,14 @@ const fallbackTestimonials: Testimonial[] = [
     id: "1",
     name: "Michael Chen",
     username: "@mike_repairs",
-    body: "Bonus Repair Desk has completely transformed our repair shop operations. Tracking tickets and managing customers is now effortless. Highly recommend!",
+    body: "Bonus Repair Desk has completely transformed our repair shop operations. Tracking devices and managing customers is now effortless. Highly recommend!",
     img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
   },
   {
     id: "2",
     name: "Sarah Johnson",
     username: "@sarah_techfix",
-    body: "The ticket management system is incredibly intuitive. We've reduced our processing time by 40% and our customers love the professional receipts.",
+    body: "The device management system is incredibly intuitive. We've reduced our processing time by 40% and our customers love the professional receipts.",
     img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop&crop=face",
   },
   {
@@ -45,7 +45,7 @@ const fallbackTestimonials: Testimonial[] = [
     id: "4",
     name: "Priya Patel",
     username: "@priya_devices",
-    body: "Managing multiple repair tickets used to be a nightmare. Now everything is organized, searchable, and we never lose track of a device. Amazing platform!",
+    body: "Managing multiple repair devices used to be a nightmare. Now everything is organized, searchable, and we never lose track of a device. Amazing platform!",
     img: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face",
   },
   {
@@ -66,7 +66,7 @@ const fallbackTestimonials: Testimonial[] = [
     id: "7",
     name: "Ahmed Hassan",
     username: "@ahmed_tech",
-    body: "The team management feature is perfect for our growing shop. We can assign tickets, track progress, and manage our staff all in one place. Essential tool!",
+    body: "The team management feature is perfect for our growing shop. We can assign devices, track progress, and manage our staff all in one place. Essential tool!",
     img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face",
   },
   {

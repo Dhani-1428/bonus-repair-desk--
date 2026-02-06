@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   RefreshControl,
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
@@ -20,6 +21,30 @@ export default function DashboardScreen({ navigation }: any) {
   const { user } = useAuth();
   const theme = useTheme();
   const { t } = useLanguage();
+
+  const getStatusTranslation = (status: string) => {
+    const statusMap: Record<string, string> = {
+      'pending': 'ticket.status.pending',
+      'completed': 'ticket.status.completed',
+      'cannot_repaired': 'ticket.status.cannot_repaired',
+      'out': 'ticket.status.out',
+    };
+    return t(statusMap[status?.toLowerCase()] || 'ticket.status.pending');
+  };
+
+  const getStatusColor = (status: string) => {
+    const statusLower = status?.toLowerCase();
+    if (statusLower === 'completed') {
+      return theme.colors.success;
+    } else if (statusLower === 'pending') {
+      return theme.colors.warning;
+    } else if (statusLower === 'cannot_repaired') {
+      return theme.colors.error;
+    } else if (statusLower === 'out') {
+      return theme.colors.secondary;
+    }
+    return theme.colors.warning;
+  };
   const [stats, setStats] = useState({
     totalTickets: 0,
     pendingTickets: 0,
@@ -36,6 +61,15 @@ export default function DashboardScreen({ navigation }: any) {
     loadDashboardData();
   }, [user]);
 
+  // Refresh when screen comes into focus (e.g., after status change)
+  useFocusEffect(
+    React.useCallback(() => {
+      if (user?.id) {
+        loadDashboardData();
+      }
+    }, [user?.id])
+  );
+
   const loadDashboardData = async () => {
     if (!user?.id) return;
 
@@ -46,23 +80,44 @@ export default function DashboardScreen({ navigation }: any) {
 
       const tickets = ticketsResponse.tickets || [];
       
-      // Calculate stats
+      console.log('[DashboardScreen] Loading tickets:', {
+        totalTickets: tickets.length,
+        sampleStatuses: tickets.slice(0, 5).map((t: any) => ({ id: t.id, status: t.status })),
+      });
+      
+      // Calculate stats (case-insensitive comparison)
       const totalTickets = tickets.length;
-      const pendingTickets = tickets.filter((t: any) => 
-        t.status === 'pending' || t.status === 'in_progress'
-      ).length;
-      const completedTickets = tickets.filter((t: any) => 
-        t.status === 'completed'
-      ).length;
-      const cannotRepairedTickets = tickets.filter((t: any) => 
-        t.status === 'cannot_repaired'
-      ).length;
-      const outTickets = tickets.filter((t: any) => 
-        t.status === 'out'
-      ).length;
+      const pendingTickets = tickets.filter((t: any) => {
+        const status = (t.status || '').toLowerCase();
+        return status === 'pending' || status === 'in_progress';
+      }).length;
+      const completedTickets = tickets.filter((t: any) => {
+        const status = (t.status || '').toLowerCase();
+        return status === 'completed';
+      }).length;
+      const cannotRepairedTickets = tickets.filter((t: any) => {
+        const status = (t.status || '').toLowerCase();
+        return status === 'cannot_repaired';
+      }).length;
+      const outTickets = tickets.filter((t: any) => {
+        const status = (t.status || '').toLowerCase();
+        return status === 'out';
+      }).length;
       const totalRevenue = tickets
-        .filter((t: any) => t.status === 'completed')
+        .filter((t: any) => {
+          const status = (t.status || '').toLowerCase();
+          return status === 'completed';
+        })
         .reduce((sum: number, t: any) => sum + (parseFloat(t.price) || 0), 0);
+
+      console.log('[DashboardScreen] Calculated stats:', {
+        totalTickets,
+        pendingTickets,
+        completedTickets,
+        cannotRepairedTickets,
+        outTickets,
+        totalRevenue,
+      });
 
       setStats({
         totalTickets,
@@ -128,53 +183,111 @@ export default function DashboardScreen({ navigation }: any) {
         }
       >
         <View style={styles.statsContainer}>
-          <BlurView intensity={60} tint="dark" style={styles.statCard}>
-            <View style={[styles.statIconContainer, { backgroundColor: theme.colors.primary + '20' }]}>
-              <Ionicons name="document-text" size={28} color={theme.colors.primary} />
-            </View>
-            <Text style={styles.statValue}>{stats.totalTickets}</Text>
-            <Text style={styles.statLabel}>{t('dashboard.totalDevices')}</Text>
-          </BlurView>
+          <TouchableOpacity
+            style={styles.statCardWrapper}
+            onPress={() => navigation.navigate('DeviceList', {
+              filterType: 'all',
+              title: t('dashboard.totalDevices'),
+            })}
+            activeOpacity={0.7}
+          >
+            <BlurView intensity={60} tint="dark" style={styles.statCard}>
+              <View style={[styles.statIconContainer, { backgroundColor: theme.colors.primary + '20' }]}>
+                <Ionicons name="document-text" size={28} color={theme.colors.primary} />
+              </View>
+              <Text style={styles.statValue}>{stats.totalTickets}</Text>
+              <Text style={styles.statLabel}>{t('dashboard.totalDevices')}</Text>
+            </BlurView>
+          </TouchableOpacity>
 
-          <BlurView intensity={60} tint="dark" style={styles.statCard}>
-            <View style={[styles.statIconContainer, { backgroundColor: theme.colors.warning + '20' }]}>
-              <Ionicons name="time-outline" size={28} color={theme.colors.warning} />
-            </View>
-            <Text style={styles.statValue}>{stats.pendingTickets}</Text>
-            <Text style={styles.statLabel}>{t('dashboard.pending')}</Text>
-          </BlurView>
+          <TouchableOpacity
+            style={styles.statCardWrapper}
+            onPress={() => navigation.navigate('DeviceList', {
+              filterType: 'status',
+              filterValue: 'pending',
+              title: t('dashboard.pending'),
+            })}
+            activeOpacity={0.7}
+          >
+            <BlurView intensity={60} tint="dark" style={styles.statCard}>
+              <View style={[styles.statIconContainer, { backgroundColor: theme.colors.warning + '20' }]}>
+                <Ionicons name="time-outline" size={28} color={theme.colors.warning} />
+              </View>
+              <Text style={styles.statValue}>{stats.pendingTickets || 0}</Text>
+              <Text style={styles.statLabel}>{t('dashboard.pending')}</Text>
+            </BlurView>
+          </TouchableOpacity>
 
-          <BlurView intensity={60} tint="dark" style={styles.statCard}>
-            <View style={[styles.statIconContainer, { backgroundColor: theme.colors.success + '20' }]}>
-              <Ionicons name="checkmark-circle" size={28} color={theme.colors.success} />
-            </View>
-            <Text style={styles.statValue}>{stats.completedTickets}</Text>
-            <Text style={styles.statLabel}>{t('dashboard.completed')}</Text>
-          </BlurView>
+          <TouchableOpacity
+            style={styles.statCardWrapper}
+            onPress={() => navigation.navigate('DeviceList', {
+              filterType: 'status',
+              filterValue: 'completed',
+              title: t('dashboard.completed'),
+            })}
+            activeOpacity={0.7}
+          >
+            <BlurView intensity={60} tint="dark" style={styles.statCard}>
+              <View style={[styles.statIconContainer, { backgroundColor: theme.colors.success + '20' }]}>
+                <Ionicons name="checkmark-circle" size={28} color={theme.colors.success} />
+              </View>
+              <Text style={styles.statValue}>{stats.completedTickets || 0}</Text>
+              <Text style={styles.statLabel}>{t('dashboard.completed')}</Text>
+            </BlurView>
+          </TouchableOpacity>
 
-          <BlurView intensity={60} tint="dark" style={styles.statCard}>
-            <View style={[styles.statIconContainer, { backgroundColor: theme.colors.error + '20' }]}>
-              <Ionicons name="close-circle" size={28} color={theme.colors.error} />
-            </View>
-            <Text style={styles.statValue}>{stats.cannotRepairedTickets}</Text>
-            <Text style={styles.statLabel}>{t('dashboard.cannotRepaired')}</Text>
-          </BlurView>
+          <TouchableOpacity
+            style={styles.statCardWrapper}
+            onPress={() => navigation.navigate('DeviceList', {
+              filterType: 'status',
+              filterValue: 'cannot_repaired',
+              title: t('dashboard.cannotRepaired'),
+            })}
+            activeOpacity={0.7}
+          >
+            <BlurView intensity={60} tint="dark" style={styles.statCard}>
+              <View style={[styles.statIconContainer, { backgroundColor: theme.colors.error + '20' }]}>
+                <Ionicons name="close-circle" size={28} color={theme.colors.error} />
+              </View>
+              <Text style={styles.statValue}>{stats.cannotRepairedTickets || 0}</Text>
+              <Text style={styles.statLabel}>{t('dashboard.cannotRepaired')}</Text>
+            </BlurView>
+          </TouchableOpacity>
 
-          <BlurView intensity={60} tint="dark" style={styles.statCard}>
-            <View style={[styles.statIconContainer, { backgroundColor: theme.colors.secondary + '20' }]}>
-              <Ionicons name="exit-outline" size={28} color={theme.colors.secondary} />
-            </View>
-            <Text style={styles.statValue}>{stats.outTickets}</Text>
-            <Text style={styles.statLabel}>{t('dashboard.out')}</Text>
-          </BlurView>
+          <TouchableOpacity
+            style={styles.statCardWrapper}
+            onPress={() => navigation.navigate('DeviceList', {
+              filterType: 'status',
+              filterValue: 'out',
+              title: t('dashboard.out'),
+            })}
+            activeOpacity={0.7}
+          >
+            <BlurView intensity={60} tint="dark" style={styles.statCard}>
+              <View style={[styles.statIconContainer, { backgroundColor: theme.colors.secondary + '20' }]}>
+                <Ionicons name="exit-outline" size={28} color={theme.colors.secondary} />
+              </View>
+              <Text style={styles.statValue}>{stats.outTickets || 0}</Text>
+              <Text style={styles.statLabel}>{t('dashboard.out')}</Text>
+            </BlurView>
+          </TouchableOpacity>
 
-          <BlurView intensity={60} tint="dark" style={styles.statCard}>
-            <View style={[styles.statIconContainer, { backgroundColor: theme.colors.primary + '20' }]}>
-              <Ionicons name="cash" size={28} color={theme.colors.primary} />
-            </View>
-            <Text style={styles.statValue}>€{stats.totalRevenue.toFixed(2)}</Text>
-            <Text style={styles.statLabel}>{t('dashboard.revenue')}</Text>
-          </BlurView>
+          <TouchableOpacity
+            style={styles.statCardWrapper}
+            onPress={() => navigation.navigate('DeviceList', {
+              filterType: 'revenue',
+              title: t('dashboard.revenue'),
+            })}
+            activeOpacity={0.7}
+          >
+            <BlurView intensity={60} tint="dark" style={styles.statCard}>
+              <View style={[styles.statIconContainer, { backgroundColor: theme.colors.primary + '20' }]}>
+                <Ionicons name="cash" size={28} color={theme.colors.primary} />
+              </View>
+              <Text style={styles.statValue}>€{stats.totalRevenue.toFixed(2)}</Text>
+              <Text style={styles.statLabel}>{t('dashboard.revenue')}</Text>
+            </BlurView>
+          </TouchableOpacity>
         </View>
 
       <View style={styles.section}>
@@ -209,12 +322,7 @@ export default function DashboardScreen({ navigation }: any) {
                   style={[
                     styles.statusBadge,
                     {
-                      backgroundColor:
-                        ticket.status === 'completed'
-                          ? theme.colors.success + '20'
-                          : ticket.status === 'pending'
-                          ? theme.colors.warning + '20'
-                          : theme.colors.secondary + '20',
+                      backgroundColor: getStatusColor(ticket.status || 'pending') + '20',
                     },
                   ]}
                 >
@@ -222,16 +330,11 @@ export default function DashboardScreen({ navigation }: any) {
                     style={[
                       styles.statusText,
                       {
-                        color:
-                          ticket.status === 'completed'
-                            ? theme.colors.success
-                            : ticket.status === 'pending'
-                            ? theme.colors.warning
-                            : theme.colors.secondary,
+                        color: getStatusColor(ticket.status || 'pending'),
                       },
                     ]}
                   >
-                    {ticket.status || 'pending'}
+                    {getStatusTranslation(ticket.status || 'pending')}
                   </Text>
                 </View>
               </View>
@@ -308,8 +411,11 @@ const createStyles = (theme: any) =>
       marginBottom: 24,
       gap: 12,
     },
-    statCard: {
+    statCardWrapper: {
       width: '48%',
+    },
+    statCard: {
+      width: '100%',
       borderRadius: 20,
       padding: 20,
       alignItems: 'center',

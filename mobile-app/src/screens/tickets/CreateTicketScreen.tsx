@@ -14,8 +14,10 @@ import {
 } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { apiService } from '../../services/api';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Brand and Model data (same as website)
 const BRANDS_AND_MODELS: Record<string, string[]> = {
@@ -37,6 +39,38 @@ const BRANDS_AND_MODELS: Record<string, string[]> = {
 };
 
 const ALL_BRANDS = Object.keys(BRANDS_AND_MODELS);
+
+// Storage keys for custom brands and models
+const CUSTOM_BRANDS_KEY = '@custom_brands';
+const CUSTOM_MODELS_KEY = '@custom_models';
+
+// Load custom brands and models from storage
+const loadCustomData = async (): Promise<{ customBrands: string[], customModels: Record<string, string[]> }> => {
+  try {
+    const [customBrandsJson, customModelsJson] = await Promise.all([
+      AsyncStorage.getItem(CUSTOM_BRANDS_KEY),
+      AsyncStorage.getItem(CUSTOM_MODELS_KEY),
+    ]);
+    const customBrands = customBrandsJson ? JSON.parse(customBrandsJson) : [];
+    const customModels = customModelsJson ? JSON.parse(customModelsJson) : {};
+    return { customBrands, customModels };
+  } catch (error) {
+    console.error('Error loading custom data:', error);
+    return { customBrands: [], customModels: {} };
+  }
+};
+
+// Save custom brands and models to storage
+const saveCustomData = async (customBrands: string[], customModels: Record<string, string[]>) => {
+  try {
+    await Promise.all([
+      AsyncStorage.setItem(CUSTOM_BRANDS_KEY, JSON.stringify(customBrands)),
+      AsyncStorage.setItem(CUSTOM_MODELS_KEY, JSON.stringify(customModels)),
+    ]);
+  } catch (error) {
+    console.error('Error saving custom data:', error);
+  }
+};
 
 // Generate Client ID - starts from 0001
 const generateClientId = async (userId: string): Promise<string> => {
@@ -78,10 +112,14 @@ const getRepairNumberPreview = (): string => {
 export default function CreateTicketScreen({ navigation }: any) {
   const { user } = useAuth();
   const theme = useTheme();
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [generatingClientId, setGeneratingClientId] = useState(true);
   const [showBrandModal, setShowBrandModal] = useState(false);
   const [showModelModal, setShowModelModal] = useState(false);
+  const [customBrands, setCustomBrands] = useState<string[]>([]);
+  const [customModels, setCustomModels] = useState<Record<string, string[]>>({});
+  const [brandsAndModels, setBrandsAndModels] = useState<Record<string, string[]>>(BRANDS_AND_MODELS);
   const [formData, setFormData] = useState({
     customerName: '',
     contact: '',
@@ -110,6 +148,26 @@ export default function CreateTicketScreen({ navigation }: any) {
   });
 
   useEffect(() => {
+    // Load custom brands and models
+    loadCustomData().then(({ customBrands, customModels }) => {
+      setCustomBrands(customBrands);
+      setCustomModels(customModels);
+      
+      // Merge custom data with default brands and models
+      const merged = { ...BRANDS_AND_MODELS };
+      customBrands.forEach(brand => {
+        if (!merged[brand]) {
+          merged[brand] = customModels[brand] || [];
+        } else {
+          // Merge custom models with existing models
+          const existingModels = merged[brand] || [];
+          const customBrandModels = customModels[brand] || [];
+          merged[brand] = [...new Set([...existingModels, ...customBrandModels])];
+        }
+      });
+      setBrandsAndModels(merged);
+    });
+
     // Auto-generate Client ID on mount
     if (user?.id) {
       setGeneratingClientId(true);
@@ -129,19 +187,27 @@ export default function CreateTicketScreen({ navigation }: any) {
   const handleSubmit = async () => {
     // Validate required fields (matching website requirements)
     if (!formData.customerName || !formData.receivedBy) {
-      Alert.alert('Error', 'Customer Name and Received By are required fields');
+      Alert.alert(t('common.error'), t('form.requiredFields'));
       return;
     }
 
     // Validate IMEI if provided (must be exactly 15 digits)
     if (formData.imeiNo && formData.imeiNo.trim() !== '' && !/^\d{15}$/.test(formData.imeiNo)) {
-      Alert.alert('Error', 'IMEI must be exactly 15 digits (if provided)');
+      Alert.alert(t('common.error'), t('form.imeiValidation'));
       return;
     }
 
     setLoading(true);
     try {
-      await apiService.createTicket({
+      console.log('[CreateTicket] Submitting device creation...', {
+        userId: user?.id,
+        customerName: formData.customerName,
+        receivedBy: formData.receivedBy,
+        brand: formData.brand,
+        model: formData.model,
+      });
+
+      const ticketData = {
         userId: user?.id,
         clientId: formData.clientId || null, // Will be auto-generated on server if null
         customerName: formData.customerName,
@@ -168,12 +234,19 @@ export default function CreateTicketScreen({ navigation }: any) {
         price: parseFloat(formData.price) || 0,
         budget: formData.budget ? parseFloat(formData.budget) : null,
         status: 'PENDING',
-      });
-      Alert.alert('Success', 'Device created successfully', [
-        { text: 'OK', onPress: () => navigation.goBack() },
+      };
+
+      console.log('[CreateTicket] Sending data to API...', ticketData);
+      const result = await apiService.createTicket(ticketData);
+      console.log('[CreateTicket] Device created successfully:', result);
+      
+      Alert.alert(t('common.success'), t('form.deviceCreated'), [
+        { text: t('common.ok'), onPress: () => navigation.goBack() },
       ]);
     } catch (error: any) {
-      Alert.alert('Error', error.message || 'Failed to create device');
+      console.error('[CreateTicket] Error creating device:', error);
+      const errorMessage = error?.message || error?.toString() || t('form.createFailed');
+      Alert.alert(t('common.error'), errorMessage);
     } finally {
       setLoading(false);
     }
@@ -189,23 +262,23 @@ export default function CreateTicketScreen({ navigation }: any) {
       keyboardShouldPersistTaps="handled"
     >
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Customer Information</Text>
+        <Text style={styles.sectionTitle}>{t('form.customerInformation')}</Text>
         <FormInput
-          label="Customer Name *"
+          label={t('form.customerName') + ' *'}
           value={formData.customerName}
           onChangeText={(text) => setFormData({ ...formData, customerName: text })}
-          placeholder="Enter customer name"
+          placeholder={t('placeholder.customerName')}
         />
         <FormInput
-          label="Contact *"
+          label={t('form.contact') + ' *'}
           value={formData.contact}
           onChangeText={(text) => setFormData({ ...formData, contact: text })}
-          placeholder="Phone number"
+          placeholder={t('placeholder.contactNumber')}
           keyboardType="phone-pad"
         />
         <View style={{ marginBottom: theme.spacing.md }}>
           <Text style={{ fontSize: 14, color: theme.colors.textSecondary, marginBottom: theme.spacing.xs }}>
-            Client ID (Auto-generated)
+            {t('form.clientIdAuto')}
           </Text>
           <View style={styles.autoGeneratedField}>
             {generatingClientId ? (
@@ -218,7 +291,7 @@ export default function CreateTicketScreen({ navigation }: any) {
         </View>
         <View style={{ marginBottom: theme.spacing.md }}>
           <Text style={{ fontSize: 14, color: theme.colors.textSecondary, marginBottom: theme.spacing.xs }}>
-            Repair Number (Auto-generated)
+            {t('form.repairNumberAuto')}
           </Text>
           <View style={styles.autoGeneratedField}>
             <Text style={styles.autoGeneratedText}>{getRepairNumberPreview()}</Text>
@@ -226,50 +299,93 @@ export default function CreateTicketScreen({ navigation }: any) {
           </View>
         </View>
         <FormInput
-          label="Received By *"
+          label={t('form.receivedBy') + ' *'}
           value={formData.receivedBy}
           onChangeText={(text) => setFormData({ ...formData, receivedBy: text })}
-          placeholder="Enter your name"
+          placeholder={t('placeholder.receivedBy')}
         />
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Device Information</Text>
+        <Text style={styles.sectionTitle}>{t('form.deviceInformation')}</Text>
         <View style={{ marginBottom: theme.spacing.md }}>
           <Text style={{ fontSize: 14, color: theme.colors.textSecondary, marginBottom: theme.spacing.xs }}>
-            Brand *
+            {t('form.brand')} *
           </Text>
-          <TouchableOpacity
-            style={styles.dropdownButton}
-            onPress={() => setShowBrandModal(true)}
-          >
-            <Text style={[styles.dropdownText, !formData.brand && styles.dropdownPlaceholder]}>
-              {formData.brand || 'Select Brand'}
-            </Text>
-            <Ionicons name="chevron-down" size={20} color={theme.colors.textSecondary} />
-          </TouchableOpacity>
+          <View style={{ flexDirection: 'row', gap: 8 }}>
+            <TextInput
+              style={[styles.textInput, { flex: 1 }]}
+              value={formData.brand}
+              onChangeText={(text) => {
+                setFormData({ ...formData, brand: text, model: '' });
+                // Auto-add new brand if not exists
+                if (text && !brandsAndModels[text] && !customBrands.includes(text)) {
+                  const newCustomBrands = [...customBrands, text];
+                  const newCustomModels = { ...customModels, [text]: [] };
+                  setCustomBrands(newCustomBrands);
+                  setCustomModels(newCustomModels);
+                  setBrandsAndModels({ ...brandsAndModels, [text]: [] });
+                  saveCustomData(newCustomBrands, newCustomModels);
+                }
+              }}
+              placeholder={t('form.selectBrandOrType')}
+              placeholderTextColor={theme.colors.textSecondary}
+            />
+            <TouchableOpacity
+              style={styles.dropdownButtonSmall}
+              onPress={() => setShowBrandModal(true)}
+            >
+              <Ionicons name="list" size={20} color={theme.colors.primary} />
+            </TouchableOpacity>
+          </View>
         </View>
         <View style={{ marginBottom: theme.spacing.md }}>
           <Text style={{ fontSize: 14, color: theme.colors.textSecondary, marginBottom: theme.spacing.xs }}>
-            Model *
+            {t('form.model')} *
           </Text>
-          <TouchableOpacity
-            style={[styles.dropdownButton, !formData.brand && styles.dropdownButtonDisabled]}
-            onPress={() => formData.brand && setShowModelModal(true)}
-            disabled={!formData.brand}
-          >
-            <Text style={[styles.dropdownText, !formData.model && styles.dropdownPlaceholder]}>
-              {formData.model || (formData.brand ? 'Select Model' : 'Select Brand First')}
-            </Text>
-            <Ionicons 
-              name="chevron-down" 
-              size={20} 
-              color={formData.brand ? theme.colors.textSecondary : theme.colors.textSecondary + '60'} 
+          <View style={{ flexDirection: 'row', gap: 8 }}>
+            <TextInput
+              style={[styles.textInput, { flex: 1 }]}
+              value={formData.model}
+              onChangeText={(text) => {
+                setFormData({ ...formData, model: text });
+                // Auto-add new model to current brand if not exists
+                if (text && formData.brand) {
+                  const brandModels = brandsAndModels[formData.brand] || [];
+                  if (!brandModels.includes(text)) {
+                    const updatedModels = [...brandModels, text];
+                    const updatedBrandsAndModels = { ...brandsAndModels, [formData.brand]: updatedModels };
+                    setBrandsAndModels(updatedBrandsAndModels);
+                    
+                    // Save to custom models
+                    const newCustomModels = {
+                      ...customModels,
+                      [formData.brand]: [...(customModels[formData.brand] || []), text],
+                    };
+                    setCustomModels(newCustomModels);
+                    saveCustomData(customBrands, newCustomModels);
+                  }
+                }
+              }}
+              placeholder={formData.brand ? t('form.selectModelOrType') : t('form.selectBrandFirst')}
+              placeholderTextColor={theme.colors.textSecondary}
+              editable={!!formData.brand}
             />
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.dropdownButtonSmall, !formData.brand && styles.dropdownButtonDisabled]}
+              onPress={() => formData.brand && setShowModelModal(true)}
+              disabled={!formData.brand}
+            >
+              <Ionicons 
+                name="list" 
+                size={20} 
+                color={formData.brand ? theme.colors.primary : theme.colors.textSecondary + '60'} 
+              />
+            </TouchableOpacity>
+          </View>
         </View>
         <FormInput
-          label="IMEI Number"
+          label={t('form.imeiNumber')}
           value={formData.imeiNo}
           onChangeText={(text) => {
             const digitsOnly = text.replace(/\D/g, '');
@@ -277,24 +393,59 @@ export default function CreateTicketScreen({ navigation }: any) {
               setFormData({ ...formData, imeiNo: digitsOnly });
             }
           }}
-          placeholder="15-digit IMEI (optional)"
+          placeholder={t('form.imeiPlaceholder')}
           keyboardType="numeric"
           maxLength={15}
         />
         <FormInput
-          label="Serial Number"
+          label={t('form.serialNumber')}
           value={formData.serialNo}
           onChangeText={(text) => setFormData({ ...formData, serialNo: text })}
-          placeholder="Serial number"
+          placeholder={t('placeholder.serialNumber')}
         />
         <FormInput
-          label="Software Version"
+          label={t('form.softwareVersion')}
           value={formData.softwareVersion}
           onChangeText={(text) => setFormData({ ...formData, softwareVersion: text })}
-          placeholder="e.g., iOS 17.0, Android 14"
+          placeholder={t('placeholder.softwareVersion')}
+        />
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>{t('form.repairDetails')}</Text>
+        <FormInput
+          label={t('form.problemDescription')}
+          value={formData.problem}
+          onChangeText={(text) => setFormData({ ...formData, problem: text })}
+          placeholder={t('placeholder.problemDescription')}
+          multiline
+          numberOfLines={3}
+        />
+        <FormInput
+          label={t('form.condition')}
+          value={formData.condition}
+          onChangeText={(text) => setFormData({ ...formData, condition: text })}
+          placeholder={t('placeholder.condition')}
+        />
+        <FormInput
+          label={t('form.serviceName')}
+          value={formData.serviceName}
+          onChangeText={(text) => setFormData({ ...formData, serviceName: text })}
+          placeholder={t('placeholder.serviceName')}
+        />
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>{t('form.pricing')}</Text>
+        <FormInput
+          label={t('form.budget')}
+          value={formData.budget}
+          onChangeText={(text) => setFormData({ ...formData, budget: text })}
+          placeholder={t('placeholder.budget')}
+          keyboardType="decimal-pad"
         />
         <View style={styles.warrantyContainer}>
-          <Text style={styles.warrantyLabel}>Warranty</Text>
+          <Text style={styles.warrantyLabel}>{t('form.warranty')}</Text>
           <View style={styles.warrantyButtons}>
             <TouchableOpacity
               style={[
@@ -309,7 +460,7 @@ export default function CreateTicketScreen({ navigation }: any) {
                   formData.warranty === 'Without Warranty' && styles.warrantyButtonTextActive,
                 ]}
               >
-                Without Warranty
+                {t('form.withoutWarranty')}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -325,7 +476,7 @@ export default function CreateTicketScreen({ navigation }: any) {
                   formData.warranty === 'Warranty Until 30 days' && styles.warrantyButtonTextActive,
                 ]}
               >
-                30 Days
+                {t('form.warranty30Days')}
               </Text>
             </TouchableOpacity>
           </View>
@@ -333,101 +484,59 @@ export default function CreateTicketScreen({ navigation }: any) {
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Repair Details</Text>
-        <FormInput
-          label="Problem Description"
-          value={formData.problem}
-          onChangeText={(text) => setFormData({ ...formData, problem: text })}
-          placeholder="Describe the problem"
-          multiline
-          numberOfLines={3}
-        />
-        <FormInput
-          label="Condition"
-          value={formData.condition}
-          onChangeText={(text) => setFormData({ ...formData, condition: text })}
-          placeholder="Device condition"
-        />
-        <FormInput
-          label="Service Name"
-          value={formData.serviceName}
-          onChangeText={(text) => setFormData({ ...formData, serviceName: text })}
-          placeholder="Service required"
-        />
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Pricing</Text>
-        <FormInput
-          label="Price"
-          value={formData.price}
-          onChangeText={(text) => setFormData({ ...formData, price: text })}
-          placeholder="0.00"
-          keyboardType="decimal-pad"
-        />
-        <FormInput
-          label="Budget"
-          value={formData.budget}
-          onChangeText={(text) => setFormData({ ...formData, budget: text })}
-          placeholder="0.00"
-          keyboardType="decimal-pad"
-        />
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Accessories</Text>
+        <Text style={styles.sectionTitle}>{t('form.accessories')}</Text>
         <SwitchRow
-          label="Battery"
+          label={t('form.battery')}
           value={formData.battery}
           onValueChange={(value) => setFormData({ ...formData, battery: value })}
         />
         <SwitchRow
-          label="Charger"
+          label={t('form.charger')}
           value={formData.charger}
           onValueChange={(value) => setFormData({ ...formData, charger: value })}
         />
         <SwitchRow
-          label="SIM Card"
+          label={t('form.simCard')}
           value={formData.simCard}
           onValueChange={(value) => setFormData({ ...formData, simCard: value })}
         />
         <SwitchRow
-          label="SIM Tray"
+          label={t('form.simTray')}
           value={formData.simTray}
           onValueChange={(value) => setFormData({ ...formData, simTray: value })}
         />
         <SwitchRow
-          label="Memory Card"
+          label={t('form.memoryCard')}
           value={formData.memoryCard}
           onValueChange={(value) => setFormData({ ...formData, memoryCard: value })}
         />
         <SwitchRow
-          label="Water Damaged"
+          label={t('form.waterDamaged')}
           value={formData.waterDamaged}
           onValueChange={(value) => setFormData({ ...formData, waterDamaged: value })}
         />
         <SwitchRow
-          label="Loan Equipment"
+          label={t('form.loanEquipment')}
           value={formData.loanEquipment}
           onValueChange={(value) => setFormData({ ...formData, loanEquipment: value })}
         />
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Observations</Text>
+        <Text style={styles.sectionTitle}>{t('form.observations')}</Text>
         <FormInput
-          label="Equipment Observations"
+          label={t('form.equipmentObs')}
           value={formData.equipmentObs}
           onChangeText={(text) => setFormData({ ...formData, equipmentObs: text })}
-          placeholder="Equipment observations"
+          placeholder={t('placeholder.equipmentObservations')}
           multiline
           numberOfLines={3}
         />
         <FormInput
-          label="Repair Observations"
+          label={t('form.repairObs')}
           value={formData.repairObs}
           onChangeText={(text) => setFormData({ ...formData, repairObs: text })}
-          placeholder="Repair observations"
+          placeholder={t('placeholder.repairObservations')}
           multiline
           numberOfLines={3}
         />
@@ -441,7 +550,7 @@ export default function CreateTicketScreen({ navigation }: any) {
         {loading ? (
           <ActivityIndicator color="#ffffff" />
         ) : (
-          <Text style={styles.submitButtonText}>Create Device</Text>
+          <Text style={styles.submitButtonText}>{t('form.createDevice')}</Text>
         )}
       </TouchableOpacity>
 
@@ -455,13 +564,13 @@ export default function CreateTicketScreen({ navigation }: any) {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Select Brand</Text>
+              <Text style={styles.modalTitle}>{t('form.selectBrand')}</Text>
               <TouchableOpacity onPress={() => setShowBrandModal(false)}>
                 <Ionicons name="close" size={24} color={theme.colors.text} />
               </TouchableOpacity>
             </View>
             <FlatList
-              data={ALL_BRANDS}
+              data={Object.keys(brandsAndModels)}
               keyExtractor={(item) => item}
               renderItem={({ item }) => (
                 <TouchableOpacity
@@ -502,14 +611,14 @@ export default function CreateTicketScreen({ navigation }: any) {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Select Model</Text>
+              <Text style={styles.modalTitle}>{t('form.selectModel')}</Text>
               <TouchableOpacity onPress={() => setShowModelModal(false)}>
                 <Ionicons name="close" size={24} color={theme.colors.text} />
               </TouchableOpacity>
             </View>
-            {formData.brand && formData.brand !== 'Other' && BRANDS_AND_MODELS[formData.brand] ? (
+            {formData.brand && brandsAndModels[formData.brand] && brandsAndModels[formData.brand].length > 0 ? (
               <FlatList
-                data={BRANDS_AND_MODELS[formData.brand]}
+                data={brandsAndModels[formData.brand]}
                 keyExtractor={(item) => item}
                 renderItem={({ item }) => (
                   <TouchableOpacity
@@ -540,8 +649,8 @@ export default function CreateTicketScreen({ navigation }: any) {
               <View style={styles.modalEmpty}>
                 <Text style={styles.modalEmptyText}>
                   {formData.brand === 'Other' 
-                    ? 'Please enter model manually' 
-                    : 'No models available for this brand'}
+                    ? t('form.enterModelManually') 
+                    : t('form.noModelsAvailable')}
                 </Text>
               </View>
             )}
@@ -560,6 +669,8 @@ function FormInput({
   keyboardType,
   multiline,
   numberOfLines,
+  maxLength,
+  editable,
 }: {
   label: string;
   value: string;
@@ -568,6 +679,8 @@ function FormInput({
   keyboardType?: any;
   multiline?: boolean;
   numberOfLines?: number;
+  maxLength?: number;
+  editable?: boolean;
 }) {
   const theme = useTheme();
   return (
@@ -594,6 +707,8 @@ function FormInput({
         keyboardType={keyboardType}
         multiline={multiline}
         numberOfLines={numberOfLines}
+        maxLength={maxLength}
+        editable={editable}
       />
     </View>
   );
@@ -710,6 +825,16 @@ const createStyles = (theme: any) =>
       fontWeight: '600',
       fontFamily: 'monospace',
     },
+    textInput: {
+      backgroundColor: '#2a2a2a',
+      borderRadius: theme.borderRadius.md,
+      padding: theme.spacing.md,
+      color: theme.colors.text,
+      fontSize: 16,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      minHeight: 44,
+    },
     dropdownButton: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -720,6 +845,17 @@ const createStyles = (theme: any) =>
       borderWidth: 1,
       borderColor: theme.colors.border,
       minHeight: 44,
+    },
+    dropdownButtonSmall: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: '#2a2a2a',
+      borderRadius: theme.borderRadius.md,
+      padding: theme.spacing.md,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      width: 44,
+      height: 44,
     },
     dropdownButtonDisabled: {
       opacity: 0.5,

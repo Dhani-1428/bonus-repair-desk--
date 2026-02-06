@@ -127,7 +127,7 @@ export function PricingSection() {
               <ul className="space-y-4 mb-8">
                 <li className="flex items-center gap-3">
                   <Check className="w-5 h-5 text-[#e78a53] flex-shrink-0" />
-                  <span className="text-white/80 text-sm">Repair ticket management</span>
+                  <span className="text-white/80 text-sm">Repair device management</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <Check className="w-5 h-5 text-[#e78a53] flex-shrink-0" />

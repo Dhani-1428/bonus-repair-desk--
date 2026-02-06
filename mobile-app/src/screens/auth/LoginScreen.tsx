@@ -13,11 +13,13 @@ import {
 } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function LoginScreen({ navigation }: any) {
   const { login } = useAuth();
   const theme = useTheme();
+  const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -25,7 +27,7 @@ export default function LoginScreen({ navigation }: any) {
 
   const handleLogin = async () => {
     if (!email || !password) {
-      Alert.alert('Error', 'Please fill in all fields');
+      Alert.alert(t('common.error'), t('auth.fillAllFields'));
       return;
     }
 
@@ -34,7 +36,7 @@ export default function LoginScreen({ navigation }: any) {
       await login(email, password);
       // Navigation will be handled by AppNavigator based on auth state
     } catch (error: any) {
-      Alert.alert('Login Failed', error.message || 'Invalid credentials');
+      Alert.alert(t('auth.loginFailed'), error.message || t('auth.invalidCredentials'));
     } finally {
       setLoading(false);
     }
@@ -67,7 +69,7 @@ export default function LoginScreen({ navigation }: any) {
               <Ionicons name="mail-outline" size={20} color={theme.colors.textSecondary} style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
-                placeholder="your@email.com"
+                placeholder={t('auth.emailPlaceholder')}
                 placeholderTextColor={theme.colors.textSecondary}
                 value={email}
                 onChangeText={setEmail}
@@ -81,7 +83,7 @@ export default function LoginScreen({ navigation }: any) {
               <Ionicons name="lock-closed-outline" size={20} color={theme.colors.textSecondary} style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
-                placeholder="Enter your password"
+                placeholder={t('auth.passwordPlaceholder')}
                 placeholderTextColor={theme.colors.textSecondary}
                 value={password}
                 onChangeText={setPassword}
@@ -108,14 +110,14 @@ export default function LoginScreen({ navigation }: any) {
               {loading ? (
                 <ActivityIndicator color="#000000" />
               ) : (
-                <Text style={styles.buttonText}>Log in</Text>
+                <Text style={styles.buttonText}>{t('auth.login')}</Text>
               )}
             </TouchableOpacity>
 
             <View style={styles.registerContainer}>
-              <Text style={styles.registerText}>Don't have an account? </Text>
+              <Text style={styles.registerText}>{t('auth.noAccount')} </Text>
               <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-                <Text style={styles.registerLink}>Sign up</Text>
+                <Text style={styles.registerLink}>{t('auth.signUp')}</Text>
               </TouchableOpacity>
             </View>
           </View>

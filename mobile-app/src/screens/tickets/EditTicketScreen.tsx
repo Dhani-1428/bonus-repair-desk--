@@ -36,7 +36,6 @@ export default function EditTicketScreen() {
     serialNo: '',
     problem: '',
     condition: '',
-    price: '',
     budget: '',
     warranty: 'Without Warranty',
     battery: false,
@@ -73,7 +72,6 @@ export default function EditTicketScreen() {
         serialNo: ticket.serialNo || '',
         problem: ticket.problem || '',
         condition: ticket.condition || '',
-        price: ticket.price?.toString() || '',
         budget: ticket.budget?.toString() || '',
         warranty: ticket.warranty || 'Without Warranty',
         battery: ticket.battery ?? false,
@@ -89,7 +87,7 @@ export default function EditTicketScreen() {
       });
     } catch (error) {
       console.error('Error loading ticket:', error);
-      Alert.alert('Error', 'Failed to load device details');
+      Alert.alert(t('common.error'), t('error.loadDeviceFailed'));
     } finally {
       setLoading(false);
     }
@@ -97,12 +95,12 @@ export default function EditTicketScreen() {
 
   const handleSubmit = async () => {
     if (!formData.customerName || !formData.contact || !formData.brand || !formData.model) {
-      Alert.alert('Error', 'Please fill in all required fields');
+      Alert.alert(t('common.error'), t('common.fillRequiredFields'));
       return;
     }
 
     if (formData.imeiNo && formData.imeiNo.length !== 15) {
-      Alert.alert('Error', 'IMEI Number must be exactly 15 digits');
+      Alert.alert(t('common.error'), t('error.imei.exact'));
       return;
     }
 
@@ -119,7 +117,7 @@ export default function EditTicketScreen() {
         serialNo: formData.serialNo || null,
         problem: formData.problem,
         condition: formData.condition || null,
-        price: formData.price ? parseFloat(formData.price) : null,
+        price: null,
         budget: formData.budget ? parseFloat(formData.budget) : null,
         warranty: formData.warranty,
         battery: formData.battery,
@@ -127,16 +125,16 @@ export default function EditTicketScreen() {
         simCard: formData.simCard,
         memoryCard: formData.memoryCard,
         equipmentObs: formData.equipmentObs || null,
-        repairObs: formData.repairObs || null,
+        repairObs: formData.serviceName || null,
         serviceName: formData.serviceName,
       };
 
       await apiService.updateTicket(ticketId, updateData);
-      Alert.alert('Success', 'Device updated successfully', [
-        { text: 'OK', onPress: () => navigation.goBack() },
+      Alert.alert(t('common.success'), t('message.deviceUpdatedSuccess'), [
+        { text: t('common.ok'), onPress: () => navigation.goBack() },
       ]);
     } catch (error: any) {
-      Alert.alert('Error', error.message || 'Failed to update device');
+      Alert.alert(t('common.error'), error.message || t('error.updateDeviceFailed'));
     } finally {
       setSaving(false);
     }
@@ -160,44 +158,44 @@ export default function EditTicketScreen() {
       keyboardShouldPersistTaps="handled"
     >
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Customer Information</Text>
+        <Text style={styles.sectionTitle}>{t('form.customerInformation')}</Text>
         <FormInput
-          label="Customer Name *"
+          label={t('form.customerName') + ' *'}
           value={formData.customerName}
           onChangeText={(text) => setFormData({ ...formData, customerName: text })}
         />
         <FormInput
-          label="Contact *"
+          label={t('form.contact') + ' *'}
           value={formData.contact}
           onChangeText={(text) => setFormData({ ...formData, contact: text })}
           keyboardType="phone-pad"
         />
         <FormInput
-          label="Client ID"
+          label={t('form.clientId')}
           value={formData.clientId}
           onChangeText={(text) => setFormData({ ...formData, clientId: text })}
         />
         <FormInput
-          label="Received By"
+          label={t('form.receivedBy')}
           value={formData.receivedBy}
           onChangeText={(text) => setFormData({ ...formData, receivedBy: text })}
         />
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Device Information</Text>
+        <Text style={styles.sectionTitle}>{t('form.deviceInformation')}</Text>
         <FormInput
-          label="Brand *"
+          label={t('form.brand') + ' *'}
           value={formData.brand}
           onChangeText={(text) => setFormData({ ...formData, brand: text })}
         />
         <FormInput
-          label="Model *"
+          label={t('form.model') + ' *'}
           value={formData.model}
           onChangeText={(text) => setFormData({ ...formData, model: text })}
         />
         <FormInput
-          label="IMEI Number"
+          label={t('form.imeiNumber')}
           value={formData.imeiNo}
           onChangeText={(text) => {
             const digitsOnly = text.replace(/\D/g, '');
@@ -209,12 +207,47 @@ export default function EditTicketScreen() {
           maxLength={15}
         />
         <FormInput
-          label="Serial Number"
+          label={t('form.serialNumber')}
           value={formData.serialNo}
           onChangeText={(text) => setFormData({ ...formData, serialNo: text })}
         />
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>{t('form.repairDetails')}</Text>
+        <FormInput
+          label="On Arrival"
+          value={formData.equipmentObs}
+          onChangeText={(text) => setFormData({ ...formData, equipmentObs: text })}
+          multiline
+          numberOfLines={3}
+        />
+        <FormInput
+          label="Phone Issue"
+          value={formData.problem}
+          onChangeText={(text) => setFormData({ ...formData, problem: text })}
+          multiline
+          numberOfLines={3}
+        />
+        <FormInput
+          label="Service Done"
+          value={formData.serviceName}
+          onChangeText={(text) => setFormData({ ...formData, serviceName: text })}
+          multiline
+          numberOfLines={3}
+        />
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>{t('form.pricing')}</Text>
+        <FormInput
+          label={t('form.budget')}
+          value={formData.budget}
+          onChangeText={(text) => setFormData({ ...formData, budget: text })}
+          keyboardType="decimal-pad"
+        />
         <View style={styles.switchRow}>
-          <Text style={styles.switchLabel}>Warranty</Text>
+          <Text style={styles.switchLabel}>{t('form.warranty')}</Text>
           <View style={styles.warrantyButtons}>
             <TouchableOpacity
               style={[
@@ -229,7 +262,7 @@ export default function EditTicketScreen() {
                   formData.warranty === 'Without Warranty' && styles.warrantyButtonTextActive,
                 ]}
               >
-                Without Warranty
+                {t('form.withoutWarranty')}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -245,7 +278,7 @@ export default function EditTicketScreen() {
                   formData.warranty === 'Warranty Until 30 days' && styles.warrantyButtonTextActive,
                 ]}
               >
-                30 Days
+                {t('form.warranty30Days')}
               </Text>
             </TouchableOpacity>
           </View>
@@ -253,77 +286,24 @@ export default function EditTicketScreen() {
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Repair Details</Text>
-        <FormInput
-          label="Problem"
-          value={formData.problem}
-          onChangeText={(text) => setFormData({ ...formData, problem: text })}
-          multiline
-          numberOfLines={3}
-        />
-        <FormInput
-          label="Condition"
-          value={formData.condition}
-          onChangeText={(text) => setFormData({ ...formData, condition: text })}
-          multiline
-          numberOfLines={2}
-        />
-        <FormInput
-          label="Service Name"
-          value={formData.serviceName}
-          onChangeText={(text) => setFormData({ ...formData, serviceName: text })}
-        />
-        <FormInput
-          label="Equipment Observations"
-          value={formData.equipmentObs}
-          onChangeText={(text) => setFormData({ ...formData, equipmentObs: text })}
-          multiline
-          numberOfLines={3}
-        />
-        <FormInput
-          label="Repair Observations"
-          value={formData.repairObs}
-          onChangeText={(text) => setFormData({ ...formData, repairObs: text })}
-          multiline
-          numberOfLines={3}
-        />
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Pricing</Text>
-        <FormInput
-          label="Price"
-          value={formData.price}
-          onChangeText={(text) => setFormData({ ...formData, price: text })}
-          keyboardType="decimal-pad"
-        />
-        <FormInput
-          label="Budget"
-          value={formData.budget}
-          onChangeText={(text) => setFormData({ ...formData, budget: text })}
-          keyboardType="decimal-pad"
-        />
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Accessories</Text>
+        <Text style={styles.sectionTitle}>{t('form.accessories')}</Text>
         <SwitchRow
-          label="Battery"
+          label={t('form.battery')}
           value={formData.battery}
           onValueChange={(value) => setFormData({ ...formData, battery: value })}
         />
         <SwitchRow
-          label="Charger"
+          label={t('form.charger')}
           value={formData.charger}
           onValueChange={(value) => setFormData({ ...formData, charger: value })}
         />
         <SwitchRow
-          label="SIM Card"
+          label={t('form.simCard')}
           value={formData.simCard}
           onValueChange={(value) => setFormData({ ...formData, simCard: value })}
         />
         <SwitchRow
-          label="Memory Card"
+          label={t('form.memoryCard')}
           value={formData.memoryCard}
           onValueChange={(value) => setFormData({ ...formData, memoryCard: value })}
         />

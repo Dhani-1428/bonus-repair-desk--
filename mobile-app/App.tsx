@@ -20,11 +20,12 @@ import AnalyticsScreen from './src/screens/analytics/AnalyticsScreen';
 import BuySubscriptionScreen from './src/screens/subscription/BuySubscriptionScreen';
 import TrashScreen from './src/screens/trash/TrashScreen';
 import EditTicketScreen from './src/screens/tickets/EditTicketScreen';
+import DeviceListScreen from './src/screens/dashboard/DeviceListScreen';
 
 // Context
 import { AuthProvider, useAuth } from './src/context/AuthContext';
 import { ThemeProvider } from './src/context/ThemeContext';
-import { LanguageProvider } from './src/context/LanguageContext';
+import { LanguageProvider, useLanguage } from './src/context/LanguageContext';
 
 // Types
 export type RootStackParamList = {
@@ -42,6 +43,7 @@ export type RootStackParamList = {
   Analytics: undefined;
   Subscription: undefined;
   Trash: undefined;
+  DeviceList: { filterType: string; filterValue?: string; title: string };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -49,6 +51,8 @@ const Tab = createBottomTabNavigator();
 
 // Main Tab Navigator
 function MainTabs() {
+  const { t } = useLanguage();
+  
   return (
     <Tab.Navigator
       screenOptions={({ route }: { route: any }) => ({
@@ -83,11 +87,11 @@ function MainTabs() {
         },
         tabBarLabel: ({ children }: { children: string }) => {
           const labelMap: Record<string, string> = {
-            'Dashboard': 'Home',
-            'Tickets': 'Devices',
-            'Subscription': 'Subscription',
-            'Analytics': 'Analytics',
-            'Settings': 'Settings',
+            'Dashboard': t('nav.home'),
+            'Tickets': t('nav.devices'),
+            'Subscription': t('nav.subscription'),
+            'Analytics': t('nav.analytics'),
+            'Settings': t('nav.settings'),
           };
           return labelMap[children] || children;
         },
@@ -128,27 +132,42 @@ function MainTabs() {
       <Tab.Screen 
         name="Dashboard" 
         component={DashboardScreen}
-        options={{ tabBarLabel: 'Home' }}
+        options={() => ({ 
+          tabBarLabel: t('nav.home'),
+          title: t('nav.home'),
+        })}
       />
       <Tab.Screen 
         name="Tickets" 
         component={TicketsScreen}
-        options={{ tabBarLabel: 'Devices' }}
+        options={() => ({ 
+          tabBarLabel: t('nav.devices'),
+          title: t('page.tickets.title'),
+        })}
       />
       <Tab.Screen 
         name="Subscription" 
         component={BuySubscriptionScreen}
-        options={{ tabBarLabel: 'Subscription' }}
+        options={() => ({ 
+          tabBarLabel: t('nav.subscription'),
+          title: t('page.subscription.title'),
+        })}
       />
       <Tab.Screen 
         name="Analytics" 
         component={AnalyticsScreen}
-        options={{ tabBarLabel: 'Analytics' }}
+        options={() => ({ 
+          tabBarLabel: t('nav.analytics'),
+          title: t('page.analytics.title'),
+        })}
       />
       <Tab.Screen 
         name="Settings" 
         component={SettingsScreen}
-        options={{ tabBarLabel: 'Settings' }}
+        options={() => ({ 
+          tabBarLabel: t('nav.settings'),
+          title: t('page.settings.title'),
+        })}
       />
     </Tab.Navigator>
   );
@@ -156,6 +175,8 @@ function MainTabs() {
 
 // Auth Stack
 function AuthStack() {
+  const { t } = useLanguage();
+  
   return (
     <Stack.Navigator
       screenOptions={{
@@ -182,7 +203,7 @@ function AuthStack() {
       <Stack.Screen 
         name="Register" 
         component={RegisterScreen}
-        options={{ title: 'Create Account' }}
+        options={{ title: t('auth.createAccount') }}
       />
     </Stack.Navigator>
   );
@@ -191,6 +212,7 @@ function AuthStack() {
 // Main App Navigator
 function AppNavigator() {
   const { user, loading } = useAuth();
+  const { t } = useLanguage();
 
   if (loading) {
     return (
@@ -222,22 +244,27 @@ function AppNavigator() {
           <Stack.Screen 
             name="TicketDetail" 
             component={TicketDetailScreen}
-            options={{ title: 'Device Details' }}
+            options={() => ({ title: t('ticket.details') })}
           />
           <Stack.Screen
                 name="CreateTicket" 
                 component={CreateTicketScreen}
-                options={{ title: 'New Device' }}
+                options={() => ({ title: t('form.createDevice') })}
               />
               <Stack.Screen
                 name="EditTicket" 
                 component={EditTicketScreen}
-                options={{ title: 'Edit Device' }}
+                options={() => ({ title: t('ticket.edit') })}
               />
                <Stack.Screen 
                  name="Subscription" 
                  component={BuySubscriptionScreen}
-                 options={{ title: 'Subscription' }}
+                 options={() => ({ title: t('page.subscription.title') })}
+               />
+               <Stack.Screen 
+                 name="DeviceList" 
+                 component={DeviceListScreen}
+                 options={({ route }: any) => ({ title: route.params?.title || t('dashboard.totalDevices') })}
                />
         </>
       ) : (

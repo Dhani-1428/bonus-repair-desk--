@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { apiService } from '../../services/api';
 import { printTicket } from '../../services/printService';
 import { Ionicons } from '@expo/vector-icons';
@@ -21,6 +22,7 @@ import { BlurView } from 'expo-blur';
 export default function TicketsScreen({ navigation }: any) {
   const { user } = useAuth();
   const theme = useTheme();
+  const { t } = useLanguage();
   const [tickets, setTickets] = useState<any[]>([]);
   const [filteredTickets, setFilteredTickets] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -39,7 +41,7 @@ export default function TicketsScreen({ navigation }: any) {
       await printTicket(ticket);
     } catch (error: any) {
       console.error('Error printing:', error);
-      Alert.alert('Print Error', error.message || 'Failed to print receipt');
+      Alert.alert(t('common.error'), error.message || t('common.printFailed'));
     } finally {
       setPrinting(null);
     }
@@ -58,7 +60,7 @@ export default function TicketsScreen({ navigation }: any) {
       setTickets(ticketsData);
     } catch (error) {
       console.error('Error loading tickets:', error);
-      Alert.alert('Error', 'Failed to load tickets');
+      Alert.alert(t('common.error'), t('error.loadTicketsFailed') || 'Failed to load tickets');
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -80,9 +82,17 @@ export default function TicketsScreen({ navigation }: any) {
       );
     }
 
-    // Filter by status
+    // Filter by status (case-insensitive)
     if (filterStatus) {
-      filtered = filtered.filter((ticket) => ticket.status === filterStatus);
+      filtered = filtered.filter((ticket) => {
+        const ticketStatus = (ticket.status || '').toLowerCase();
+        const filterStatusLower = filterStatus.toLowerCase();
+
+        if (filterStatusLower === 'pending') {
+          return ticketStatus === 'pending' || ticketStatus === 'in_progress';
+        }
+        return ticketStatus === filterStatusLower;
+      });
     }
 
     setFilteredTickets(filtered);
@@ -93,21 +103,46 @@ export default function TicketsScreen({ navigation }: any) {
     loadTickets();
   };
 
+  const getStatusTranslation = (status: string) => {
+    const statusMap: Record<string, string> = {
+      'pending': 'ticket.status.pending',
+      'in_progress': 'ticket.status.in_progress',
+      'completed': 'ticket.status.completed',
+      'cannot_repaired': 'ticket.status.cannot_repaired',
+      'out': 'ticket.status.out',
+    };
+    return t(statusMap[status?.toLowerCase()] || 'ticket.status.pending');
+  };
+
+  const getStatusColor = (status: string) => {
+    const statusLower = status?.toLowerCase();
+    if (statusLower === 'completed') {
+      return theme.colors.success;
+    } else if (statusLower === 'pending' || statusLower === 'in_progress') {
+      return theme.colors.warning;
+    } else if (statusLower === 'cannot_repaired') {
+      return theme.colors.error;
+    } else if (statusLower === 'out') {
+      return theme.colors.secondary;
+    }
+    return theme.colors.warning;
+  };
+
   const handleDelete = (ticketId: string) => {
     Alert.alert(
-      'Delete Device',
-      'Are you sure you want to delete this device?',
+      t('ticket.delete'),
+      t('common.deleteConfirmation'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Delete',
+          text: t('common.delete'),
           style: 'destructive',
           onPress: async () => {
             try {
               await apiService.deleteTicket(ticketId);
               loadTickets();
             } catch (error: any) {
-              Alert.alert('Error', error.message || 'Failed to delete device');
+              Alert.alert(t('common.error'), error.message || t('common.deleteFailed'));
             }
           },
         },
@@ -131,7 +166,7 @@ export default function TicketsScreen({ navigation }: any) {
         <Ionicons name="search" size={20} color={theme.colors.textSecondary} style={styles.searchIcon} />
         <TextInput
           style={styles.searchInput}
-          placeholder="Search devices..."
+          placeholder={t('tickets.searchPlaceholder')}
           placeholderTextColor={theme.colors.textSecondary}
           value={searchQuery}
           onChangeText={setSearchQuery}
@@ -148,25 +183,49 @@ export default function TicketsScreen({ navigation }: any) {
           style={[styles.filterButton, filterStatus === null && styles.filterButtonActive]}
           onPress={() => setFilterStatus(null)}
         >
-          <Text style={[styles.filterText, filterStatus === null && styles.filterTextActive]}>All</Text>
+          <Text style={[styles.filterText, filterStatus === null && styles.filterTextActive]}>
+            {t('tickets.filterAll')}
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.filterButton, filterStatus === 'pending' && styles.filterButtonActive]}
           onPress={() => setFilterStatus('pending')}
         >
-          <Text style={[styles.filterText, filterStatus === 'pending' && styles.filterTextActive]}>Pending</Text>
+          <Text style={[styles.filterText, filterStatus === 'pending' && styles.filterTextActive]}>
+            {getStatusTranslation('pending')}
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.filterButton, filterStatus === 'in_progress' && styles.filterButtonActive]}
           onPress={() => setFilterStatus('in_progress')}
         >
-          <Text style={[styles.filterText, filterStatus === 'in_progress' && styles.filterTextActive]}>In Progress</Text>
+          <Text style={[styles.filterText, filterStatus === 'in_progress' && styles.filterTextActive]}>
+            {getStatusTranslation('in_progress')}
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.filterButton, filterStatus === 'completed' && styles.filterButtonActive]}
           onPress={() => setFilterStatus('completed')}
         >
-          <Text style={[styles.filterText, filterStatus === 'completed' && styles.filterTextActive]}>Completed</Text>
+          <Text style={[styles.filterText, filterStatus === 'completed' && styles.filterTextActive]}>
+            {getStatusTranslation('completed')}
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.filterButton, filterStatus === 'cannot_repaired' && styles.filterButtonActive]}
+          onPress={() => setFilterStatus('cannot_repaired')}
+        >
+          <Text style={[styles.filterText, filterStatus === 'cannot_repaired' && styles.filterTextActive]}>
+            {getStatusTranslation('cannot_repaired')}
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.filterButton, filterStatus === 'out' && styles.filterButtonActive]}
+          onPress={() => setFilterStatus('out')}
+        >
+          <Text style={[styles.filterText, filterStatus === 'out' && styles.filterTextActive]}>
+            {getStatusTranslation('out')}
+          </Text>
         </TouchableOpacity>
       </View>
 
@@ -192,12 +251,7 @@ export default function TicketsScreen({ navigation }: any) {
                   style={[
                     styles.statusBadge,
                     {
-                      backgroundColor:
-                        item.status === 'completed'
-                          ? theme.colors.success + '20'
-                          : item.status === 'pending'
-                          ? theme.colors.warning + '20'
-                          : theme.colors.secondary + '20',
+                      backgroundColor: getStatusColor(item.status || 'pending') + '20',
                     },
                   ]}
                 >
@@ -205,27 +259,38 @@ export default function TicketsScreen({ navigation }: any) {
                     style={[
                       styles.statusText,
                       {
-                        color:
-                          item.status === 'completed'
-                            ? theme.colors.success
-                            : item.status === 'pending'
-                            ? theme.colors.warning
-                            : theme.colors.secondary,
+                        color: getStatusColor(item.status || 'pending'),
                       },
                     ]}
                   >
-                    {item.status || 'pending'}
+                    {getStatusTranslation(item.status || 'pending')}
                   </Text>
                 </View>
               </View>
             <Text style={styles.ticketDevice} numberOfLines={1} ellipsizeMode="tail">
               {item.brand} {item.model}
             </Text>
+            {item.problem && (
+              <View style={styles.ticketField}>
+                <Text style={styles.ticketFieldLabel}>Phone Issue:</Text>
+                <Text style={styles.ticketFieldValue} numberOfLines={2} ellipsizeMode="tail">
+                  {item.problem}
+                </Text>
+              </View>
+            )}
+            {(item.repairObs || item.serviceName || (Array.isArray(item.selectedServices) && item.selectedServices.length > 0)) && (
+              <View style={styles.ticketField}>
+                <Text style={styles.ticketFieldLabel}>Service Done:</Text>
+                <Text style={styles.ticketFieldValue} numberOfLines={2} ellipsizeMode="tail">
+                  {item.repairObs || item.serviceName || (Array.isArray(item.selectedServices) ? item.selectedServices.join(', ') : '')}
+                </Text>
+              </View>
+            )}
               <View style={styles.ticketFooter}>
                 <Text style={styles.ticketDate}>
                   {format(new Date(item.createdAt), 'MMM dd, yyyy')}
                 </Text>
-                <Text style={styles.ticketPrice}>€{parseFloat(item.price || 0).toFixed(2)}</Text>
+                <Text style={styles.ticketPrice}>€{parseFloat(item.budget || item.price || 0).toFixed(2)}</Text>
               </View>
             </TouchableOpacity>
             <TouchableOpacity
@@ -239,7 +304,7 @@ export default function TicketsScreen({ navigation }: any) {
               {printing === item.id ? (
                 <ActivityIndicator size="small" color={theme.colors.primary} />
               ) : (
-                <Ionicons name="print-outline" size={20} color={theme.colors.primary} />
+                <Ionicons name="print-outline" size={24} color={theme.colors.primary} style={{ fontWeight: 'bold' }} />
               )}
             </TouchableOpacity>
           </View>
@@ -247,7 +312,7 @@ export default function TicketsScreen({ navigation }: any) {
         ListEmptyComponent={
           <View style={styles.emptyState}>
             <Ionicons name="document-outline" size={48} color={theme.colors.textSecondary} />
-            <Text style={styles.emptyText}>No devices found</Text>
+            <Text style={styles.emptyText}>{t('tickets.noDevicesFound')}</Text>
           </View>
         }
         refreshControl={
@@ -302,15 +367,22 @@ const createStyles = (theme: any) =>
       flexDirection: 'row',
       paddingHorizontal: 20,
       marginBottom: theme.spacing.sm,
+      flexWrap: 'wrap',
+      gap: 6,
+      rowGap: 6,
     },
     filterButton: {
-      paddingHorizontal: theme.spacing.md,
-      paddingVertical: theme.spacing.sm,
-      borderRadius: theme.borderRadius.md,
-      marginRight: theme.spacing.sm,
+      paddingHorizontal: 10,
+      paddingVertical: 6,
+      borderRadius: 8,
       backgroundColor: theme.colors.surface,
       borderWidth: 1,
       borderColor: theme.colors.border,
+      minHeight: 32,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: 0,
+      marginBottom: 0,
     },
     filterButtonActive: {
       backgroundColor: theme.colors.primary,
@@ -318,7 +390,7 @@ const createStyles = (theme: any) =>
     },
     filterText: {
       color: theme.colors.textSecondary,
-      fontSize: 14,
+      fontSize: 12,
       fontWeight: '500',
     },
     filterTextActive: {
@@ -349,6 +421,8 @@ const createStyles = (theme: any) =>
       borderLeftWidth: 1,
       borderLeftColor: theme.colors.border,
       backgroundColor: theme.colors.surface,
+      minWidth: 50,
+      minHeight: 50,
     },
     ticketHeader: {
       flexDirection: 'row',
@@ -384,6 +458,20 @@ const createStyles = (theme: any) =>
       color: theme.colors.text,
       marginBottom: theme.spacing.sm,
       fontWeight: '500',
+    },
+    ticketField: {
+      marginBottom: theme.spacing.xs,
+    },
+    ticketFieldLabel: {
+      fontSize: 11,
+      color: theme.colors.textSecondary,
+      fontWeight: '600',
+      marginBottom: 2,
+    },
+    ticketFieldValue: {
+      fontSize: 12,
+      color: theme.colors.text,
+      lineHeight: 16,
     },
     ticketFooter: {
       flexDirection: 'row',

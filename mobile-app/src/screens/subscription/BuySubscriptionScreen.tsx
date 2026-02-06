@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -11,42 +11,43 @@ import {
 } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { apiService } from '../../services/api';
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { useNavigation } from '@react-navigation/native';
 
-const PLANS = [
+const getPlans = (t: (key: string) => string) => [
   {
     id: 'SIX_MONTH',
-    name: 'Professional',
+    name: t('subscription.plan.professional'),
     price: 100,
     months: 6,
-    period: '6 Months',
+    period: t('subscription.plan.6months'),
     popular: true,
     features: [
-      'Everything in Starter',
-      'Advanced Analytics',
-      'Priority Support',
-      'Custom Reports',
-      'API Access',
-      'Data Export',
+      t('subscription.feature.everythingStarter'),
+      t('subscription.feature.advancedAnalytics'),
+      t('subscription.feature.prioritySupport'),
+      t('subscription.feature.customReports'),
+      t('subscription.feature.apiAccess'),
+      t('subscription.feature.dataExport'),
     ],
   },
   {
     id: 'TWELVE_MONTH',
-    name: 'Enterprise',
+    name: t('subscription.plan.enterprise'),
     price: 150,
     months: 12,
-    period: '12 Months',
+    period: t('subscription.plan.12months'),
     popular: false,
     features: [
-      'Everything in Professional',
-      'Unlimited Tickets',
-      'Dedicated Support',
-      'Custom Integrations',
-      'White Label Options',
-      'Advanced Security',
+      t('subscription.feature.everythingProfessional'),
+      t('subscription.feature.unlimitedTickets'),
+      t('subscription.feature.dedicatedSupport'),
+      t('subscription.feature.customIntegrations'),
+      t('subscription.feature.whiteLabel'),
+      t('subscription.feature.advancedSecurity'),
     ],
   },
 ];
@@ -54,11 +55,15 @@ const PLANS = [
 export default function BuySubscriptionScreen() {
   const { user } = useAuth();
   const theme = useTheme();
+  const { t, language } = useLanguage();
   const navigation = useNavigation();
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [subscription, setSubscription] = useState<any>(null);
+  
+  // Recalculate plans when language changes
+  const PLANS = useMemo(() => getPlans(t), [t, language]);
 
   useEffect(() => {
     loadSubscription();
@@ -106,11 +111,11 @@ export default function BuySubscriptionScreen() {
       });
 
       Alert.alert(
-        'Payment Submitted',
-        'Your payment request has been submitted. Your subscription will be activated after admin approval.',
+        t('subscription.paymentSubmitted'),
+        t('subscription.paymentSubmittedMessage'),
         [
           {
-            text: 'OK',
+            text: t('common.ok'),
             onPress: () => {
               setShowPaymentModal(false);
               setSelectedPlan(null);
@@ -120,7 +125,7 @@ export default function BuySubscriptionScreen() {
         ]
       );
     } catch (error: any) {
-      Alert.alert('Error', error.message || 'Failed to submit payment');
+      Alert.alert(t('common.error'), error.message || t('subscription.paymentFailed'));
     } finally {
       setLoading(false);
     }
@@ -134,8 +139,8 @@ export default function BuySubscriptionScreen() {
       <BlurView intensity={80} tint="dark" style={styles.blurHeader}>
         <View style={styles.header}>
           <View>
-            <Text style={styles.title}>Subscription</Text>
-            <Text style={styles.subtitle}>Choose your plan</Text>
+            <Text style={styles.title}>{t('page.subscription.title')}</Text>
+            <Text style={styles.subtitle}>{t('page.subscription.subtitle')}</Text>
           </View>
           <Ionicons name="card-outline" size={32} color={theme.colors.primary} />
         </View>
@@ -151,24 +156,24 @@ export default function BuySubscriptionScreen() {
           <BlurView intensity={60} tint="dark" style={styles.currentSubscriptionCard}>
             <View style={styles.currentSubscriptionHeader}>
               <Ionicons name="checkmark-circle" size={24} color={theme.colors.success} />
-              <Text style={styles.currentSubscriptionTitle}>Current Subscription</Text>
+              <Text style={styles.currentSubscriptionTitle}>{t('subscription.current')}</Text>
             </View>
             <Text style={styles.currentSubscriptionPlan}>
               {subscription.planName || subscription.plan}
             </Text>
             <Text style={styles.currentSubscriptionStatus}>
-              Status: {subscription.status || 'Active'}
+              {t('common.status')}: {subscription.status || t('subscription.active')}
             </Text>
           </BlurView>
         )}
 
-        <Text style={styles.sectionTitle}>Available Plans</Text>
+        <Text style={styles.sectionTitle}>{t('subscription.availablePlans')}</Text>
 
         {PLANS.map((plan) => (
           <BlurView key={plan.id} intensity={60} tint="dark" style={styles.planCard}>
             {plan.popular && (
               <View style={styles.popularBadge}>
-                <Text style={styles.popularText}>Most Popular</Text>
+                <Text style={styles.popularText}>{t('subscription.mostPopular')}</Text>
               </View>
             )}
 
@@ -199,7 +204,7 @@ export default function BuySubscriptionScreen() {
               ]}
               onPress={() => handleSelectPlan(plan.id)}
             >
-              <Text style={styles.subscribeButtonText}>Subscribe Now</Text>
+              <Text style={styles.subscribeButtonText}>{t('subscription.subscribeNow')}</Text>
               <Ionicons name="arrow-forward" size={20} color="#fff" />
             </TouchableOpacity>
           </BlurView>
@@ -216,7 +221,7 @@ export default function BuySubscriptionScreen() {
         <BlurView intensity={80} tint="dark" style={styles.modalOverlay}>
           <BlurView intensity={100} tint="dark" style={styles.modalContent}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>MBWay Payment</Text>
+              <Text style={styles.modalTitle}>{t('subscription.mbwayPayment')}</Text>
               <TouchableOpacity onPress={() => setShowPaymentModal(false)}>
                 <Ionicons name="close" size={24} color={theme.colors.text} />
               </TouchableOpacity>
@@ -228,7 +233,7 @@ export default function BuySubscriptionScreen() {
                   <View style={styles.paymentRow}>
                     <Ionicons name="phone-portrait-outline" size={20} color={theme.colors.primary} />
                     <View style={styles.paymentRowContent}>
-                      <Text style={styles.paymentLabel}>MBWay Number</Text>
+                      <Text style={styles.paymentLabel}>{t('subscription.mbwayNumber')}</Text>
                       <Text style={styles.paymentValue}>+351920306889</Text>
                     </View>
                   </View>
@@ -236,7 +241,7 @@ export default function BuySubscriptionScreen() {
                   <View style={styles.paymentRow}>
                     <Ionicons name="person-outline" size={20} color={theme.colors.primary} />
                     <View style={styles.paymentRowContent}>
-                      <Text style={styles.paymentLabel}>Recipient Name</Text>
+                      <Text style={styles.paymentLabel}>{t('subscription.recipientName')}</Text>
                       <Text style={styles.paymentValue}>Sheetal Sheetal</Text>
                     </View>
                   </View>
@@ -244,7 +249,7 @@ export default function BuySubscriptionScreen() {
                   <View style={styles.paymentRow}>
                     <Ionicons name="cash-outline" size={20} color={theme.colors.primary} />
                     <View style={styles.paymentRowContent}>
-                      <Text style={styles.paymentLabel}>Amount</Text>
+                      <Text style={styles.paymentLabel}>{t('subscription.amount')}</Text>
                       <Text style={styles.paymentValueAmount}>€{selectedPlanData.price}</Text>
                     </View>
                   </View>
@@ -253,7 +258,7 @@ export default function BuySubscriptionScreen() {
                 <View style={styles.modalWarning}>
                   <Ionicons name="information-circle-outline" size={20} color={theme.colors.warning} />
                   <Text style={styles.modalWarningText}>
-                    After sending payment, click "Confirm Payment". Your subscription will be activated after admin approval.
+                    {t('subscription.paymentWarning')}
                   </Text>
                 </View>
 
@@ -262,7 +267,7 @@ export default function BuySubscriptionScreen() {
                     style={styles.modalCancelButton}
                     onPress={() => setShowPaymentModal(false)}
                   >
-                    <Text style={styles.modalCancelText}>Cancel</Text>
+                    <Text style={styles.modalCancelText}>{t('common.cancel')}</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.modalConfirmButton}
@@ -273,7 +278,7 @@ export default function BuySubscriptionScreen() {
                       <ActivityIndicator color="#fff" />
                     ) : (
                       <>
-                        <Text style={styles.modalConfirmText}>Confirm Payment</Text>
+                        <Text style={styles.modalConfirmText}>{t('subscription.confirmPayment')}</Text>
                         <Ionicons name="checkmark-circle" size={20} color="#fff" />
                       </>
                     )}

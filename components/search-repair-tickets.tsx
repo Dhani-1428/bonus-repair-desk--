@@ -558,7 +558,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
         })(),
         condition: editFormData.condition || null,
         problem: editFormData.problem || null,
-        price: editFormData.price ? Number.parseFloat(editFormData.price) : null,
+        price: null,
         budget: editFormData.budget ? Number.parseFloat(editFormData.budget) : null,
         status: editFormData.status || "pending",
       }
@@ -881,8 +881,8 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                     <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[10%]">{t("table.contact")}</th>
                     <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[12%]">{t("table.model")}</th>
                     <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[11%]">{t("table.imei")}</th>
-                    <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[11%]">Problem</th>
-                    <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[11%]">{t("table.service")}</th>
+                    <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[11%]">Phone Issue</th>
+                    <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[11%]">Service Done</th>
                     <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[9%]">{t("table.status")}</th>
                     <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[8%]">{t("table.price")}</th>
                     <th className="px-1 py-1.5 text-center text-[10px] font-semibold text-black uppercase tracking-wider w-[5%]">{t("table.action")}</th>
@@ -926,7 +926,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                           {ticket.imeiNo || "-"}
                         </td>
                         <td className="border-r border-blue-300 px-1 py-1.5 text-[11px] text-black break-words">
-                          {ticket.equipmentObs || "-"}
+                          {ticket.problem || "-"}
                         </td>
                         <td className="border-r border-blue-300 px-1 py-1.5 text-[11px] text-black break-words">
                           {ticket.repairObs || (() => {
@@ -988,11 +988,11 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                                 handleEditClick(ticket)
                               }}
                               disabled={ticket.status === "DELIVERED" || ticket.status === "delivered" || ticket.status === "CANCELLED" || ticket.status === "cancelled"}
-                              className="text-blue-600 hover:text-blue-800 hover:bg-blue-100 h-5 w-5 p-0 flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="text-blue-600 hover:text-blue-800 hover:bg-blue-100 h-7 w-7 p-0 flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed font-bold"
                               title="Edit"
                             >
-                              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                               </svg>
                             </Button>
                             <Button
@@ -1002,11 +1002,11 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                                 e.stopPropagation()
                                 printReceiptWithLanguageSelection([ticket])
                               }}
-                              className="text-green-600 hover:text-green-800 hover:bg-green-100 h-5 w-5 p-0 flex-shrink-0"
+                              className="text-green-600 hover:text-green-800 hover:bg-green-100 h-7 w-7 p-0 flex-shrink-0 font-bold"
                               title="Print Receipt"
                             >
-                              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
                               </svg>
                             </Button>
                             <AlertDialog>
@@ -1022,11 +1022,11 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                                     }
                                   }}
                                   disabled={ticket.status === "DELIVERED" || ticket.status === "delivered" || ticket.status === "CANCELLED" || ticket.status === "cancelled"}
-                                  className="text-red-600 hover:text-red-800 hover:bg-red-100 h-5 w-5 p-0 flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                                  className="text-red-600 hover:text-red-800 hover:bg-red-100 h-7 w-7 p-0 flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed font-bold"
                                   title="Delete"
                                 >
-                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                   </svg>
                                 </Button>
                               </AlertDialogTrigger>
@@ -1110,6 +1110,10 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                 <Input id="edit-serialNo" value={editFormData.serialNo || ""} onChange={(e) => setEditFormData({ ...editFormData, serialNo: e.target.value })} className="bg-white border-blue-300 text-black" />
               </div>
               <div className="space-y-2">
+                <Label htmlFor="edit-budget" className="text-black">{t("form.budget")}</Label>
+                <Input id="edit-budget" type="number" step="0.01" value={editFormData.budget || ""} onChange={(e) => setEditFormData({ ...editFormData, budget: e.target.value })} className="bg-white border-blue-300 text-black" />
+              </div>
+              <div className="space-y-2">
                 <Label htmlFor="edit-warranty" className="text-black">{t("form.warranty")}</Label>
                 <Select value={editFormData.warranty || "Without Warranty"} onValueChange={(value) => setEditFormData({ ...editFormData, warranty: value })}>
                   <SelectTrigger id="edit-warranty" className="bg-white border-blue-300 text-black">
@@ -1120,14 +1124,6 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                     <SelectItem value="Warranty Until 30 Days" className="text-black">{t("form.warrantyUntil30Days")}</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="edit-price" className="text-black">{t("form.price")}</Label>
-                <Input id="edit-price" type="number" step="0.01" value={editFormData.price || ""} onChange={(e) => setEditFormData({ ...editFormData, price: e.target.value })} className="bg-white border-blue-300 text-black" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="edit-budget" className="text-black">{t("form.budget")}</Label>
-                <Input id="edit-budget" type="number" step="0.01" value={editFormData.budget || ""} onChange={(e) => setEditFormData({ ...editFormData, budget: e.target.value })} className="bg-white border-blue-300 text-black" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="edit-status" className="text-black">{t("table.status")}</Label>
@@ -1177,7 +1173,15 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="edit-selectedServices" className="text-black">{t("form.serviceNames")}</Label>
+              <Label htmlFor="edit-equipmentObs" className="text-black">On Arrival</Label>
+              <Textarea id="edit-equipmentObs" value={editFormData.equipmentObs || ""} onChange={(e) => setEditFormData({ ...editFormData, equipmentObs: e.target.value })} className="bg-white border-blue-300 text-black min-h-[80px]" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-problem" className="text-black">Phone Issue</Label>
+              <Textarea id="edit-problem" value={editFormData.problem || ""} onChange={(e) => setEditFormData({ ...editFormData, problem: e.target.value })} className="bg-white border-blue-300 text-black min-h-[100px]" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-selectedServices" className="text-black">Service Done</Label>
               <Textarea 
                 id="edit-selectedServices" 
                 value={(() => {
@@ -1200,14 +1204,6 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                 disabled={false}
                 readOnly={false}
               />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="edit-equipmentObs" className="text-black">Mobile Conditions (On Arrival)</Label>
-              <Textarea id="edit-equipmentObs" value={editFormData.equipmentObs || ""} onChange={(e) => setEditFormData({ ...editFormData, equipmentObs: e.target.value })} className="bg-white border-blue-300 text-black min-h-[80px]" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="edit-problem" className="text-black">{t("form.technicianNotes")}</Label>
-              <Textarea id="edit-problem" value={editFormData.problem || ""} onChange={(e) => setEditFormData({ ...editFormData, problem: e.target.value })} className="bg-white border-blue-300 text-black min-h-[100px]" />
             </div>
             <div className="flex justify-end gap-2 pt-4">
               <Button type="button" variant="outline" onClick={() => { setIsEditDialogOpen(false); setEditingTicket(null) }} className="border-blue-300 bg-white text-black hover:bg-blue-50">{t("form.cancel")}</Button>

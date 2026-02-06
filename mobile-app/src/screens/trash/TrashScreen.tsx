@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { apiService } from '../../services/api';
 import { Ionicons } from '@expo/vector-icons';
 import { format } from 'date-fns';
@@ -19,6 +20,7 @@ import { BlurView } from 'expo-blur';
 export default function TrashScreen() {
   const { user } = useAuth();
   const theme = useTheme();
+  const { t } = useLanguage();
   const [deletedTickets, setDeletedTickets] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -117,8 +119,8 @@ export default function TrashScreen() {
       <BlurView intensity={80} tint="dark" style={styles.blurHeader}>
         <View style={styles.header}>
           <View>
-            <Text style={styles.title}>Trash</Text>
-            <Text style={styles.subtitle}>Deleted devices and products</Text>
+            <Text style={styles.title}>{t('trash.title')}</Text>
+            <Text style={styles.subtitle}>{t('trash.subtitle')}</Text>
           </View>
           <Ionicons name="trash-outline" size={32} color={theme.colors.primary} />
         </View>
@@ -137,9 +139,9 @@ export default function TrashScreen() {
           <View style={styles.emptyState}>
             <BlurView intensity={60} tint="dark" style={styles.emptyCard}>
               <Ionicons name="trash-outline" size={64} color={theme.colors.textSecondary} />
-              <Text style={styles.emptyText}>Trash is empty</Text>
+              <Text style={styles.emptyText}>{t('trash.empty')}</Text>
                   <Text style={styles.emptySubtext}>
-                    Deleted devices will appear here
+                    {t('trash.emptySubtext')}
                   </Text>
             </BlurView>
           </View>
