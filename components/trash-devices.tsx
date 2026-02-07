@@ -45,17 +45,22 @@ export function TrashDevices() {
           if (response.ok) {
             const data = await response.json()
             const tickets = data.tickets || []
+            console.log(`[TrashDevices] Fetched ${tickets.length} deleted tickets from API`)
+            console.log(`[TrashDevices] Sample ticket:`, tickets[0] ? { id: tickets[0].id, customerName: tickets[0].customerName, deletedAt: tickets[0].deletedAt } : 'No tickets')
+            
             // Add deletedAt timestamp if not present
             const ticketsWithDeletedAt = tickets.map((ticket: any) => ({
               ...ticket,
-              deletedAt: ticket.deletedAt || ticket.createdAt
+              deletedAt: ticket.deletedAt || ticket.createdAt || new Date().toISOString()
             }))
             const sortedTickets = ticketsWithDeletedAt.sort((a: any, b: any) => 
               new Date(b.deletedAt || 0).getTime() - new Date(a.deletedAt || 0).getTime()
             )
+            console.log(`[TrashDevices] Setting ${sortedTickets.length} deleted tickets in state`)
             setDeletedTickets(sortedTickets)
           } else {
-            console.error("Failed to fetch deleted tickets:", response.statusText)
+            const errorText = await response.text()
+            console.error("Failed to fetch deleted tickets:", response.status, response.statusText, errorText)
             setDeletedTickets([])
           }
         } catch (error) {
