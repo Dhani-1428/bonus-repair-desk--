@@ -146,7 +146,7 @@ export function generateThermalReceipt(
         receipt += `Conditions: ${ticket.equipmentObs}\n`
       }
 
-      receipt += `Price: €${Number.parseFloat(ticket.price?.toString() || "0").toFixed(2)}\n`
+      receipt += `Budget: €${Number.parseFloat(ticket.price?.toString() || "0").toFixed(2)}\n`
     } else {
       // Multiple devices receipt
       receipt += `Number of Devices: ${tickets.length}\n`
@@ -166,7 +166,7 @@ export function generateThermalReceipt(
             : ticket.services
           receipt += `  Services: ${services}\n`
         }
-        receipt += `  Price: €${Number.parseFloat(ticket.price?.toString() || "0").toFixed(2)}\n`
+        receipt += `  Budget: €${Number.parseFloat(ticket.price?.toString() || "0").toFixed(2)}\n`
         if (index < tickets.length - 1) {
           receipt += "\n"
         }
@@ -177,7 +177,7 @@ export function generateThermalReceipt(
         (sum, ticket) => sum + Number.parseFloat(ticket.price?.toString() || "0"),
         0
       )
-      receipt += `Total Price: €${totalPrice.toFixed(2)}\n`
+      receipt += `Total Budget: €${totalPrice.toFixed(2)}\n`
     }
 
     receipt += "-".repeat(32) + "\n"

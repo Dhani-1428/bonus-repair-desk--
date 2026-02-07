@@ -1545,7 +1545,7 @@ export function NewRepairTicketForm() {
                     <div className="space-y-3 md:col-span-2">
                       <h4 className="text-sm font-semibold text-blue-600 border-b border-blue-200 pb-2">Pricing</h4>
                       <div className="text-lg font-bold text-green-600">
-                        Price: €{ticket?.price ? Number.parseFloat(ticket.price).toFixed(2) : "0.00"}
+                        Budget: €{ticket?.price ? Number.parseFloat(ticket.price).toFixed(2) : "0.00"}
                       </div>
                     </div>
                   </div>
@@ -1851,7 +1851,7 @@ function getReceiptTranslations(lang: "en" | "pt" | "de" | "fr" | "ur" | "pa" | 
       "receipt.repairObs": "Repair Obs.",
       "receipt.services": "Services",
       "receipt.problem": "Problem",
-      "receipt.price": "Price",
+      "receipt.price": "Budget",
       "receipt.responsibleText": "WE ARE RESPONSIBLE FOR THE ASSISTANCE / REPAIRING OF THE DESCRIBED ANOMALIES.",
       "receipt.storageTitle": "We are responsible for resolving and repairing the reported anomalies.",
       "receipt.storageText1": "The item must be collected within 60 days of repair notice.",
@@ -1889,7 +1889,7 @@ function getReceiptTranslations(lang: "en" | "pt" | "de" | "fr" | "ur" | "pa" | 
       "receipt.repairObs": "Obs. de Reparação",
       "receipt.services": "Serviços",
       "receipt.problem": "Problema",
-      "receipt.price": "Preço",
+      "receipt.price": "Orçamento",
       "receipt.responsibleText": "SOMOS RESPONSÁVEIS PELA ASSISTÊNCIA / REPARAÇÃO DAS ANOMALIAS DESCRITAS.",
       "receipt.storageTitle": "Condições de Armazenamento e Levantamento",
       "receipt.storageText1": "O equipamento deverá ser levantado no prazo máximo de sessenta (60) dias após a conclusão da reparação e respetiva notificação por",
@@ -1927,7 +1927,7 @@ function getReceiptTranslations(lang: "en" | "pt" | "de" | "fr" | "ur" | "pa" | 
       "receipt.repairObs": "Reparaturbeobachtung",
       "receipt.services": "Dienstleistungen",
       "receipt.problem": "Problem",
-      "receipt.price": "Preis",
+      "receipt.price": "Budget",
       "receipt.responsibleText": "WIR SIND VERANTWORTLICH FÜR DIE ASSISTENZ / REPARATUR DER BESCHRIEBENEN ANOMALIEN.",
       "receipt.storageTitle": "Lagerungs- und Abholbedingungen",
       "receipt.storageText1": "Das Gerät muss innerhalb von sechzig (60) Tagen nach Abschluss der Reparatur und entsprechender Benachrichtigung durch",
@@ -1965,7 +1965,7 @@ function getReceiptTranslations(lang: "en" | "pt" | "de" | "fr" | "ur" | "pa" | 
       "receipt.repairObs": "Obs. réparation",
       "receipt.services": "Services",
       "receipt.problem": "Problème",
-      "receipt.price": "Prix",
+      "receipt.price": "Budget",
       "receipt.responsibleText": "NOUS SOMMES RESPONSABLES DE L'ASSISTANCE / RÉPARATION DES ANOMALIES DÉCRITES.",
       "receipt.storageTitle": "Conditions de stockage et de retrait",
       "receipt.storageText1": "L'équipement doit être retiré dans un délai maximum de soixante (60) jours après l'achèvement de la réparation et la notification correspondante par",
@@ -2002,7 +2002,7 @@ function getReceiptTranslations(lang: "en" | "pt" | "de" | "fr" | "ur" | "pa" | 
       "receipt.repairObs": "مرمت کی رپورٹ",
       "receipt.services": "خدمات",
       "receipt.problem": "مسئلہ",
-      "receipt.price": "قیمت",
+      "receipt.price": "بجٹ",
       "receipt.responsibleText": "ہم بیان کردہ خرابیوں کی مدد / مرمت کے ذمہ دار ہیں۔",
       "receipt.storageTitle": "ذخیرہ کرنے اور اٹھانے کی شرائط",
       "receipt.storageText1": "مرمت مکمل ہونے اور",
@@ -2040,7 +2040,7 @@ function getReceiptTranslations(lang: "en" | "pt" | "de" | "fr" | "ur" | "pa" | 
       "receipt.repairObs": "ਮੁਰੰਮਤ ਰਿਪੋਰਟ",
       "receipt.services": "ਸੇਵਾਵਾਂ",
       "receipt.problem": "ਸਮੱਸਿਆ",
-      "receipt.price": "ਕੀਮਤ",
+      "receipt.price": "ਬਜਟ",
       "receipt.responsibleText": "ਅਸੀਂ ਦੱਸੀਆਂ ਗਈਆਂ ਖਰਾਬੀਆਂ ਦੀ ਸਹਾਇਤਾ / ਮੁਰੰਮਤ ਦੇ ਜ਼ਿੰਮੇਵਾਰ ਹਾਂ।",
       "receipt.storageTitle": "ਸਟੋਰੇਜ ਅਤੇ ਲਿਆਉਣ ਦੀਆਂ ਸ਼ਰਤਾਂ",
       "receipt.storageText1": "ਮੁਰੰਮਤ ਪੂਰੀ ਹੋਣ ਅਤੇ",
@@ -2080,7 +2080,7 @@ function getReceiptTranslations(lang: "en" | "pt" | "de" | "fr" | "ur" | "pa" | 
       "receipt.repairObs": "मरम्मत रिपोर्ट",
       "receipt.services": "सेवाएं",
       "receipt.problem": "समस्या",
-      "receipt.price": "मूल्य",
+      "receipt.price": "बजट",
       "receipt.responsibleText": "हम वर्णित खराबियों की सहायता / मरम्मत के जिम्मेदार हैं।",
       "receipt.storageTitle": "भंडारण और लेने की शर्तें",
       "receipt.storageText1": "मरम्मत पूरी होने और",
@@ -2470,7 +2470,7 @@ export async function printReceiptForTickets(
                       <th style="padding: 4px; font-size: 6.5pt; font-weight: bold; text-align: left; border-right: 1px solid #000; border-bottom: 1px solid #000;">Brand-Model</th>
                       <th style="padding: 4px; font-size: 6.5pt; font-weight: bold; text-align: left; border-right: 1px solid #000; border-bottom: 1px solid #000;">IMEI</th>
                       <th style="padding: 4px; font-size: 6.5pt; font-weight: bold; text-align: left; border-right: 1px solid #000; border-bottom: 1px solid #000;">Warranty</th>
-                      <th style="padding: 4px; font-size: 6.5pt; font-weight: bold; text-align: right; border-right: 1px solid #000; border-bottom: 1px solid #000;">Price</th>
+                      <th style="padding: 4px; font-size: 6.5pt; font-weight: bold; text-align: right; border-right: 1px solid #000; border-bottom: 1px solid #000;">Budget</th>
                       <th style="padding: 4px; font-size: 6.5pt; font-weight: bold; text-align: center; border-bottom: 1px solid #000;">Repair #</th>
                     </tr>
                   </thead>
@@ -2505,7 +2505,7 @@ export async function printReceiptForTickets(
         </div>
         
         <div style="margin: 8px 0; padding: 6px; background-color: #f0f0f0; text-align: center; font-weight: bold; font-size: ${headerFontSize}; border: 1px solid #ddd; page-break-inside: avoid;">
-          <div style="font-size: ${headerFontSize}; font-weight: bold;">Total Price: €${totalPrice.toFixed(2)}</div>
+          <div style="font-size: ${headerFontSize}; font-weight: bold;">Total Budget: €${totalPrice.toFixed(2)}</div>
         </div>
         
         <!-- Gap between device information and footer -->
@@ -2981,7 +2981,7 @@ export async function printToReceiptPrinter(tickets: any[]) {
         `Customer: ${ticket.customerName || 'N/A'}\n`,
         `IMEI: ${ticket.imeiNo || 'N/A'}\n`,
         `Device: ${ticket.brand || 'N/A'} ${ticket.model || 'N/A'}\n`,
-        `Price: €${ticket.price || '0.00'}\n`,
+        `Budget: €${ticket.price || '0.00'}\n`,
         '\x1B\x64\x05', // Feed 5 lines
         '\x1D\x56\x00', // Cut paper
       ].join('')

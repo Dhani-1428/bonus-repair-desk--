@@ -152,7 +152,7 @@ function generateReceiptHTML(tickets: Ticket[], companyInfo?: CompanyInfo): stri
           <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">Repair Obs:</span> ${repairObs}</div>
           <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">Services:</span> ${services}</div>
           <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">Problem:</span> ${problem}</div>
-          <div style="margin: 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">Price:</span> €${price.toFixed(2)}</div>
+          <div style="margin: 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">Budget:</span> €${price.toFixed(2)}</div>
         </div>
         
         <!-- Gap between device information and footer -->
