@@ -174,6 +174,32 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // First, check if this customer already has a client ID (one client = one client ID)
+    const findExistingClientId = async (customerName: string): Promise<string | null> => {
+      try {
+        if (!customerName || customerName.trim() === "") return null
+        
+        // Search for existing tickets with the same customer name (case-insensitive)
+        const existingTicket = await queryOne(
+          `SELECT clientId FROM ${tableName} WHERE LOWER(TRIM(customerName)) = LOWER(TRIM(?)) AND clientId IS NOT NULL AND clientId != '' ORDER BY createdAt DESC LIMIT 1`,
+          [customerName.trim()]
+        ) as any
+        
+        if (existingTicket && existingTicket.clientId) {
+          // Validate the client ID format
+          const match = existingTicket.clientId.match(/^CLI-(\d{1,4})$/)
+          if (match) {
+            console.log(`[API] Found existing client ID ${existingTicket.clientId} for customer: ${customerName}`)
+            return existingTicket.clientId
+          }
+        }
+        return null
+      } catch (error) {
+        console.error("[findExistingClientId] Error:", error)
+        return null
+      }
+    }
+
     // Client ID is optional - generate if not provided (starts from 001)
     const generateClientId = async () => {
       try {
@@ -207,7 +233,23 @@ export async function POST(request: NextRequest) {
         return "CLI-0001"
       }
     }
-    const finalClientId = clientId && clientId.trim() !== "" ? clientId.trim() : await generateClientId()
+    
+    // Check if customer already has a client ID, otherwise use provided or generate new one
+    let finalClientId: string
+    if (clientId && clientId.trim() !== "") {
+      finalClientId = clientId.trim()
+    } else {
+      // First try to find existing client ID for this customer
+      const existingClientId = await findExistingClientId(customerName)
+      if (existingClientId) {
+        finalClientId = existingClientId
+        console.log(`[API] Reusing existing client ID ${finalClientId} for customer: ${customerName}`)
+      } else {
+        // Generate new client ID if customer doesn't exist
+        finalClientId = await generateClientId()
+        console.log(`[API] Generated new client ID ${finalClientId} for new customer: ${customerName}`)
+      }
+    }
 
     // Serial number should come from the request body (manual input) - OPTIONAL
     const serialNoFromBody = body.serialNo || body.serialNumber || null
