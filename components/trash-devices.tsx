@@ -122,25 +122,19 @@ export function TrashDevices() {
         return
       }
 
-      // Restore via API - POST to create the ticket again
-      const { deletedAt, ...ticketWithoutDeletedDate } = ticketToRestore
-      const response = await fetch("/api/repairs", {
-        method: "POST",
+      // Restore via PUT - set deleted = false and deletedAt = null
+      const response = await fetch(`/api/repairs/${ticketId}`, {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(ticketWithoutDeletedDate),
+        body: JSON.stringify({
+          userId,
+          deleted: false,
+          deletedAt: null
+        }),
       })
 
       if (!response.ok) {
         throw new Error("Failed to restore device")
-      }
-
-      // Delete from deleted tickets table via API
-      const deleteResponse = await fetch(`/api/repairs/${ticketId}?userId=${userId}&deleted=true`, {
-        method: "DELETE",
-      })
-
-      if (!deleteResponse.ok) {
-        console.warn("Failed to remove from deleted tickets table, but ticket was restored")
       }
 
       // Update local state
@@ -177,8 +171,8 @@ export function TrashDevices() {
         return
       }
 
-      // Permanently delete from database
-      const response = await fetch(`/api/repairs/${ticketId}?userId=${userId}&deleted=true`, {
+      // Permanently delete from database (requires permanent=true parameter)
+      const response = await fetch(`/api/repairs/${ticketId}?userId=${userId}&permanent=true`, {
         method: "DELETE",
       })
 

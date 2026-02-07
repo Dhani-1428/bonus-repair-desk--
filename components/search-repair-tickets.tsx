@@ -846,9 +846,15 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
         if (!confirmed) return
       }
 
-      // Delete via API
-      const response = await fetch(`/api/repairs/${ticketId}?userId=${userId}`, {
-        method: "DELETE",
+      // Soft delete via PUT (set deleted = true)
+      const response = await fetch(`/api/repairs/${ticketId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId,
+          deleted: true,
+          deletedAt: new Date().toISOString()
+        }),
       })
 
       if (response.ok) {

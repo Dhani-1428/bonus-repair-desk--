@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
     }
 
     const tables = getTenantTableNames(userTenantId)
-    const tableName = deleted ? escapeId(tables.deletedTickets) : escapeId(tables.repairTickets)
+    const tableName = escapeId(tables.repairTickets)
     
     console.log(`[API] Fetching ${deleted ? 'deleted ' : ''}repair tickets from table: ${tableName} for userId: ${userId}, tenantId: ${userTenantId}`)
     console.log(`[API] Database: ${process.env.DB_NAME || "admin_panel_db"}`)
@@ -62,14 +62,9 @@ export async function GET(request: NextRequest) {
     let tickets
     try {
       if (deleted) {
-        // For deleted tickets, order by deletedAt
-        // First check if table exists and has any records
-        const tableCheck = await query(`SELECT COUNT(*) as count FROM ${tableName} WHERE userId = ?`, [userId])
-        const count = tableCheck && tableCheck[0] ? tableCheck[0].count : 0
-        console.log(`[API] Checking deletedTickets table ${tableName} - Found ${count} records for userId ${userId}`)
-        
+        // For deleted tickets, filter by deleted = true and order by deletedAt
         tickets = await query(
-          `SELECT * FROM ${tableName} WHERE userId = ? ORDER BY deletedAt DESC`,
+          `SELECT * FROM ${tableName} WHERE userId = ? AND deleted = TRUE ORDER BY deletedAt DESC`,
           [userId]
         )
         console.log(`[API] ✅ Query returned ${tickets.length} deleted tickets`)
@@ -82,8 +77,9 @@ export async function GET(request: NextRequest) {
           })
         }
       } else {
+        // For active tickets, filter by deleted = false or NULL
         tickets = await query(
-          `SELECT * FROM ${tableName} WHERE userId = ? ORDER BY createdAt DESC`,
+          `SELECT * FROM ${tableName} WHERE userId = ? AND (deleted = FALSE OR deleted IS NULL) ORDER BY createdAt DESC`,
           [userId]
         )
       }

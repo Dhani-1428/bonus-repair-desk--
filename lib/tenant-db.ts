@@ -70,6 +70,8 @@ export async function createTenantTables(tenantId: string): Promise<void> {
       status ENUM('PENDING', 'NOT_OK', 'COMPLETED', 'DELIVERED', 'CANCELLED') DEFAULT 'PENDING',
       editHistory JSON DEFAULT NULL,
       deliveredDate DATETIME DEFAULT NULL,
+      deleted BOOLEAN DEFAULT FALSE,
+      deletedAt DATETIME DEFAULT NULL,
       createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
       updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
       INDEX idx_userId (userId),
@@ -77,7 +79,8 @@ export async function createTenantTables(tenantId: string): Promise<void> {
       INDEX idx_imeiNo (imeiNo),
       INDEX idx_status (status),
       INDEX idx_batchId (batchId),
-      INDEX idx_clientId_customerName (clientId, customerName)
+      INDEX idx_clientId_customerName (clientId, customerName),
+      INDEX idx_deleted (deleted)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
   `)
 

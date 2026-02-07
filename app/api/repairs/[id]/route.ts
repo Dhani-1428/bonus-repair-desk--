@@ -382,7 +382,7 @@ export async function PUT(
   }
 }
 
-// DELETE repair ticket (tenant-specific)
+// DELETE repair ticket (tenant-specific) - only for permanent deletion from trash
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> | { id: string } }
@@ -390,7 +390,7 @@ export async function DELETE(
   try {
     const { searchParams } = new URL(request.url)
     const userId = searchParams.get("userId")
-    const deleted = searchParams.get("deleted") === "true"
+    const permanent = searchParams.get("permanent") === "true"
 
     if (!userId) {
       return NextResponse.json(
@@ -418,132 +418,20 @@ export async function DELETE(
 
     const tables = getTenantTableNames(user.tenantId)
     const repairTable = escapeId(tables.repairTickets)
-    const deletedTable = escapeId(tables.deletedTickets)
 
-    if (deleted) {
-      // Permanently delete from deleted tickets table
+    // Only allow permanent deletion if explicitly requested (from trash page)
+    if (permanent) {
+      // Permanently delete from repair_tickets table
       await execute(
-        `DELETE FROM ${deletedTable} WHERE id = ? AND userId = ?`,
+        `DELETE FROM ${repairTable} WHERE id = ? AND userId = ? AND deleted = TRUE`,
         [ticketId, userId]
       )
       return NextResponse.json({ message: "Ticket permanently deleted" })
     } else {
-      // Move to deleted tickets before deleting from main table
-      const ticket = await queryOne(
-        `SELECT * FROM ${repairTable} WHERE id = ?`,
-        [ticketId]
+      return NextResponse.json(
+        { error: "Permanent deletion requires permanent=true parameter" },
+        { status: 400 }
       )
-
-      if (!ticket) {
-        return NextResponse.json(
-          { error: "Ticket not found" },
-          { status: 404 }
-        )
-      }
-
-      // Ensure deletedTickets table exists
-      const tablesExist = await tenantTablesExist(user.tenantId)
-      if (!tablesExist) {
-        console.log(`[API] Creating tenant tables for tenantId: ${user.tenantId}`)
-        await createTenantTables(user.tenantId)
-        console.log(`[API] ✅ Tenant tables created`)
-      }
-
-      // Insert all ticket data into deletedTickets table
-      // Include all fields including budget, createdAt, simTray, waterDamaged, etc.
-      try {
-        const repairNumberValue = ticket.repairNumber || `DEL-${ticket.id.substring(0, 8)}`
-        console.log(`[API] Attempting to insert ticket ${ticketId} into ${deletedTable}`)
-        console.log(`[API] Ticket data:`, {
-          id: ticket.id,
-          userId: ticket.userId,
-          customerName: ticket.customerName,
-          clientId: ticket.clientId,
-          repairNumber: repairNumberValue,
-          tenantId: user.tenantId
-        })
-        
-        const insertResult = await execute(
-          `INSERT INTO ${deletedTable} (id, userId, repairNumber, clientId, customerName, contact, receivedBy, imeiNo,
-            brand, model, serialNo, softwareVersion, warranty, battery, charger,
-            simCard, simTray, memoryCard, loanEquipment, equipmentObs, repairObs,
-            selectedServices, \`condition\`, problem, price, budget, status)
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-          [
-            ticket.id,
-            ticket.userId,
-            repairNumberValue,
-            ticket.clientId || null,
-            ticket.customerName || null,
-            ticket.contact || null,
-            ticket.receivedBy || null,
-            ticket.imeiNo || null,
-            ticket.brand || null,
-            ticket.model || null,
-            ticket.serialNo || null,
-            ticket.softwareVersion || null,
-            ticket.warranty || null,
-            ticket.battery || false,
-            ticket.charger || false,
-            ticket.simCard || false,
-            ticket.simTray || false,
-            ticket.memoryCard || false,
-            ticket.loanEquipment || false,
-            ticket.equipmentObs || null,
-            ticket.repairObs || null,
-            ticket.selectedServices ? (typeof ticket.selectedServices === 'string' ? ticket.selectedServices : JSON.stringify(ticket.selectedServices)) : null,
-            ticket.condition || null,
-            ticket.problem || null,
-            ticket.price || null,
-            ticket.budget || null,
-            ticket.status || 'PENDING'
-          ]
-        )
-        console.log(`[API] ✅ INSERT successful. Result:`, insertResult)
-        
-        // Verify the insert worked by querying the deleted table
-        const verifyTicket = await queryOne(
-          `SELECT id, customerName, deletedAt, repairNumber FROM ${deletedTable} WHERE id = ? AND userId = ?`,
-          [ticketId, ticket.userId]
-        )
-        if (verifyTicket) {
-          console.log(`[API] ✅ Verified ticket in deletedTickets:`, {
-            id: verifyTicket.id,
-            customerName: verifyTicket.customerName,
-            deletedAt: verifyTicket.deletedAt,
-            repairNumber: verifyTicket.repairNumber
-          })
-        } else {
-          console.error(`[API] ❌ Ticket NOT FOUND in deletedTickets after insert!`)
-          // Try to query all tickets in the table to see what's there
-          const allDeleted = await query(`SELECT id, customerName FROM ${deletedTable} LIMIT 5`)
-          console.log(`[API] Sample records in ${deletedTable}:`, allDeleted)
-        }
-      } catch (insertError: any) {
-        console.error(`[API] ❌ Error inserting into deletedTickets:`, {
-          code: insertError?.code,
-          errno: insertError?.errno,
-          sqlState: insertError?.sqlState,
-          sqlMessage: insertError?.sqlMessage,
-          message: insertError?.message,
-          table: deletedTable
-        })
-        // If it's a duplicate entry error, the ticket might already be in trash, continue with deletion
-        if (insertError.code === 'ER_DUP_ENTRY') {
-          console.log(`[API] Ticket ${ticketId} already exists in deletedTickets, continuing with deletion`)
-        } else {
-          throw insertError
-        }
-      }
-
-      // Delete from main repair table
-      await execute(
-        `DELETE FROM ${repairTable} WHERE id = ?`,
-        [ticketId]
-      )
-      console.log(`[API] ✅ Successfully deleted ticket ${ticketId} from repairTickets table`)
-
-      return NextResponse.json({ message: "Ticket deleted successfully" })
     }
   } catch (error: any) {
     console.error("[API] Error deleting repair ticket:", error)
