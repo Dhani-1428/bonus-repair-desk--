@@ -323,6 +323,49 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
     }
   }
 
+  // Function to consolidate client IDs - ensure one client has only one client ID
+  const consolidateClientIds = async () => {
+    try {
+      if (!currentUser?.id) {
+        toast.error(t("error.userNotFound"))
+        return
+      }
+
+      toast.loading("Consolidating client IDs...", { id: "consolidate-ids" })
+
+      const response = await fetch("/api/migrate/consolidate-client-ids", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId: currentUser.id }),
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        toast.success(
+          data.message || 
+          `Consolidated ${data.consolidated} customers, updated ${data.updated} tickets.`, 
+          { id: "consolidate-ids", duration: 5000 }
+        )
+        // Reload tickets
+        const reloadResponse = await fetch(`/api/repairs?userId=${currentUser.id}`)
+        if (reloadResponse.ok) {
+          const reloadData = await reloadResponse.json()
+          const ticketsArray = Array.isArray(reloadData.tickets) ? reloadData.tickets : []
+          const sortedTickets = sortTicketsByClientId(ticketsArray)
+          setTickets(sortedTickets)
+        }
+      } else {
+        const errorData = await response.json()
+        toast.error(errorData.error || "Consolidation failed", { id: "consolidate-ids" })
+      }
+    } catch (error: any) {
+      console.error("[SearchRepairTickets] Error consolidating client IDs:", error)
+      toast.error("Failed to consolidate client IDs", { id: "consolidate-ids" })
+    }
+  }
+
   useEffect(() => {
     const loadData = async () => {
       try {
