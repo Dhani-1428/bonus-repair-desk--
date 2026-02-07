@@ -179,9 +179,18 @@ export async function query(sql: string, params?: any[], retries = 2): Promise<a
         error?.message?.includes("too many connections")
       
       if (isConnectionError && attempt < retries) {
+        const isTooManyConnections = error?.code === "ER_CON_COUNT_ERROR" || error?.errno === 1040 || 
+                                     error?.message?.includes("Too many connections") || 
+                                     error?.message?.includes("too many connections")
+        
         console.warn(`[MySQL] Connection error (attempt ${attempt + 1}/${retries + 1}), retrying...`, error?.code || error?.message)
-        // Wait before retrying (exponential backoff)
-        await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000))
+        
+        // For "too many connections", use longer backoff to allow connections to free up
+        const backoffDelay = isTooManyConnections 
+          ? Math.min(Math.pow(2, attempt) * 2000, 10000) // 2s, 4s, 8s, max 10s
+          : Math.pow(2, attempt) * 1000 // Standard exponential backoff
+        
+        await new Promise(resolve => setTimeout(resolve, backoffDelay))
         continue
       }
       
