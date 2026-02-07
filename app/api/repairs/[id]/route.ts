@@ -435,38 +435,43 @@ export async function DELETE(
       )
 
       if (ticket) {
+        // Insert all ticket data into deletedTickets table
+        // Include all fields including budget, createdAt, simTray, waterDamaged, etc.
         await execute(
           `INSERT INTO ${deletedTable} (id, userId, repairNumber, clientId, customerName, contact, receivedBy, imeiNo,
             brand, model, serialNo, softwareVersion, warranty, battery, charger,
-            simCard, memoryCard, loanEquipment, equipmentObs, repairObs,
-            selectedServices, \`condition\`, problem, price, status)
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            simCard, simTray, memoryCard, loanEquipment, equipmentObs, repairObs,
+            selectedServices, \`condition\`, problem, price, budget, status, createdAt)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
           [
             ticket.id,
             ticket.userId,
-            ticket.repairNumber,
-            ticket.clientId,
-            ticket.customerName,
-            ticket.contact,
+            ticket.repairNumber || null,
+            ticket.clientId || null,
+            ticket.customerName || null,
+            ticket.contact || null,
             ticket.receivedBy || null,
-            ticket.imeiNo,
-            ticket.brand,
-            ticket.model,
-            ticket.serialNo,
-            ticket.softwareVersion,
-            ticket.warranty,
-            ticket.battery,
-            ticket.charger,
-            ticket.simCard,
-            ticket.memoryCard,
-            ticket.loanEquipment,
-            ticket.equipmentObs,
-            ticket.repairObs,
-            ticket.selectedServices,
-            ticket.condition,
-            ticket.problem,
-            ticket.price,
-            ticket.status
+            ticket.imeiNo || null,
+            ticket.brand || null,
+            ticket.model || null,
+            ticket.serialNo || null,
+            ticket.softwareVersion || null,
+            ticket.warranty || null,
+            ticket.battery || false,
+            ticket.charger || false,
+            ticket.simCard || false,
+            ticket.simTray || false,
+            ticket.memoryCard || false,
+            ticket.loanEquipment || false,
+            ticket.equipmentObs || null,
+            ticket.repairObs || null,
+            ticket.selectedServices ? (typeof ticket.selectedServices === 'string' ? ticket.selectedServices : JSON.stringify(ticket.selectedServices)) : null,
+            ticket.condition || null,
+            ticket.problem || null,
+            ticket.price || null,
+            ticket.budget || null,
+            ticket.status || 'PENDING',
+            ticket.createdAt || new Date().toISOString().slice(0, 19).replace('T', ' ')
           ]
         )
       }
