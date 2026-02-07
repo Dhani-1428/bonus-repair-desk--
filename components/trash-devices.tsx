@@ -41,12 +41,27 @@ export function TrashDevices() {
 
         // Fetch deleted tickets from API
         try {
+          console.log(`[TrashDevices] Fetching deleted tickets for userId: ${userId}`)
           const response = await fetch(`/api/repairs?userId=${userId}&deleted=true`)
+          console.log(`[TrashDevices] Response status:`, response.status, response.statusText)
+          
           if (response.ok) {
             const data = await response.json()
+            console.log(`[TrashDevices] Response data:`, data)
             const tickets = data.tickets || []
             console.log(`[TrashDevices] Fetched ${tickets.length} deleted tickets from API`)
-            console.log(`[TrashDevices] Sample ticket:`, tickets[0] ? { id: tickets[0].id, customerName: tickets[0].customerName, deletedAt: tickets[0].deletedAt } : 'No tickets')
+            
+            if (tickets.length > 0) {
+              console.log(`[TrashDevices] Sample ticket:`, {
+                id: tickets[0].id,
+                customerName: tickets[0].customerName,
+                deletedAt: tickets[0].deletedAt,
+                userId: tickets[0].userId,
+                repairNumber: tickets[0].repairNumber
+              })
+            } else {
+              console.warn(`[TrashDevices] ⚠️  No deleted tickets found in response`)
+            }
             
             // Add deletedAt timestamp if not present
             const ticketsWithDeletedAt = tickets.map((ticket: any) => ({
@@ -60,11 +75,21 @@ export function TrashDevices() {
             setDeletedTickets(sortedTickets)
           } else {
             const errorText = await response.text()
-            console.error("Failed to fetch deleted tickets:", response.status, response.statusText, errorText)
+            console.error("[TrashDevices] Failed to fetch deleted tickets:", response.status, response.statusText, errorText)
+            try {
+              const errorData = JSON.parse(errorText)
+              console.error("[TrashDevices] Error details:", errorData)
+            } catch (e) {
+              // Not JSON, that's okay
+            }
             setDeletedTickets([])
           }
-        } catch (error) {
-          console.error("Error fetching deleted tickets:", error)
+        } catch (error: any) {
+          console.error("[TrashDevices] Error fetching deleted tickets:", error)
+          console.error("[TrashDevices] Error details:", {
+            message: error?.message,
+            stack: error?.stack
+          })
           setDeletedTickets([])
         }
       } catch (error) {
