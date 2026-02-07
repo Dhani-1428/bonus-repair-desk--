@@ -96,6 +96,66 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
     return clientId
   }
 
+  // Helper function to translate service names
+  const translateServiceName = (serviceName: string): string => {
+    if (!serviceName) return serviceName
+    
+    // Map common service names to translation keys
+    const serviceMap: Record<string, string> = {
+      "LCD": "service.lcd",
+      "Battery": "service.battery",
+      "Charging Port": "service.chargingPort",
+      "Microphone": "service.microphone",
+      "Ear speaker": "service.earSpeaker",
+      "Back cover": "service.backCover",
+      "Wifi/Bluetooth": "service.wifiBluetooth",
+      "Network": "service.network",
+      "Software": "service.software",
+      "Shut off": "service.shutOff",
+    }
+    
+    // Try to find exact match first
+    const translationKey = serviceMap[serviceName]
+    if (translationKey) {
+      return t(translationKey) || serviceName
+    }
+    
+    // Try case-insensitive match
+    const lowerServiceName = serviceName.toLowerCase()
+    for (const [key, value] of Object.entries(serviceMap)) {
+      if (key.toLowerCase() === lowerServiceName) {
+        return t(value) || serviceName
+      }
+    }
+    
+    // If no translation found, return original
+    return serviceName
+  }
+
+  // Helper function to translate multiple services (comma-separated or array)
+  const translateServices = (services: string | string[] | null | undefined): string => {
+    if (!services) return "-"
+    
+    let servicesArray: string[] = []
+    if (typeof services === 'string') {
+      try {
+        // Try to parse as JSON array first
+        const parsed = JSON.parse(services)
+        servicesArray = Array.isArray(parsed) ? parsed : [services]
+      } catch {
+        // If not JSON, split by comma
+        servicesArray = services.split(',').map(s => s.trim()).filter(s => s)
+      }
+    } else if (Array.isArray(services)) {
+      servicesArray = services
+    }
+    
+    if (servicesArray.length === 0) return "-"
+    
+    // Translate each service and join
+    return servicesArray.map(service => translateServiceName(service)).join(", ")
+  }
+
   // Helper function to sort tickets by clientId (CLI-0001, CLI-0002, etc.) then by createdAt
   const sortTicketsByClientId = (ticketsArray: any[]): any[] => {
     return ticketsArray.sort((a: any, b: any) => {
@@ -881,8 +941,8 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                     <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[10%]">{t("table.contact")}</th>
                     <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[12%]">{t("table.model")}</th>
                     <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[11%]">{t("table.imei")}</th>
-                    <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[11%]">Phone Issue</th>
-                    <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[11%]">Service Done</th>
+                    <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[11%]">{t("table.phoneIssue")}</th>
+                    <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[11%]">{t("table.serviceDone")}</th>
                     <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[9%]">{t("table.status")}</th>
                     <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[8%]">{t("table.price")}</th>
                     <th className="px-0.5 py-1.5 text-center text-[10px] font-semibold text-black uppercase tracking-wider w-[6%]">{t("table.action")}</th>
@@ -929,21 +989,29 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                           {ticket.problem || "-"}
                         </td>
                         <td className="border-r border-blue-300 px-1 py-1.5 text-[11px] text-black break-words">
-                          {ticket.repairObs || (() => {
-                            let services = ticket.serviceName || ""
+                          {(() => {
+                            // Get services from repairObs, selectedServices, or serviceName
+                            let services: string | string[] | null = null
+                            
+                            if (ticket.repairObs) {
+                              // If repairObs exists, use it (it might already be translated or formatted)
+                              return ticket.repairObs
+                            }
+                            
                             if (ticket.selectedServices) {
                               try {
-                                const servicesArray = typeof ticket.selectedServices === 'string' 
+                                services = typeof ticket.selectedServices === 'string' 
                                   ? JSON.parse(ticket.selectedServices) 
                                   : ticket.selectedServices
-                                if (Array.isArray(servicesArray) && servicesArray.length > 0) {
-                                  services = servicesArray.join(", ")
-                                }
                               } catch {
-                                // Keep serviceName if parsing fails
+                                // If parsing fails, try as comma-separated string
+                                services = ticket.selectedServices
                               }
+                            } else if (ticket.serviceName) {
+                              services = ticket.serviceName
                             }
-                            return services || "-"
+                            
+                            return translateServices(services)
                           })()}
                         </td>
                         <td className="border-r border-blue-300 px-1 py-1.5 text-[11px] whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
@@ -1177,11 +1245,11 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
               <Textarea id="edit-equipmentObs" value={editFormData.equipmentObs || ""} onChange={(e) => setEditFormData({ ...editFormData, equipmentObs: e.target.value })} className="bg-white border-blue-300 text-black min-h-[80px]" />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-problem" className="text-black">Phone Issue</Label>
+              <Label htmlFor="edit-problem" className="text-black">{t("table.phoneIssue")}</Label>
               <Textarea id="edit-problem" value={editFormData.problem || ""} onChange={(e) => setEditFormData({ ...editFormData, problem: e.target.value })} className="bg-white border-blue-300 text-black min-h-[100px]" />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-selectedServices" className="text-black">Service Done</Label>
+              <Label htmlFor="edit-selectedServices" className="text-black">{t("table.serviceDone")}</Label>
               <Textarea 
                 id="edit-selectedServices" 
                 value={(() => {
