@@ -35,8 +35,29 @@ export async function POST(request: NextRequest) {
         [email.trim()]
       )
     } catch (dbError: any) {
+      // Handle "Too many connections" error
+      if (dbError?.code === "ER_CON_COUNT_ERROR" || 
+          dbError?.errno === 1040 || 
+          dbError?.message?.includes("Too many connections") ||
+          dbError?.message?.includes("too many connections")) {
+        console.error("[API] Too many database connections:", {
+          code: dbError?.code,
+          errno: dbError?.errno,
+          message: dbError?.message,
+        })
+        // Retry after a short delay
+        await new Promise(resolve => setTimeout(resolve, 2000))
+        try {
+          user = await queryOne(
+            `SELECT * FROM users WHERE LOWER(email) = LOWER(?)`,
+            [email.trim()]
+          )
+        } catch (retryError: any) {
+          throw new Error("Database is temporarily busy. Please try again in a moment.")
+        }
+      }
       // Handle DNS resolution errors (ENOTFOUND)
-      if (dbError?.code === "ENOTFOUND" || dbError?.message?.includes("ENOTFOUND") || dbError?.message?.includes("getaddrinfo")) {
+      else if (dbError?.code === "ENOTFOUND" || dbError?.message?.includes("ENOTFOUND") || dbError?.message?.includes("getaddrinfo")) {
         console.error("[API] Database hostname cannot be resolved:", {
           code: dbError?.code,
           message: dbError?.message,
@@ -45,11 +66,13 @@ export async function POST(request: NextRequest) {
         throw new Error("Database connection failed: Cannot resolve database hostname. Please check your database configuration.")
       }
       // If it's a connection error, log it but provide a helpful message
-      if (dbError?.code === "ECONNRESET" || dbError?.message?.includes("ECONNRESET")) {
+      else if (dbError?.code === "ECONNRESET" || dbError?.message?.includes("ECONNRESET")) {
         console.error("[API] Database connection reset during login query")
         throw new Error("Database connection error. Please try again in a moment.")
       }
-      throw dbError
+      else {
+        throw dbError
+      }
     }
 
     if (!user) {
@@ -173,6 +196,8 @@ export async function POST(request: NextRequest) {
       errorMessage = "Database authentication failed. Please verify your database username and password in environment variables."
     } else if (error?.code === "ER_BAD_DB_ERROR") {
       errorMessage = `Database '${process.env.DB_NAME || "unknown"}' not found. Please check your DB_NAME environment variable.`
+    } else if (error?.code === "ER_CON_COUNT_ERROR" || error?.errno === 1040 || error?.message?.includes("Too many connections")) {
+      errorMessage = "Database is temporarily busy with too many connections. Please wait a moment and try again."
     } else if (error?.code === "ER_NO_SUCH_TABLE") {
       errorMessage = "Database table not found. Please run the database initialization script."
     } else if (error?.code === "ENV_MISSING") {

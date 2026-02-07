@@ -85,8 +85,8 @@ const pool = mysql.createPool({
   database: process.env.DB_NAME || "admin_panel_db",
   ssl: getSSLConfig(),
   waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
+  connectionLimit: 5, // Reduced to prevent too many connections
+  queueLimit: 10, // Allow queuing requests when pool is full
   enableKeepAlive: true,
   keepAliveInitialDelay: 0,
   connectTimeout: 60000, // 60 seconds timeout for cloud databases
@@ -95,6 +95,9 @@ const pool = mysql.createPool({
   dateStrings: false,
   supportBigNumbers: true,
   bigNumberStrings: false,
+  // Connection pool options to prevent leaks
+  acquireTimeout: 60000, // Wait up to 60s for a connection
+  timeout: 60000, // Connection timeout
 })
 
 // Handle pool errors
@@ -165,11 +168,15 @@ export async function query(sql: string, params?: any[], retries = 2): Promise<a
         error?.code === "PROTOCOL_ENQUEUE_AFTER_QUIT" ||
         error?.code === "ER_ACCESS_DENIED_ERROR" ||
         error?.code === "ER_BAD_DB_ERROR" ||
+        error?.code === "ER_CON_COUNT_ERROR" ||
+        error?.errno === 1040 || // Too many connections
         error?.message?.includes("ENOTFOUND") ||
         error?.message?.includes("getaddrinfo") ||
         error?.message?.includes("Connection lost") ||
         error?.message?.includes("read ECONNRESET") ||
-        error?.message?.includes("connect ECONNREFUSED")
+        error?.message?.includes("connect ECONNREFUSED") ||
+        error?.message?.includes("Too many connections") ||
+        error?.message?.includes("too many connections")
       
       if (isConnectionError && attempt < retries) {
         console.warn(`[MySQL] Connection error (attempt ${attempt + 1}/${retries + 1}), retrying...`, error?.code || error?.message)
