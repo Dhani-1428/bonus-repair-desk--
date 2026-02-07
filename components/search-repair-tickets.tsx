@@ -1099,7 +1099,15 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                           {ticket.imeiNo || "-"}
                         </td>
                         <td className="border-r border-blue-300 px-1 py-1.5 text-[11px] text-black break-words">
-                          {translateProblem(ticket.problem)}
+                          {(() => {
+                            // Show Mobile Condition (On Arrival) - equipmentObs or condition field
+                            const mobileCondition = ticket.equipmentObs || ticket.equipmentObservations || ticket.condition || ""
+                            if (mobileCondition && mobileCondition.trim() !== "") {
+                              return mobileCondition.trim()
+                            }
+                            // Fallback to problem if no condition is available (for backward compatibility)
+                            return translateProblem(ticket.problem)
+                          })()}
                         </td>
                         <td className="border-r border-blue-300 px-1 py-1.5 text-[11px] text-black break-words">
                           {(() => {
