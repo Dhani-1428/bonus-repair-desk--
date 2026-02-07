@@ -202,6 +202,22 @@ export function NewRepairTicketForm() {
       if (matchingClients.length > 0) {
         setShowClientSuggestions(true)
         setClientSearchTerm(value)
+        
+        // Check if this customer already has a client ID and auto-fill it
+        const exactMatch = existingClients.find((client: any) => {
+          const clientName = (client.customerName || "").toLowerCase().trim()
+          const inputName = value.toLowerCase().trim()
+          return clientName === inputName
+        })
+        
+        if (exactMatch && exactMatch.clientId) {
+          // Auto-fill the existing client ID for this customer
+          setClientId(exactMatch.clientId)
+          if (exactMatch.contact) {
+            setContact(exactMatch.contact)
+          }
+          toast.success(`Found existing client: ${exactMatch.clientId}`)
+        }
       } else {
         setShowClientSuggestions(false)
       }
