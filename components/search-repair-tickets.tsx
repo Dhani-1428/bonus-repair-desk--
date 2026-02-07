@@ -156,6 +156,63 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
     return servicesArray.map(service => translateServiceName(service)).join(", ")
   }
 
+  // Helper function to translate common phone issues/problems
+  const translateProblem = (problem: string | null | undefined): string => {
+    if (!problem || problem.trim() === "") return "-"
+    
+    const problemText = problem.trim()
+    
+    // Map common problem descriptions to translation keys
+    // Try exact match first (case-insensitive)
+    const problemMap: Record<string, string> = {
+      "screen broken": "problem.screenBroken",
+      "broken screen": "problem.screenBroken",
+      "cracked screen": "problem.crackedScreen",
+      "screen cracked": "problem.crackedScreen",
+      "screen not working": "problem.screenNotWorking",
+      "display not working": "problem.displayNotWorking",
+      "touch not working": "problem.touchNotWorking",
+      "battery not charging": "problem.batteryNotCharging",
+      "charging issue": "problem.chargingIssue",
+      "not charging": "problem.notCharging",
+      "water damage": "problem.waterDamage",
+      "water damaged": "problem.waterDamaged",
+      "speaker not working": "problem.speakerNotWorking",
+      "microphone not working": "problem.microphoneNotWorking",
+      "camera not working": "problem.cameraNotWorking",
+      "wifi not working": "problem.wifiNotWorking",
+      "bluetooth not working": "problem.bluetoothNotWorking",
+      "network issue": "problem.networkIssue",
+      "software issue": "problem.softwareIssue",
+      "phone not turning on": "problem.phoneNotTurningOn",
+      "won't turn on": "problem.wontTurnOn",
+      "power button not working": "problem.powerButtonNotWorking",
+      "home button not working": "problem.homeButtonNotWorking",
+    }
+    
+    // Try exact match (case-insensitive)
+    const lowerProblem = problemText.toLowerCase()
+    for (const [key, translationKey] of Object.entries(problemMap)) {
+      if (lowerProblem === key.toLowerCase()) {
+        const translated = t(translationKey)
+        return translated || problemText
+      }
+    }
+    
+    // Try partial match (contains)
+    for (const [key, translationKey] of Object.entries(problemMap)) {
+      if (lowerProblem.includes(key.toLowerCase()) || key.toLowerCase().includes(lowerProblem)) {
+        const translated = t(translationKey)
+        if (translated && translated !== translationKey) {
+          return translated
+        }
+      }
+    }
+    
+    // If no translation found, return original text
+    return problemText
+  }
+
   // Helper function to sort tickets by clientId (CLI-0001, CLI-0002, etc.) then by createdAt
   const sortTicketsByClientId = (ticketsArray: any[]): any[] => {
     return ticketsArray.sort((a: any, b: any) => {
@@ -986,7 +1043,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                           {ticket.imeiNo || "-"}
                         </td>
                         <td className="border-r border-blue-300 px-1 py-1.5 text-[11px] text-black break-words">
-                          {ticket.problem || "-"}
+                          {translateProblem(ticket.problem)}
                         </td>
                         <td className="border-r border-blue-300 px-1 py-1.5 text-[11px] text-black break-words">
                           {(() => {
