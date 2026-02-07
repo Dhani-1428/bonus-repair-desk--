@@ -106,8 +106,14 @@ export async function GET(request: NextRequest) {
       if (ticket.selectedServices && Array.isArray(ticket.selectedServices) && ticket.selectedServices.length > 0) {
         ticket.serviceName = ticket.selectedServices.join(", ")
       }
+      // Ensure deletedAt is set for deleted tickets
+      if (deleted && !ticket.deletedAt) {
+        ticket.deletedAt = ticket.createdAt || new Date().toISOString()
+      }
       return ticket
     })
+    
+    console.log(`[API] ✅ Returning ${parsedTickets.length} ${deleted ? 'deleted ' : ''}tickets`)
 
     return NextResponse.json({ tickets: parsedTickets })
   } catch (error) {

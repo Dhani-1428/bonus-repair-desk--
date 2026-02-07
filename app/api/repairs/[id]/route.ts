@@ -444,12 +444,22 @@ export async function DELETE(
       // Ensure deletedTickets table exists
       const tablesExist = await tenantTablesExist(user.tenantId)
       if (!tablesExist) {
+        console.log(`[API] Creating tenant tables for tenantId: ${user.tenantId}`)
         await createTenantTables(user.tenantId)
+        console.log(`[API] ✅ Tenant tables created`)
       }
 
       // Insert all ticket data into deletedTickets table
       // Include all fields including budget, createdAt, simTray, waterDamaged, etc.
       try {
+        console.log(`[API] Attempting to insert ticket ${ticketId} into ${deletedTable}`)
+        console.log(`[API] Ticket data:`, {
+          id: ticket.id,
+          customerName: ticket.customerName,
+          clientId: ticket.clientId,
+          repairNumber: ticket.repairNumber
+        })
+        
         await execute(
           `INSERT INTO ${deletedTable} (id, userId, repairNumber, clientId, customerName, contact, receivedBy, imeiNo,
             brand, model, serialNo, softwareVersion, warranty, battery, charger,
@@ -487,8 +497,22 @@ export async function DELETE(
           ]
         )
         console.log(`[API] ✅ Successfully moved ticket ${ticketId} to deletedTickets table`)
+        
+        // Verify the insert worked by querying the deleted table
+        const verifyTicket = await queryOne(
+          `SELECT id, customerName, deletedAt FROM ${deletedTable} WHERE id = ?`,
+          [ticketId]
+        )
+        console.log(`[API] ✅ Verified ticket in deletedTickets:`, verifyTicket ? { id: verifyTicket.id, customerName: verifyTicket.customerName, deletedAt: verifyTicket.deletedAt } : 'NOT FOUND')
       } catch (insertError: any) {
-        console.error(`[API] ❌ Error inserting into deletedTickets:`, insertError)
+        console.error(`[API] ❌ Error inserting into deletedTickets:`, {
+          code: insertError?.code,
+          errno: insertError?.errno,
+          sqlState: insertError?.sqlState,
+          sqlMessage: insertError?.sqlMessage,
+          message: insertError?.message,
+          table: deletedTable
+        })
         // If it's a duplicate entry error, the ticket might already be in trash, continue with deletion
         if (insertError.code === 'ER_DUP_ENTRY') {
           console.log(`[API] Ticket ${ticketId} already exists in deletedTickets, continuing with deletion`)
