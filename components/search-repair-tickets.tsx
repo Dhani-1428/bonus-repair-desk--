@@ -98,38 +98,72 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
 
   // Helper function to translate service names
   const translateServiceName = (serviceName: string): string => {
-    if (!serviceName) return serviceName
+    if (!serviceName || serviceName.trim() === "") return serviceName
     
-    // Map common service names to translation keys
+    const trimmedService = serviceName.trim()
+    const lowerServiceName = trimmedService.toLowerCase()
+    
+    // Map common service names to translation keys (expanded with variations)
     const serviceMap: Record<string, string> = {
       "LCD": "service.lcd",
+      "lcd": "service.lcd",
       "Battery": "service.battery",
+      "battery": "service.battery",
       "Charging Port": "service.chargingPort",
+      "charging port": "service.chargingPort",
+      "chargingport": "service.chargingPort",
       "Microphone": "service.microphone",
+      "microphone": "service.microphone",
       "Ear speaker": "service.earSpeaker",
+      "ear speaker": "service.earSpeaker",
+      "earspeaker": "service.earSpeaker",
       "Back cover": "service.backCover",
+      "back cover": "service.backCover",
+      "backcover": "service.backCover",
       "Wifi/Bluetooth": "service.wifiBluetooth",
+      "wifi/bluetooth": "service.wifiBluetooth",
+      "wifi": "service.wifiBluetooth",
+      "bluetooth": "service.wifiBluetooth",
       "Network": "service.network",
+      "network": "service.network",
       "Software": "service.software",
+      "software": "service.software",
       "Shut off": "service.shutOff",
+      "shut off": "service.shutOff",
+      "shutoff": "service.shutOff",
     }
     
-    // Try to find exact match first
-    const translationKey = serviceMap[serviceName]
+    // Try exact match first
+    const translationKey = serviceMap[trimmedService] || serviceMap[lowerServiceName]
     if (translationKey) {
-      return t(translationKey) || serviceName
+      const translated = t(translationKey)
+      if (translated && translated !== translationKey) {
+        return translated
+      }
     }
     
     // Try case-insensitive match
-    const lowerServiceName = serviceName.toLowerCase()
     for (const [key, value] of Object.entries(serviceMap)) {
       if (key.toLowerCase() === lowerServiceName) {
-        return t(value) || serviceName
+        const translated = t(value)
+        if (translated && translated !== value) {
+          return translated
+        }
+      }
+    }
+    
+    // Try partial match for service names that might contain the service
+    for (const [key, value] of Object.entries(serviceMap)) {
+      if (lowerServiceName.includes(key.toLowerCase()) || key.toLowerCase().includes(lowerServiceName)) {
+        const translated = t(value)
+        if (translated && translated !== value) {
+          return translated
+        }
       }
     }
     
     // If no translation found, return original
-    return serviceName
+    return trimmedService
   }
 
   // Helper function to translate multiple services (comma-separated or array)
@@ -161,10 +195,12 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
     if (!problem || problem.trim() === "") return "-"
     
     const problemText = problem.trim()
+    const lowerProblem = problemText.toLowerCase()
     
     // Map common problem descriptions to translation keys
-    // Try exact match first (case-insensitive)
+    // Expanded list with more variations
     const problemMap: Record<string, string> = {
+      // Screen issues
       "screen broken": "problem.screenBroken",
       "broken screen": "problem.screenBroken",
       "cracked screen": "problem.crackedScreen",
@@ -172,36 +208,53 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
       "screen not working": "problem.screenNotWorking",
       "display not working": "problem.displayNotWorking",
       "touch not working": "problem.touchNotWorking",
+      "touchscreen not working": "problem.touchNotWorking",
+      
+      // Charging issues
       "battery not charging": "problem.batteryNotCharging",
       "charging issue": "problem.chargingIssue",
       "not charging": "problem.notCharging",
+      "charger not working": "problem.chargingIssue",
+      
+      // Water damage
       "water damage": "problem.waterDamage",
       "water damaged": "problem.waterDamaged",
+      "liquid damage": "problem.waterDamage",
+      
+      // Component issues
       "speaker not working": "problem.speakerNotWorking",
       "microphone not working": "problem.microphoneNotWorking",
       "camera not working": "problem.cameraNotWorking",
       "wifi not working": "problem.wifiNotWorking",
       "bluetooth not working": "problem.bluetoothNotWorking",
+      
+      // System issues
       "network issue": "problem.networkIssue",
       "software issue": "problem.softwareIssue",
       "phone not turning on": "problem.phoneNotTurningOn",
       "won't turn on": "problem.wontTurnOn",
+      "not turning on": "problem.wontTurnOn",
+      "dead": "problem.dead",
+      "dead repair": "problem.deadRepair",
+      "repair": "problem.deadRepair",
       "power button not working": "problem.powerButtonNotWorking",
       "home button not working": "problem.homeButtonNotWorking",
     }
     
-    // Try exact match (case-insensitive)
-    const lowerProblem = problemText.toLowerCase()
+    // Try exact match first (case-insensitive)
     for (const [key, translationKey] of Object.entries(problemMap)) {
       if (lowerProblem === key.toLowerCase()) {
         const translated = t(translationKey)
-        return translated || problemText
+        if (translated && translated !== translationKey) {
+          return translated
+        }
       }
     }
     
-    // Try partial match (contains)
+    // Try partial match - check if problem contains any key phrase
     for (const [key, translationKey] of Object.entries(problemMap)) {
-      if (lowerProblem.includes(key.toLowerCase()) || key.toLowerCase().includes(lowerProblem)) {
+      const lowerKey = key.toLowerCase()
+      if (lowerProblem.includes(lowerKey) || lowerKey.includes(lowerProblem)) {
         const translated = t(translationKey)
         if (translated && translated !== translationKey) {
           return translated

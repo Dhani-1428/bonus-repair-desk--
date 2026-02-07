@@ -203,6 +203,8 @@ const translations: Record<Language, Record<string, string>> = {
     "problem.softwareIssue": "Software Issue",
     "problem.phoneNotTurningOn": "Phone Not Turning On",
     "problem.wontTurnOn": "Won't Turn On",
+    "problem.dead": "Dead",
+    "problem.deadRepair": "Dead / Won't Turn On",
     "problem.powerButtonNotWorking": "Power Button Not Working",
     "problem.homeButtonNotWorking": "Home Button Not Working",
 
@@ -683,6 +685,8 @@ const translations: Record<Language, Record<string, string>> = {
     "problem.softwareIssue": "Problema de Software",
     "problem.phoneNotTurningOn": "Telefone Não Liga",
     "problem.wontTurnOn": "Não Liga",
+    "problem.dead": "Morto",
+    "problem.deadRepair": "Morto / Não Liga",
     "problem.powerButtonNotWorking": "Botão de Energia Não Funciona",
     "problem.homeButtonNotWorking": "Botão Home Não Funciona",
 
@@ -1139,6 +1143,8 @@ const translations: Record<Language, Record<string, string>> = {
     "problem.softwareIssue": "Softwareproblem",
     "problem.phoneNotTurningOn": "Telefon Geht Nicht An",
     "problem.wontTurnOn": "Geht Nicht An",
+    "problem.dead": "Tot",
+    "problem.deadRepair": "Tot / Geht Nicht An",
     "problem.powerButtonNotWorking": "Ein-/Ausschalter Funktioniert Nicht",
     "problem.homeButtonNotWorking": "Home-Taste Funktioniert Nicht",
 
@@ -1551,6 +1557,8 @@ const translations: Record<Language, Record<string, string>> = {
     "problem.softwareIssue": "Problème Logiciel",
     "problem.phoneNotTurningOn": "Téléphone Ne S'Allume Pas",
     "problem.wontTurnOn": "Ne S'Allume Pas",
+    "problem.dead": "Mort",
+    "problem.deadRepair": "Mort / Ne S'Allume Pas",
     "problem.powerButtonNotWorking": "Bouton d'Alimentation Ne Fonctionne Pas",
     "problem.homeButtonNotWorking": "Bouton Home Ne Fonctionne Pas",
 
@@ -1964,6 +1972,8 @@ const translations: Record<Language, Record<string, string>> = {
     "problem.softwareIssue": "سافٹ ویئر کا مسئلہ",
     "problem.phoneNotTurningOn": "فون آن نہیں ہو رہا",
     "problem.wontTurnOn": "آن نہیں ہو رہا",
+    "problem.dead": "مر گیا",
+    "problem.deadRepair": "مر گیا / آن نہیں ہو رہا",
     "problem.powerButtonNotWorking": "پاور بٹن کام نہیں کر رہا",
     "problem.homeButtonNotWorking": "ہوم بٹن کام نہیں کر رہا",
 
@@ -2367,6 +2377,8 @@ const translations: Record<Language, Record<string, string>> = {
     "problem.softwareIssue": "ਸਾਫਟਵੇਅਰ ਦੀ ਸਮੱਸਿਆ",
     "problem.phoneNotTurningOn": "ਫੋਨ ਚਾਲੂ ਨਹੀਂ ਹੋ ਰਿਹਾ",
     "problem.wontTurnOn": "ਚਾਲੂ ਨਹੀਂ ਹੋ ਰਿਹਾ",
+    "problem.dead": "ਮਰ ਗਿਆ",
+    "problem.deadRepair": "ਮਰ ਗਿਆ / ਚਾਲੂ ਨਹੀਂ ਹੋ ਰਿਹਾ",
     "problem.powerButtonNotWorking": "ਪਾਵਰ ਬਟਨ ਕੰਮ ਨਹੀਂ ਕਰ ਰਿਹਾ",
     "problem.homeButtonNotWorking": "ਹੋਮ ਬਟਨ ਕੰਮ ਨਹੀਂ ਕਰ ਰਿਹਾ",
 
@@ -2781,6 +2793,8 @@ const translations: Record<Language, Record<string, string>> = {
     "problem.softwareIssue": "सॉफ्टवेयर की समस्या",
     "problem.phoneNotTurningOn": "फोन चालू नहीं हो रहा",
     "problem.wontTurnOn": "चालू नहीं हो रहा",
+    "problem.dead": "मर गया",
+    "problem.deadRepair": "मर गया / चालू नहीं हो रहा",
     "problem.powerButtonNotWorking": "पावर बटन काम नहीं कर रहा",
     "problem.homeButtonNotWorking": "होम बटन काम नहीं कर रहा",
 
