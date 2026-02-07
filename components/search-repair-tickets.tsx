@@ -1397,6 +1397,42 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
               </div>
             </div>
             
+            <div className="space-y-2">
+              <Label htmlFor="edit-equipmentObs" className="text-black">{t("table.phoneIssue") || "Phone Issue"}</Label>
+              <Textarea 
+                id="edit-equipmentObs" 
+                value={editFormData.equipmentObs || ""} 
+                onChange={(e) => setEditFormData({ ...editFormData, equipmentObs: e.target.value })} 
+                className="bg-white border-blue-300 text-black min-h-[80px]" 
+                placeholder="Mobile Condition (On Arrival) - This is what shows in Phone Issue column"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-selectedServices" className="text-black">{t("table.serviceDone")}</Label>
+              <Textarea 
+                id="edit-selectedServices" 
+                value={(() => {
+                  // Get value - handle both string and array formats
+                  if (typeof editFormData.selectedServices === 'string') {
+                    return editFormData.selectedServices
+                  } else if (Array.isArray(editFormData.selectedServices)) {
+                    return editFormData.selectedServices.join(", ")
+                  }
+                  return ""
+                })()}
+                onChange={(e) => {
+                  const value = e.target.value
+                  // Store as string to allow unlimited text input with formatting preserved
+                  // This will be saved to repairObs when form is submitted
+                  setEditFormData({ ...editFormData, selectedServices: value })
+                }} 
+                className="bg-white border-blue-300 text-black min-h-[120px] resize-y w-full" 
+                placeholder="Enter services or repair observations (comma-separated or multiple lines)"
+                disabled={false}
+                readOnly={false}
+              />
+            </div>
+
             {/* Equipment Check */}
             <div className="space-y-2">
               <Label className="text-black">{t("form.equipmentCheck")}</Label>
@@ -1426,40 +1462,6 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                   <span className="text-sm text-black">{t("form.waterDamaged")}</span>
                 </label>
               </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="edit-equipmentObs" className="text-black">On Arrival</Label>
-              <Textarea id="edit-equipmentObs" value={editFormData.equipmentObs || ""} onChange={(e) => setEditFormData({ ...editFormData, equipmentObs: e.target.value })} className="bg-white border-blue-300 text-black min-h-[80px]" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="edit-problem" className="text-black">{t("table.phoneIssue")}</Label>
-              <Textarea id="edit-problem" value={editFormData.problem || ""} onChange={(e) => setEditFormData({ ...editFormData, problem: e.target.value })} className="bg-white border-blue-300 text-black min-h-[100px]" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="edit-selectedServices" className="text-black">{t("table.serviceDone")}</Label>
-              <Textarea 
-                id="edit-selectedServices" 
-                value={(() => {
-                  // Get value - handle both string and array formats
-                  if (typeof editFormData.selectedServices === 'string') {
-                    return editFormData.selectedServices
-                  } else if (Array.isArray(editFormData.selectedServices)) {
-                    return editFormData.selectedServices.join(", ")
-                  }
-                  return ""
-                })()}
-                onChange={(e) => {
-                  const value = e.target.value
-                  // Store as string to allow unlimited text input with formatting preserved
-                  // This will be saved to repairObs when form is submitted
-                  setEditFormData({ ...editFormData, selectedServices: value })
-                }} 
-                className="bg-white border-blue-300 text-black min-h-[120px] resize-y w-full" 
-                placeholder="Enter services or repair observations (comma-separated or multiple lines)"
-                disabled={false}
-                readOnly={false}
-              />
             </div>
             <div className="flex justify-end gap-2 pt-4">
               <Button type="button" variant="outline" onClick={() => { setIsEditDialogOpen(false); setEditingTicket(null) }} className="border-blue-300 bg-white text-black hover:bg-blue-50">{t("form.cancel")}</Button>

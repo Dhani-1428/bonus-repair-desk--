@@ -136,14 +136,14 @@ export function generateThermalReceipt(
         receipt += `Services: ${services}\n`
       }
 
+      // Mobile Condition (On Arrival)
+      if (ticket.equipmentObs) {
+        receipt += `Mobile Condition (On Arrival): ${ticket.equipmentObs}\n`
+      }
+
       // Problem
       if (ticket.problem && ticket.problem !== "N/A") {
         receipt += `Problem: ${ticket.problem}\n`
-      }
-
-      // Equipment Observations
-      if (ticket.equipmentObs) {
-        receipt += `Conditions: ${ticket.equipmentObs}\n`
       }
 
       receipt += `Budget: €${Number.parseFloat(ticket.price?.toString() || "0").toFixed(2)}\n`

@@ -126,7 +126,7 @@ function generateReceiptHTML(tickets: Ticket[], companyInfo?: CompanyInfo): stri
             <div style="display: ${cellLayout}; width: ${cellWidth}; vertical-align: top; padding-left: ${printerType === 'thermal' ? '0' : '6px'}; margin-top: ${printerType === 'thermal' ? '4px' : '0'}; border-top: ${printerType === 'thermal' ? '1px solid #ccc' : 'none'}; padding-top: ${printerType === 'thermal' ? '4px' : '0'};">
               <div style="font-weight: bold; font-size: ${headerFontSize}; margin: 0 0 2px 0; padding: 0; color: #000; line-height: ${lineHeight};">Client ID: ${clientId}</div>
               <div style="margin: 0 0 2px 0; padding: 0; font-size: ${baseFontSize}; color: #000; line-height: ${lineHeight};"><strong>Name:</strong> ${customerName}</div>
-              <div style="margin: 0 0 2px 0; padding: 0; font-size: ${baseFontSize}; color: #000; line-height: ${lineHeight};"><strong>Client Phone:</strong> ${contact}</div>
+              <div style="margin: 0 0 2px 0; padding: 0; font-size: ${baseFontSize}; color: #000; line-height: ${lineHeight};"><strong>Client Contact:</strong> ${contact}</div>
               <div style="margin: 0; padding: 0; font-size: ${baseFontSize}; color: #000; line-height: ${lineHeight};"><strong>Device Received By:</strong> ${receivedBy}</div>
             </div>
           </div>
@@ -143,14 +143,11 @@ function generateReceiptHTML(tickets: Ticket[], companyInfo?: CompanyInfo): stri
         </div>
         
         <div style="margin: 6px 0;">
+          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">Mobile Condition (On Arrival):</span> ${equipmentObs}</div>
+          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">Repair Obs:</span> ${repairObs}</div>
           <div style="font-weight: bold; margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};">Equipment Check:</div>
           <div style="margin: 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">SIM Card:</span> ${simCard} | <span style="font-weight: bold;">SIM Tray:</span> ${simTray} | <span style="font-weight: bold;">Memory Card:</span> ${memoryCard} | <span style="font-weight: bold;">Charger:</span> ${charger} | <span style="font-weight: bold;">Battery:</span> ${battery} | <span style="font-weight: bold;">Water Damaged:</span> ${waterDamaged}</div>
-        </div>
-        
-        <div style="margin: 6px 0;">
-          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">Equipment Obs:</span> ${equipmentObs}</div>
-          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">Repair Obs:</span> ${repairObs}</div>
-          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">Services:</span> ${services}</div>
+          <div style="margin: 4px 0 0 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">Services:</span> ${services}</div>
           <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">Problem:</span> ${problem}</div>
           <div style="margin: 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">Budget:</span> €${price.toFixed(2)}</div>
         </div>
