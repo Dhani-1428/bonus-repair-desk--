@@ -62,9 +62,9 @@ export async function GET(request: NextRequest) {
     let tickets
     try {
       if (deleted) {
-        // For deleted tickets, order by deletedAt if available, otherwise createdAt
+        // For deleted tickets, order by deletedAt
         tickets = await query(
-          `SELECT *, createdAt as deletedAt FROM ${tableName} WHERE userId = ? ORDER BY createdAt DESC`,
+          `SELECT * FROM ${tableName} WHERE userId = ? ORDER BY deletedAt DESC`,
           [userId]
         )
       } else {
