@@ -452,15 +452,18 @@ export async function DELETE(
       // Insert all ticket data into deletedTickets table
       // Include all fields including budget, createdAt, simTray, waterDamaged, etc.
       try {
+        const repairNumberValue = ticket.repairNumber || `DEL-${ticket.id.substring(0, 8)}`
         console.log(`[API] Attempting to insert ticket ${ticketId} into ${deletedTable}`)
         console.log(`[API] Ticket data:`, {
           id: ticket.id,
+          userId: ticket.userId,
           customerName: ticket.customerName,
           clientId: ticket.clientId,
-          repairNumber: ticket.repairNumber
+          repairNumber: repairNumberValue,
+          tenantId: user.tenantId
         })
         
-        await execute(
+        const insertResult = await execute(
           `INSERT INTO ${deletedTable} (id, userId, repairNumber, clientId, customerName, contact, receivedBy, imeiNo,
             brand, model, serialNo, softwareVersion, warranty, battery, charger,
             simCard, simTray, memoryCard, loanEquipment, equipmentObs, repairObs,
@@ -469,7 +472,7 @@ export async function DELETE(
           [
             ticket.id,
             ticket.userId,
-            ticket.repairNumber || `DEL-${ticket.id.substring(0, 8)}`,
+            repairNumberValue,
             ticket.clientId || null,
             ticket.customerName || null,
             ticket.contact || null,
@@ -496,14 +499,26 @@ export async function DELETE(
             ticket.status || 'PENDING'
           ]
         )
-        console.log(`[API] ✅ Successfully moved ticket ${ticketId} to deletedTickets table`)
+        console.log(`[API] ✅ INSERT successful. Result:`, insertResult)
         
         // Verify the insert worked by querying the deleted table
         const verifyTicket = await queryOne(
-          `SELECT id, customerName, deletedAt FROM ${deletedTable} WHERE id = ?`,
-          [ticketId]
+          `SELECT id, customerName, deletedAt, repairNumber FROM ${deletedTable} WHERE id = ? AND userId = ?`,
+          [ticketId, ticket.userId]
         )
-        console.log(`[API] ✅ Verified ticket in deletedTickets:`, verifyTicket ? { id: verifyTicket.id, customerName: verifyTicket.customerName, deletedAt: verifyTicket.deletedAt } : 'NOT FOUND')
+        if (verifyTicket) {
+          console.log(`[API] ✅ Verified ticket in deletedTickets:`, {
+            id: verifyTicket.id,
+            customerName: verifyTicket.customerName,
+            deletedAt: verifyTicket.deletedAt,
+            repairNumber: verifyTicket.repairNumber
+          })
+        } else {
+          console.error(`[API] ❌ Ticket NOT FOUND in deletedTickets after insert!`)
+          // Try to query all tickets in the table to see what's there
+          const allDeleted = await query(`SELECT id, customerName FROM ${deletedTable} LIMIT 5`)
+          console.log(`[API] Sample records in ${deletedTable}:`, allDeleted)
+        }
       } catch (insertError: any) {
         console.error(`[API] ❌ Error inserting into deletedTickets:`, {
           code: insertError?.code,

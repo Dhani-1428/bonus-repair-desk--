@@ -63,10 +63,24 @@ export async function GET(request: NextRequest) {
     try {
       if (deleted) {
         // For deleted tickets, order by deletedAt
+        // First check if table exists and has any records
+        const tableCheck = await query(`SELECT COUNT(*) as count FROM ${tableName} WHERE userId = ?`, [userId])
+        const count = tableCheck && tableCheck[0] ? tableCheck[0].count : 0
+        console.log(`[API] Checking deletedTickets table ${tableName} - Found ${count} records for userId ${userId}`)
+        
         tickets = await query(
           `SELECT * FROM ${tableName} WHERE userId = ? ORDER BY deletedAt DESC`,
           [userId]
         )
+        console.log(`[API] ✅ Query returned ${tickets.length} deleted tickets`)
+        if (tickets.length > 0) {
+          console.log(`[API] Sample deleted ticket:`, {
+            id: tickets[0].id,
+            customerName: tickets[0].customerName,
+            deletedAt: tickets[0].deletedAt,
+            repairNumber: tickets[0].repairNumber
+          })
+        }
       } else {
         tickets = await query(
           `SELECT * FROM ${tableName} WHERE userId = ? ORDER BY createdAt DESC`,
@@ -81,6 +95,8 @@ export async function GET(request: NextRequest) {
         errno: queryError?.errno,
         sqlState: queryError?.sqlState,
         sqlMessage: queryError?.sqlMessage,
+        tableName: tableName,
+        userId: userId
       })
       
       // If table doesn't exist, return empty array instead of error
