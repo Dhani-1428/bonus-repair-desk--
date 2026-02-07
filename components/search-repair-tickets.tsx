@@ -251,10 +251,13 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
       }
     }
     
-    // Try partial match - check if problem contains any key phrase
+    // Try partial match - only if the key is a significant part of the problem
+    // This prevents short words like "repair" from matching "dead repair"
     for (const [key, translationKey] of Object.entries(problemMap)) {
       const lowerKey = key.toLowerCase()
-      if (lowerProblem.includes(lowerKey) || lowerKey.includes(lowerProblem)) {
+      // Only match if the key phrase is at least 3 characters and is contained in the problem
+      // OR if the problem is contained in the key (for exact phrases)
+      if (lowerKey.length >= 3 && lowerProblem.includes(lowerKey)) {
         const translated = t(translationKey)
         if (translated && translated !== translationKey) {
           return translated
@@ -262,7 +265,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
       }
     }
     
-    // If no translation found, return original text
+    // ALWAYS return original text if no translation found - this ensures old data is displayed
     return problemText
   }
 
