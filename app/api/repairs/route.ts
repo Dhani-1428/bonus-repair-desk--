@@ -355,8 +355,8 @@ export async function DELETE(request: NextRequest) {
         `INSERT INTO ${deletedTable} (id, userId, repairNumber, clientId, customerName, contact, receivedBy, imeiNo,
           brand, model, serialNo, softwareVersion, warranty, battery, charger,
           simCard, simTray, memoryCard, loanEquipment, equipmentObs, repairObs,
-          selectedServices, \`condition\`, problem, price, budget, status, createdAt)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          selectedServices, \`condition\`, problem, price, budget, status)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           ticket.id,
           ticket.userId,
@@ -384,8 +384,7 @@ export async function DELETE(request: NextRequest) {
           ticket.problem || null,
           ticket.price || null,
           ticket.budget || null,
-          ticket.status || 'PENDING',
-          ticket.createdAt || new Date().toISOString().slice(0, 19).replace('T', ' ')
+          ticket.status || 'PENDING'
         ]
       )
     }
