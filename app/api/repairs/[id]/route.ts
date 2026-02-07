@@ -507,10 +507,36 @@ export async function DELETE(
 
       return NextResponse.json({ message: "Ticket deleted successfully" })
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error("[API] Error deleting repair ticket:", error)
+    console.error("[API] Error details:", {
+      code: error?.code,
+      errno: error?.errno,
+      sqlState: error?.sqlState,
+      sqlMessage: error?.sqlMessage,
+      message: error?.message,
+    })
+    
+    // Provide more specific error messages
+    let errorMessage = "Failed to delete repair ticket"
+    if (error?.code === "ER_NO_SUCH_TABLE") {
+      errorMessage = "Database table not found. Please try again."
+    } else if (error?.code === "ER_DUP_ENTRY") {
+      errorMessage = "Ticket already exists in trash"
+    } else if (error?.sqlMessage) {
+      errorMessage = error.sqlMessage
+    } else if (error?.message) {
+      errorMessage = error.message
+    }
+    
     return NextResponse.json(
-      { error: "Failed to delete repair ticket" },
+      { 
+        error: errorMessage,
+        details: process.env.NODE_ENV === "development" ? {
+          code: error?.code,
+          sqlMessage: error?.sqlMessage,
+        } : undefined
+      },
       { status: 500 }
     )
   }
