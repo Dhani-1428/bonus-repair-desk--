@@ -366,7 +366,7 @@ export async function DELETE(request: NextRequest) {
         [
           ticket.id,
           ticket.userId,
-          ticket.repairNumber || null,
+          ticket.repairNumber || `DEL-${ticket.id.substring(0, 8)}`,
           ticket.clientId || null,
           ticket.customerName || null,
           ticket.contact || null,
