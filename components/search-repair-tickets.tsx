@@ -840,24 +840,38 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
         return
       }
 
+      // Confirm deletion
+      if (typeof window !== "undefined") {
+        const confirmed = window.confirm(t("trash.confirmDelete") || "Are you sure you want to delete this device? It will be moved to trash.")
+        if (!confirmed) return
+      }
+
       // Delete via API
       const response = await fetch(`/api/repairs/${ticketId}?userId=${userId}`, {
         method: "DELETE",
       })
 
       if (response.ok) {
-        // Reload tickets
+        // Remove from local state immediately
+        setTickets(prev => prev.filter(t => String(t.id) !== String(ticketId)))
+        
+        // Also update localStorage
         const storedTickets = await getUserData<any[]>("repairTickets", [])
-        const reloadedTickets = Array.isArray(storedTickets) ? storedTickets : []
-        setTickets(reloadedTickets)
-        toast.success(t("success.deviceMovedToTrash"))
+        const updatedTickets = Array.isArray(storedTickets) 
+          ? storedTickets.filter(t => String(t.id) !== String(ticketId))
+          : []
+        await setUserData("repairTickets", updatedTickets)
+        
+        toast.success(t("success.deviceMovedToTrash") || "Device moved to trash successfully")
       } else {
         const data = await response.json()
-        throw new Error(data.error || t("error.deviceDeleteFailed"))
+        const errorMessage = data.error || t("error.deviceDeleteFailed") || "Failed to delete device"
+        console.error("[SearchRepairTickets] Delete failed:", errorMessage)
+        toast.error(errorMessage)
       }
     } catch (error: any) {
       console.error("[SearchRepairTickets] Error deleting ticket:", error)
-      toast.error(error.message || t("error.device.notFound"))
+      toast.error(error.message || t("error.deviceDeleteFailed") || "Failed to delete device")
     }
   }
 

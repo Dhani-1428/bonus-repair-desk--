@@ -434,9 +434,22 @@ export async function DELETE(
         [ticketId]
       )
 
-      if (ticket) {
-        // Insert all ticket data into deletedTickets table
-        // Include all fields including budget, createdAt, simTray, waterDamaged, etc.
+      if (!ticket) {
+        return NextResponse.json(
+          { error: "Ticket not found" },
+          { status: 404 }
+        )
+      }
+
+      // Ensure deletedTickets table exists
+      const tablesExist = await tenantTablesExist(user.tenantId)
+      if (!tablesExist) {
+        await createTenantTables(user.tenantId)
+      }
+
+      // Insert all ticket data into deletedTickets table
+      // Include all fields including budget, createdAt, simTray, waterDamaged, etc.
+      try {
         await execute(
           `INSERT INTO ${deletedTable} (id, userId, repairNumber, clientId, customerName, contact, receivedBy, imeiNo,
             brand, model, serialNo, softwareVersion, warranty, battery, charger,
@@ -474,12 +487,23 @@ export async function DELETE(
             ticket.createdAt || new Date().toISOString().slice(0, 19).replace('T', ' ')
           ]
         )
+        console.log(`[API] ✅ Successfully moved ticket ${ticketId} to deletedTickets table`)
+      } catch (insertError: any) {
+        console.error(`[API] ❌ Error inserting into deletedTickets:`, insertError)
+        // If it's a duplicate entry error, the ticket might already be in trash, continue with deletion
+        if (insertError.code === 'ER_DUP_ENTRY') {
+          console.log(`[API] Ticket ${ticketId} already exists in deletedTickets, continuing with deletion`)
+        } else {
+          throw insertError
+        }
       }
 
+      // Delete from main repair table
       await execute(
         `DELETE FROM ${repairTable} WHERE id = ?`,
         [ticketId]
       )
+      console.log(`[API] ✅ Successfully deleted ticket ${ticketId} from repairTickets table`)
 
       return NextResponse.json({ message: "Ticket deleted successfully" })
     }
