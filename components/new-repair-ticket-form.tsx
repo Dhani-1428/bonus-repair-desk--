@@ -31,6 +31,7 @@ interface DeviceFormData {
   waterDamaged: boolean
   loanEquipment?: boolean
   equipmentObs: string
+  phoneIssue: string
   repairObs: string
   selectedServices: string[]
   condition: string
@@ -414,6 +415,7 @@ export function NewRepairTicketForm() {
             waterDamaged: currentDevice.waterDamaged,
             loanEquipment: false,
             equipmentObs: currentDevice.equipmentObs || null,
+            phoneIssue: currentDevice.phoneIssue || null,
             repairObs: currentDevice.repairObs || null,
             selectedServices: [],
             condition: null,
@@ -639,6 +641,7 @@ export function NewRepairTicketForm() {
             waterDamaged: device.waterDamaged,
             loanEquipment: false,
             equipmentObs: device.equipmentObs || null,
+            phoneIssue: device.phoneIssue || null,
             repairObs: device.repairObs || null,
             selectedServices: [],
             condition: null,
@@ -1403,10 +1406,21 @@ export function NewRepairTicketForm() {
 
                   {/* Mobile Conditions (On Arrival) */}
                   <div className="space-y-2 md:col-span-2">
-                    <Label className="text-black">mobile conditions (on arrival)</Label>
+                    <Label className="text-black">Mobile Conditions (On Arrival)</Label>
                     <Textarea
                       value={device.equipmentObs}
                       onChange={(e) => updateDevice(deviceIndex, "equipmentObs", e.target.value)}
+                      rows={2}
+                      className="!bg-white border-2 border-blue-200 text-black placeholder:text-black focus:border-blue-500"
+                    />
+                  </div>
+
+                  {/* Phone Issue */}
+                  <div className="space-y-2 md:col-span-2">
+                    <Label className="text-black">Phone Issue</Label>
+                    <Textarea
+                      value={device.phoneIssue}
+                      onChange={(e) => updateDevice(deviceIndex, "phoneIssue", e.target.value)}
                       rows={2}
                       className="!bg-white border-2 border-blue-200 text-black placeholder:text-black focus:border-blue-500"
                     />
