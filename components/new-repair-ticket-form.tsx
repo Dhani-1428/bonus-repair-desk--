@@ -308,6 +308,9 @@ export function NewRepairTicketForm() {
   const [availablePrinters, setAvailablePrinters] = useState<any[]>([])
   const [selectedPrinter, setSelectedPrinter] = useState<string | null>(null)
   const [isDetectingPrinters, setIsDetectingPrinters] = useState(false)
+  const [isSavingDevice, setIsSavingDevice] = useState(false)
+  const [isDeviceAnimating, setIsDeviceAnimating] = useState(false)
+  const [deviceKey, setDeviceKey] = useState(0) // Key to force re-render and trigger animation
 
   // Generate preview Repair Number
   const getRepairNumberPreview = (): string => {
@@ -365,6 +368,13 @@ export function NewRepairTicketForm() {
                      currentDevice.budget?.trim()
       
       if (hasData && user?.id && customerName.trim() && receivedBy.trim()) {
+        // Start animation: fade out current device
+        setIsSavingDevice(true)
+        setIsDeviceAnimating(true)
+        
+        // Wait for fade-out animation (300ms)
+        await new Promise(resolve => setTimeout(resolve, 300))
+        
         // Save the current device immediately
         try {
           const deviceImei = currentDevice.imeiNo && currentDevice.imeiNo.trim() !== "" ? currentDevice.imeiNo.trim() : ""
@@ -435,41 +445,54 @@ export function NewRepairTicketForm() {
             const errorData = await response.json().catch(() => ({}))
             console.error("[NewRepairTicketForm] Failed to save device:", errorData)
             toast.error("Failed to save current device. Please try again.")
+            setIsSavingDevice(false)
+            setIsDeviceAnimating(false)
             return // Don't add new device if save failed
           }
         } catch (error) {
           console.error("[NewRepairTicketForm] Error saving device:", error)
           toast.error("Failed to save current device. Please try again.")
+          setIsSavingDevice(false)
+          setIsDeviceAnimating(false)
           return // Don't add new device if save failed
         }
       }
     }
 
-    // Clear the form and add a new empty device
-    setDevices([{
-      model: "",
-      brand: "",
-      imeiNo: "",
-      serialNo: "",
-      warrantyUntil30Days: false,
-      simCard: false,
-      simTray: false,
-      memoryCard: false,
-      charger: false,
-      battery: false,
-      waterDamaged: false,
-      loanEquipment: false,
-      equipmentObs: "",
-      repairObs: "",
-      selectedServices: [],
-      condition: "",
-      customCondition: "",
-      problem: "",
-      price: "",
-      budget: "",
-      priceType: "budget",
-      imeiError: null,
-    }])
+    // Clear the form and add a new empty device with fade-in animation
+    setIsSavingDevice(false)
+    setIsDeviceAnimating(false)
+    
+    // Update device key to trigger animation on new device
+    setDeviceKey(prev => prev + 1)
+    
+    // Small delay to ensure smooth transition
+    setTimeout(() => {
+      setDevices([{
+        model: "",
+        brand: "",
+        imeiNo: "",
+        serialNo: "",
+        warrantyUntil30Days: false,
+        simCard: false,
+        simTray: false,
+        memoryCard: false,
+        charger: false,
+        battery: false,
+        waterDamaged: false,
+        loanEquipment: false,
+        equipmentObs: "",
+        repairObs: "",
+        selectedServices: [],
+        condition: "",
+        customCondition: "",
+        problem: "",
+        price: "",
+        budget: "",
+        priceType: "budget",
+        imeiError: null,
+      }])
+    }, 50)
   }
 
   const removeDevice = (index: number) => {
@@ -1237,8 +1260,14 @@ export function NewRepairTicketForm() {
           <div className="space-y-6">
             {devices.map((device, deviceIndex) => (
               <div
-                key={deviceIndex}
-                className="border-2 border-blue-200 rounded-xl p-6 bg-white"
+                key={`${deviceKey}-${deviceIndex}`}
+                className={`border-2 border-blue-200 rounded-xl p-6 bg-white transition-all duration-300 ease-in-out ${
+                  isSavingDevice && deviceIndex === 0
+                    ? "opacity-0 -translate-x-5 pointer-events-none"
+                    : deviceIndex === 0 && deviceKey > 0
+                    ? "animate-fade-in-slide"
+                    : "opacity-100 translate-x-0"
+                }`}
               >
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold text-black">{t("form.device")} {deviceIndex + 1}</h3>
