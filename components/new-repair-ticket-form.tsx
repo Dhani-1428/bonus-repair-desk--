@@ -965,7 +965,7 @@ export function NewRepairTicketForm() {
         <Card className="shadow-2xl border border-blue-200 bg-white">
       <CardHeader className="bg-gradient-to-r from-blue-50 to-purple-50 border-b border-blue-200 rounded-t-lg px-6 py-4">
         <CardTitle className="text-2xl flex items-center gap-2 text-black">
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
           {t("page.newTicket.customerDeviceInformation")}
@@ -981,7 +981,7 @@ export function NewRepairTicketForm() {
               onClick={addDevice}
               className="border-blue-600 bg-blue-50 text-blue-700 hover:bg-blue-100"
             >
-              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 mr-2 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
               {t("form.addAnotherDevice")}
@@ -1052,7 +1052,7 @@ export function NewRepairTicketForm() {
                                   <div className="text-xs text-gray-500">{client.contact}</div>
                                 )}
                               </div>
-                              <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <svg className="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                               </svg>
                             </div>
@@ -1120,7 +1120,7 @@ export function NewRepairTicketForm() {
                       onClick={() => removeDevice(deviceIndex)}
                       className="border-red-300 bg-red-50 text-red-700 hover:bg-red-100 hover:border-red-400"
                     >
-                      <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 mr-1 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                       </svg>
                       {t("form.remove")}
@@ -1151,7 +1151,7 @@ export function NewRepairTicketForm() {
                             size="sm"
                             className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 p-0 hover:bg-gray-100"
                           >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                             </svg>
                           </Button>
@@ -1195,7 +1195,7 @@ export function NewRepairTicketForm() {
                               size="sm"
                               className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 p-0 hover:bg-gray-100"
                             >
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <svg className="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                               </svg>
                             </Button>
@@ -1265,7 +1265,7 @@ export function NewRepairTicketForm() {
                           onChange={(e) => updateDevice(deviceIndex, "simCard", e.target.checked)}
                         />
                         <div className="flex items-center gap-1">
-                          <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4 text-black" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M4 4h16v16H4V4zm2 2v12h12V6H6z" fill="currentColor"/>
                             <path d="M4 4l3-3v3H4z" fill="currentColor" opacity="0.6"/>
                             <rect x="8" y="9" width="2" height="1.5" fill="white" opacity="0.9"/>
@@ -1285,7 +1285,7 @@ export function NewRepairTicketForm() {
                           onChange={(e) => updateDevice(deviceIndex, "simTray", e.target.checked)}
                         />
                         <div className="flex items-center gap-1">
-                          <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4 text-black" fill="currentColor" viewBox="0 0 24 24">
                             <rect x="6" y="8" width="12" height="8" rx="1" fill="currentColor"/>
                             <rect x="7" y="10" width="10" height="4" fill="white" opacity="0.3"/>
                             <rect x="9" y="11" width="6" height="2" fill="white" opacity="0.5"/>
@@ -1303,7 +1303,7 @@ export function NewRepairTicketForm() {
                           onChange={(e) => updateDevice(deviceIndex, "memoryCard", e.target.checked)}
                         />
                         <div className="flex items-center gap-1">
-                          <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4 text-black" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M4 4h16v16H4V4zm2 2v12h12V6H6z" fill="currentColor"/>
                             <path d="M4 4h3v3H4V4z" fill="currentColor" opacity="0.7"/>
                             <rect x="8" y="7" width="8" height="10" fill="white" opacity="0.2"/>
@@ -1321,7 +1321,7 @@ export function NewRepairTicketForm() {
                           onChange={(e) => updateDevice(deviceIndex, "charger", e.target.checked)}
                         />
                         <div className="flex items-center gap-1">
-                          <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4 text-black" fill="currentColor" viewBox="0 0 24 24">
                             <rect x="9" y="2" width="6" height="8" rx="1" fill="currentColor"/>
                             <rect x="8" y="6" width="1.5" height="4" rx="0.3" fill="currentColor"/>
                             <rect x="14.5" y="6" width="1.5" height="4" rx="0.3" fill="currentColor"/>
@@ -1340,7 +1340,7 @@ export function NewRepairTicketForm() {
                           onChange={(e) => updateDevice(deviceIndex, "battery", e.target.checked)}
                         />
                         <div className="flex items-center gap-1">
-                          <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4 text-black" fill="currentColor" viewBox="0 0 24 24">
                             <rect x="4" y="7" width="14" height="10" rx="1" fill="currentColor"/>
                             <rect x="18" y="10" width="2" height="4" rx="0.5" fill="currentColor"/>
                             <rect x="6" y="9" width="10" height="6" rx="0.5" fill="white" opacity="0.9"/>
@@ -1358,7 +1358,7 @@ export function NewRepairTicketForm() {
                           onChange={(e) => updateDevice(deviceIndex, "waterDamaged", e.target.checked)}
                         />
                         <div className="flex items-center gap-1">
-                          <svg className="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4 text-black" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M19.36 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.64-4.96z"/>
                             <path d="M7 16l1 2h2l-1-2M11 16l1 2h2l-1-2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
                           </svg>
@@ -1462,7 +1462,7 @@ export function NewRepairTicketForm() {
                   </>
                 ) : (
                   <>
-                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 mr-2 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                     {devices.length > 1 
@@ -1481,7 +1481,7 @@ export function NewRepairTicketForm() {
         <Card className="shadow-2xl border border-gray-200 bg-white">
           <CardHeader className="bg-gradient-to-r from-green-50 to-blue-50 border-b border-gray-200 rounded-t-lg px-6 py-4">
             <CardTitle className="text-2xl flex items-center gap-2 text-gray-900">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               Ticket Details - {createdTicketsDetails.length} Device{createdTicketsDetails.length > 1 ? "s" : ""} Created
@@ -1606,7 +1606,7 @@ export function NewRepairTicketForm() {
                         size="sm"
                         className="border-blue-500 bg-blue-50 text-blue-700 hover:bg-blue-100 hover:border-blue-600"
                       >
-                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-4 h-4 mr-2 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
                         </svg>
                         Print This Device Receipt
@@ -1619,7 +1619,7 @@ export function NewRepairTicketForm() {
                         size="sm"
                         className="border-purple-500 bg-purple-50 text-purple-700 hover:bg-purple-100 hover:border-purple-600"
                       >
-                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-4 h-4 mr-2 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
                         </svg>
                         Print All Devices ({ticket.clientId})
