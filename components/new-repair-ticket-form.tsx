@@ -1154,7 +1154,7 @@ export function NewRepairTicketForm() {
                       value={clientId}
                       onChange={(e) => handleClientIdChange(e.target.value)}
                       placeholder="CLI-0001"
-                      className="!bg-white border-blue-200 text-black focus:border-blue-500 h-12 text-lg font-mono"
+                      className="!bg-white border-2 border-blue-200 text-black focus:border-blue-500 h-12 text-lg font-mono"
                     />
                     <p className="text-xs text-gray-500 mt-1">{t("form.clientIdHintNew") || "Enter existing Client ID or leave for new client"}</p>
                   </div>
@@ -1185,7 +1185,7 @@ export function NewRepairTicketForm() {
                         setTimeout(() => setShowClientSuggestions(false), 200)
                       }}
                     required
-                      className="!bg-white border-blue-200 text-black focus:border-blue-500 h-12 text-lg"
+                      className="!bg-white border-2 border-blue-200 text-black focus:border-blue-500 h-12 text-lg"
                     />
                     {showClientSuggestions && searchExistingClients(customerName).length > 0 && (
                       <div className="absolute z-50 w-full mt-1 bg-white border-2 border-blue-200 rounded-lg shadow-xl max-h-64 overflow-y-auto">
@@ -1230,7 +1230,7 @@ export function NewRepairTicketForm() {
                     type="tel"
                     value={contact}
                     onChange={(e) => setContact(e.target.value)}
-                    className="!bg-white border-blue-200 text-black placeholder:text-black focus:border-blue-500 h-12 text-lg"
+                    className="!bg-white border-2 border-blue-200 text-black placeholder:text-black focus:border-blue-500 h-12 text-lg"
                   />
                 ) : (
                   <div className="bg-white border border-blue-200 rounded-md px-4 py-3 h-12 text-lg text-black flex items-center">
@@ -1246,7 +1246,7 @@ export function NewRepairTicketForm() {
                     value={receivedBy}
                     onChange={(e) => setReceivedBy(e.target.value)}
                     required
-                    className="!bg-white border-blue-200 text-black placeholder:text-black focus:border-blue-500 h-12 text-lg"
+                    className="!bg-white border-2 border-blue-200 text-black placeholder:text-black focus:border-blue-500 h-12 text-lg"
                   />
                 ) : (
                   <div className="bg-white border border-blue-200 rounded-md px-4 py-3 h-12 text-lg text-black flex items-center">
@@ -1301,7 +1301,7 @@ export function NewRepairTicketForm() {
                             updateDevice(deviceIndex, "model", "")
                           }
                         }}
-                        className="!bg-white border-blue-200 text-black placeholder:text-black focus:border-blue-500 pr-10"
+                        className="!bg-white border-2 border-blue-200 text-black placeholder:text-black focus:border-blue-500 pr-10"
                       />
                       <Popover>
                         <PopoverTrigger asChild>
@@ -1344,7 +1344,7 @@ export function NewRepairTicketForm() {
                         value={device.model}
                         onChange={(e) => updateDevice(deviceIndex, "model", e.target.value)}
                         disabled={!device.brand}
-                        className="!bg-white border-blue-200 text-black placeholder:text-black focus:border-blue-500 pr-10 disabled:opacity-50"
+                        className="!bg-white border-2 border-blue-200 text-black placeholder:text-black focus:border-blue-500 pr-10 disabled:opacity-50"
                       />
                       {device.brand && device.brand !== "Other" && BRANDS_AND_MODELS[device.brand] && (
                         <Popover>
@@ -1386,7 +1386,7 @@ export function NewRepairTicketForm() {
                       onChange={(e) => updateDevice(deviceIndex, "imeiNo", e.target.value)}
                       maxLength={15}
                       inputMode="numeric"
-                      className={`!bg-white border-blue-200 text-black placeholder:text-black focus:border-blue-500 h-12 text-lg ${device.imeiError ? "border-red-500 focus-visible:ring-red-500" : ""}`}
+                      className={`!bg-white border-2 border-blue-200 text-black placeholder:text-black focus:border-blue-500 h-12 text-lg ${device.imeiError ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                     />
                     {device.imeiError && <p className="text-xs text-red-600">{device.imeiError}</p>}
                   </div>
@@ -1396,7 +1396,7 @@ export function NewRepairTicketForm() {
                     <Input
                       value={device.serialNo || ""}
                       onChange={(e) => updateDevice(deviceIndex, "serialNo", e.target.value)}
-                      className="!bg-white border-gray-300 text-gray-900 placeholder:text-black focus:border-blue-500 h-12 text-lg"
+                      className="!bg-white border-2 border-gray-300 text-gray-900 placeholder:text-black focus:border-blue-500 h-12 text-lg"
                     />
                     <p className="text-xs text-black">{t("form.laptopSerialNumberHint")}</p>
                   </div>
@@ -1408,7 +1408,7 @@ export function NewRepairTicketForm() {
                       value={device.equipmentObs}
                       onChange={(e) => updateDevice(deviceIndex, "equipmentObs", e.target.value)}
                       rows={2}
-                      className="!bg-white border-blue-200 text-black placeholder:text-black focus:border-blue-500"
+                      className="!bg-white border-2 border-blue-200 text-black placeholder:text-black focus:border-blue-500"
                     />
                   </div>
 
@@ -1534,7 +1534,7 @@ export function NewRepairTicketForm() {
                       value={device.repairObs}
                       onChange={(e) => updateDevice(deviceIndex, "repairObs", e.target.value)}
                       rows={2}
-                      className="!bg-white border-blue-200 text-black placeholder:text-black focus:border-blue-500"
+                      className="!bg-white border-2 border-blue-200 text-black placeholder:text-black focus:border-blue-500"
                     />
                   </div>
 
@@ -1548,7 +1548,7 @@ export function NewRepairTicketForm() {
                             updateDevice(deviceIndex, "priceType", value)
                           }}
                         >
-                          <SelectTrigger className="w-[120px] !bg-white border-gray-300 text-gray-900">
+                          <SelectTrigger className="w-[120px] !bg-white border-2 border-gray-300 text-gray-900">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent className="bg-white border-gray-200">
@@ -1571,7 +1571,7 @@ export function NewRepairTicketForm() {
                                 updateDevice(deviceIndex, "budget", value)
                               }
                             }}
-                            className="!bg-white border-gray-300 text-gray-900 placeholder:text-black focus:border-blue-500 pl-8 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                            className="!bg-white border-2 border-gray-300 text-gray-900 placeholder:text-black focus:border-blue-500 pl-8 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                           />
                         </div>
                       </div>
@@ -1592,7 +1592,7 @@ export function NewRepairTicketForm() {
                       <Input
                         value={getRepairNumberPreview()}
                         disabled
-                        className="bg-purple-50 border-purple-200 text-purple-700 font-mono font-semibold cursor-not-allowed"
+                        className="bg-purple-50 border-2 border-purple-200 text-purple-700 font-mono font-semibold cursor-not-allowed"
                       />
                       <p className="text-xs text-gray-500">{t("form.repairNumberHint")}</p>
                     </div>
