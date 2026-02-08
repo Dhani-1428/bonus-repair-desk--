@@ -2567,11 +2567,22 @@ export async function printReceiptForTickets(
   // Open print window with proper error handling
   let printWindow: Window | null = null
   try {
-    printWindow = window.open("", "_blank", "width=800,height=600")
+    // Open window with a data URL to ensure it's not blank
+    printWindow = window.open("about:blank", "_blank", "width=800,height=600")
     if (!printWindow || printWindow.closed || typeof printWindow.closed === "undefined") {
       // If popup blocked, show error message
       console.error("Popup blocked or window failed to open")
       toast.error("Could not open print window. Please allow popups for this site and try again.")
+      return
+    }
+    
+    // Wait a moment for the window to be ready
+    await new Promise(resolve => setTimeout(resolve, 50))
+    
+    // Verify window is still open and accessible
+    if (printWindow.closed || !printWindow.document) {
+      console.error("Print window closed or document not accessible")
+      toast.error("Print window error. Please try again.")
       return
     }
   } catch (error) {
@@ -3156,17 +3167,44 @@ export async function printReceiptForTickets(
       return
     }
     
-    // Open document for writing (this clears any existing content)
-    printWindow.document.open("text/html", "replace")
-    printWindow.document.write(printHTML)
-    printWindow.document.close()
-    
-    // Set title after document is closed
+    // Write content to print window using a more reliable method
+    // First, ensure the window is ready
     if (printWindow.document) {
+      // Clear any existing content
+      printWindow.document.open()
+      
+      // Write the HTML content
+      printWindow.document.write(printHTML)
+      
+      // Close the document stream
+      printWindow.document.close()
+      
+      // Set title
       printWindow.document.title = "Repair Ticket Receipt"
+      
+      console.log("Print window content written successfully, HTML length:", printHTML.length)
+      console.log("Document ready state:", printWindow.document.readyState)
+      
+      // Verify content was written
+      setTimeout(() => {
+        if (printWindow && !printWindow.closed && printWindow.document) {
+          const bodyContent = printWindow.document.body?.innerHTML || ""
+          if (bodyContent.length === 0) {
+            console.error("Warning: Print window body is empty after write")
+            toast.error("Print content failed to load. Please try again.")
+          } else {
+            console.log("Print window body content length:", bodyContent.length)
+          }
+        }
+      }, 100)
+    } else {
+      console.error("Print window document is not available")
+      toast.error("Print window error. Please try again.")
+      if (printWindow && !printWindow.closed) {
+        printWindow.close()
+      }
+      return
     }
-    
-    console.log("Print window content written successfully")
   } catch (error) {
     console.error("Error writing to print window:", error)
     toast.error("Error generating print preview. Please try again.")
