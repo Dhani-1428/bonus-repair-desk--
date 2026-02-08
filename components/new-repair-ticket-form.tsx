@@ -1538,54 +1538,56 @@ export function NewRepairTicketForm() {
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label className="text-gray-700">{t("form.budget")} / {t("form.price")}</Label>
-                    <div className="flex gap-2">
-                      <Select
-                        value={device.priceType || "budget"}
-                        onValueChange={(value: "budget" | "price") => {
-                          updateDevice(deviceIndex, "priceType", value)
-                        }}
-                      >
-                        <SelectTrigger className="w-[120px] bg-white border-gray-300 text-gray-900">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="bg-white border-gray-200">
-                          <SelectItem value="budget" className="text-black">{t("form.budget")}</SelectItem>
-                          <SelectItem value="price" className="text-black">{t("form.price")}</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <div className="relative w-32">
-                        <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600 text-lg font-semibold">€</span>
-                        <Input
-                          type="text"
-                          inputMode="decimal"
-                          pattern="[0-9]*\.?[0-9]*"
-                          value={device.priceType === "price" ? device.price : device.budget}
-                          onChange={(e) => {
-                            const value = e.target.value.replace(/[^0-9.]/g, '')
-                            if (device.priceType === "price") {
-                              updateDevice(deviceIndex, "price", value)
-                            } else {
-                              updateDevice(deviceIndex, "budget", value)
-                            }
+                  <div className="flex justify-between items-start gap-8 md:col-span-2">
+                    <div className="space-y-2 flex-1">
+                      <Label className="text-gray-700">{t("form.budget")} / {t("form.price")}</Label>
+                      <div className="flex gap-2">
+                        <Select
+                          value={device.priceType || "budget"}
+                          onValueChange={(value: "budget" | "price") => {
+                            updateDevice(deviceIndex, "priceType", value)
                           }}
-                          className="bg-white border-gray-300 text-gray-900 placeholder:text-black focus:border-blue-500 pl-8 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                        />
+                        >
+                          <SelectTrigger className="w-[120px] bg-white border-gray-300 text-gray-900">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="bg-white border-gray-200">
+                            <SelectItem value="budget" className="text-black">{t("form.budget")}</SelectItem>
+                            <SelectItem value="price" className="text-black">{t("form.price")}</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <div className="relative w-32">
+                          <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600 text-lg font-semibold">€</span>
+                          <Input
+                            type="text"
+                            inputMode="decimal"
+                            pattern="[0-9]*\.?[0-9]*"
+                            value={device.priceType === "price" ? device.price : device.budget}
+                            onChange={(e) => {
+                              const value = e.target.value.replace(/[^0-9.]/g, '')
+                              if (device.priceType === "price") {
+                                updateDevice(deviceIndex, "price", value)
+                              } else {
+                                updateDevice(deviceIndex, "budget", value)
+                              }
+                            }}
+                            className="bg-white border-gray-300 text-gray-900 placeholder:text-black focus:border-blue-500 pl-8 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                          />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-black">{t("form.warranty")}</Label>
-                    <label className="flex items-center gap-2 text-sm text-black hover:text-black cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="h-4 w-4 cursor-pointer bg-white border-blue-200 text-blue-600 focus:ring-blue-500 rounded"
-                        checked={device.warrantyUntil30Days}
-                        onChange={(e) => updateDevice(deviceIndex, "warrantyUntil30Days", e.target.checked)}
-                      />
-                      <span>{t("form.warrantyUntil30Days")}</span>
-                    </label>
+                    <div className="space-y-2 bg-blue-50 p-4 rounded-lg border border-blue-200">
+                      <Label className="text-black">{t("form.warranty")}</Label>
+                      <label className="flex items-center gap-2 text-sm text-black hover:text-black cursor-pointer">
+                        <input
+                          type="checkbox"
+                          className="h-4 w-4 cursor-pointer bg-white border-blue-200 text-blue-600 focus:ring-blue-500 rounded"
+                          checked={device.warrantyUntil30Days}
+                          onChange={(e) => updateDevice(deviceIndex, "warrantyUntil30Days", e.target.checked)}
+                        />
+                        <span>{t("form.warrantyUntil30Days")}</span>
+                      </label>
+                    </div>
                   </div>
 
                   <div className="space-y-2 md:col-span-2">
