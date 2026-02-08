@@ -2076,6 +2076,8 @@ function getReceiptTranslations(lang: "en" | "pt" | "de" | "fr" | "ur" | "pa" | 
       "form.charger": "Charger",
       "form.battery": "Battery",
       "form.waterDamaged": "Water Damaged",
+      "form.price": "Price",
+      "form.budget": "Budget",
     },
     pt: {
       "receipt.clientCopy": "CÓPIA DO CLIENTE",
@@ -2114,6 +2116,8 @@ function getReceiptTranslations(lang: "en" | "pt" | "de" | "fr" | "ur" | "pa" | 
       "form.charger": "Carregador",
       "form.battery": "Bateria",
       "form.waterDamaged": "Danificado por Água",
+      "form.price": "Preço",
+      "form.budget": "Orçamento",
     },
     de: {
       "receipt.clientCopy": "KUNDENKOPIE",
@@ -2152,6 +2156,8 @@ function getReceiptTranslations(lang: "en" | "pt" | "de" | "fr" | "ur" | "pa" | 
       "form.charger": "Ladegerät",
       "form.battery": "Batterie",
       "form.waterDamaged": "Wasserschaden",
+      "form.price": "Preis",
+      "form.budget": "Budget",
     },
     fr: {
       "receipt.clientCopy": "COPIE CLIENT",
@@ -2190,6 +2196,8 @@ function getReceiptTranslations(lang: "en" | "pt" | "de" | "fr" | "ur" | "pa" | 
       "form.charger": "Chargeur",
       "form.battery": "Batterie",
       "form.waterDamaged": "Endommagé par l'eau",
+      "form.price": "Prix",
+      "form.budget": "Budget",
     },
     ur: {
       "receipt.clientCopy": "کلائنٹ کاپی",
@@ -2227,6 +2235,8 @@ function getReceiptTranslations(lang: "en" | "pt" | "de" | "fr" | "ur" | "pa" | 
       "form.charger": "چارجر",
       "form.battery": "بیٹری",
       "form.waterDamaged": "پانی سے خراب",
+      "form.price": "قیمت",
+      "form.budget": "بجٹ",
     },
     pa: {
       "receipt.clientCopy": "ਕਲਾਇੰਟ ਕਾਪੀ",
@@ -2267,6 +2277,8 @@ function getReceiptTranslations(lang: "en" | "pt" | "de" | "fr" | "ur" | "pa" | 
       "form.charger": "ਚਾਰਜਰ",
       "form.battery": "ਬੈਟਰੀ",
       "form.waterDamaged": "ਪਾਣੀ ਨਾਲ ਖਰਾਬ",
+      "form.price": "ਕੀਮਤ",
+      "form.budget": "ਬਜਟ",
     },
     hi: {
       "receipt.clientCopy": "क्लाइंट कॉपी",
@@ -2307,6 +2319,8 @@ function getReceiptTranslations(lang: "en" | "pt" | "de" | "fr" | "ur" | "pa" | 
       "form.charger": "चार्जर",
       "form.battery": "बैटरी",
       "form.waterDamaged": "पानी से क्षतिग्रस्त",
+      "form.price": "कीमत",
+      "form.budget": "बजट",
     },
   }
   return translations[lang] || translations.en
@@ -2728,7 +2742,7 @@ export async function printReceiptForTickets(
                 ? Number.parseFloat(ticket.price || 0)
                 : Number.parseFloat(ticket.budget || ticket.price || 0)
               const ticketPrice = amount.toFixed(2)
-              const priceLabel = priceType === "price" ? t["form.price"] : t["form.budget"]
+              const priceLabel = priceType === "price" ? (t["form.price"] || "Price") : (t["form.budget"] || "Budget")
               
               return `
                 <div style="margin: 6px 0; padding: 5px 0; border-bottom: 1.5px solid #ccc; background-color: #f5f5f5; page-break-inside: avoid;">
@@ -2874,7 +2888,7 @@ export async function printReceiptForTickets(
             const amount = priceType === "price" 
               ? Number.parseFloat(ticket.price || 0)
               : Number.parseFloat(ticket.budget || ticket.price || 0)
-            const priceLabel = priceType === "price" ? t["form.price"] : t["form.budget"]
+            const priceLabel = priceType === "price" ? (t["form.price"] || "Price") : (t["form.budget"] || "Budget")
             return `<div style="margin: 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${priceLabel}:</span> €${amount.toFixed(2)}</div>`
           })()}
         </div>
