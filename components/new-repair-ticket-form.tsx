@@ -373,90 +373,90 @@ export function NewRepairTicketForm() {
         setIsSavingDevice(true)
         setIsDeviceAnimating(true)
         
-        // Wait for fade-out animation (300ms)
-        await new Promise(resolve => setTimeout(resolve, 300))
+        // Wait for fade-out animation (reduced to 150ms for faster transition)
+        await new Promise(resolve => setTimeout(resolve, 150))
         
-        // Save the current device immediately
-        try {
-          const deviceImei = currentDevice.imeiNo && currentDevice.imeiNo.trim() !== "" ? currentDevice.imeiNo.trim() : ""
-          const currentBatchId = batchId || `batch_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-          if (!batchId) {
-            setBatchId(currentBatchId)
-          }
-
-          const translate = (key: string) => {
-            try {
-              return t(key)
-            } catch (error) {
-              const fallbacks: Record<string, string> = {
-                "form.warrantyUntil30Days": "Warranty Until 30 Days",
-                "form.withoutWarranty": "Without Warranty"
-              }
-              return fallbacks[key] || key
+        // Save the current device in the background (don't wait for it to complete)
+        // This allows device 2 to appear immediately
+        const saveDeviceInBackground = async () => {
+          try {
+            const deviceImei = currentDevice.imeiNo && currentDevice.imeiNo.trim() !== "" ? currentDevice.imeiNo.trim() : ""
+            const currentBatchId = batchId || `batch_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+            if (!batchId) {
+              setBatchId(currentBatchId)
             }
-          }
 
-          const requestPayload = {
-            userId: user.id,
-            clientId: clientId.trim(),
-            customerName,
-            contact,
-            receivedBy: receivedBy.trim(),
-            imeiNo: deviceImei,
-            brand: currentDevice.brand || currentDevice.model?.split(" ")[0] || "N/A",
-            model: currentDevice.model || "",
-            serialNo: currentDevice.serialNo?.trim() || null,
-            warranty: currentDevice.warrantyUntil30Days ? translate("form.warrantyUntil30Days") : translate("form.withoutWarranty"),
-            simCard: currentDevice.simCard,
-            simTray: currentDevice.simTray,
-            memoryCard: currentDevice.memoryCard,
-            charger: currentDevice.charger,
-            battery: currentDevice.battery,
-            waterDamaged: currentDevice.waterDamaged,
-            loanEquipment: false,
-            equipmentObs: currentDevice.equipmentObs || null,
-            repairObs: currentDevice.repairObs || null,
-            selectedServices: [],
-            condition: null,
-            problem: currentDevice.problem || null,
-            price: parseFloat(currentDevice.price) || 0,
-            budget: currentDevice.budget ? parseFloat(currentDevice.budget) : null,
-            priceType: currentDevice.priceType || "budget",
-            batchId: currentBatchId,
-            status: "PENDING",
-          }
-
-          const response = await fetch("/api/repairs/create", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(requestPayload),
-          })
-
-          if (response.ok) {
-            const data = await response.json()
-            const ticket = data?.ticket || data
-            if (ticket) {
-              toast.success("Device saved successfully!")
-              // Add to created tickets details if we're showing them
-              if (showTicketDetails && createdTicketsDetails.length > 0) {
-                setCreatedTicketsDetails(prev => [...prev, ticket])
+            const translate = (key: string) => {
+              try {
+                return t(key)
+              } catch (error) {
+                const fallbacks: Record<string, string> = {
+                  "form.warrantyUntil30Days": "Warranty Until 30 Days",
+                  "form.withoutWarranty": "Without Warranty"
+                }
+                return fallbacks[key] || key
               }
             }
-          } else {
-            const errorData = await response.json().catch(() => ({}))
-            console.error("[NewRepairTicketForm] Failed to save device:", errorData)
+
+            const requestPayload = {
+              userId: user.id,
+              clientId: clientId.trim(),
+              customerName,
+              contact,
+              receivedBy: receivedBy.trim(),
+              imeiNo: deviceImei,
+              brand: currentDevice.brand || currentDevice.model?.split(" ")[0] || "N/A",
+              model: currentDevice.model || "",
+              serialNo: currentDevice.serialNo?.trim() || null,
+              warranty: currentDevice.warrantyUntil30Days ? translate("form.warrantyUntil30Days") : translate("form.withoutWarranty"),
+              simCard: currentDevice.simCard,
+              simTray: currentDevice.simTray,
+              memoryCard: currentDevice.memoryCard,
+              charger: currentDevice.charger,
+              battery: currentDevice.battery,
+              waterDamaged: currentDevice.waterDamaged,
+              loanEquipment: false,
+              equipmentObs: currentDevice.equipmentObs || null,
+              repairObs: currentDevice.repairObs || null,
+              selectedServices: [],
+              condition: null,
+              problem: currentDevice.problem || null,
+              price: parseFloat(currentDevice.price) || 0,
+              budget: currentDevice.budget ? parseFloat(currentDevice.budget) : null,
+              priceType: currentDevice.priceType || "budget",
+              batchId: currentBatchId,
+              status: "PENDING",
+            }
+
+            const response = await fetch("/api/repairs/create", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(requestPayload),
+            })
+
+            if (response.ok) {
+              const data = await response.json()
+              const ticket = data?.ticket || data
+              if (ticket) {
+                toast.success("Device saved successfully!")
+                // Add to created tickets details if we're showing them
+                if (showTicketDetails && createdTicketsDetails.length > 0) {
+                  setCreatedTicketsDetails(prev => [...prev, ticket])
+                }
+              }
+            } else {
+              const errorData = await response.json().catch(() => ({}))
+              console.error("[NewRepairTicketForm] Failed to save device:", errorData)
+              toast.error("Failed to save current device. Please try again.")
+            }
+          } catch (error) {
+            console.error("[NewRepairTicketForm] Error saving device:", error)
             toast.error("Failed to save current device. Please try again.")
-            setIsSavingDevice(false)
-            setIsDeviceAnimating(false)
-            return // Don't add new device if save failed
           }
-        } catch (error) {
-          console.error("[NewRepairTicketForm] Error saving device:", error)
-          toast.error("Failed to save current device. Please try again.")
-          setIsSavingDevice(false)
-          setIsDeviceAnimating(false)
-          return // Don't add new device if save failed
         }
+        
+        // Start saving in background (don't wait for it)
+        saveDeviceInBackground()
       }
     }
 
@@ -1269,7 +1269,7 @@ export function NewRepairTicketForm() {
             {devices.map((device, deviceIndex) => (
               <div
                 key={`${deviceKey}-${deviceIndex}`}
-                className={`border-2 border-blue-200 rounded-xl p-6 bg-white transition-all duration-300 ease-in-out ${
+                className={`border-2 border-blue-200 rounded-xl p-6 bg-white transition-all duration-150 ease-in-out ${
                   isSavingDevice && deviceIndex === 0
                     ? "opacity-0 -translate-x-5 pointer-events-none"
                     : deviceIndex === 0 && deviceKey > 0 && !isSavingDevice && !isDeviceAnimating

@@ -286,5 +286,5 @@ body {
 }
 
 .animate-fade-in-slide {
-  animation: fadeInSlide 0.4s ease-out forwards;
+  animation: fadeInSlide 0.2s ease-out forwards;
 }
