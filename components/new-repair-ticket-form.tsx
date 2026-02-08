@@ -459,40 +459,42 @@ export function NewRepairTicketForm() {
       }
     }
 
-    // Clear the form and add a new empty device with fade-in animation
-    setIsSavingDevice(false)
-    setIsDeviceAnimating(false)
+    // Clear the form immediately and add a new empty device
+    // Create a fresh empty device object
+    const newEmptyDevice: DeviceFormData = {
+      model: "",
+      brand: "",
+      imeiNo: "",
+      serialNo: "",
+      warrantyUntil30Days: false,
+      simCard: false,
+      simTray: false,
+      memoryCard: false,
+      charger: false,
+      battery: false,
+      waterDamaged: false,
+      loanEquipment: false,
+      equipmentObs: "",
+      repairObs: "",
+      selectedServices: [],
+      condition: "",
+      customCondition: "",
+      problem: "",
+      price: "",
+      budget: "",
+      priceType: "budget",
+      imeiError: null,
+    }
     
-    // Update device key to trigger animation on new device
+    // Update device key first to trigger animation on new device, then immediately update devices
     setDeviceKey(prev => prev + 1)
     
-    // Small delay to ensure smooth transition
-    setTimeout(() => {
-      setDevices([{
-        model: "",
-        brand: "",
-        imeiNo: "",
-        serialNo: "",
-        warrantyUntil30Days: false,
-        simCard: false,
-        simTray: false,
-        memoryCard: false,
-        charger: false,
-        battery: false,
-        waterDamaged: false,
-        loanEquipment: false,
-        equipmentObs: "",
-        repairObs: "",
-        selectedServices: [],
-        condition: "",
-        customCondition: "",
-        problem: "",
-        price: "",
-        budget: "",
-        priceType: "budget",
-        imeiError: null,
-      }])
-    }, 50)
+    // Clear the form immediately with a fresh empty device (no delay)
+    setDevices([newEmptyDevice])
+    
+    // Reset animation states immediately to show new device form right away
+    setIsSavingDevice(false)
+    setIsDeviceAnimating(false)
   }
 
   const removeDevice = (index: number) => {
@@ -1264,7 +1266,7 @@ export function NewRepairTicketForm() {
                 className={`border-2 border-blue-200 rounded-xl p-6 bg-white transition-all duration-300 ease-in-out ${
                   isSavingDevice && deviceIndex === 0
                     ? "opacity-0 -translate-x-5 pointer-events-none"
-                    : deviceIndex === 0 && deviceKey > 0
+                    : deviceIndex === 0 && deviceKey > 0 && !isSavingDevice && !isDeviceAnimating
                     ? "animate-fade-in-slide"
                     : "opacity-100 translate-x-0"
                 }`}
