@@ -1576,8 +1576,7 @@ export function NewRepairTicketForm() {
                         </div>
                       </div>
                     </div>
-                    <div className="space-y-2 bg-blue-50 p-4 rounded-lg border border-blue-200">
-                      <Label className="text-black">{t("form.warranty")}</Label>
+                    <div className="flex items-end">
                       <label className="flex items-center gap-2 text-sm text-black hover:text-black cursor-pointer">
                         <input
                           type="checkbox"
