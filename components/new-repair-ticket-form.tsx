@@ -311,6 +311,7 @@ export function NewRepairTicketForm() {
   const [isSavingDevice, setIsSavingDevice] = useState(false)
   const [isDeviceAnimating, setIsDeviceAnimating] = useState(false)
   const [deviceKey, setDeviceKey] = useState(0) // Key to force re-render and trigger animation
+  const [deviceNumber, setDeviceNumber] = useState(1) // Track the current device number (1, 2, 3, etc.)
 
   // Generate preview Repair Number
   const getRepairNumberPreview = (): string => {
@@ -485,6 +486,9 @@ export function NewRepairTicketForm() {
       priceType: "budget",
       imeiError: null,
     }
+    
+    // Increment device number for the next device (Device 2, 3, 4, etc.)
+    setDeviceNumber(prev => prev + 1)
     
     // Update device key first to trigger animation on new device, then immediately update devices
     setDeviceKey(prev => prev + 1)
@@ -869,6 +873,7 @@ export function NewRepairTicketForm() {
       setContact("")
       setReceivedBy("")
       setBatchId(null) // Reset batch ID for new entry
+      setDeviceNumber(1) // Reset device number to 1 for new entry
       setDevices([{
         model: "",
         brand: "",
@@ -939,6 +944,7 @@ export function NewRepairTicketForm() {
     setContact("")
     setReceivedBy("")
     setBatchId(null) // Reset batch ID for new entry
+    setDeviceNumber(1) // Reset device number to 1 for new entry
     setDevices([{
       model: "",
       brand: "",
@@ -1272,7 +1278,7 @@ export function NewRepairTicketForm() {
                 }`}
               >
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-black">{t("form.device")} {deviceIndex + 1}</h3>
+                  <h3 className="text-lg font-semibold text-black">{t("form.device")} {deviceNumber}</h3>
                   {devices.length > 1 && (
                     <Button
                       type="button"
