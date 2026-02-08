@@ -60,6 +60,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
     battery: false,
     waterDamaged: false,
     equipmentObs: "",
+    phoneIssue: "",
     repairObs: "",
     selectedServices: "" as string | string[],
     condition: "",
@@ -708,6 +709,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
       battery: ticket.battery ?? false,
       waterDamaged: ticket.waterDamaged ?? false,
       equipmentObs: ticket.equipmentObs || "",
+      phoneIssue: ticket.phoneIssue || "",
       repairObs: ticket.repairObs || "",
       selectedServices: servicesForField,
       condition: ticket.condition || "",
@@ -759,6 +761,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
         battery: editFormData.battery ?? false,
         waterDamaged: editFormData.waterDamaged ?? false,
         equipmentObs: editFormData.equipmentObs || null,
+        phoneIssue: editFormData.phoneIssue || null,
         // When Services field is edited, save it to repairObs so it shows in Services column
         // Always use Services field value if it exists, otherwise keep repairObs
         repairObs: (() => {
@@ -1184,7 +1187,12 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                         </td>
                         <td className="border-r border-blue-300 px-1 py-1.5 text-[11px] text-black break-words">
                           {(() => {
-                            // Show Mobile Condition (On Arrival) - equipmentObs or condition field
+                            // Show Phone Issue - phoneIssue field
+                            const phoneIssue = ticket.phoneIssue || ""
+                            if (phoneIssue && phoneIssue.trim() !== "") {
+                              return phoneIssue.trim()
+                            }
+                            // Fallback to equipmentObs for backward compatibility
                             const mobileCondition = ticket.equipmentObs || ticket.equipmentObservations || ticket.condition || ""
                             if (mobileCondition && mobileCondition.trim() !== "") {
                               return mobileCondition.trim()
@@ -1444,13 +1452,13 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="edit-equipmentObs" className="text-black">{t("table.phoneIssue") || "Phone Issue"}</Label>
+              <Label htmlFor="edit-phoneIssue" className="text-black">{t("table.phoneIssue") || "Phone Issue"}</Label>
               <Textarea 
-                id="edit-equipmentObs" 
-                value={editFormData.equipmentObs || ""} 
-                onChange={(e) => setEditFormData({ ...editFormData, equipmentObs: e.target.value })} 
+                id="edit-phoneIssue" 
+                value={editFormData.phoneIssue || ""} 
+                onChange={(e) => setEditFormData({ ...editFormData, phoneIssue: e.target.value })} 
                 className="bg-white border-blue-300 text-black min-h-[80px]" 
-                placeholder="Mobile Condition (On Arrival) - This is what shows in Phone Issue column"
+                placeholder="Enter phone issue details"
               />
             </div>
             <div className="space-y-2">
