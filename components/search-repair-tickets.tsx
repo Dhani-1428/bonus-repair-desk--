@@ -1425,15 +1425,19 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
               </div>
               <div className="space-y-2">
                 <Label htmlFor="edit-warranty" className="text-black">{t("form.warranty")}</Label>
-                <Select value={editFormData.warranty || "Without Warranty"} onValueChange={(value) => setEditFormData({ ...editFormData, warranty: value })}>
-                  <SelectTrigger id="edit-warranty" className="bg-white border-blue-300 text-black">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white border-blue-200">
-                    <SelectItem value="Without Warranty" className="text-black">{t("form.withoutWarranty")}</SelectItem>
-                    <SelectItem value="Warranty Until 30 Days" className="text-black">{t("form.warrantyUntil30Days")}</SelectItem>
-                  </SelectContent>
-                </Select>
+                <label className="flex items-center gap-2 text-sm text-black hover:text-black cursor-pointer">
+                  <input
+                    type="checkbox"
+                    id="edit-warranty"
+                    className="h-4 w-4 cursor-pointer bg-white border-blue-200 text-blue-600 focus:ring-blue-500 rounded"
+                    checked={editFormData.warranty === "Warranty Until 30 Days" || editFormData.warranty === "Warranty Until 30 days"}
+                    onChange={(e) => setEditFormData({ 
+                      ...editFormData, 
+                      warranty: e.target.checked ? "Warranty Until 30 Days" : "Without Warranty" 
+                    })}
+                  />
+                  <span>{t("form.warrantyUntil30Days")}</span>
+                </label>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="edit-status" className="text-black">{t("table.status")}</Label>
@@ -1452,6 +1456,16 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
             </div>
             
             <div className="space-y-2">
+              <Label htmlFor="edit-equipmentObs" className="text-black">Mobile Conditions (On Arrival)</Label>
+              <Textarea 
+                id="edit-equipmentObs" 
+                value={editFormData.equipmentObs || ""} 
+                onChange={(e) => setEditFormData({ ...editFormData, equipmentObs: e.target.value })} 
+                className="bg-white border-blue-300 text-black min-h-[80px]" 
+                placeholder="Enter mobile conditions on arrival"
+              />
+            </div>
+            <div className="space-y-2">
               <Label htmlFor="edit-phoneIssue" className="text-black">{t("table.phoneIssue") || "Phone Issue"}</Label>
               <Textarea 
                 id="edit-phoneIssue" 
@@ -1459,6 +1473,16 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                 onChange={(e) => setEditFormData({ ...editFormData, phoneIssue: e.target.value })} 
                 className="bg-white border-blue-300 text-black min-h-[80px]" 
                 placeholder="Enter phone issue details"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-repairObs" className="text-black">{t("form.repairObservations")}</Label>
+              <Textarea 
+                id="edit-repairObs" 
+                value={editFormData.repairObs || ""} 
+                onChange={(e) => setEditFormData({ ...editFormData, repairObs: e.target.value })} 
+                className="bg-white border-blue-300 text-black min-h-[80px]" 
+                placeholder="Enter repair observations"
               />
             </div>
             <div className="space-y-2">
