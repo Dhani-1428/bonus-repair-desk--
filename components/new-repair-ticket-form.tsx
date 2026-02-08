@@ -2556,9 +2556,19 @@ export async function printReceiptForTickets(
     companyPhone1: companyPhone1 || "(not set)"
   })
 
-  const printWindow = window.open("", "_blank")
-  if (!printWindow) {
-    console.error("Could not open print window")
+  // Open print window with proper error handling
+  let printWindow: Window | null = null
+  try {
+    printWindow = window.open("", "_blank", "width=800,height=600")
+    if (!printWindow || printWindow.closed || typeof printWindow.closed === "undefined") {
+      // If popup blocked, show error message
+      console.error("Popup blocked or window failed to open")
+      toast.error("Could not open print window. Please allow popups for this site and try again.")
+      return
+    }
+  } catch (error) {
+    console.error("Error opening print window:", error)
+    toast.error("Could not open print window. Please check popup blocker settings.")
     return
   }
 
@@ -2956,6 +2966,15 @@ export async function printReceiptForTickets(
   
   const ticketsHTML = receiptsHTML
   
+  // Validate that we have content to print
+  if (!ticketsHTML || ticketsHTML.trim() === "") {
+    console.error("[printReceiptForTickets] No HTML content generated for printing")
+    toast.error("No receipt content to print. Please check ticket data.")
+    return
+  }
+  
+  console.log(`[printReceiptForTickets] Generated HTML content length: ${ticketsHTML.length} characters`)
+  
   // Determine page size - use long bill format (narrow width, auto height)
   const pageSize = printerType === "thermal" ? "80mm" : "80mm"
   const pageMargin = "0"
@@ -3114,13 +3133,48 @@ export async function printReceiptForTickets(
     </html>
   `
 
-  printWindow.document.write(printHTML)
-  printWindow.document.close()
-  printWindow.document.title = "Repair Ticket Receipt"
+  // Write content to print window with proper error handling
+  try {
+    if (!printWindow) {
+      console.error("Print window is null")
+      toast.error("Print window error. Please try again.")
+      return
+    }
+    
+    // Check if window is still open
+    if (printWindow.closed) {
+      console.error("Print window was closed")
+      toast.error("Print window was closed. Please try again.")
+      return
+    }
+    
+    // Open document for writing (this clears any existing content)
+    printWindow.document.open("text/html", "replace")
+    printWindow.document.write(printHTML)
+    printWindow.document.close()
+    
+    // Set title after document is closed
+    if (printWindow.document) {
+      printWindow.document.title = "Repair Ticket Receipt"
+    }
+    
+    console.log("Print window content written successfully")
+  } catch (error) {
+    console.error("Error writing to print window:", error)
+    toast.error("Error generating print preview. Please try again.")
+    if (printWindow && !printWindow.closed) {
+      printWindow.close()
+    }
+    return
+  }
 
   // Remove any URLs and href attributes from the document before printing
   setTimeout(() => {
     try {
+      if (!printWindow || !printWindow.document) {
+        console.warn("Print window or document not available")
+        return
+      }
       printWindow.document.querySelectorAll('a').forEach((link: any) => {
         // Remove href attribute to prevent URLs from appearing in print
         link.removeAttribute('href')
@@ -3128,39 +3182,68 @@ export async function printReceiptForTickets(
         link.style.color = 'inherit'
       })
     } catch (e) {
+      console.warn("Error removing URLs from print document:", e)
       // Ignore if querySelector fails
     }
   }, 100)
 
-  setTimeout(() => {
+  // Wait for content to load before printing
+  const waitForContentAndPrint = () => {
+    if (!printWindow || printWindow.closed) {
+      console.error("Print window is null or closed")
+      return
+    }
+    
     try {
-      printWindow.focus()
-      
-      // Store printer selection from print dialog
-      // Note: We can't programmatically select a printer due to browser security,
-      // but we can guide the user and remember their choice
-      const printHandler = () => {
-        // After printing, the browser will remember the last selected printer
-        // This helps with automatic printer detection for future prints
-        if (preferredPrinter) {
-          console.log(`Attempting to print to: ${preferredPrinter}`)
+      // Check if document is ready
+      if (printWindow.document && printWindow.document.readyState === "complete") {
+        // Document is ready, proceed with print
+        printWindow.focus()
+        
+        // Store printer selection from print dialog
+        // Note: We can't programmatically select a printer due to browser security,
+        // but we can guide the user and remember their choice
+        const printHandler = () => {
+          // After printing, the browser will remember the last selected printer
+          // This helps with automatic printer detection for future prints
+          if (preferredPrinter) {
+            console.log(`Attempting to print to: ${preferredPrinter}`)
+          }
         }
+        
+        printWindow.addEventListener('beforeprint', printHandler)
+        printWindow.print()
+        
+        // Remove event listener after print
+        setTimeout(() => {
+          if (printWindow && !printWindow.closed) {
+            printWindow.removeEventListener('beforeprint', printHandler)
+          }
+        }, 1000)
+        
+        // For receipt printers, keep the window open longer to allow print job to complete
+        setTimeout(() => {
+          if (printWindow && !printWindow.closed) {
+            printWindow.close()
+          }
+        }, 2000)
+      } else if (printWindow.document && printWindow.document.readyState === "interactive") {
+        // Document is loading, wait a bit more
+        setTimeout(waitForContentAndPrint, 100)
+      } else {
+        // Document not ready yet, wait for load event
+        printWindow.addEventListener("load", () => {
+          setTimeout(waitForContentAndPrint, 100)
+        }, { once: true })
       }
-      
-      printWindow.addEventListener('beforeprint', printHandler)
-      printWindow.print()
-      
-      // Remove event listener after print
-      setTimeout(() => {
-        printWindow.removeEventListener('beforeprint', printHandler)
-      }, 1000)
-      
-      // For receipt printers, keep the window open longer to allow print job to complete
-      setTimeout(() => {
-        if (printWindow && !printWindow.closed) {
-          printWindow.close()
-        }
-      }, 2000)
+    } catch (error) {
+      console.error("Error in waitForContentAndPrint:", error)
+      toast.error("Error preparing print. Please try again.")
+    }
+  }
+  
+  // Start waiting for content after a short delay
+  setTimeout(waitForContentAndPrint, 200)
     } catch (error) {
       console.error("Print error:", error)
       // Note: toast might not be available in this context
