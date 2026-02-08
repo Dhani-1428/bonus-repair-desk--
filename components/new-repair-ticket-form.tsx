@@ -1577,7 +1577,7 @@ export function NewRepairTicketForm() {
                       </div>
                     </div>
                     <div className="flex items-end">
-                      <label className="flex items-center gap-2 text-sm text-black hover:text-black cursor-pointer">
+                      <label className="flex items-center gap-2 text-sm text-black hover:text-black cursor-pointer mt-6">
                         <input
                           type="checkbox"
                           className="h-4 w-4 cursor-pointer bg-white border-blue-200 text-blue-600 focus:ring-blue-500 rounded"
