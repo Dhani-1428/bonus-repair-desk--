@@ -3167,43 +3167,45 @@ export async function printReceiptForTickets(
       return
     }
     
-    // Write content to print window using a more reliable method
-    // First, ensure the window is ready
-    if (printWindow.document) {
-      // Clear any existing content
-      printWindow.document.open()
+    // Use a more reliable method: Create a blob URL and navigate to it
+    try {
+      const blob = new Blob([printHTML], { type: 'text/html' })
+      const url = URL.createObjectURL(blob)
       
-      // Write the HTML content
-      printWindow.document.write(printHTML)
+      // Navigate the print window to the blob URL
+      printWindow.location.href = url
       
-      // Close the document stream
-      printWindow.document.close()
+      // Wait for the page to load
+      printWindow.addEventListener('load', () => {
+        console.log("Print window loaded successfully")
+        // Clean up the blob URL after a delay
+        setTimeout(() => {
+          URL.revokeObjectURL(url)
+        }, 1000)
+      }, { once: true })
       
-      // Set title
-      printWindow.document.title = "Repair Ticket Receipt"
+      console.log("Print window content loaded via blob URL, HTML length:", printHTML.length)
+    } catch (blobError) {
+      // Fallback to document.write if blob fails
+      console.warn("Blob URL method failed, trying document.write:", blobError)
       
-      console.log("Print window content written successfully, HTML length:", printHTML.length)
-      console.log("Document ready state:", printWindow.document.readyState)
-      
-      // Verify content was written
-      setTimeout(() => {
-        if (printWindow && !printWindow.closed && printWindow.document) {
-          const bodyContent = printWindow.document.body?.innerHTML || ""
-          if (bodyContent.length === 0) {
-            console.error("Warning: Print window body is empty after write")
-            toast.error("Print content failed to load. Please try again.")
-          } else {
-            console.log("Print window body content length:", bodyContent.length)
-          }
-        }
-      }, 100)
-    } else {
-      console.error("Print window document is not available")
-      toast.error("Print window error. Please try again.")
-      if (printWindow && !printWindow.closed) {
-        printWindow.close()
+      if (printWindow.document) {
+        // Clear any existing content
+        printWindow.document.open()
+        
+        // Write the HTML content
+        printWindow.document.write(printHTML)
+        
+        // Close the document stream
+        printWindow.document.close()
+        
+        // Set title
+        printWindow.document.title = "Repair Ticket Receipt"
+        
+        console.log("Print window content written via document.write")
+      } else {
+        throw new Error("Print window document is not available")
       }
-      return
     }
   } catch (error) {
     console.error("Error writing to print window:", error)
