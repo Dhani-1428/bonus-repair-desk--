@@ -762,10 +762,14 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
         waterDamaged: editFormData.waterDamaged ?? false,
         equipmentObs: editFormData.equipmentObs || null,
         phoneIssue: editFormData.phoneIssue || null,
-        // When Services field is edited, save it to repairObs so it shows in Services column
-        // Always use Services field value if it exists, otherwise keep repairObs
+        // Repair Observations field - prioritize repairObs field, fallback to selectedServices for backward compatibility
         repairObs: (() => {
-          // Get value from selectedServices field (stored as string in Textarea)
+          // First, use repairObs field if it has a value
+          if (editFormData.repairObs && editFormData.repairObs.trim()) {
+            return editFormData.repairObs.trim()
+          }
+          
+          // Fallback: Get value from selectedServices field (for backward compatibility)
           let servicesValue = ""
           if (typeof editFormData.selectedServices === 'string') {
             servicesValue = editFormData.selectedServices.trim()
@@ -773,10 +777,9 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
             servicesValue = editFormData.selectedServices.join(", ").trim()
           }
           
-          // If Services field has value, use it; otherwise keep existing repairObs value
-          return servicesValue || editFormData.repairObs || null
+          return servicesValue || null
         })(),
-        // Also save to selectedServices for backward compatibility
+        // Save selectedServices separately
         selectedServices: (() => {
           if (typeof editFormData.selectedServices === 'string') {
             return editFormData.selectedServices.trim() ? [editFormData.selectedServices.trim()] : []
@@ -794,11 +797,14 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
       }
 
       // Update via API
+      console.log("[SearchRepairTickets] Updating ticket:", editingTicket.id, "with data:", updateData)
       const response = await fetch(`/api/repairs/${editingTicket.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updateData),
       })
+
+      console.log("[SearchRepairTickets] Update response status:", response.status, response.ok)
 
       if (response.ok) {
         // Close form first
@@ -837,11 +843,22 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
         }
         toast.success(t("success.deviceUpdated") || "Device updated successfully")
       } else {
-        const data = await response.json()
-        throw new Error(data.error || t("error.deviceUpdateFailed"))
+        const data = await response.json().catch(() => ({ error: "Unknown error" }))
+        console.error("[SearchRepairTickets] Update failed:", {
+          status: response.status,
+          statusText: response.statusText,
+          error: data.error || data,
+          updateData
+        })
+        throw new Error(data.error || data.message || t("error.deviceUpdateFailed"))
       }
     } catch (error: any) {
       console.error("[SearchRepairTickets] Error updating ticket:", error)
+      console.error("[SearchRepairTickets] Error details:", {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      })
       toast.error(error.message || t("error.deviceUpdateFailed"))
     }
   }
@@ -1430,11 +1447,17 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                     type="checkbox"
                     id="edit-warranty"
                     className="h-4 w-4 cursor-pointer bg-white border-blue-200 text-blue-600 focus:ring-blue-500 rounded"
-                    checked={editFormData.warranty === "Warranty Until 30 Days" || editFormData.warranty === "Warranty Until 30 days"}
-                    onChange={(e) => setEditFormData({ 
-                      ...editFormData, 
-                      warranty: e.target.checked ? "Warranty Until 30 Days" : "Without Warranty" 
-                    })}
+                    checked={(() => {
+                      const warranty = editFormData.warranty || ""
+                      return warranty.toLowerCase().includes("warranty") && warranty.toLowerCase().includes("30")
+                    })()}
+                    onChange={(e) => {
+                      const warrantyValue = e.target.checked ? t("form.warrantyUntil30Days") : t("form.withoutWarranty")
+                      setEditFormData({ 
+                        ...editFormData, 
+                        warranty: warrantyValue
+                      })
+                    }}
                   />
                   <span>{t("form.warrantyUntil30Days")}</span>
                 </label>
