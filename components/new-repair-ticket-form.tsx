@@ -3246,19 +3246,6 @@ export async function printReceiptForTickets(
   
   // Start waiting for content after a short delay
   setTimeout(waitForContentAndPrint, 200)
-    } catch (error) {
-      console.error("Print error:", error)
-      // Note: toast might not be available in this context
-      try {
-        if (typeof window !== 'undefined') {
-          const { toast } = require('sonner')
-          toast.error("Failed to print. Please check your printer connection.")
-        }
-      } catch (e) {
-        // Ignore if toast is not available
-      }
-    }
-  }, 500)
 }
 
 // Helper function to print directly to a receipt printer (if Web Serial API is available)
