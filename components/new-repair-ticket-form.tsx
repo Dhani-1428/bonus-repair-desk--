@@ -1538,8 +1538,8 @@ export function NewRepairTicketForm() {
                     />
                   </div>
 
-                  <div className="flex justify-between items-start gap-0 md:col-span-2">
-                    <div className="space-y-2 flex-1">
+                  <div className="flex justify-center items-start gap-4 md:col-span-2">
+                    <div className="space-y-2">
                       <Label className="text-gray-700">{t("form.budget")} / {t("form.price")}</Label>
                       <div className="flex gap-2">
                         <Select
