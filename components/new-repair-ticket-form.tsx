@@ -1395,7 +1395,7 @@ export function NewRepairTicketForm() {
                           <SelectItem value="price" className="text-black">{t("form.price")}</SelectItem>
                         </SelectContent>
                       </Select>
-                      <div className="relative flex-1">
+                      <div className="relative w-32">
                         <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600 text-lg font-semibold">€</span>
                         <Input
                           type="text"
