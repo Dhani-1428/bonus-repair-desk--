@@ -209,6 +209,19 @@ export async function PUT(
       } else if (typeof value === "number") {
         updateFields.push(`\`${key}\` = ?`)
         updateValues.push(value)
+      } else if ((key === "deletedAt" || key === "deliveredDate" || key === "createdAt" || key === "updatedAt") && typeof value === "string") {
+        // Convert ISO datetime string to MySQL DATETIME format (YYYY-MM-DD HH:MM:SS)
+        // Handle both ISO format (2026-02-08T00:06:47.452Z) and already formatted strings
+        let mysqlDateTime: string
+        if (value.includes('T') || value.includes('Z')) {
+          // ISO format - convert to MySQL format
+          mysqlDateTime = new Date(value).toISOString().slice(0, 19).replace('T', ' ')
+        } else {
+          // Already in MySQL format or other format - use as is
+          mysqlDateTime = value
+        }
+        updateFields.push(`\`${key}\` = ?`)
+        updateValues.push(mysqlDateTime)
       } else {
         updateFields.push(`\`${key}\` = ?`)
         updateValues.push(value)
