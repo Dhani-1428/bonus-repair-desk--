@@ -146,7 +146,13 @@ export function generateThermalReceipt(
         receipt += `Problem: ${ticket.problem}\n`
       }
 
-      receipt += `Budget: €${Number.parseFloat(ticket.price?.toString() || "0").toFixed(2)}\n`
+      // Get amount and label based on priceType
+      const priceType = ticket.priceType || "budget"
+      const amount = priceType === "price" 
+        ? Number.parseFloat(ticket.price?.toString() || "0")
+        : Number.parseFloat(ticket.budget?.toString() || ticket.price?.toString() || "0")
+      const label = priceType === "price" ? "Price" : "Budget"
+      receipt += `${label}: €${amount.toFixed(2)}\n`
     } else {
       // Multiple devices receipt
       receipt += `Number of Devices: ${tickets.length}\n`
@@ -166,18 +172,29 @@ export function generateThermalReceipt(
             : ticket.services
           receipt += `  Services: ${services}\n`
         }
-        receipt += `  Budget: €${Number.parseFloat(ticket.price?.toString() || "0").toFixed(2)}\n`
+        // Get amount and label based on priceType
+        const priceType = ticket.priceType || "budget"
+        const amount = priceType === "price" 
+          ? Number.parseFloat(ticket.price?.toString() || "0")
+          : Number.parseFloat(ticket.budget?.toString() || ticket.price?.toString() || "0")
+        const label = priceType === "price" ? "Price" : "Budget"
+        receipt += `  ${label}: €${amount.toFixed(2)}\n`
         if (index < tickets.length - 1) {
           receipt += "\n"
         }
       })
 
-      // Total Price
-      const totalPrice = tickets.reduce(
-        (sum, ticket) => sum + Number.parseFloat(ticket.price?.toString() || "0"),
-        0
-      )
-      receipt += `Total Budget: €${totalPrice.toFixed(2)}\n`
+      // Total - use the same label as the first ticket (or default to Budget)
+      const firstPriceType = tickets[0]?.priceType || "budget"
+      const totalLabel = firstPriceType === "price" ? "Total Price" : "Total Budget"
+      const totalAmount = tickets.reduce((sum, ticket) => {
+        const priceType = ticket.priceType || "budget"
+        const amount = priceType === "price" 
+          ? Number.parseFloat(ticket.price?.toString() || "0")
+          : Number.parseFloat(ticket.budget?.toString() || ticket.price?.toString() || "0")
+        return sum + amount
+      }, 0)
+      receipt += `${totalLabel}: €${totalAmount.toFixed(2)}\n`
     }
 
     receipt += "-".repeat(32) + "\n"

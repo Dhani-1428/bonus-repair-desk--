@@ -38,6 +38,7 @@ interface DeviceFormData {
   problem: string
   price: string
   budget: string
+  priceType: "budget" | "price" // Track whether amount is budget or price
   imeiError: string | null
   repairNumber?: string // Auto-generated, read-only
 }
@@ -297,6 +298,7 @@ export function NewRepairTicketForm() {
       problem: "",
       price: "",
       budget: "",
+      priceType: "budget", // Default to budget
       imeiError: null,
     },
   ])
@@ -373,6 +375,7 @@ export function NewRepairTicketForm() {
         problem: "",
         price: "",
         budget: "",
+        priceType: "budget", // Default to budget
         imeiError: null,
       },
     ])
@@ -528,6 +531,7 @@ export function NewRepairTicketForm() {
             problem: device.problem || null,
             price: parseFloat(device.price) || 0,
             budget: device.budget ? parseFloat(device.budget) : null,
+            priceType: device.priceType || "budget",
             batchId: currentBatchId,
             status: "PENDING",
           }
@@ -1375,20 +1379,40 @@ export function NewRepairTicketForm() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label className="text-gray-700">{t("form.budget")}</Label>
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600 text-lg font-semibold">€</span>
-                      <Input
-                        type="text"
-                        inputMode="decimal"
-                        pattern="[0-9]*\.?[0-9]*"
-                        value={device.budget}
-                        onChange={(e) => {
-                          const value = e.target.value.replace(/[^0-9.]/g, '')
-                          updateDevice(deviceIndex, "budget", value)
+                    <Label className="text-gray-700">{t("form.budget")} / {t("form.price")}</Label>
+                    <div className="flex gap-2">
+                      <Select
+                        value={device.priceType || "budget"}
+                        onValueChange={(value: "budget" | "price") => {
+                          updateDevice(deviceIndex, "priceType", value)
                         }}
-                        className="bg-white border-gray-300 text-gray-900 placeholder:text-black focus:border-blue-500 pl-8 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                      />
+                      >
+                        <SelectTrigger className="w-[120px] bg-white border-gray-300 text-gray-900">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white border-gray-200">
+                          <SelectItem value="budget" className="text-black">{t("form.budget")}</SelectItem>
+                          <SelectItem value="price" className="text-black">{t("form.price")}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <div className="relative flex-1">
+                        <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600 text-lg font-semibold">€</span>
+                        <Input
+                          type="text"
+                          inputMode="decimal"
+                          pattern="[0-9]*\.?[0-9]*"
+                          value={device.priceType === "price" ? device.price : device.budget}
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/[^0-9.]/g, '')
+                            if (device.priceType === "price") {
+                              updateDevice(deviceIndex, "price", value)
+                            } else {
+                              updateDevice(deviceIndex, "budget", value)
+                            }
+                          }}
+                          className="bg-white border-gray-300 text-gray-900 placeholder:text-black focus:border-blue-500 pl-8 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                        />
+                      </div>
                     </div>
                   </div>
                   <div className="space-y-2">
@@ -1561,7 +1585,14 @@ export function NewRepairTicketForm() {
                     <div className="space-y-3 md:col-span-2">
                       <h4 className="text-sm font-semibold text-blue-600 border-b border-blue-200 pb-2">Pricing</h4>
                       <div className="text-lg font-bold text-green-600">
-                        Budget: €{ticket?.price ? Number.parseFloat(ticket.price).toFixed(2) : "0.00"}
+                        {(() => {
+                          const priceType = ticket?.priceType || "budget"
+                          const amount = priceType === "price" 
+                            ? Number.parseFloat(ticket?.price || 0)
+                            : Number.parseFloat(ticket?.budget || ticket?.price || 0)
+                          const label = priceType === "price" ? t("form.price") : t("form.budget")
+                          return `${label}: €${amount.toFixed(2)}`
+                        })()}
                       </div>
                     </div>
                   </div>
@@ -2417,8 +2448,16 @@ export async function printReceiptForTickets(
       outDateDisplay = `<div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.outDate"] || "Out Date"}:</span> ${formattedOutDate} ${formattedOutTime}</div>`
     }
     
-    // Calculate total price
-    const totalPrice = tickets.reduce((sum, ticket) => sum + (Number.parseFloat(ticket.price || 0)), 0)
+    // Calculate total - use priceType to determine which field to use
+    const firstPriceType = tickets[0]?.priceType || "budget"
+    const totalPrice = tickets.reduce((sum, ticket) => {
+      const priceType = ticket.priceType || "budget"
+      const amount = priceType === "price" 
+        ? Number.parseFloat(ticket.price || 0)
+        : Number.parseFloat(ticket.budget || ticket.price || 0)
+      return sum + amount
+    }, 0)
+    const totalLabel = firstPriceType === "price" ? "Total Price" : "Total Budget"
     
     // Generate device list HTML - use table format for multiple devices
     console.log(`[generateReceiptHTMLForMultipleDevices] Generating receipt for ${tickets.length} device(s)`)
@@ -2503,7 +2542,13 @@ export async function printReceiptForTickets(
               const ticketModel = ticket.model || "N/A"
               const ticketSerialNo = ticket.serialNo || "-"
               const ticketWarrantyText = translateWarrantyValue(ticket.warranty, language)
-              const ticketPrice = Number.parseFloat(ticket.price || 0).toFixed(2)
+              // Get amount and label based on priceType
+              const priceType = ticket.priceType || "budget"
+              const amount = priceType === "price" 
+                ? Number.parseFloat(ticket.price || 0)
+                : Number.parseFloat(ticket.budget || ticket.price || 0)
+              const ticketPrice = amount.toFixed(2)
+              const priceLabel = priceType === "price" ? t("form.price") : t("form.budget")
               
               return `
                 <div style="margin: 6px 0; padding: 5px 0; border-bottom: 1.5px solid #ccc; background-color: #f5f5f5; page-break-inside: avoid;">
@@ -2513,7 +2558,7 @@ export async function printReceiptForTickets(
                   <div style="margin: 2px 0; padding: 1px 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.brandModel"]}:</span> ${ticketBrand} - ${ticketModel}</div>
                   <div style="margin: 2px 0; padding: 1px 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.laptopSerialN"]}:</span> ${ticketSerialNo}</div>
                   <div style="margin: 2px 0; padding: 1px 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.warranty"]}:</span> ${ticketWarrantyText}</div>
-                  <div style="margin: 2px 0; padding: 1px 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.price"]}:</span> €${ticketPrice}</div>
+                  <div style="margin: 2px 0; padding: 1px 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${priceLabel}:</span> €${ticketPrice}</div>
                 </div>
               `
             }
@@ -2521,7 +2566,7 @@ export async function printReceiptForTickets(
         </div>
         
         <div style="margin: 8px 0; padding: 6px; background-color: #f0f0f0; text-align: center; font-weight: bold; font-size: ${headerFontSize}; border: 1px solid #ddd; page-break-inside: avoid;">
-          <div style="font-size: ${headerFontSize}; font-weight: bold;">Total Budget: €${totalPrice.toFixed(2)}</div>
+          <div style="font-size: ${headerFontSize}; font-weight: bold;">${totalLabel}: €${totalPrice.toFixed(2)}</div>
         </div>
         
         <!-- Gap between device information and footer -->
@@ -2644,7 +2689,14 @@ export async function printReceiptForTickets(
           <div style="margin: 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["form.simCard"]}:</span> ${ticketSimCard} | <span style="font-weight: bold;">${t["form.simTray"]}:</span> ${ticketSimTray} | <span style="font-weight: bold;">${t["form.memoryCard"]}:</span> ${ticketMemoryCard} | <span style="font-weight: bold;">${t["form.charger"]}:</span> ${ticketCharger} | <span style="font-weight: bold;">${t["form.battery"]}:</span> ${ticketBattery} | <span style="font-weight: bold;">${t["form.waterDamaged"]}:</span> ${ticketWaterDamaged}</div>
           <div style="margin: 4px 0 0 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.services"]}:</span> ${services}</div>
           <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.problem"]}:</span> ${ticketProblem}</div>
-          <div style="margin: 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.price"]}:</span> €${ticketPrice}</div>
+          ${(() => {
+            const priceType = ticket.priceType || "budget"
+            const amount = priceType === "price" 
+              ? Number.parseFloat(ticket.price || 0)
+              : Number.parseFloat(ticket.budget || ticket.price || 0)
+            const priceLabel = priceType === "price" ? t("form.price") : t("form.budget")
+            return `<div style="margin: 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${priceLabel}:</span> €${amount.toFixed(2)}</div>`
+          })()}
         </div>
         
         <!-- Gap between device information and footer -->
@@ -2994,7 +3046,14 @@ export async function printToReceiptPrinter(tickets: any[]) {
         `Customer: ${ticket.customerName || 'N/A'}\n`,
         `IMEI: ${ticket.imeiNo || 'N/A'}\n`,
         `Device: ${ticket.brand || 'N/A'} ${ticket.model || 'N/A'}\n`,
-        `Budget: €${ticket.price || '0.00'}\n`,
+        `${(() => {
+          const priceType = ticket.priceType || "budget"
+          const amount = priceType === "price" 
+            ? Number.parseFloat(ticket.price || 0)
+            : Number.parseFloat(ticket.budget || ticket.price || 0)
+          const label = priceType === "price" ? "Price" : "Budget"
+          return `${label}: €${amount.toFixed(2)}`
+        })()}\n`,
         '\x1B\x64\x05', // Feed 5 lines
         '\x1D\x56\x00', // Cut paper
       ].join('')

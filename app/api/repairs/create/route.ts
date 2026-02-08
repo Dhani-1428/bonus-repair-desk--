@@ -111,6 +111,7 @@ export async function POST(request: NextRequest) {
       problem,
       price,
       budget,
+      priceType,
       batchId,
       status,
     } = body
@@ -274,8 +275,8 @@ export async function POST(request: NextRequest) {
           `INSERT INTO ${tableName} (id, userId, clientId, customerName, contact, receivedBy, imeiNo,
             brand, model, serialNo, softwareVersion, warranty, simCard, simTray, memoryCard,
             charger, battery, waterDamaged, loanEquipment, equipmentObs, repairObs,
-            selectedServices, \`condition\`, problem, price, budget, batchId, status)
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            selectedServices, \`condition\`, problem, price, budget, priceType, batchId, status)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
           [
             ticketId,
             userId,
@@ -303,6 +304,7 @@ export async function POST(request: NextRequest) {
             problem || null,
             price ? parseFloat(price) : 0,
             budget ? parseFloat(budget) : null,
+            priceType || "budget",
             batchId || null,
             status || "PENDING"
           ]

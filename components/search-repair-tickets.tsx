@@ -66,6 +66,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
     problem: "",
     price: "",
     budget: "",
+    priceType: "budget" as "budget" | "price",
     status: "pending",
   })
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
@@ -705,6 +706,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
       problem: ticket.problem || "",
       price: ticket.price || "",
       budget: ticket.budget || "",
+      priceType: ticket.priceType || "budget",
       status: ticket.status || "pending",
     })
     setIsEditDialogOpen(true)
@@ -774,8 +776,9 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
         })(),
         condition: editFormData.condition || null,
         problem: editFormData.problem || null,
-        price: null,
-        budget: editFormData.budget ? Number.parseFloat(editFormData.budget) : null,
+        price: editFormData.priceType === "price" && editFormData.price ? Number.parseFloat(editFormData.price) : null,
+        budget: editFormData.priceType === "budget" && editFormData.budget ? Number.parseFloat(editFormData.budget) : null,
+        priceType: editFormData.priceType || "budget",
         status: editFormData.status || "pending",
       }
 
@@ -1372,8 +1375,37 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                 <Input id="edit-serialNo" value={editFormData.serialNo || ""} onChange={(e) => setEditFormData({ ...editFormData, serialNo: e.target.value })} className="bg-white border-blue-300 text-black" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="edit-budget" className="text-black">{t("form.budget")}</Label>
-                <Input id="edit-budget" type="number" step="0.01" value={editFormData.budget || ""} onChange={(e) => setEditFormData({ ...editFormData, budget: e.target.value })} className="bg-white border-blue-300 text-black" />
+                <Label htmlFor="edit-budget" className="text-black">{t("form.budget")} / {t("form.price")}</Label>
+                <div className="flex gap-2">
+                  <Select
+                    value={editFormData.priceType || "budget"}
+                    onValueChange={(value: "budget" | "price") => {
+                      setEditFormData({ ...editFormData, priceType: value })
+                    }}
+                  >
+                    <SelectTrigger className="w-[120px] bg-white border-blue-300 text-black">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white border-blue-200">
+                      <SelectItem value="budget" className="text-black">{t("form.budget")}</SelectItem>
+                      <SelectItem value="price" className="text-black">{t("form.price")}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Input
+                    id="edit-budget"
+                    type="number"
+                    step="0.01"
+                    value={editFormData.priceType === "price" ? editFormData.price || "" : editFormData.budget || ""}
+                    onChange={(e) => {
+                      if (editFormData.priceType === "price") {
+                        setEditFormData({ ...editFormData, price: e.target.value })
+                      } else {
+                        setEditFormData({ ...editFormData, budget: e.target.value })
+                      }
+                    }}
+                    className="flex-1 bg-white border-blue-300 text-black"
+                  />
+                </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="edit-warranty" className="text-black">{t("form.warranty")}</Label>
