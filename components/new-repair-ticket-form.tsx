@@ -1412,6 +1412,16 @@ export function NewRepairTicketForm() {
                     />
                   </div>
 
+                  <div className="space-y-2 md:col-span-2">
+                    <Label className="text-black">{t("form.repairObservations")}</Label>
+                    <Textarea
+                      value={device.repairObs}
+                      onChange={(e) => updateDevice(deviceIndex, "repairObs", e.target.value)}
+                      rows={2}
+                      className="!bg-white border-2 border-blue-200 text-black placeholder:text-black focus:border-blue-500"
+                    />
+                  </div>
+
                   {/* Equipment Check - All 6 blocks in one line */}
                   <div className="space-y-2 md:col-span-2">
                     <Label className="text-black text-sm font-semibold mb-2 block">{t("form.equipmentCheck")}</Label>
@@ -1526,16 +1536,6 @@ export function NewRepairTicketForm() {
                         </div>
                       </label>
                     </div>
-                  </div>
-
-                  <div className="space-y-2 md:col-span-2">
-                    <Label className="text-black">{t("form.repairObservations")}</Label>
-                    <Textarea
-                      value={device.repairObs}
-                      onChange={(e) => updateDevice(deviceIndex, "repairObs", e.target.value)}
-                      rows={2}
-                      className="!bg-white border-2 border-blue-200 text-black placeholder:text-black focus:border-blue-500"
-                    />
                   </div>
 
                   <div className="flex justify-center items-start gap-20 md:col-span-2">
