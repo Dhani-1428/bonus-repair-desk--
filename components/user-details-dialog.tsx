@@ -197,11 +197,11 @@ export function UserDetailsDialog({ open, onOpenChange, userDetails, users }: Us
                         <div className="flex items-center justify-between mb-2">
                           <div>
                             <p className="text-sm font-semibold text-black">
-                              {PLAN_PRICING[sub.plan]?.name || sub.plan}
+                              {PLAN_PRICING[sub.plan as keyof typeof PLAN_PRICING]?.name || sub.plan}
                               {index === 0 && <span className="ml-2 text-xs text-blue-600">(Current)</span>}
                             </p>
                             <p className="text-xs text-black">
-                              {sub.isFreeTrial ? "Free Trial" : `€${PLAN_PRICING[sub.plan]?.price || 0}`}
+                              {sub.isFreeTrial ? "Free Trial" : `€${PLAN_PRICING[sub.plan as keyof typeof PLAN_PRICING]?.price || 0}`}
                             </p>
                           </div>
                           <Badge

@@ -958,6 +958,7 @@ export function NewRepairTicketForm() {
       problem: "",
       price: "",
       budget: "",
+      priceType: "budget",
       imeiError: null,
     }])
     setCreatedTicketsDetails([])
@@ -2556,15 +2557,6 @@ export async function printReceiptForTickets(
     companyPhone1: companyPhone1 || "(not set)"
   })
 
-  // Validate that we have content to print
-  if (!ticketsHTML || ticketsHTML.trim() === "") {
-    console.error("[printReceiptForTickets] No HTML content generated for printing")
-    toast.error("No receipt content to print. Please check ticket data.")
-    return
-  }
-  
-  console.log(`[printReceiptForTickets] Generated HTML content length: ${ticketsHTML.length} characters`)
-  
   // Open print window with proper error handling
   let printWindow: Window | null = null
   try {
@@ -2736,7 +2728,7 @@ export async function printReceiptForTickets(
                 ? Number.parseFloat(ticket.price || 0)
                 : Number.parseFloat(ticket.budget || ticket.price || 0)
               const ticketPrice = amount.toFixed(2)
-              const priceLabel = priceType === "price" ? t("form.price") : t("form.budget")
+              const priceLabel = priceType === "price" ? t["form.price"] : t["form.budget"]
               
               return `
                 <div style="margin: 6px 0; padding: 5px 0; border-bottom: 1.5px solid #ccc; background-color: #f5f5f5; page-break-inside: avoid;">
@@ -2882,7 +2874,7 @@ export async function printReceiptForTickets(
             const amount = priceType === "price" 
               ? Number.parseFloat(ticket.price || 0)
               : Number.parseFloat(ticket.budget || ticket.price || 0)
-            const priceLabel = priceType === "price" ? t("form.price") : t("form.budget")
+            const priceLabel = priceType === "price" ? t["form.price"] : t["form.budget"]
             return `<div style="margin: 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${priceLabel}:</span> €${amount.toFixed(2)}</div>`
           })()}
         </div>
@@ -2984,6 +2976,15 @@ export async function printReceiptForTickets(
   }).join("")
   
   const ticketsHTML = receiptsHTML
+  
+  // Validate that we have content to print
+  if (!ticketsHTML || ticketsHTML.trim() === "") {
+    console.error("[printReceiptForTickets] No HTML content generated for printing")
+    toast.error("No receipt content to print. Please check ticket data.")
+    return
+  }
+  
+  console.log(`[printReceiptForTickets] Generated HTML content length: ${ticketsHTML.length} characters`)
   
   // Determine page size - use long bill format (narrow width, auto height)
   const pageSize = printerType === "thermal" ? "80mm" : "80mm"
