@@ -55,8 +55,15 @@ export function useCardReader(options: UseCardReaderOptions = {}) {
         const cardData = cardDataRef.current.trim()
         
         // Card data is typically 16-19 characters (credit card format)
-        // or could be a custom format
-        if (cardData.length >= 10) {
+        // or could be a custom format (CLI-0001, repair numbers, etc.)
+        // Only process if it looks like card data (numeric, CLI format, or long enough)
+        const isCardFormat = cardData.length >= 10 && (
+          /^\d+$/.test(cardData) || // All digits (credit card, repair number)
+          /^CLI-?\d+$/i.test(cardData) || // Client ID format
+          cardData.length >= 15 // Long alphanumeric (likely card data)
+        )
+        
+        if (isCardFormat) {
           console.log("[CardReader] Card swiped:", cardData)
           
           if (onCardSwipe) {
@@ -73,16 +80,28 @@ export function useCardReader(options: UseCardReaderOptions = {}) {
                   })
                   toast.success(`Printing receipt for ${tickets.length} device(s)`)
                 } else {
-                  toast.info("No tickets found for this card")
+                  // Only show error if it's a valid card format (not random typing)
+                  // Suppress error for very short inputs or non-card formats
+                  if (cardData.length >= 15 || /^CLI-?\d+$/i.test(cardData)) {
+                    console.log("[CardReader] No tickets found for card:", cardData)
+                    // Don't show toast for card reader - it's too noisy
+                    // toast.info("No tickets found for this card")
+                  }
                 }
               })
               .catch((error) => {
                 console.error("[CardReader] Error getting tickets:", error)
-                toast.error("Error retrieving ticket information")
+                // Only show error for valid card formats
+                if (cardData.length >= 15 || /^CLI-?\d+$/i.test(cardData)) {
+                  toast.error("Error retrieving ticket information")
+                }
               })
           }
 
           // Reset card data
+          cardDataRef.current = ""
+        } else {
+          // Not a card swipe, just reset silently
           cardDataRef.current = ""
         }
       }, 200)

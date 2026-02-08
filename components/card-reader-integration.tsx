@@ -234,7 +234,14 @@ export function CardReaderIntegration() {
         toast.error(`Failed to print receipt: ${error.message || "Unknown error"}`)
       }
     } else {
-      toast.info("No tickets found for this card")
+      // Only show error if card data looks like a valid card format
+      // Suppress for random keyboard input
+      const isCardFormat = cardData.length >= 15 || /^CLI-?\d+$/i.test(cardData.trim())
+      if (isCardFormat) {
+        console.log("[CardReader] No tickets found for card data:", cardData)
+        // Don't show toast - it's too noisy and may be false positives
+        // toast.info("No tickets found for this card")
+      }
     }
   }
 
