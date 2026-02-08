@@ -957,6 +957,7 @@ export function NewRepairTicketForm() {
       waterDamaged: false,
       loanEquipment: false,
       equipmentObs: "",
+      phoneIssue: "",
       repairObs: "",
       selectedServices: [],
       condition: "",
