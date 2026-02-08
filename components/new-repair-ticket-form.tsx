@@ -1538,7 +1538,7 @@ export function NewRepairTicketForm() {
                     />
                   </div>
 
-                  <div className="flex justify-center items-start gap-75 md:col-span-2">
+                  <div className="flex justify-center items-start gap-6 md:col-span-2">
                     <div className="space-y-2">
                       <Label className="text-gray-700">{t("form.budget")} / {t("form.price")}</Label>
                       <div className="flex gap-2">
@@ -1587,16 +1587,15 @@ export function NewRepairTicketForm() {
                         <span>{t("form.warrantyUntil30Days")}</span>
                       </label>
                     </div>
-                  </div>
-
-                  <div className="space-y-2 md:col-span-2">
-                    <Label className="text-gray-700">{t("form.repairNumber")}</Label>
-                    <Input
-                      value={getRepairNumberPreview()}
-                      disabled
-                      className="bg-purple-50 border-purple-200 text-purple-700 font-mono font-semibold cursor-not-allowed"
-                    />
-                    <p className="text-xs text-gray-500">{t("form.repairNumberHint")}</p>
+                    <div className="space-y-2">
+                      <Label className="text-gray-700">{t("form.repairNumber")}</Label>
+                      <Input
+                        value={getRepairNumberPreview()}
+                        disabled
+                        className="bg-purple-50 border-purple-200 text-purple-700 font-mono font-semibold cursor-not-allowed"
+                      />
+                      <p className="text-xs text-gray-500">{t("form.repairNumberHint")}</p>
+                    </div>
                   </div>
                 </div>
               </div>
