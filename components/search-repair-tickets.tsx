@@ -381,14 +381,20 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
           if (response.ok) {
             const data = await response.json()
             const ticketsArray = Array.isArray(data.tickets) ? data.tickets : []
+            console.log(`[SearchRepairTickets] Loaded ${ticketsArray.length} tickets from API`)
             // Sort tickets by newest first (descending by createdAt)
             const sortedTickets = ticketsArray.sort((a: any, b: any) => {
               return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
             })
             setTickets(sortedTickets)
+            // Also set filteredTickets initially (will be updated by useEffect)
+            setFilteredTickets(sortedTickets)
+            console.log(`[SearchRepairTickets] Set ${sortedTickets.length} tickets and filteredTickets`)
           } else {
-            console.error("[SearchRepairTickets] Failed to load tickets from API")
+            const errorData = await response.json().catch(() => ({}))
+            console.error("[SearchRepairTickets] Failed to load tickets from API:", response.status, errorData)
             setTickets([])
+            setFilteredTickets([])
           }
         }
       } catch (error) {
@@ -420,6 +426,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
   useEffect(() => {
     // Ensure tickets is an array before filtering
     const ticketsArray = Array.isArray(tickets) ? tickets : []
+    console.log(`[SearchRepairTickets] Filtering ${ticketsArray.length} tickets, statusFilter=${statusFilter}, searchTerm="${searchTerm}"`)
     let filtered = [...ticketsArray]
     if (searchTerm.trim() && searchType !== "date") {
       const lowercaseTerm = searchTerm.toLowerCase()
@@ -487,6 +494,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
     const sortedFiltered = filtered.sort((a: any, b: any) => {
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     })
+    console.log(`[SearchRepairTickets] After filtering: ${sortedFiltered.length} tickets`)
     setFilteredTickets(sortedFiltered)
     
     // Scroll to first result when search is performed

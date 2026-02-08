@@ -32,7 +32,8 @@ export async function GET(request: NextRequest) {
     }
 
     const userTenantId = tenantId || user.tenantId
-    const isAdmin = user.role === "ADMIN" || user.role === "admin"
+    
+    console.log(`[API] User role: role="${user.role}", tenantId=${userTenantId}`)
 
     // Security check: Verify user can only access their own tenant data (unless super admin)
     // If a different tenantId is provided in query params, verify access
@@ -63,19 +64,11 @@ export async function GET(request: NextRequest) {
     let tickets
     try {
       if (deleted) {
-        // For deleted tickets, filter by deleted = true and order by deletedAt
-        // If admin, show all deleted tickets for the tenant; otherwise only user's tickets
-        if (isAdmin) {
-          tickets = await query(
-            `SELECT * FROM ${tableName} WHERE deleted = TRUE ORDER BY deletedAt DESC`
-          )
-        } else {
-          tickets = await query(
-            `SELECT * FROM ${tableName} WHERE userId = ? AND deleted = TRUE ORDER BY deletedAt DESC`,
-            [userId]
-          )
-        }
-        console.log(`[API] ✅ Query returned ${tickets.length} deleted tickets ${isAdmin ? 'for tenant' : 'for user'}`)
+        // For deleted tickets, show all deleted tickets for the tenant
+        tickets = await query(
+          `SELECT * FROM ${tableName} WHERE deleted = TRUE ORDER BY deletedAt DESC`
+        )
+        console.log(`[API] ✅ Query returned ${tickets.length} deleted tickets for tenant`)
         if (tickets.length > 0) {
           console.log(`[API] Sample deleted ticket:`, {
             id: tickets[0].id,
@@ -85,20 +78,21 @@ export async function GET(request: NextRequest) {
           })
         }
       } else {
-        // For active tickets, filter by deleted = false or NULL
-        // If admin, show all active tickets for the tenant; otherwise only user's tickets
-        if (isAdmin) {
-          tickets = await query(
-            `SELECT * FROM ${tableName} WHERE (deleted = FALSE OR deleted IS NULL) ORDER BY createdAt DESC`
-          )
-        } else {
-          tickets = await query(
-            `SELECT * FROM ${tableName} WHERE userId = ? AND (deleted = FALSE OR deleted IS NULL) ORDER BY createdAt DESC`,
-            [userId]
-          )
-        }
+        // For active tickets, show all active tickets for the tenant (all users see all tenant data)
+        tickets = await query(
+          `SELECT * FROM ${tableName} WHERE (deleted = FALSE OR deleted IS NULL) ORDER BY createdAt DESC`
+        )
       }
-      console.log(`[API] ✅ Found ${tickets.length} ${deleted ? 'deleted ' : ''}repair ticket(s) ${isAdmin ? 'for tenant' : 'for user'} ${userId}`)
+      console.log(`[API] ✅ Found ${tickets.length} ${deleted ? 'deleted ' : ''}repair ticket(s) for tenant ${userTenantId}`)
+      if (tickets.length > 0 && !deleted) {
+        console.log(`[API] Sample active ticket:`, {
+          id: tickets[0].id,
+          customerName: tickets[0].customerName,
+          userId: tickets[0].userId,
+          status: tickets[0].status,
+          deleted: tickets[0].deleted
+        })
+      }
     } catch (queryError: any) {
       console.error(`[API] ❌ Error querying table ${tableName}:`, queryError?.message || queryError)
       console.error(`[API] Error details:`, {
