@@ -2556,13 +2556,33 @@ export async function printReceiptForTickets(
     companyPhone1: companyPhone1 || "(not set)"
   })
 
+  // Validate that we have content to print
+  if (!ticketsHTML || ticketsHTML.trim() === "") {
+    console.error("[printReceiptForTickets] No HTML content generated for printing")
+    toast.error("No receipt content to print. Please check ticket data.")
+    return
+  }
+  
+  console.log(`[printReceiptForTickets] Generated HTML content length: ${ticketsHTML.length} characters`)
+  
   // Open print window with proper error handling
   let printWindow: Window | null = null
   try {
+    // Open window - must be opened before we can write to it
     printWindow = window.open("", "_blank", "width=800,height=600")
     if (!printWindow || printWindow.closed || typeof printWindow.closed === "undefined") {
       console.error("Popup blocked or window failed to open")
       toast.error("Could not open print window. Please allow popups for this site and try again.")
+      return
+    }
+    
+    // Small delay to ensure window is ready
+    await new Promise(resolve => setTimeout(resolve, 50))
+    
+    // Verify window is still accessible
+    if (printWindow.closed || !printWindow.document) {
+      console.error("Print window closed or document not accessible")
+      toast.error("Print window error. Please try again.")
       return
     }
   } catch (error) {
@@ -3131,13 +3151,43 @@ export async function printReceiptForTickets(
       return
     }
     
+    if (!printWindow.document) {
+      console.error("Print window document is not available")
+      toast.error("Print window error. Please try again.")
+      if (printWindow && !printWindow.closed) {
+        printWindow.close()
+      }
+      return
+    }
+    
     // Open document for writing (this is required before document.write)
-    printWindow.document.open()
+    // This clears any existing content and prepares the document for writing
+    printWindow.document.open("text/html", "replace")
+    
+    // Write the complete HTML content
     printWindow.document.write(printHTML)
+    
+    // Close the document stream - this triggers the browser to parse and render the HTML
     printWindow.document.close()
+    
+    // Set title
     printWindow.document.title = "Repair Ticket Receipt"
     
-    console.log("Print window content written successfully")
+    console.log("Print window content written successfully, HTML length:", printHTML.length)
+    console.log("Document ready state after write:", printWindow.document.readyState)
+    
+    // Verify content was written by checking body
+    setTimeout(() => {
+      if (printWindow && !printWindow.closed && printWindow.document && printWindow.document.body) {
+        const bodyContent = printWindow.document.body.innerHTML || ""
+        if (bodyContent.length === 0) {
+          console.error("ERROR: Print window body is empty after write!")
+          toast.error("Print content failed to load. Please try again.")
+        } else {
+          console.log("Print window body content verified, length:", bodyContent.length)
+        }
+      }
+    }, 100)
   } catch (error) {
     console.error("Error writing to print window:", error)
     toast.error("Error generating print preview. Please try again.")
@@ -3162,16 +3212,28 @@ export async function printReceiptForTickets(
   }, 100)
 
   // Wait for content to load before printing
-  setTimeout(() => {
+  // Use a function that checks document readiness
+  const waitForContentAndPrint = () => {
     try {
       if (!printWindow || printWindow.closed) {
         console.error("Print window is null or closed")
         return
       }
       
-      // Check if document is ready
-      if (printWindow.document && printWindow.document.readyState === "complete") {
-        // Document is ready, proceed with print
+      if (!printWindow.document) {
+        console.error("Print window document is not available")
+        return
+      }
+      
+      // Check if document is ready and has content
+      const readyState = printWindow.document.readyState
+      const hasBodyContent = printWindow.document.body && printWindow.document.body.innerHTML && printWindow.document.body.innerHTML.length > 0
+      
+      console.log("Document ready state:", readyState, "Has body content:", hasBodyContent)
+      
+      if (readyState === "complete" && hasBodyContent) {
+        // Document is ready and has content, proceed with print
+        console.log("Document ready, triggering print...")
         printWindow.focus()
         
         // Store printer selection from print dialog
@@ -3201,35 +3263,36 @@ export async function printReceiptForTickets(
             printWindow.close()
           }
         }, 2000)
+      } else if (readyState === "loading" || readyState === "interactive") {
+        // Document is still loading, wait a bit more
+        console.log("Document still loading, waiting...")
+        setTimeout(waitForContentAndPrint, 100)
+      } else if (!hasBodyContent) {
+        // Document is complete but has no content - wait a bit more
+        console.log("Document complete but no content, waiting...")
+        setTimeout(waitForContentAndPrint, 100)
       } else {
-        // Document not ready yet, wait a bit more
+        // Fallback: try printing anyway after a delay
+        console.log("Fallback: attempting print after delay")
         setTimeout(() => {
           if (printWindow && !printWindow.closed && printWindow.document) {
-            if (printWindow.document.readyState === "complete") {
-              printWindow.focus()
-              printWindow.print()
-              setTimeout(() => {
-                if (printWindow && !printWindow.closed) {
-                  printWindow.close()
-                }
-              }, 2000)
-            }
+            printWindow.focus()
+            printWindow.print()
+            setTimeout(() => {
+              if (printWindow && !printWindow.closed) {
+                printWindow.close()
+              }
+            }, 2000)
           }
-        }, 200)
+        }, 500)
       }
     } catch (error) {
-      console.error("Print error:", error)
-      // Note: toast might not be available in this context
-      try {
-        if (typeof window !== 'undefined') {
-          const { toast } = require('sonner')
-          toast.error("Failed to print. Please check your printer connection.")
-        }
-      } catch (e) {
-        // Ignore if toast is not available
-      }
+      console.error("Error in waitForContentAndPrint:", error)
     }
-  }, 500)
+  }
+  
+  // Start waiting for content after a short delay to allow document.write to complete
+  setTimeout(waitForContentAndPrint, 200)
 }
 
 // Helper function to print directly to a receipt printer (if Web Serial API is available)
