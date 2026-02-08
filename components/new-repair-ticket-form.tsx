@@ -311,7 +311,6 @@ export function NewRepairTicketForm() {
   const [isSavingDevice, setIsSavingDevice] = useState(false)
   const [isDeviceAnimating, setIsDeviceAnimating] = useState(false)
   const [deviceKey, setDeviceKey] = useState(0) // Key to force re-render and trigger animation
-  const [deviceNumber, setDeviceNumber] = useState(1) // Track the current device number (1, 2, 3, etc.)
 
   // Generate preview Repair Number
   const getRepairNumberPreview = (): string => {
@@ -373,132 +372,127 @@ export function NewRepairTicketForm() {
         setIsSavingDevice(true)
         setIsDeviceAnimating(true)
         
-        // Wait for fade-out animation (reduced to 150ms for faster transition)
-        await new Promise(resolve => setTimeout(resolve, 150))
+        // Wait for fade-out animation (300ms)
+        await new Promise(resolve => setTimeout(resolve, 300))
         
-        // Save the current device in the background (don't wait for it to complete)
-        // This allows device 2 to appear immediately
-        const saveDeviceInBackground = async () => {
-          try {
-            const deviceImei = currentDevice.imeiNo && currentDevice.imeiNo.trim() !== "" ? currentDevice.imeiNo.trim() : ""
-            const currentBatchId = batchId || `batch_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-            if (!batchId) {
-              setBatchId(currentBatchId)
-            }
-
-            const translate = (key: string) => {
-              try {
-                return t(key)
-              } catch (error) {
-                const fallbacks: Record<string, string> = {
-                  "form.warrantyUntil30Days": "Warranty Until 30 Days",
-                  "form.withoutWarranty": "Without Warranty"
-                }
-                return fallbacks[key] || key
-              }
-            }
-
-            const requestPayload = {
-              userId: user.id,
-              clientId: clientId.trim(),
-              customerName,
-              contact,
-              receivedBy: receivedBy.trim(),
-              imeiNo: deviceImei,
-              brand: currentDevice.brand || currentDevice.model?.split(" ")[0] || "N/A",
-              model: currentDevice.model || "",
-              serialNo: currentDevice.serialNo?.trim() || null,
-              warranty: currentDevice.warrantyUntil30Days ? translate("form.warrantyUntil30Days") : translate("form.withoutWarranty"),
-              simCard: currentDevice.simCard,
-              simTray: currentDevice.simTray,
-              memoryCard: currentDevice.memoryCard,
-              charger: currentDevice.charger,
-              battery: currentDevice.battery,
-              waterDamaged: currentDevice.waterDamaged,
-              loanEquipment: false,
-              equipmentObs: currentDevice.equipmentObs || null,
-              repairObs: currentDevice.repairObs || null,
-              selectedServices: [],
-              condition: null,
-              problem: currentDevice.problem || null,
-              price: parseFloat(currentDevice.price) || 0,
-              budget: currentDevice.budget ? parseFloat(currentDevice.budget) : null,
-              priceType: currentDevice.priceType || "budget",
-              batchId: currentBatchId,
-              status: "PENDING",
-            }
-
-            const response = await fetch("/api/repairs/create", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(requestPayload),
-            })
-
-            if (response.ok) {
-              const data = await response.json()
-              const ticket = data?.ticket || data
-              if (ticket) {
-                toast.success("Device saved successfully!")
-                // Add to created tickets details if we're showing them
-                if (showTicketDetails && createdTicketsDetails.length > 0) {
-                  setCreatedTicketsDetails(prev => [...prev, ticket])
-                }
-              }
-            } else {
-              const errorData = await response.json().catch(() => ({}))
-              console.error("[NewRepairTicketForm] Failed to save device:", errorData)
-              toast.error("Failed to save current device. Please try again.")
-            }
-          } catch (error) {
-            console.error("[NewRepairTicketForm] Error saving device:", error)
-            toast.error("Failed to save current device. Please try again.")
+        // Save the current device immediately
+        try {
+          const deviceImei = currentDevice.imeiNo && currentDevice.imeiNo.trim() !== "" ? currentDevice.imeiNo.trim() : ""
+          const currentBatchId = batchId || `batch_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+          if (!batchId) {
+            setBatchId(currentBatchId)
           }
+
+          const translate = (key: string) => {
+            try {
+              return t(key)
+            } catch (error) {
+              const fallbacks: Record<string, string> = {
+                "form.warrantyUntil30Days": "Warranty Until 30 Days",
+                "form.withoutWarranty": "Without Warranty"
+              }
+              return fallbacks[key] || key
+            }
+          }
+
+          const requestPayload = {
+            userId: user.id,
+            clientId: clientId.trim(),
+            customerName,
+            contact,
+            receivedBy: receivedBy.trim(),
+            imeiNo: deviceImei,
+            brand: currentDevice.brand || currentDevice.model?.split(" ")[0] || "N/A",
+            model: currentDevice.model || "",
+            serialNo: currentDevice.serialNo?.trim() || null,
+            warranty: currentDevice.warrantyUntil30Days ? translate("form.warrantyUntil30Days") : translate("form.withoutWarranty"),
+            simCard: currentDevice.simCard,
+            simTray: currentDevice.simTray,
+            memoryCard: currentDevice.memoryCard,
+            charger: currentDevice.charger,
+            battery: currentDevice.battery,
+            waterDamaged: currentDevice.waterDamaged,
+            loanEquipment: false,
+            equipmentObs: currentDevice.equipmentObs || null,
+            repairObs: currentDevice.repairObs || null,
+            selectedServices: [],
+            condition: null,
+            problem: currentDevice.problem || null,
+            price: parseFloat(currentDevice.price) || 0,
+            budget: currentDevice.budget ? parseFloat(currentDevice.budget) : null,
+            priceType: currentDevice.priceType || "budget",
+            batchId: currentBatchId,
+            status: "PENDING",
+          }
+
+          const response = await fetch("/api/repairs/create", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(requestPayload),
+          })
+
+          if (response.ok) {
+            const data = await response.json()
+            const ticket = data?.ticket || data
+            if (ticket) {
+              toast.success("Device saved successfully!")
+              // Add to created tickets details if we're showing them
+              if (showTicketDetails && createdTicketsDetails.length > 0) {
+                setCreatedTicketsDetails(prev => [...prev, ticket])
+              }
+            }
+          } else {
+            const errorData = await response.json().catch(() => ({}))
+            console.error("[NewRepairTicketForm] Failed to save device:", errorData)
+            toast.error("Failed to save current device. Please try again.")
+            setIsSavingDevice(false)
+            setIsDeviceAnimating(false)
+            return // Don't add new device if save failed
+          }
+        } catch (error) {
+          console.error("[NewRepairTicketForm] Error saving device:", error)
+          toast.error("Failed to save current device. Please try again.")
+          setIsSavingDevice(false)
+          setIsDeviceAnimating(false)
+          return // Don't add new device if save failed
         }
-        
-        // Start saving in background (don't wait for it)
-        saveDeviceInBackground()
       }
     }
 
-    // Clear the form immediately and add a new empty device
-    // Create a fresh empty device object
-    const newEmptyDevice: DeviceFormData = {
-      model: "",
-      brand: "",
-      imeiNo: "",
-      serialNo: "",
-      warrantyUntil30Days: false,
-      simCard: false,
-      simTray: false,
-      memoryCard: false,
-      charger: false,
-      battery: false,
-      waterDamaged: false,
-      loanEquipment: false,
-      equipmentObs: "",
-      repairObs: "",
-      selectedServices: [],
-      condition: "",
-      customCondition: "",
-      problem: "",
-      price: "",
-      budget: "",
-      priceType: "budget",
-      imeiError: null,
-    }
-    
-    // Increment device number for the next device (Device 2, 3, 4, etc.)
-    setDeviceNumber(prev => prev + 1)
-    
-    // Update device key first to trigger animation on new device, then immediately update devices
-    setDeviceKey(prev => prev + 1)
-    
-    // Clear the form immediately with a fresh empty device (no delay)
-    setDevices([newEmptyDevice])
-    
-    // Reset animation states immediately to show new device form right away
+    // Clear the form and add a new empty device with fade-in animation
     setIsSavingDevice(false)
     setIsDeviceAnimating(false)
+    
+    // Update device key to trigger animation on new device
+    setDeviceKey(prev => prev + 1)
+    
+    // Small delay to ensure smooth transition
+    setTimeout(() => {
+      setDevices([{
+        model: "",
+        brand: "",
+        imeiNo: "",
+        serialNo: "",
+        warrantyUntil30Days: false,
+        simCard: false,
+        simTray: false,
+        memoryCard: false,
+        charger: false,
+        battery: false,
+        waterDamaged: false,
+        loanEquipment: false,
+        equipmentObs: "",
+        repairObs: "",
+        selectedServices: [],
+        condition: "",
+        customCondition: "",
+        problem: "",
+        price: "",
+        budget: "",
+        priceType: "budget",
+        imeiError: null,
+      }])
+    }, 50)
   }
 
   const removeDevice = (index: number) => {
@@ -873,7 +867,6 @@ export function NewRepairTicketForm() {
       setContact("")
       setReceivedBy("")
       setBatchId(null) // Reset batch ID for new entry
-      setDeviceNumber(1) // Reset device number to 1 for new entry
       setDevices([{
         model: "",
         brand: "",
@@ -944,7 +937,6 @@ export function NewRepairTicketForm() {
     setContact("")
     setReceivedBy("")
     setBatchId(null) // Reset batch ID for new entry
-    setDeviceNumber(1) // Reset device number to 1 for new entry
     setDevices([{
       model: "",
       brand: "",
@@ -1269,16 +1261,16 @@ export function NewRepairTicketForm() {
             {devices.map((device, deviceIndex) => (
               <div
                 key={`${deviceKey}-${deviceIndex}`}
-                className={`border-2 border-blue-200 rounded-xl p-6 bg-white transition-all duration-150 ease-in-out ${
+                className={`border-2 border-blue-200 rounded-xl p-6 bg-white transition-all duration-300 ease-in-out ${
                   isSavingDevice && deviceIndex === 0
                     ? "opacity-0 -translate-x-5 pointer-events-none"
-                    : deviceIndex === 0 && deviceKey > 0 && !isSavingDevice && !isDeviceAnimating
+                    : deviceIndex === 0 && deviceKey > 0
                     ? "animate-fade-in-slide"
                     : "opacity-100 translate-x-0"
                 }`}
               >
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-black">{t("form.device")} {deviceNumber}</h3>
+                  <h3 className="text-lg font-semibold text-black">{t("form.device")} {deviceIndex + 1}</h3>
                   {devices.length > 1 && (
                     <Button
                       type="button"
@@ -2564,30 +2556,9 @@ export async function printReceiptForTickets(
     companyPhone1: companyPhone1 || "(not set)"
   })
 
-  // Open print window with proper error handling
-  let printWindow: Window | null = null
-  try {
-    // Open window with a data URL to ensure it's not blank
-    printWindow = window.open("about:blank", "_blank", "width=800,height=600")
-    if (!printWindow || printWindow.closed || typeof printWindow.closed === "undefined") {
-      // If popup blocked, show error message
-      console.error("Popup blocked or window failed to open")
-      toast.error("Could not open print window. Please allow popups for this site and try again.")
-      return
-    }
-    
-    // Wait a moment for the window to be ready
-    await new Promise(resolve => setTimeout(resolve, 50))
-    
-    // Verify window is still open and accessible
-    if (printWindow.closed || !printWindow.document) {
-      console.error("Print window closed or document not accessible")
-      toast.error("Print window error. Please try again.")
-      return
-    }
-  } catch (error) {
-    console.error("Error opening print window:", error)
-    toast.error("Could not open print window. Please check popup blocker settings.")
+  const printWindow = window.open("", "_blank")
+  if (!printWindow) {
+    console.error("Could not open print window")
     return
   }
 
@@ -2985,15 +2956,6 @@ export async function printReceiptForTickets(
   
   const ticketsHTML = receiptsHTML
   
-  // Validate that we have content to print
-  if (!ticketsHTML || ticketsHTML.trim() === "") {
-    console.error("[printReceiptForTickets] No HTML content generated for printing")
-    toast.error("No receipt content to print. Please check ticket data.")
-    return
-  }
-  
-  console.log(`[printReceiptForTickets] Generated HTML content length: ${ticketsHTML.length} characters`)
-  
   // Determine page size - use long bill format (narrow width, auto height)
   const pageSize = printerType === "thermal" ? "80mm" : "80mm"
   const pageMargin = "0"
@@ -3152,77 +3114,13 @@ export async function printReceiptForTickets(
     </html>
   `
 
-  // Write content to print window with proper error handling
-  try {
-    if (!printWindow) {
-      console.error("Print window is null")
-      toast.error("Print window error. Please try again.")
-      return
-    }
-    
-    // Check if window is still open
-    if (printWindow.closed) {
-      console.error("Print window was closed")
-      toast.error("Print window was closed. Please try again.")
-      return
-    }
-    
-    // Use a more reliable method: Create a blob URL and navigate to it
-    try {
-      const blob = new Blob([printHTML], { type: 'text/html' })
-      const url = URL.createObjectURL(blob)
-      
-      // Navigate the print window to the blob URL
-      printWindow.location.href = url
-      
-      // Wait for the page to load
-      printWindow.addEventListener('load', () => {
-        console.log("Print window loaded successfully")
-        // Clean up the blob URL after a delay
-        setTimeout(() => {
-          URL.revokeObjectURL(url)
-        }, 1000)
-      }, { once: true })
-      
-      console.log("Print window content loaded via blob URL, HTML length:", printHTML.length)
-    } catch (blobError) {
-      // Fallback to document.write if blob fails
-      console.warn("Blob URL method failed, trying document.write:", blobError)
-      
-      if (printWindow.document) {
-        // Clear any existing content
-        printWindow.document.open()
-        
-        // Write the HTML content
-        printWindow.document.write(printHTML)
-        
-        // Close the document stream
-        printWindow.document.close()
-        
-        // Set title
-        printWindow.document.title = "Repair Ticket Receipt"
-        
-        console.log("Print window content written via document.write")
-      } else {
-        throw new Error("Print window document is not available")
-      }
-    }
-  } catch (error) {
-    console.error("Error writing to print window:", error)
-    toast.error("Error generating print preview. Please try again.")
-    if (printWindow && !printWindow.closed) {
-      printWindow.close()
-    }
-    return
-  }
+  printWindow.document.write(printHTML)
+  printWindow.document.close()
+  printWindow.document.title = "Repair Ticket Receipt"
 
   // Remove any URLs and href attributes from the document before printing
   setTimeout(() => {
     try {
-      if (!printWindow || !printWindow.document) {
-        console.warn("Print window or document not available")
-        return
-      }
       printWindow.document.querySelectorAll('a').forEach((link: any) => {
         // Remove href attribute to prevent URLs from appearing in print
         link.removeAttribute('href')
@@ -3230,68 +3128,52 @@ export async function printReceiptForTickets(
         link.style.color = 'inherit'
       })
     } catch (e) {
-      console.warn("Error removing URLs from print document:", e)
       // Ignore if querySelector fails
     }
   }, 100)
 
-  // Wait for content to load before printing
-  const waitForContentAndPrint = () => {
-    if (!printWindow || printWindow.closed) {
-      console.error("Print window is null or closed")
-      return
-    }
-    
+  setTimeout(() => {
     try {
-      // Check if document is ready
-      if (printWindow.document && printWindow.document.readyState === "complete") {
-        // Document is ready, proceed with print
-        printWindow.focus()
-        
-        // Store printer selection from print dialog
-        // Note: We can't programmatically select a printer due to browser security,
-        // but we can guide the user and remember their choice
-        const printHandler = () => {
-          // After printing, the browser will remember the last selected printer
-          // This helps with automatic printer detection for future prints
-          if (preferredPrinter) {
-            console.log(`Attempting to print to: ${preferredPrinter}`)
-          }
+      printWindow.focus()
+      
+      // Store printer selection from print dialog
+      // Note: We can't programmatically select a printer due to browser security,
+      // but we can guide the user and remember their choice
+      const printHandler = () => {
+        // After printing, the browser will remember the last selected printer
+        // This helps with automatic printer detection for future prints
+        if (preferredPrinter) {
+          console.log(`Attempting to print to: ${preferredPrinter}`)
         }
-        
-        printWindow.addEventListener('beforeprint', printHandler)
-        printWindow.print()
-        
-        // Remove event listener after print
-        setTimeout(() => {
-          if (printWindow && !printWindow.closed) {
-            printWindow.removeEventListener('beforeprint', printHandler)
-          }
-        }, 1000)
-        
-        // For receipt printers, keep the window open longer to allow print job to complete
-        setTimeout(() => {
-          if (printWindow && !printWindow.closed) {
-            printWindow.close()
-          }
-        }, 2000)
-      } else if (printWindow.document && printWindow.document.readyState === "interactive") {
-        // Document is loading, wait a bit more
-        setTimeout(waitForContentAndPrint, 100)
-      } else {
-        // Document not ready yet, wait for load event
-        printWindow.addEventListener("load", () => {
-          setTimeout(waitForContentAndPrint, 100)
-        }, { once: true })
       }
+      
+      printWindow.addEventListener('beforeprint', printHandler)
+      printWindow.print()
+      
+      // Remove event listener after print
+      setTimeout(() => {
+        printWindow.removeEventListener('beforeprint', printHandler)
+      }, 1000)
+      
+      // For receipt printers, keep the window open longer to allow print job to complete
+      setTimeout(() => {
+        if (printWindow && !printWindow.closed) {
+          printWindow.close()
+        }
+      }, 2000)
     } catch (error) {
-      console.error("Error in waitForContentAndPrint:", error)
-      toast.error("Error preparing print. Please try again.")
+      console.error("Print error:", error)
+      // Note: toast might not be available in this context
+      try {
+        if (typeof window !== 'undefined') {
+          const { toast } = require('sonner')
+          toast.error("Failed to print. Please check your printer connection.")
+        }
+      } catch (e) {
+        // Ignore if toast is not available
+      }
     }
-  }
-  
-  // Start waiting for content after a short delay
-  setTimeout(waitForContentAndPrint, 200)
+  }, 500)
 }
 
 // Helper function to print directly to a receipt printer (if Web Serial API is available)
