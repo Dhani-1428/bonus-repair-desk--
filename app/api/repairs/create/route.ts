@@ -105,6 +105,7 @@ export async function POST(request: NextRequest) {
       waterDamaged,
       loanEquipment,
       equipmentObs,
+      phoneIssue,
       repairObs,
       selectedServices,
       condition,
@@ -274,9 +275,9 @@ export async function POST(request: NextRequest) {
         const [insertResult] = await connection.execute(
           `INSERT INTO ${tableName} (id, userId, clientId, customerName, contact, receivedBy, imeiNo,
             brand, model, serialNo, softwareVersion, warranty, simCard, simTray, memoryCard,
-            charger, battery, waterDamaged, loanEquipment, equipmentObs, repairObs,
+            charger, battery, waterDamaged, loanEquipment, equipmentObs, phoneIssue, repairObs,
             selectedServices, \`condition\`, problem, price, budget, priceType, batchId, status)
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
           [
             ticketId,
             userId,
@@ -298,6 +299,7 @@ export async function POST(request: NextRequest) {
             waterDamaged || false,
             loanEquipment || false,
             equipmentObs || null,
+            phoneIssue || null,
             repairObs || null,
             JSON.stringify(selectedServices || []),
             condition || null,

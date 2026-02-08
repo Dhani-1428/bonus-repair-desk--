@@ -60,6 +60,7 @@ export async function createTenantTables(tenantId: string): Promise<void> {
       waterDamaged BOOLEAN DEFAULT FALSE,
       loanEquipment BOOLEAN DEFAULT FALSE,
       equipmentObs TEXT,
+      phoneIssue TEXT,
       repairObs TEXT,
       selectedServices JSON,
       \`condition\` TEXT,
@@ -123,6 +124,7 @@ export async function createTenantTables(tenantId: string): Promise<void> {
       waterDamaged BOOLEAN,
       loanEquipment BOOLEAN,
       equipmentObs TEXT,
+      phoneIssue TEXT,
       repairObs TEXT,
       selectedServices JSON,
       \`condition\` TEXT,
@@ -455,6 +457,40 @@ export async function migrateTenantTables(tenantId: string): Promise<void> {
           ADD COLUMN priceType VARCHAR(10) DEFAULT 'budget' AFTER budget
         `)
         console.log(`[Migration] ✅ Added priceType column to ${tables.deletedTickets}`)
+      } else {
+        throw error
+      }
+    }
+
+    // Check if phoneIssue column exists in repair_tickets table
+    try {
+      await query(`SELECT phoneIssue FROM ${repairTicketsTable} LIMIT 1`)
+    } catch (error: any) {
+      // Column doesn't exist, add it
+      if (error.code === "ER_BAD_FIELD_ERROR" || error.message?.includes("Unknown column")) {
+        console.log(`[Migration] Adding phoneIssue column to ${tables.repairTickets}`)
+        await execute(`
+          ALTER TABLE ${repairTicketsTable} 
+          ADD COLUMN phoneIssue TEXT AFTER equipmentObs
+        `)
+        console.log(`[Migration] ✅ Added phoneIssue column to ${tables.repairTickets}`)
+      } else {
+        throw error
+      }
+    }
+
+    // Check if phoneIssue column exists in deleted_tickets table
+    try {
+      await query(`SELECT phoneIssue FROM ${deletedTicketsTable} LIMIT 1`)
+    } catch (error: any) {
+      // Column doesn't exist, add it
+      if (error.code === "ER_BAD_FIELD_ERROR" || error.message?.includes("Unknown column")) {
+        console.log(`[Migration] Adding phoneIssue column to ${tables.deletedTickets}`)
+        await execute(`
+          ALTER TABLE ${deletedTicketsTable} 
+          ADD COLUMN phoneIssue TEXT AFTER equipmentObs
+        `)
+        console.log(`[Migration] ✅ Added phoneIssue column to ${tables.deletedTickets}`)
       } else {
         throw error
       }
