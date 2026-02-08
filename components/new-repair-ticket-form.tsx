@@ -1230,7 +1230,7 @@ export function NewRepairTicketForm() {
                     type="tel"
                     value={contact}
                     onChange={(e) => setContact(e.target.value)}
-                    className="bg-white border-blue-200 text-black placeholder:text-black focus:border-blue-500 h-12 text-lg"
+                    className="!bg-white border-blue-200 text-black placeholder:text-black focus:border-blue-500 h-12 text-lg"
                   />
                 ) : (
                   <div className="bg-white border border-blue-200 rounded-md px-4 py-3 h-12 text-lg text-black flex items-center">
@@ -1246,7 +1246,7 @@ export function NewRepairTicketForm() {
                     value={receivedBy}
                     onChange={(e) => setReceivedBy(e.target.value)}
                     required
-                    className="bg-white border-blue-200 text-black placeholder:text-black focus:border-blue-500 h-12 text-lg"
+                    className="!bg-white border-blue-200 text-black placeholder:text-black focus:border-blue-500 h-12 text-lg"
                   />
                 ) : (
                   <div className="bg-white border border-blue-200 rounded-md px-4 py-3 h-12 text-lg text-black flex items-center">
