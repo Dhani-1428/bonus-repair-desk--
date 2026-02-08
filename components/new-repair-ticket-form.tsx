@@ -351,34 +351,125 @@ export function NewRepairTicketForm() {
 
   // toggleService function removed - services option no longer available
 
-  const addDevice = () => {
-    setDevices((prev) => [
-      ...prev,
-      {
-        model: "",
-        brand: "",
-        imeiNo: "",
-        serialNo: "",
-        warrantyUntil30Days: false,
-        simCard: false,
-        simTray: false,
-        memoryCard: false,
-        charger: false,
-        battery: false,
-        waterDamaged: false,
-        loanEquipment: false,
-        equipmentObs: "",
-        repairObs: "",
-        selectedServices: [],
-        condition: "",
-        customCondition: "",
-        problem: "",
-        price: "",
-        budget: "",
-        priceType: "budget", // Default to budget
-        imeiError: null,
-      },
-    ])
+  const addDevice = async () => {
+    // If there's a device with data, save it first before adding a new one
+    if (devices.length > 0 && devices[0]) {
+      const currentDevice = devices[0]
+      // Check if device has any meaningful data (not just empty fields)
+      const hasData = currentDevice.model?.trim() || 
+                     currentDevice.brand?.trim() || 
+                     currentDevice.imeiNo?.trim() ||
+                     currentDevice.serialNo?.trim() ||
+                     currentDevice.problem?.trim() ||
+                     currentDevice.price?.trim() ||
+                     currentDevice.budget?.trim()
+      
+      if (hasData && user?.id && customerName.trim() && receivedBy.trim()) {
+        // Save the current device immediately
+        try {
+          const deviceImei = currentDevice.imeiNo && currentDevice.imeiNo.trim() !== "" ? currentDevice.imeiNo.trim() : ""
+          const currentBatchId = batchId || `batch_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+          if (!batchId) {
+            setBatchId(currentBatchId)
+          }
+
+          const translate = (key: string) => {
+            try {
+              return t(key)
+            } catch (error) {
+              const fallbacks: Record<string, string> = {
+                "form.warrantyUntil30Days": "Warranty Until 30 Days",
+                "form.withoutWarranty": "Without Warranty"
+              }
+              return fallbacks[key] || key
+            }
+          }
+
+          const requestPayload = {
+            userId: user.id,
+            clientId: clientId.trim(),
+            customerName,
+            contact,
+            receivedBy: receivedBy.trim(),
+            imeiNo: deviceImei,
+            brand: currentDevice.brand || currentDevice.model?.split(" ")[0] || "N/A",
+            model: currentDevice.model || "",
+            serialNo: currentDevice.serialNo?.trim() || null,
+            warranty: currentDevice.warrantyUntil30Days ? translate("form.warrantyUntil30Days") : translate("form.withoutWarranty"),
+            simCard: currentDevice.simCard,
+            simTray: currentDevice.simTray,
+            memoryCard: currentDevice.memoryCard,
+            charger: currentDevice.charger,
+            battery: currentDevice.battery,
+            waterDamaged: currentDevice.waterDamaged,
+            loanEquipment: false,
+            equipmentObs: currentDevice.equipmentObs || null,
+            repairObs: currentDevice.repairObs || null,
+            selectedServices: [],
+            condition: null,
+            problem: currentDevice.problem || null,
+            price: parseFloat(currentDevice.price) || 0,
+            budget: currentDevice.budget ? parseFloat(currentDevice.budget) : null,
+            priceType: currentDevice.priceType || "budget",
+            batchId: currentBatchId,
+            status: "PENDING",
+          }
+
+          const response = await fetch("/api/repairs/create", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(requestPayload),
+          })
+
+          if (response.ok) {
+            const data = await response.json()
+            const ticket = data?.ticket || data
+            if (ticket) {
+              toast.success("Device saved successfully!")
+              // Add to created tickets details if we're showing them
+              if (showTicketDetails && createdTicketsDetails.length > 0) {
+                setCreatedTicketsDetails(prev => [...prev, ticket])
+              }
+            }
+          } else {
+            const errorData = await response.json().catch(() => ({}))
+            console.error("[NewRepairTicketForm] Failed to save device:", errorData)
+            toast.error("Failed to save current device. Please try again.")
+            return // Don't add new device if save failed
+          }
+        } catch (error) {
+          console.error("[NewRepairTicketForm] Error saving device:", error)
+          toast.error("Failed to save current device. Please try again.")
+          return // Don't add new device if save failed
+        }
+      }
+    }
+
+    // Clear the form and add a new empty device
+    setDevices([{
+      model: "",
+      brand: "",
+      imeiNo: "",
+      serialNo: "",
+      warrantyUntil30Days: false,
+      simCard: false,
+      simTray: false,
+      memoryCard: false,
+      charger: false,
+      battery: false,
+      waterDamaged: false,
+      loanEquipment: false,
+      equipmentObs: "",
+      repairObs: "",
+      selectedServices: [],
+      condition: "",
+      customCondition: "",
+      problem: "",
+      price: "",
+      budget: "",
+      priceType: "budget",
+      imeiError: null,
+    }])
   }
 
   const removeDevice = (index: number) => {
@@ -743,8 +834,42 @@ export function NewRepairTicketForm() {
         toast.error("Device entry created, but no receipt data available.")
       }
       
-      // Reset batch ID for next submission (devices added separately will have different batch IDs)
-      setBatchId(null)
+      // Clear form automatically after successful submission
+      setCustomerName("")
+      if (user?.id) {
+        generateClientId(user.id).then(setClientId).catch(() => setClientId("CLI-0001"))
+      } else {
+        setClientId("CLI-0001")
+      }
+      setContact("")
+      setReceivedBy("")
+      setBatchId(null) // Reset batch ID for new entry
+      setDevices([{
+        model: "",
+        brand: "",
+        imeiNo: "",
+        serialNo: "",
+        warrantyUntil30Days: false,
+        simCard: false,
+        simTray: false,
+        memoryCard: false,
+        charger: false,
+        battery: false,
+        waterDamaged: false,
+        loanEquipment: false,
+        equipmentObs: "",
+        repairObs: "",
+        selectedServices: [],
+        condition: "",
+        customCondition: "",
+        problem: "",
+        price: "",
+        budget: "",
+        priceType: "budget",
+        imeiError: null,
+      }])
+      setShowTicketDetails(false)
+      setCreatedTicketsDetails([])
       
       // Reload existing clients after successful submission
       loadExistingClients()
@@ -760,6 +885,11 @@ export function NewRepairTicketForm() {
           // Ignore localStorage errors
         }
       }
+      
+      // Scroll to top of form after clearing
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      }, 300)
     } catch (error: any) {
       toast.error(error.message || "Failed to create repair ticket")
     } finally {
