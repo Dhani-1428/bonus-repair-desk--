@@ -65,8 +65,9 @@ export async function GET(request: NextRequest) {
     try {
       if (deleted) {
         // For deleted tickets, show all deleted tickets for the tenant
+        // Handle both boolean (TRUE) and numeric (1) values for deleted field
         tickets = await query(
-          `SELECT * FROM ${tableName} WHERE deleted = TRUE ORDER BY deletedAt DESC`
+          `SELECT * FROM ${tableName} WHERE (deleted = TRUE OR deleted = 1) ORDER BY deletedAt DESC`
         )
         console.log(`[API] ✅ Query returned ${tickets.length} deleted tickets for tenant`)
         if (tickets.length > 0) {
@@ -79,9 +80,23 @@ export async function GET(request: NextRequest) {
         }
       } else {
         // For active tickets, show all active tickets for the tenant (all users see all tenant data)
-        tickets = await query(
-          `SELECT * FROM ${tableName} WHERE (deleted = FALSE OR deleted IS NULL) ORDER BY createdAt DESC`
-        )
+        // Handle both boolean (FALSE/TRUE) and numeric (0/1) values for deleted field
+        // Also handle case where deleted column might not exist (older tables)
+        try {
+          tickets = await query(
+            `SELECT * FROM ${tableName} WHERE (deleted = FALSE OR deleted = 0 OR deleted IS NULL) ORDER BY createdAt DESC`
+          )
+        } catch (deletedColumnError: any) {
+          // If deleted column doesn't exist, fetch all tickets
+          if (deletedColumnError?.code === "ER_BAD_FIELD_ERROR" || deletedColumnError?.message?.includes("Unknown column 'deleted'")) {
+            console.log(`[API] ⚠️  'deleted' column doesn't exist, fetching all tickets`)
+            tickets = await query(
+              `SELECT * FROM ${tableName} ORDER BY createdAt DESC`
+            )
+          } else {
+            throw deletedColumnError
+          }
+        }
       }
       console.log(`[API] ✅ Found ${tickets.length} ${deleted ? 'deleted ' : ''}repair ticket(s) for tenant ${userTenantId}`)
       if (tickets.length > 0 && !deleted) {

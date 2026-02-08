@@ -24,19 +24,62 @@ export function StatsCards() {
       
       try {
         // Load tickets from API instead of localStorage
+        console.log(`[StatsCards] Fetching tickets for userId: ${user.id}`)
         const response = await fetch(`/api/repairs?userId=${user.id}`)
+        console.log(`[StatsCards] API response status: ${response.status}`)
+        
         if (response.ok) {
           const data = await response.json()
+          console.log(`[StatsCards] API response data:`, { 
+            hasTickets: !!data.tickets, 
+            ticketsCount: Array.isArray(data.tickets) ? data.tickets.length : 0,
+            error: data.error 
+          })
+          
           const ticketsArray = Array.isArray(data.tickets) ? data.tickets : []
+          console.log(`[StatsCards] Processing ${ticketsArray.length} tickets`)
+          
+          if (ticketsArray.length > 0) {
+            console.log(`[StatsCards] Sample ticket statuses:`, ticketsArray.slice(0, 5).map((t: any) => ({ 
+              id: t.id, 
+              status: t.status, 
+              deleted: t.deleted 
+            })))
+          }
+          
           setStats({
             total: ticketsArray.length,
-            pending: ticketsArray.filter((t: any) => t.status === "PENDING" || t.status === "pending").length,
-            notOk: ticketsArray.filter((t: any) => t.status === "NOT_OK" || t.status === "not_ok").length,
-            completed: ticketsArray.filter((t: any) => t.status === "COMPLETED" || t.status === "completed").length,
-            delivered: ticketsArray.filter((t: any) => t.status === "DELIVERED" || t.status === "delivered").length,
+            pending: ticketsArray.filter((t: any) => {
+              const status = (t.status || "").toLowerCase()
+              return status === "pending" || status === "PENDING"
+            }).length,
+            notOk: ticketsArray.filter((t: any) => {
+              const status = (t.status || "").toLowerCase()
+              return status === "not_ok" || status === "NOT_OK" || status === "not ok"
+            }).length,
+            completed: ticketsArray.filter((t: any) => {
+              const status = (t.status || "").toLowerCase()
+              return status === "completed" || status === "COMPLETED"
+            }).length,
+            delivered: ticketsArray.filter((t: any) => {
+              const status = (t.status || "").toLowerCase()
+              return status === "delivered" || status === "DELIVERED"
+            }).length,
+          })
+          
+          console.log(`[StatsCards] Updated stats:`, {
+            total: ticketsArray.length,
+            pending: ticketsArray.filter((t: any) => (t.status || "").toLowerCase() === "pending").length,
+            notOk: ticketsArray.filter((t: any) => {
+              const s = (t.status || "").toLowerCase()
+              return s === "not_ok" || s === "not ok"
+            }).length,
+            completed: ticketsArray.filter((t: any) => (t.status || "").toLowerCase() === "completed").length,
+            delivered: ticketsArray.filter((t: any) => (t.status || "").toLowerCase() === "delivered").length,
           })
         } else {
-          console.error("[StatsCards] Failed to load tickets from API")
+          const errorData = await response.json().catch(() => ({}))
+          console.error("[StatsCards] Failed to load tickets from API:", response.status, errorData)
           setStats({
             total: 0,
             pending: 0,
