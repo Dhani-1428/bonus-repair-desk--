@@ -386,6 +386,7 @@ export default function SubscriptionsPage() {
             </div>
           </CardContent>
         </Card>
+        )}
 
         {/* Edit Plan Dialog */}
         <Dialog open={isPlanEditDialogOpen} onOpenChange={setIsPlanEditDialogOpen}>
