@@ -144,6 +144,7 @@ class ApiService {
     try {
       console.log('[API] Attempting login to:', `${this.baseURL}/auth/login`);
       console.log('[API] Base URL:', this.baseURL);
+      console.log('[API] Email:', email);
       
       // Try the auth/login endpoint first (skip auth headers for login)
       const data = await this.fetchRequest<any>(`${this.baseURL}/auth/login`, {
@@ -151,10 +152,11 @@ class ApiService {
         body: JSON.stringify({ email, password }),
       }, true);
       
-      console.log('[API] Login response:', data);
+      console.log('[API] Login response received:', JSON.stringify(data, null, 2));
       
       // Backend returns: { message: "Login successful", user: {...}, token: ... }
-      if (data.user) {
+      if (data && data.user) {
+        console.log('[API] Login successful, user ID:', data.user.id);
         return {
           user: data.user,
           token: data.token || data.accessToken || data.user.id || '',
@@ -162,13 +164,15 @@ class ApiService {
       }
       
       // If no user in response, something went wrong
-      throw new Error('Invalid response: user data not found');
+      console.error('[API] Invalid response structure:', data);
+      throw new Error(data?.error || data?.message || 'Invalid response: user data not found');
     } catch (error: any) {
       console.error('[API] Login error:', error.message);
       console.error('[API] Error details:', {
         message: error.message,
         name: error.name,
-        stack: error.stack?.substring(0, 200),
+        code: error.code,
+        stack: error.stack?.substring(0, 300),
       });
       
       // If auth/login doesn't exist, try alternative endpoints
@@ -194,6 +198,13 @@ class ApiService {
           error.message?.includes('Failed to fetch')) {
         // Error message already formatted, just re-throw
         throw error;
+      }
+      
+      // If it's an authentication error, provide clearer message
+      if (error.message?.includes('Invalid email or password') || 
+          error.message?.includes('401') ||
+          error.message?.includes('Unauthorized')) {
+        throw new Error('Invalid email or password. Please check your credentials.');
       }
       
       throw error;
