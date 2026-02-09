@@ -178,6 +178,14 @@ export function generateThermalReceipt(
             : ticket.services
           receipt += `  Services: ${services}\n`
         }
+        // Mobile Condition (On Arrival)
+        if (ticket.equipmentObs) {
+          receipt += `  Mobile Condition (On Arrival): ${ticket.equipmentObs}\n`
+        }
+        // Phone Issue
+        if (ticket.phoneIssue) {
+          receipt += `  Phone Issue: ${ticket.phoneIssue}\n`
+        }
         // Get amount and label based on priceType
         const priceType = ticket.priceType || "budget"
         const amount = priceType === "price" 
