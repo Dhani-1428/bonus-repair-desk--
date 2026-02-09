@@ -5,6 +5,19 @@ import { createTenantTables } from "@/lib/tenant-db"
 import { v4 as uuidv4 } from "uuid"
 import { sendAdminSignupNotification } from "@/lib/email-service"
 
+// CORS headers helper
+function corsHeaders() {
+  return {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-User-Id',
+  }
+}
+
+export async function OPTIONS() {
+  return NextResponse.json({}, { headers: corsHeaders() })
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
@@ -13,7 +26,7 @@ export async function POST(request: NextRequest) {
     if (!name || !email || !password) {
       return NextResponse.json(
         { error: "Name, email, and password are required" },
-        { status: 400 }
+        { status: 400, headers: corsHeaders() }
       )
     }
 
@@ -32,7 +45,7 @@ export async function POST(request: NextRequest) {
     if (existingUser) {
       return NextResponse.json(
         { error: "User with this email already exists" },
-        { status: 400 }
+        { status: 400, headers: corsHeaders() }
       )
     }
 
@@ -122,10 +135,10 @@ export async function POST(request: NextRequest) {
           }
           throw new Error(`Failed to create user in database: ${retryError?.sqlMessage || retryError?.message || "Unknown error"}`)
         }
-      } else if (insertError?.code === "ER_DUP_ENTRY") {
+      } else       if (insertError?.code === "ER_DUP_ENTRY") {
         return NextResponse.json(
           { error: "User with this email already exists" },
-          { status: 400 }
+          { status: 400, headers: corsHeaders() }
         )
       } else {
         throw new Error(`Failed to create user in database: ${insertError?.sqlMessage || insertError?.message || "Unknown error"}`)
@@ -222,7 +235,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       message: "User registered successfully",
       user,
-    }, { status: 201 })
+      token: user.id, // Use user ID as token for mobile app compatibility
+    }, { status: 201, headers: corsHeaders() })
   } catch (error: any) {
     console.error("[API] Register error:", error)
     console.error("[API] Register error details:", {
@@ -265,7 +279,7 @@ export async function POST(request: NextRequest) {
         details: process.env.NODE_ENV === "development" ? error?.message : undefined,
         code: process.env.NODE_ENV === "development" ? error?.code : undefined
       },
-      { status: 500 }
+      { status: 500, headers: corsHeaders() }
     )
   }
 }

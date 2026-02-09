@@ -3,6 +3,19 @@ import { query, queryOne } from "@/lib/mysql"
 import bcrypt from "bcryptjs"
 import { sendLoginEmail, sendAdminLoginNotification } from "@/lib/email-service"
 
+// CORS headers helper
+function corsHeaders() {
+  return {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-User-Id',
+  }
+}
+
+export async function OPTIONS() {
+  return NextResponse.json({}, { headers: corsHeaders() })
+}
+
 export async function POST(request: NextRequest) {
   try {
     let body
@@ -12,7 +25,7 @@ export async function POST(request: NextRequest) {
       console.error("[API] Failed to parse request body:", parseError?.message || parseError)
       return NextResponse.json(
         { error: "Invalid request format" },
-        { status: 400 }
+        { status: 400, headers: corsHeaders() }
       )
     }
 
@@ -21,7 +34,7 @@ export async function POST(request: NextRequest) {
     if (!email || !password) {
       return NextResponse.json(
         { error: "Email and password are required" },
-        { status: 400 }
+        { status: 400, headers: corsHeaders() }
       )
     }
 
@@ -117,7 +130,7 @@ export async function POST(request: NextRequest) {
       console.log("[API] Available users (first 5):", allUsers)
       return NextResponse.json(
         { error: "Invalid email or password" },
-        { status: 401 }
+        { status: 401, headers: corsHeaders() }
       )
     }
 
@@ -131,7 +144,7 @@ export async function POST(request: NextRequest) {
       console.error("[API] Password hash in DB:", user.password?.substring(0, 20) + "...")
       return NextResponse.json(
         { error: "Invalid email or password" },
-        { status: 401 }
+        { status: 401, headers: corsHeaders() }
       )
     }
 
@@ -202,7 +215,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       message: "Login successful",
       user: userWithoutPassword,
-    })
+      token: userWithoutPassword.id, // Use user ID as token for mobile app compatibility
+    }, { headers: corsHeaders() })
   } catch (error: any) {
     console.error("[API] Login error:", error)
     console.error("[API] Error details:", {
@@ -258,7 +272,7 @@ export async function POST(request: NextRequest) {
           helpUrl: helpUrl || (error?.code === "ENOTFOUND" || error?.code === "ENV_MISSING" ? "/api/diagnose-db" : undefined),
           diagnoseUrl: "/api/diagnose-db",
         },
-        { status: 500 }
+        { status: 500, headers: corsHeaders() }
       )
     } catch (jsonError) {
       // If JSON serialization fails, return a simple text response
@@ -266,7 +280,7 @@ export async function POST(request: NextRequest) {
         JSON.stringify({ error: errorMessage }),
         { 
           status: 500,
-          headers: { "Content-Type": "application/json" }
+          headers: { "Content-Type": "application/json", ...corsHeaders() }
         }
       )
     }
