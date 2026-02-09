@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Update this to your website's API base URL
 const API_BASE_URL = __DEV__ 
-  ? 'http://192.168.0.11:3000/api'  // Your computer's IP - phone needs this to connect!
+  ? 'http://192.168.0.10:3000/api'  // Your computer's IP - phone needs this to connect!
   : 'https://your-website.com/api'; // Replace with your production URL
 
 class ApiService {
@@ -141,7 +141,8 @@ class ApiService {
       if (error.message?.startsWith('NETWORK_ERROR:')) {
         const targetUrl = error.message.replace('NETWORK_ERROR:', '');
         console.error('[API] Network connection failed:', targetUrl);
-        throw new Error(`Cannot connect to server.\n\nCheck:\n1. Backend is running (npm run dev)\n2. IP is correct: ${this.baseURL.replace('/api', '')}\n3. Same WiFi network\n4. Firewall allows port 3000`);
+        const baseUrl = this.baseURL.replace('/api', '');
+        throw new Error(`Cannot connect to ${baseUrl}\n\nTroubleshooting:\n1. Is backend running? Run: npm run dev\n2. IP correct? Current: ${baseUrl}\n3. Same WiFi? Phone & computer must be on same network\n4. Firewall? Allow port 3000\n5. Test in browser: ${baseUrl}/api/auth/login`);
       }
       
       if (error.message?.startsWith('TIMEOUT:')) {
@@ -169,20 +170,29 @@ class ApiService {
   }
 
   // Test connection to backend
-  async testConnection(): Promise<boolean> {
+  async testConnection(): Promise<{ success: boolean; message: string }> {
     try {
-      console.log('[API] Testing connection to:', this.baseURL);
-      const response = await fetch(`${this.baseURL.replace('/api', '')}/api/auth/login`, {
+      const testUrl = `${this.baseURL.replace('/api', '')}`;
+      console.log('[API] Testing connection to:', testUrl);
+      
+      const response = await fetch(`${testUrl}/api/auth/login`, {
         method: 'OPTIONS',
         headers: {
           'Content-Type': 'application/json',
         },
       });
+      
       console.log('[API] Connection test response:', response.status);
-      return response.status < 500; // Any status < 500 means server is reachable
+      return { 
+        success: response.status < 500, 
+        message: `Server responded with status ${response.status}` 
+      };
     } catch (error: any) {
-      console.error('[API] Connection test failed:', error.message);
-      return false;
+      console.error('[API] Connection test failed:', error);
+      return { 
+        success: false, 
+        message: `Connection failed: ${error.message || 'Unknown error'}` 
+      };
     }
   }
 
