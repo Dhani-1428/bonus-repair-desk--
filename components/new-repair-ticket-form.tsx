@@ -2830,6 +2830,7 @@ export async function printReceiptForTickets(
     const ticketBattery = ticket.battery ? t["common.yes"] : t["common.no"]
     const ticketWaterDamaged = ticket.waterDamaged ? t["common.yes"] : t["common.no"]
     const ticketEquipmentObs = ticket.equipmentObs || "-"
+    const ticketPhoneIssue = ticket.phoneIssue || "-"
     const ticketRepairObs = ticket.repairObs || "-"
     const ticketProblem = ticket.problem || "-"
     const ticketPrice = Number.parseFloat(ticket.price || 0).toFixed(2)
@@ -2896,6 +2897,7 @@ export async function printReceiptForTickets(
         
         <div style="margin: 6px 0;">
           <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.mobileCondition"] || "Mobile Condition (On Arrival)"}:</span> ${ticketEquipmentObs}</div>
+          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["table.phoneIssue"] || "Phone Issue"}:</span> ${ticketPhoneIssue}</div>
           <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.repairObs"]}:</span> ${ticketRepairObs}</div>
           <div style="font-weight: bold; margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};">${t["receipt.equipmentCheck"]}:</div>
           <div style="margin: 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["form.simCard"]}:</span> ${ticketSimCard} | <span style="font-weight: bold;">${t["form.simTray"]}:</span> ${ticketSimTray} | <span style="font-weight: bold;">${t["form.memoryCard"]}:</span> ${ticketMemoryCard} | <span style="font-weight: bold;">${t["form.charger"]}:</span> ${ticketCharger} | <span style="font-weight: bold;">${t["form.battery"]}:</span> ${ticketBattery} | <span style="font-weight: bold;">${t["form.waterDamaged"]}:</span> ${ticketWaterDamaged}</div>

@@ -17,6 +17,7 @@ export interface ThermalTicket {
   receivedBy?: string
   services?: string | string[]
   equipmentObs?: string
+  phoneIssue?: string
   warranty?: string
 }
 
@@ -139,6 +140,11 @@ export function generateThermalReceipt(
       // Mobile Condition (On Arrival)
       if (ticket.equipmentObs) {
         receipt += `Mobile Condition (On Arrival): ${ticket.equipmentObs}\n`
+      }
+
+      // Phone Issue
+      if (ticket.phoneIssue) {
+        receipt += `Phone Issue: ${ticket.phoneIssue}\n`
       }
 
       // Problem
