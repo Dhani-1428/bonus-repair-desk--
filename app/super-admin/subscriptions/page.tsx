@@ -261,11 +261,11 @@ export default function SubscriptionsPage() {
         <Dialog open={isPlanEditDialogOpen} onOpenChange={setIsPlanEditDialogOpen}>
           <DialogContent className="max-w-2xl bg-white border-blue-200 text-black">
             <DialogHeader>
-              <DialogTitle className="text-black">Edit Subscription Plan</DialogTitle>
+              <DialogTitle className="text-white">Edit Subscription Plan</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="plan-name" className="text-black">Plan Name</Label>
+                <Label htmlFor="plan-name" className="text-white">Plan Name</Label>
                 <Input
                   id="plan-name"
                   value={planEditFormData.name || ""}
@@ -274,7 +274,7 @@ export default function SubscriptionsPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="plan-price" className="text-black">Price (€)</Label>
+                <Label htmlFor="plan-price" className="text-white">Price (€)</Label>
                 <Input
                   id="plan-price"
                   type="number"
@@ -287,7 +287,7 @@ export default function SubscriptionsPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="plan-months" className="text-black">Duration (Months)</Label>
+                <Label htmlFor="plan-months" className="text-white">Duration (Months)</Label>
                 <Input
                   id="plan-months"
                   type="number"
@@ -299,7 +299,7 @@ export default function SubscriptionsPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="plan-features" className="text-black">Features (one per line)</Label>
+                <Label htmlFor="plan-features" className="text-white">Features (one per line)</Label>
                 <Textarea
                   id="plan-features"
                   value={planEditFormData.features || ""}
@@ -330,11 +330,11 @@ export default function SubscriptionsPage() {
         <Dialog open={isPlanAddDialogOpen} onOpenChange={setIsPlanAddDialogOpen}>
           <DialogContent className="max-w-2xl bg-white border-blue-200 text-black">
             <DialogHeader>
-              <DialogTitle className="text-black">Add New Subscription Plan</DialogTitle>
+              <DialogTitle className="text-white">Add New Subscription Plan</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="new-plan-key" className="text-black">Plan Key (e.g., SIX_MONTH)</Label>
+                <Label htmlFor="new-plan-key" className="text-white">Plan Key (e.g., SIX_MONTH)</Label>
                 <Input
                   id="new-plan-key"
                   value={planEditFormData.key || ""}
@@ -344,7 +344,7 @@ export default function SubscriptionsPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="new-plan-name" className="text-black">Plan Name</Label>
+                <Label htmlFor="new-plan-name" className="text-white">Plan Name</Label>
                 <Input
                   id="new-plan-name"
                   value={planEditFormData.name || ""}
@@ -353,7 +353,7 @@ export default function SubscriptionsPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="new-plan-price" className="text-black">Price (€)</Label>
+                <Label htmlFor="new-plan-price" className="text-white">Price (€)</Label>
                 <Input
                   id="new-plan-price"
                   type="number"
@@ -366,7 +366,7 @@ export default function SubscriptionsPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="new-plan-months" className="text-black">Duration (Months)</Label>
+                <Label htmlFor="new-plan-months" className="text-white">Duration (Months)</Label>
                 <Input
                   id="new-plan-months"
                   type="number"
@@ -378,7 +378,7 @@ export default function SubscriptionsPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="new-plan-features" className="text-black">Features (one per line)</Label>
+                <Label htmlFor="new-plan-features" className="text-white">Features (one per line)</Label>
                 <Textarea
                   id="new-plan-features"
                   value={planEditFormData.features || ""}

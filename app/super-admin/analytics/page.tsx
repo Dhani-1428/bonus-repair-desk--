@@ -204,7 +204,9 @@ export default function SuperAdminAnalyticsPage() {
           </Card>
         )}
       </div>
-    </DashboardLayout>
+        </div>
+      </div>
+    </div>
   )
 }
 
