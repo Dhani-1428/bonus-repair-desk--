@@ -100,10 +100,22 @@ class ApiService {
       }, 30000); // 30 second timeout
       return this.handleRequest<T>(Promise.resolve(response));
     } catch (error: any) {
+      // Handle network errors (fetch failures)
+      if (error.message?.includes('Network request failed') || 
+          error.message?.includes('Failed to fetch') ||
+          error.message?.includes('NetworkError') ||
+          error.name === 'TypeError' ||
+          error.message?.includes('timed out')) {
+        console.error('[API] Network error:', error.message);
+        throw new Error(`Network request failed. Please check:\n\n1. Backend server is running:\n   cd "C:\\Users\\sheet\\Downloads\\saa-s-admin-panel (1)"\n   npm run dev\n\n2. IP address is correct in api.ts:\n   Current: ${this.baseURL}\n   Update if your IP changed\n\n3. Phone and computer are on same WiFi network\n\n4. Firewall is not blocking port 3000\n\n5. Try accessing ${this.baseURL}/auth/login in a browser to test`);
+      }
+      
       if (error.message?.includes('timed out')) {
         console.error('[API] Request timeout:', url);
         throw new Error(`Connection timeout. Please check:\n1. Backend server is running (npm run dev)\n2. IP address is correct: ${this.baseURL}\n3. Phone and computer are on same WiFi`);
       }
+      
+      // Re-throw other errors
       throw error;
     }
   }
@@ -112,6 +124,7 @@ class ApiService {
   async login(email: string, password: string) {
     try {
       console.log('[API] Attempting login to:', `${this.baseURL}/auth/login`);
+      console.log('[API] Base URL:', this.baseURL);
       
       // Try the auth/login endpoint first (skip auth headers for login)
       const data = await this.fetchRequest<any>(`${this.baseURL}/auth/login`, {
@@ -121,11 +134,11 @@ class ApiService {
       
       console.log('[API] Login response:', data);
       
-      // Backend returns: { message: "Login successful", user: {...} }
+      // Backend returns: { message: "Login successful", user: {...}, token: ... }
       if (data.user) {
         return {
           user: data.user,
-          token: data.token || data.accessToken || '',
+          token: data.token || data.accessToken || data.user.id || '',
         };
       }
       
@@ -133,6 +146,11 @@ class ApiService {
       throw new Error('Invalid response: user data not found');
     } catch (error: any) {
       console.error('[API] Login error:', error.message);
+      console.error('[API] Error details:', {
+        message: error.message,
+        name: error.name,
+        stack: error.stack?.substring(0, 200),
+      });
       
       // If auth/login doesn't exist, try alternative endpoints
       if (error.message?.includes('404') || error.message?.includes('Not Found')) {
@@ -144,12 +162,19 @@ class ApiService {
           }, true);
           return {
             user: data.user || data,
-            token: data.token || data.accessToken || '',
+            token: data.token || data.accessToken || data.user?.id || '',
           };
         } catch (altError: any) {
           throw new Error(altError.message || 'Login failed');
         }
       }
+      
+      // Provide more helpful error messages
+      if (error.message?.includes('Network request failed') || 
+          error.message?.includes('Failed to fetch')) {
+        throw new Error(`Cannot connect to server at ${this.baseURL}\n\nPlease ensure:\n1. Backend is running (npm run dev in project root)\n2. IP address matches your computer's IP\n3. Phone and computer are on same WiFi`);
+      }
+      
       throw error;
     }
   }
@@ -187,11 +212,11 @@ class ApiService {
       
       console.log('[API] Register response:', data);
       
-      // Backend returns: { message: "User registered successfully", user: {...} }
+      // Backend returns: { message: "User registered successfully", user: {...}, token: ... }
       if (data.user) {
         return {
           user: data.user,
-          token: data.token || data.accessToken || '',
+          token: data.token || data.accessToken || data.user.id || '',
         };
       }
       
@@ -199,10 +224,21 @@ class ApiService {
       throw new Error('Invalid response: user data not found');
     } catch (error: any) {
       console.error('[API] Register error:', error.message);
+      console.error('[API] Error details:', {
+        message: error.message,
+        name: error.name,
+        stack: error.stack?.substring(0, 200),
+      });
       
       // Provide helpful error message for timeout
       if (error.message?.includes('timeout') || error.message?.includes('timed out')) {
         throw new Error(`Connection timeout. Please check:\n\n1. Backend server is running:\n   cd "C:\\Users\\sheet\\Downloads\\saa-s-admin-panel (1)"\n   npm run dev\n\n2. IP address is correct in api.ts:\n   Current: ${this.baseURL}\n   Update if your IP changed\n\n3. Phone and computer are on same WiFi network\n\n4. Firewall is not blocking port 3000`);
+      }
+      
+      // Handle network errors
+      if (error.message?.includes('Network request failed') || 
+          error.message?.includes('Failed to fetch')) {
+        throw new Error(`Cannot connect to server at ${this.baseURL}\n\nPlease ensure:\n1. Backend is running (npm run dev in project root)\n2. IP address matches your computer's IP\n3. Phone and computer are on same WiFi`);
       }
       
       // If auth/register doesn't exist, try users endpoint
@@ -225,7 +261,7 @@ class ApiService {
           }, true);
           return {
             user: data.user || data,
-            token: data.token || data.accessToken || '',
+            token: data.token || data.accessToken || data.user?.id || '',
           };
         } catch (altError: any) {
           throw new Error(altError.message || 'Registration failed');
