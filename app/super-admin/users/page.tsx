@@ -423,9 +423,23 @@ export default function UsersInformationPage() {
                           const daysLeft = analytics.daysUntilExpiration
                           const isExpired = daysLeft < 0
                           const isExpiringSoon = daysLeft >= 0 && daysLeft <= 7
+                          const isTrial = userSub.isFreeTrial || userSub.status === "free_trial" || userSub.status === "FREE_TRIAL"
+                          const isSixMonth = userSub.plan === "SIX_MONTH"
+                          const isTwelveMonth = userSub.plan === "TWELVE_MONTH"
+                          
+                          // Determine label based on subscription type
+                          let label = "Expiry Date"
+                          if (isTrial) {
+                            label = "Trial Expire Date"
+                          } else if (isSixMonth) {
+                            label = "6 Months Subscription Expire Date"
+                          } else if (isTwelveMonth) {
+                            label = "12 Months Subscription Expire Date"
+                          }
                           
                           return (
                             <div className="flex flex-col items-center gap-1">
+                              <span className={`text-xs text-gray-400 mb-0.5`}>{label}</span>
                               <span className={isExpired ? "text-red-400 font-semibold" : isExpiringSoon ? "text-yellow-400 font-semibold" : "text-gray-300"}>
                                 {endDate.toLocaleDateString()}
                               </span>
@@ -537,7 +551,22 @@ export default function UsersInformationPage() {
                           <p className="text-sm text-black font-semibold">€{PLAN_PRICING[userSub.plan]?.price || 0}</p>
                         </div>
                         <div className="space-y-1">
-                          <p className="text-xs font-semibold text-black">Expiry Date</p>
+                          <p className="text-xs font-semibold text-black">
+                            {(() => {
+                              const isTrial = userSub.isFreeTrial || userSub.status === "free_trial" || userSub.status === "FREE_TRIAL"
+                              const isSixMonth = userSub.plan === "SIX_MONTH"
+                              const isTwelveMonth = userSub.plan === "TWELVE_MONTH"
+                              
+                              if (isTrial) {
+                                return "Trial Expire Date"
+                              } else if (isSixMonth) {
+                                return "6 Months Subscription Expire Date"
+                              } else if (isTwelveMonth) {
+                                return "12 Months Subscription Expire Date"
+                              }
+                              return "Expiry Date"
+                            })()}
+                          </p>
                           <p className={`text-sm font-semibold ${
                             selectedUserForSubscription.daysUntilExpiration >= 0
                               ? selectedUserForSubscription.daysUntilExpiration <= 7
