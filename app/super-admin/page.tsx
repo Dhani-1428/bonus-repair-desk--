@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useAuth } from "@/hooks/use-auth"
 import { getAllUsers } from "@/lib/storage"
-import { getAllSubscriptions, getExpiringSubscriptions } from "@/lib/subscription-utils"
+import { getAllSubscriptions, getExpiringSubscriptions, getSubscriptionEndDate } from "@/lib/subscription-utils"
 import { isSuperAdmin } from "@/lib/storage"
 import { PLAN_PRICING } from "@/lib/constants"
 import Link from "next/link"
@@ -278,6 +278,9 @@ export default function SuperAdminDashboard() {
                       <p className="text-sm text-gray-600">{sub.user.email}</p>
                       <p className="text-xs text-gray-500 mt-1">
                         {PLAN_PRICING[sub.plan]?.name || sub.plan} - €{sub.price}
+                      </p>
+                      <p className="text-xs text-gray-600 mt-1">
+                        Expires: {getSubscriptionEndDate(sub).toLocaleDateString()}
                       </p>
                     </div>
                     <Badge className="bg-gradient-to-r from-red-600 to-red-700 text-white shadow-lg">

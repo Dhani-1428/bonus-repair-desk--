@@ -186,20 +186,28 @@ export default function UsersInformationPage() {
       "Shop Name",
       "Subscription Plan",
       "Status",
+      "Expiry Date",
       "Days Left",
       "Total Revenue (€)"
     ]
 
-    const rows = filteredAnalytics.map(analytics => [
-      analytics.userName,
-      analytics.userEmail,
-      analytics.password,
-      analytics.shopName,
-      analytics.subscriptionPlan,
-      analytics.subscriptionStatus,
-      analytics.daysUntilExpiration >= 0 ? analytics.daysUntilExpiration : "Expired",
-      Number.parseFloat(analytics.totalRevenue || 0).toFixed(2)
-    ])
+    const rows = filteredAnalytics.map(analytics => {
+      const userSub = allSubscriptions.find((s: any) => s.userId === analytics.userId)
+      const expiryDate = userSub ? getSubscriptionEndDate(userSub).toLocaleDateString() : "No Subscription"
+      const daysLeft = analytics.daysUntilExpiration >= 0 ? analytics.daysUntilExpiration : "Expired"
+      
+      return [
+        analytics.userName,
+        analytics.userEmail,
+        analytics.password,
+        analytics.shopName,
+        analytics.subscriptionPlan,
+        analytics.subscriptionStatus,
+        expiryDate,
+        daysLeft,
+        Number.parseFloat(analytics.totalRevenue || 0).toFixed(2)
+      ]
+    })
 
     const csvContent = [
       headers.join(","),
@@ -311,8 +319,8 @@ export default function UsersInformationPage() {
                   <th className="border-r border-gray-700 px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider w-[10%]">
                     Status
                   </th>
-                  <th className="border-r border-gray-700 px-4 py-3 text-center text-xs font-semibold text-gray-300 uppercase tracking-wider w-[8%]">
-                    Days Left
+                  <th className="border-r border-gray-700 px-4 py-3 text-center text-xs font-semibold text-gray-300 uppercase tracking-wider w-[12%]">
+                    Expiry Date
                   </th>
                   <th className="px-4 py-3 text-center text-xs font-semibold text-gray-300 uppercase tracking-wider w-[10%]">
                     Actions
@@ -406,13 +414,27 @@ export default function UsersInformationPage() {
                         </Badge>
                       </td>
                       <td className="border-r border-gray-700/50 px-4 py-3 text-sm text-center">
-                        {analytics.daysUntilExpiration >= 0 ? (
-                          <span className={analytics.daysUntilExpiration <= 7 ? "text-yellow-400 font-semibold" : "text-gray-300"}>
-                            {analytics.daysUntilExpiration}
-                          </span>
-                        ) : (
-                          <span className="text-red-400 font-semibold">Expired</span>
-                        )}
+                        {(() => {
+                          const userSub = allSubscriptions.find((s: any) => s.userId === analytics.userId)
+                          if (!userSub) {
+                            return <span className="text-gray-400">No Subscription</span>
+                          }
+                          const endDate = getSubscriptionEndDate(userSub)
+                          const daysLeft = analytics.daysUntilExpiration
+                          const isExpired = daysLeft < 0
+                          const isExpiringSoon = daysLeft >= 0 && daysLeft <= 7
+                          
+                          return (
+                            <div className="flex flex-col items-center gap-1">
+                              <span className={isExpired ? "text-red-400 font-semibold" : isExpiringSoon ? "text-yellow-400 font-semibold" : "text-gray-300"}>
+                                {endDate.toLocaleDateString()}
+                              </span>
+                              <span className={`text-xs ${isExpired ? "text-red-400" : isExpiringSoon ? "text-yellow-400" : "text-gray-500"}`}>
+                                {isExpired ? "Expired" : `${daysLeft} day${daysLeft !== 1 ? 's' : ''} left`}
+                              </span>
+                            </div>
+                          )
+                        })()}
                       </td>
                       <td className="px-4 py-3 text-center">
                         <div className="flex items-center justify-center gap-2">
@@ -515,7 +537,7 @@ export default function UsersInformationPage() {
                           <p className="text-sm text-black font-semibold">€{PLAN_PRICING[userSub.plan]?.price || 0}</p>
                         </div>
                         <div className="space-y-1">
-                          <p className="text-xs font-semibold text-black">Days Left</p>
+                          <p className="text-xs font-semibold text-black">Expiry Date</p>
                           <p className={`text-sm font-semibold ${
                             selectedUserForSubscription.daysUntilExpiration >= 0
                               ? selectedUserForSubscription.daysUntilExpiration <= 7
@@ -523,8 +545,17 @@ export default function UsersInformationPage() {
                                 : "text-black"
                               : "text-red-700"
                           }`}>
+                            {getSubscriptionEndDate(userSub).toLocaleDateString()}
+                          </p>
+                          <p className={`text-xs ${
+                            selectedUserForSubscription.daysUntilExpiration >= 0
+                              ? selectedUserForSubscription.daysUntilExpiration <= 7
+                                ? "text-yellow-600"
+                                : "text-gray-600"
+                              : "text-red-600"
+                          }`}>
                             {selectedUserForSubscription.daysUntilExpiration >= 0
-                              ? selectedUserForSubscription.daysUntilExpiration
+                              ? `${selectedUserForSubscription.daysUntilExpiration} day${selectedUserForSubscription.daysUntilExpiration !== 1 ? 's' : ''} left`
                               : "Expired"}
                           </p>
                         </div>
