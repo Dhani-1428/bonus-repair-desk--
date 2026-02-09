@@ -49,7 +49,12 @@ class ApiService {
       
       if (!response.ok) {
         const errorMessage = data?.error || data?.message || `Request failed with status ${response.status}`;
-        console.error('[API] Request failed:', errorMessage, data);
+        console.error('[API] Request failed:', {
+          status: response.status,
+          statusText: response.statusText,
+          error: errorMessage,
+          data: data,
+        });
         throw new Error(errorMessage);
       }
       
