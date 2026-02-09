@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { DashboardLayout } from "@/components/dashboard-layout"
+// Removed DashboardLayout to use website UI styling
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -138,7 +138,16 @@ export default function SubscriptionsPage() {
   }
 
   return (
-    <DashboardLayout>
+    <div className="min-h-screen w-full relative bg-black">
+      {/* Pearl Mist Background with Top Glow */}
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          background: "radial-gradient(ellipse 50% 35% at 50% 0%, rgba(226, 232, 240, 0.12), transparent 60%), #000000",
+        }}
+      />
+      
+      <div className="relative z-10 container mx-auto px-4 py-8">
       <div className="space-y-6 text-white">
         <div className="flex items-center justify-between">
           <div>
@@ -261,7 +270,7 @@ export default function SubscriptionsPage() {
                   id="plan-name"
                   value={planEditFormData.name || ""}
                   onChange={(e) => setPlanEditFormData({ ...planEditFormData, name: e.target.value })}
-                  className="bg-white border-blue-300 text-black"
+                  className="bg-gray-800/50 border-gray-700 text-white"
                 />
               </div>
               <div className="space-y-2">
@@ -274,7 +283,7 @@ export default function SubscriptionsPage() {
                   onChange={(e) =>
                     setPlanEditFormData({ ...planEditFormData, price: e.target.value })
                   }
-                  className="bg-white border-blue-300 text-black"
+                  className="bg-gray-800/50 border-gray-700 text-white"
                 />
               </div>
               <div className="space-y-2">
@@ -286,7 +295,7 @@ export default function SubscriptionsPage() {
                   onChange={(e) =>
                     setPlanEditFormData({ ...planEditFormData, months: e.target.value })
                   }
-                  className="bg-white border-blue-300 text-black"
+                  className="bg-gray-800/50 border-gray-700 text-white"
                 />
               </div>
               <div className="space-y-2">
@@ -297,7 +306,7 @@ export default function SubscriptionsPage() {
                   onChange={(e) =>
                     setPlanEditFormData({ ...planEditFormData, features: e.target.value })
                   }
-                  className="bg-white border-blue-300 text-black min-h-[120px]"
+                  className="bg-gray-800/50 border-gray-700 text-white min-h-[120px]"
                   placeholder="Feature 1&#10;Feature 2&#10;Feature 3"
                 />
               </div>
@@ -305,7 +314,7 @@ export default function SubscriptionsPage() {
                 <Button
                   variant="outline"
                   onClick={() => setIsPlanEditDialogOpen(false)}
-                  className="border-blue-300 bg-white text-black hover:bg-blue-50"
+                  className="border-gray-700 bg-gray-800/50 text-white hover:bg-gray-700"
                 >
                   Cancel
                 </Button>
@@ -330,7 +339,7 @@ export default function SubscriptionsPage() {
                   id="new-plan-key"
                   value={planEditFormData.key || ""}
                   onChange={(e) => setPlanEditFormData({ ...planEditFormData, key: e.target.value.toUpperCase().replace(/\s+/g, "_") })}
-                  className="bg-white border-blue-300 text-black"
+                  className="bg-gray-800/50 border-gray-700 text-white"
                   placeholder="SIX_MONTH"
                 />
               </div>
@@ -340,7 +349,7 @@ export default function SubscriptionsPage() {
                   id="new-plan-name"
                   value={planEditFormData.name || ""}
                   onChange={(e) => setPlanEditFormData({ ...planEditFormData, name: e.target.value })}
-                  className="bg-white border-blue-300 text-black"
+                  className="bg-gray-800/50 border-gray-700 text-white"
                 />
               </div>
               <div className="space-y-2">
@@ -353,7 +362,7 @@ export default function SubscriptionsPage() {
                   onChange={(e) =>
                     setPlanEditFormData({ ...planEditFormData, price: e.target.value })
                   }
-                  className="bg-white border-blue-300 text-black"
+                  className="bg-gray-800/50 border-gray-700 text-white"
                 />
               </div>
               <div className="space-y-2">
@@ -365,7 +374,7 @@ export default function SubscriptionsPage() {
                   onChange={(e) =>
                     setPlanEditFormData({ ...planEditFormData, months: e.target.value })
                   }
-                  className="bg-white border-blue-300 text-black"
+                  className="bg-gray-800/50 border-gray-700 text-white"
                 />
               </div>
               <div className="space-y-2">
@@ -376,7 +385,7 @@ export default function SubscriptionsPage() {
                   onChange={(e) =>
                     setPlanEditFormData({ ...planEditFormData, features: e.target.value })
                   }
-                  className="bg-white border-blue-300 text-black min-h-[120px]"
+                  className="bg-gray-800/50 border-gray-700 text-white min-h-[120px]"
                   placeholder="Feature 1&#10;Feature 2&#10;Feature 3"
                 />
               </div>
@@ -384,7 +393,7 @@ export default function SubscriptionsPage() {
                 <Button
                   variant="outline"
                   onClick={() => setIsPlanAddDialogOpen(false)}
-                  className="border-blue-300 bg-white text-black hover:bg-blue-50"
+                  className="border-gray-700 bg-gray-800/50 text-white hover:bg-gray-700"
                 >
                   Cancel
                 </Button>
@@ -421,6 +430,8 @@ export default function SubscriptionsPage() {
           </DialogContent>
         </Dialog>
       </div>
-    </DashboardLayout>
+        </div>
+      </div>
+    </div>
   )
 }

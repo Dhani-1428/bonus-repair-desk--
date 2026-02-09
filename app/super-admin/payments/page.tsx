@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { DashboardLayout } from "@/components/dashboard-layout"
+// Removed DashboardLayout to use website UI styling
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -196,8 +196,17 @@ export default function PaymentsPage() {
   }
 
   return (
-    <DashboardLayout>
-      <div className="space-y-6 text-white">
+    <div className="min-h-screen w-full relative bg-black">
+      {/* Pearl Mist Background with Top Glow */}
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          background: "radial-gradient(ellipse 50% 35% at 50% 0%, rgba(226, 232, 240, 0.12), transparent 60%), #000000",
+        }}
+      />
+      
+      <div className="relative z-10 container mx-auto px-4 py-8">
+        <div className="space-y-6 text-white">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold tracking-tight text-white">Payment Approvals</h1>
@@ -247,8 +256,8 @@ export default function PaymentsPage() {
           {filteredPayments.length === 0 ? (
             <Card className="shadow-2xl border border-gray-800/50 bg-gradient-to-br from-gray-900/95 via-black/95 to-gray-900/95 backdrop-blur-sm">
               <CardContent className="p-12 text-center">
-                <DollarSign className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-                <p className="text-gray-400">No payment requests found</p>
+                <DollarSign className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-300">No payment requests found</p>
               </CardContent>
             </Card>
           ) : (
@@ -338,8 +347,9 @@ export default function PaymentsPage() {
             ))
           )}
         </div>
+        </div>
       </div>
-    </DashboardLayout>
+    </div>
   )
 }
 

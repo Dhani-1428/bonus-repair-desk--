@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { DashboardLayout } from "@/components/dashboard-layout"
+// Removed DashboardLayout to use website UI styling
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -234,10 +234,10 @@ export default function UsersInformationPage() {
 
   if (loading || !user) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto"></div>
+          <p className="mt-4 text-gray-300">Loading...</p>
         </div>
       </div>
     )
@@ -250,8 +250,17 @@ export default function UsersInformationPage() {
   const allSubscriptions = getAllSubscriptions()
 
   return (
-    <DashboardLayout>
-      <div className="space-y-6 text-white">
+    <div className="min-h-screen w-full relative bg-black">
+      {/* Pearl Mist Background with Top Glow */}
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          background: "radial-gradient(ellipse 50% 35% at 50% 0%, rgba(226, 232, 240, 0.12), transparent 60%), #000000",
+        }}
+      />
+      
+      <div className="relative z-10 container mx-auto px-4 py-8">
+        <div className="space-y-6 text-white">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold tracking-tight text-balance text-white">
@@ -897,7 +906,9 @@ export default function UsersInformationPage() {
           </AlertDialogContent>
         </AlertDialog>
       </div>
-    </DashboardLayout>
+        </div>
+      </div>
+    </div>
   )
 }
 
