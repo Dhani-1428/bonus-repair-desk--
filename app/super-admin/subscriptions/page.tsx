@@ -429,7 +429,6 @@ export default function SubscriptionsPage() {
             </div>
           </DialogContent>
         </Dialog>
-      </div>
         </div>
       </div>
     </div>

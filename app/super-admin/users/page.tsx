@@ -905,7 +905,6 @@ export default function UsersInformationPage() {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
-      </div>
         </div>
       </div>
     </div>
