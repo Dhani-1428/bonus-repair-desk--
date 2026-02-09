@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { execute } from "@/lib/mysql"
 import { getDaysUntilExpiration, getSubscriptionEndDate } from "@/lib/subscription-utils"
-import { send7DaysReminderEmail, sendFreeTrialEndingEmail, sendAdminSubscriptionEndingNotification } from "@/lib/email-service"
+import { send7DaysReminderEmail, sendFreeTrialEndingEmail, sendAdminSubscriptionEndingNotification, sendFreeTrialExpiringEmail } from "@/lib/email-service"
 import type { User, Subscription } from "@/lib/constants"
 
 /**
@@ -59,9 +59,20 @@ export async function POST(request: NextRequest) {
         const subscription: Subscription = subscriptionRows[0]
         const daysUntilExpiration = getDaysUntilExpiration(subscription)
 
-        // Skip if subscription is not expiring within 7 days
-        if (daysUntilExpiration > 7 || daysUntilExpiration < 0) {
-          continue
+        // Skip if subscription is not expiring within 7 days (for free trials) or not at specific days (7, 3, 1, 0)
+        // For free trials, check all days from 0-7
+        // For paid subscriptions, only check at 7 days
+        const isFreeTrialCheck = subscription.isFreeTrial || subscription.status === "free_trial" || subscription.status === "FREE_TRIAL"
+        if (isFreeTrialCheck) {
+          // For free trials, only process at 7, 3, 1, or 0 days
+          if (daysUntilExpiration > 7 || daysUntilExpiration < 0 || ![7, 3, 1, 0].includes(daysUntilExpiration)) {
+            continue
+          }
+        } else {
+          // For paid subscriptions, only check at 7 days
+          if (daysUntilExpiration !== 7) {
+            continue
+          }
         }
 
         // Check if notification was already sent today (using database)
@@ -92,37 +103,58 @@ export async function POST(request: NextRequest) {
         // Determine if it's a free trial
         const endDate = new Date(subscription.endDate)
         const startDate = new Date(subscription.startDate)
-        const isFreeTrial = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) <= 31
+        const isFreeTrial = subscription.isFreeTrial || subscription.status === "free_trial" || subscription.status === "FREE_TRIAL" || Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) <= 31
 
-        // Use companyEmail if available, otherwise fall back to user.email
-        const emailToSend = user.companyEmail || user.email
+        // Use user's login email (user.email) as requested
+        const emailToSend = user.email
 
         // Send appropriate email based on subscription type and days left
-        if (isFreeTrial && daysUntilExpiration <= 7 && daysUntilExpiration >= 0) {
-          // Send free trial ending email
-          await sendFreeTrialEndingEmail({ ...user, email: emailToSend }, subscription)
+        // For free trials: send at 7, 3, 1 days and on expiration day (0)
+        if (isFreeTrial && daysUntilExpiration >= 0 && daysUntilExpiration <= 7) {
+          let emailSent = false
+          let emailType = ""
           
-          // Mark as sent (with graceful fallback if table doesn't exist)
-          try {
-            await execute(
-              `INSERT INTO email_notifications (id, userId, notificationType, createdAt)
-               VALUES (UUID(), ?, ?, NOW())
-               ON DUPLICATE KEY UPDATE createdAt = NOW()`,
-              [user.id, notificationKey]
-            )
-          } catch (error: any) {
-            console.warn("[check-subscription-expiry] Could not save notification to database:", error.message)
+          if (daysUntilExpiration === 7) {
+            // Send 7 days before expiration
+            emailSent = await sendFreeTrialExpiringEmail({ ...user, email: emailToSend }, subscription, 7)
+            emailType = "free_trial_7_days"
+          } else if (daysUntilExpiration === 3) {
+            // Send 3 days before expiration
+            emailSent = await sendFreeTrialExpiringEmail({ ...user, email: emailToSend }, subscription, 3)
+            emailType = "free_trial_3_days"
+          } else if (daysUntilExpiration === 1) {
+            // Send 1 day before expiration
+            emailSent = await sendFreeTrialExpiringEmail({ ...user, email: emailToSend }, subscription, 1)
+            emailType = "free_trial_1_day"
+          } else if (daysUntilExpiration === 0) {
+            // Send on expiration day
+            emailSent = await sendFreeTrialExpiringEmail({ ...user, email: emailToSend }, subscription, 0)
+            emailType = "free_trial_expired_today"
           }
+          
+          if (emailSent) {
+            // Mark as sent (with graceful fallback if table doesn't exist)
+            try {
+              await execute(
+                `INSERT INTO email_notifications (id, userId, notificationType, createdAt)
+                 VALUES (UUID(), ?, ?, NOW())
+                 ON DUPLICATE KEY UPDATE createdAt = NOW()`,
+                [user.id, notificationKey]
+              )
+            } catch (error: any) {
+              console.warn("[check-subscription-expiry] Could not save notification to database:", error.message)
+            }
 
-          results.push({
-            userId: user.id,
-            email: emailToSend,
-            type: "free_trial_ending",
-            daysLeft: daysUntilExpiration,
-            sent: true
-          })
+            results.push({
+              userId: user.id,
+              email: emailToSend,
+              type: emailType,
+              daysLeft: daysUntilExpiration,
+              sent: true
+            })
+          }
         } else if (daysUntilExpiration === 7) {
-          // Send 7 days reminder
+          // Send 7 days reminder for paid subscriptions
           await send7DaysReminderEmail({ ...user, email: emailToSend }, subscription)
           
           // Mark as sent (with graceful fallback if table doesn't exist)

@@ -364,9 +364,8 @@ Bonus Repair Desk Team
 ${FROM_EMAIL}
   `.trim()
 
-  // Use companyEmail if available, otherwise use user.email
-  const emailToSend = user.companyEmail || user.email
-  return sendEmail(emailToSend, "7 Days Left - Subscription Reminder", html, text)
+  // Use user's login email (user.email) as requested
+  return sendEmail(user.email, "7 Days Left - Subscription Reminder", html, text)
 }
 
 /**
@@ -451,6 +450,134 @@ ${FROM_EMAIL}
   // Use companyEmail if available, otherwise use user.email
   const emailToSend = user.companyEmail || user.email
   return sendEmail(emailToSend, "Free Trial Ending Soon - Subscribe Now", html, text)
+}
+
+/**
+ * Send free trial expiring email based on days left (7, 3, 1, or 0 days)
+ */
+export async function sendFreeTrialExpiringEmail(user: User, subscription: Subscription, daysLeft: number) {
+  // Use calculated end date for free trials to ensure accuracy
+  const calculatedEndDate = getSubscriptionEndDate(subscription)
+  const endDate = calculatedEndDate.toLocaleDateString()
+  
+  // Determine subject and message based on days left
+  let subject = ""
+  let headerText = ""
+  let messageText = ""
+  let urgencyLevel = ""
+  
+  if (daysLeft === 7) {
+    subject = "Your Free Trial Expires in 7 Days"
+    headerText = "⏰ 7 Days Left - Free Trial Expiring"
+    messageText = `Your <strong>15-day FREE trial</strong> will expire in <strong>7 days</strong> (on ${endDate}).`
+    urgencyLevel = "warning"
+  } else if (daysLeft === 3) {
+    subject = "Your Free Trial Expires in 3 Days"
+    headerText = "⚠️ 3 Days Left - Free Trial Expiring Soon"
+    messageText = `Your <strong>15-day FREE trial</strong> will expire in <strong>3 days</strong> (on ${endDate}).`
+    urgencyLevel = "warning"
+  } else if (daysLeft === 1) {
+    subject = "Your Free Trial Expires Tomorrow"
+    headerText = "🚨 1 Day Left - Free Trial Expires Tomorrow"
+    messageText = `Your <strong>15-day FREE trial</strong> will expire <strong>tomorrow</strong> (on ${endDate}).`
+    urgencyLevel = "urgent"
+  } else if (daysLeft === 0) {
+    subject = "Your Free Trial Expires Today"
+    headerText = "🔴 Free Trial Expires Today"
+    messageText = `Your <strong>15-day FREE trial</strong> expires <strong>today</strong> (${endDate}).`
+    urgencyLevel = "critical"
+  } else {
+    // Fallback for any other days
+    subject = `Your Free Trial Expires in ${daysLeft} Days`
+    headerText = `⏰ ${daysLeft} Days Left - Free Trial Expiring`
+    messageText = `Your <strong>15-day FREE trial</strong> will expire in <strong>${daysLeft} days</strong> (on ${endDate}).`
+    urgencyLevel = "warning"
+  }
+  
+  // Determine header color based on urgency
+  let headerGradient = ""
+  let warningBoxStyle = ""
+  let buttonStyle = ""
+  
+  if (urgencyLevel === "critical") {
+    headerGradient = "background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);"
+    warningBoxStyle = "background: #f8d7da; border-left: 4px solid #dc3545;"
+    buttonStyle = "background: #dc3545; color: white;"
+  } else if (urgencyLevel === "urgent") {
+    headerGradient = "background: linear-gradient(135deg, #fd7e14 0%, #e55a00 100%);"
+    warningBoxStyle = "background: #fff3cd; border-left: 4px solid #fd7e14;"
+    buttonStyle = "background: #fd7e14; color: white;"
+  } else {
+    headerGradient = "background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);"
+    warningBoxStyle = "background: #fff3cd; border-left: 4px solid #ffc107;"
+    buttonStyle = "background: #ffc107; color: #333;"
+  }
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+          .header { ${headerGradient} color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+          .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
+          .warning-box { ${warningBoxStyle} padding: 15px; margin: 20px 0; border-radius: 5px; }
+          .button { display: inline-block; padding: 12px 30px; ${buttonStyle} text-decoration: none; border-radius: 5px; margin-top: 20px; font-weight: bold; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>${headerText}</h1>
+          </div>
+          <div class="content">
+            <p>Dear ${user.name || "Valued Customer"},</p>
+            
+            <div class="warning-box">
+              <p><strong>Important:</strong> ${messageText}</p>
+            </div>
+            
+            <p>To continue accessing your admin panel after the trial period, you'll need to subscribe to one of our plans.</p>
+            
+            <p>Don't lose access to your data and settings! Subscribe now to ensure uninterrupted service.</p>
+            
+            <p style="text-align: center;">
+              <a href="${typeof window !== "undefined" ? window.location.origin : ""}/subscription" class="button">Subscribe Now</a>
+            </p>
+            
+            <p>If you have any questions or need assistance, please don't hesitate to contact our support team.</p>
+            
+            <p>Best regards,<br><strong>Bonus Repair Desk Team</strong><br>${FROM_EMAIL}</p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `
+
+  const text = `
+${headerText}
+
+Dear ${user.name || "Valued Customer"},
+
+Important: ${messageText.replace(/<[^>]*>/g, "")}
+
+To continue accessing your admin panel after the trial period, you'll need to subscribe to one of our plans.
+
+Don't lose access to your data and settings! Subscribe now to ensure uninterrupted service.
+
+Subscribe here: ${typeof window !== "undefined" ? window.location.origin : ""}/subscription
+
+If you have any questions or need assistance, please don't hesitate to contact our support team.
+
+Best regards,
+Bonus Repair Desk Team
+${FROM_EMAIL}
+  `.trim()
+
+  // Use user's login email (user.email) as requested
+  return sendEmail(user.email, subject, html, text)
 }
 
 /**
