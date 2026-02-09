@@ -66,11 +66,19 @@ class ApiService {
 
   private async fetchWithTimeout(url: string, options: RequestInit = {}, timeout: number = 30000): Promise<Response> {
     return Promise.race([
-      fetch(url, options),
+      fetch(url, options).catch((fetchError: any) => {
+        // Wrap fetch errors to provide better context
+        console.error('[API] Fetch error:', fetchError);
+        if (fetchError.message?.includes('Network request failed') || 
+            fetchError.message?.includes('Failed to fetch') ||
+            fetchError.name === 'TypeError') {
+          throw new Error(`NETWORK_ERROR:${url}`);
+        }
+        throw fetchError;
+      }),
       new Promise<Response>((_, reject) =>
         setTimeout(() => {
-          const error = new Error(`Network request timed out after ${timeout/1000} seconds.\n\nPlease ensure:\n1. Backend server is running (run: npm run start-backend)\n2. Server is accessible at: ${url}\n3. Phone and computer are on same WiFi network`);
-          reject(error);
+          reject(new Error(`TIMEOUT:${url}`));
         }, timeout)
       ),
     ]);
@@ -101,18 +109,29 @@ class ApiService {
       return this.handleRequest<T>(Promise.resolve(response));
     } catch (error: any) {
       // Handle network errors (fetch failures)
+      if (error.message?.startsWith('NETWORK_ERROR:')) {
+        const targetUrl = error.message.replace('NETWORK_ERROR:', '');
+        console.error('[API] Network connection failed:', targetUrl);
+        throw new Error(`Cannot connect to server.\n\nCheck:\n1. Backend is running (npm run dev)\n2. IP is correct: ${this.baseURL.replace('/api', '')}\n3. Same WiFi network\n4. Firewall allows port 3000`);
+      }
+      
+      if (error.message?.startsWith('TIMEOUT:')) {
+        const targetUrl = error.message.replace('TIMEOUT:', '');
+        console.error('[API] Request timeout:', targetUrl);
+        throw new Error(`Connection timeout.\n\nCheck:\n1. Backend is running\n2. IP: ${this.baseURL.replace('/api', '')}\n3. Same WiFi network`);
+      }
+      
       if (error.message?.includes('Network request failed') || 
           error.message?.includes('Failed to fetch') ||
           error.message?.includes('NetworkError') ||
-          error.name === 'TypeError' ||
-          error.message?.includes('timed out')) {
+          error.name === 'TypeError') {
         console.error('[API] Network error:', error.message);
-        throw new Error(`Network request failed. Please check:\n\n1. Backend server is running:\n   cd "C:\\Users\\sheet\\Downloads\\saa-s-admin-panel (1)"\n   npm run dev\n\n2. IP address is correct in api.ts:\n   Current: ${this.baseURL}\n   Update if your IP changed\n\n3. Phone and computer are on same WiFi network\n\n4. Firewall is not blocking port 3000\n\n5. Try accessing ${this.baseURL}/auth/login in a browser to test`);
+        throw new Error(`Cannot connect to server.\n\nCheck:\n1. Backend is running (npm run dev)\n2. IP: ${this.baseURL.replace('/api', '')}\n3. Same WiFi network`);
       }
       
       if (error.message?.includes('timed out')) {
         console.error('[API] Request timeout:', url);
-        throw new Error(`Connection timeout. Please check:\n1. Backend server is running (npm run dev)\n2. IP address is correct: ${this.baseURL}\n3. Phone and computer are on same WiFi`);
+        throw new Error(`Connection timeout.\n\nCheck:\n1. Backend is running\n2. IP: ${this.baseURL.replace('/api', '')}\n3. Same WiFi network`);
       }
       
       // Re-throw other errors
@@ -170,9 +189,11 @@ class ApiService {
       }
       
       // Provide more helpful error messages
-      if (error.message?.includes('Network request failed') || 
+      if (error.message?.includes('Cannot connect') || 
+          error.message?.includes('Network request failed') || 
           error.message?.includes('Failed to fetch')) {
-        throw new Error(`Cannot connect to server at ${this.baseURL}\n\nPlease ensure:\n1. Backend is running (npm run dev in project root)\n2. IP address matches your computer's IP\n3. Phone and computer are on same WiFi`);
+        // Error message already formatted, just re-throw
+        throw error;
       }
       
       throw error;
@@ -236,9 +257,11 @@ class ApiService {
       }
       
       // Handle network errors
-      if (error.message?.includes('Network request failed') || 
+      if (error.message?.includes('Cannot connect') || 
+          error.message?.includes('Network request failed') || 
           error.message?.includes('Failed to fetch')) {
-        throw new Error(`Cannot connect to server at ${this.baseURL}\n\nPlease ensure:\n1. Backend is running (npm run dev in project root)\n2. IP address matches your computer's IP\n3. Phone and computer are on same WiFi`);
+        // Error message already formatted, just re-throw
+        throw error;
       }
       
       // If auth/register doesn't exist, try users endpoint
