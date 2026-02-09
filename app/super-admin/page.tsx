@@ -296,7 +296,7 @@ export default function SuperAdminDashboard() {
               <div className="p-3 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg border border-blue-300 shadow-sm">
                 <p className="text-sm text-blue-900">
                   <strong>Email notifications</strong> sent to{" "}
-                  <strong className="text-blue-700">sheetal.singh.chauhan@gmail.com</strong> with user details and subscription amounts.
+                  <strong className="text-blue-700">bonusrepairdesk@gmail.com</strong> with user details and subscription amounts.
                 </p>
               </div>
             </CardContent>
