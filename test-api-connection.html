@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test API Connection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #f9f9f9;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .success {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+        .error {
+            border-color: #dc3545;
+            background: #f8d7da;
+        }
+    </style>
+</head>
+<body>
+    <h1>API Connection Test</h1>
+    <p>Test if the backend server at <strong>http://192.168.0.10:3000</strong> is accessible.</p>
+    
+    <button onclick="testConnection()">Test Connection</button>
+    <button onclick="testLogin()">Test Login (POST)</button>
+    <button onclick="testOptions()">Test CORS (OPTIONS)</button>
+    
+    <div id="result"></div>
+
+    <script>
+        const API_URL = 'http://192.168.0.10:3000/api/auth/login';
+        
+        function showResult(message, isError = false) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = message;
+            resultDiv.className = isError ? 'error' : 'success';
+        }
+
+        async function testConnection() {
+            showResult('Testing connection...');
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'OPTIONS',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+                
+                if (response.ok || response.status < 500) {
+                    showResult(`✅ Connection successful!\n\nStatus: ${response.status}\nStatus Text: ${response.statusText}\n\nServer is reachable!`);
+                } else {
+                    showResult(`⚠️ Server responded but with error:\n\nStatus: ${response.status}\nStatus Text: ${response.statusText}`, true);
+                }
+            } catch (error) {
+                showResult(`❌ Connection failed!\n\nError: ${error.message}\n\nPossible issues:\n1. Backend server not running\n2. Wrong IP address\n3. Firewall blocking port 3000\n4. Not on same WiFi network`, true);
+            }
+        }
+
+        async function testLogin() {
+            showResult('Testing login endpoint...');
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: 'test@test.com',
+                        password: 'test123'
+                    }),
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult(`✅ Login endpoint works!\n\nResponse:\n${JSON.stringify(data, null, 2)}`);
+                } else {
+                    showResult(`⚠️ Login endpoint responded:\n\nStatus: ${response.status}\nResponse:\n${JSON.stringify(data, null, 2)}\n\n(This is expected - we used test credentials)`, false);
+                }
+            } catch (error) {
+                showResult(`❌ Login test failed!\n\nError: ${error.message}`, true);
+            }
+        }
+
+        async function testOptions() {
+            showResult('Testing CORS (OPTIONS request)...');
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'OPTIONS',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+                
+                const headers = {};
+                response.headers.forEach((value, key) => {
+                    headers[key] = value;
+                });
+                
+                showResult(`✅ CORS test successful!\n\nStatus: ${response.status}\n\nCORS Headers:\n${JSON.stringify(headers, null, 2)}`);
+            } catch (error) {
+                showResult(`❌ CORS test failed!\n\nError: ${error.message}`, true);
+            }
+        }
+    </script>
+</body>
+</html>
