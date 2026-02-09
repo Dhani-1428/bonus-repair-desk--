@@ -16,6 +16,19 @@ export async function OPTIONS() {
   return NextResponse.json({}, { headers: corsHeaders() })
 }
 
+export async function GET() {
+  // Simple GET handler for testing connectivity
+  return NextResponse.json(
+    { 
+      message: "Login endpoint is accessible",
+      method: "Use POST to login",
+      endpoint: "/api/auth/login",
+      requiredFields: ["email", "password"]
+    },
+    { headers: corsHeaders() }
+  )
+}
+
 export async function POST(request: NextRequest) {
   try {
     let body
