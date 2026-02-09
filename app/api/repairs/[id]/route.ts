@@ -2,6 +2,19 @@ import { NextRequest, NextResponse } from "next/server"
 import { query, queryOne, execute, escapeId } from "@/lib/mysql"
 import { getTenantTableNames, tenantTablesExist, createTenantTables, migrateTenantTables } from "@/lib/tenant-db"
 
+// CORS headers helper
+function corsHeaders() {
+  return {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-User-Id',
+  }
+}
+
+export async function OPTIONS() {
+  return NextResponse.json({}, { headers: corsHeaders() })
+}
+
 // GET single repair ticket by ID (tenant-specific)
 export async function GET(
   request: NextRequest,
@@ -45,7 +58,7 @@ export async function GET(
     if (!ticket) {
       return NextResponse.json(
         { error: "Ticket not found" },
-        { status: 404 }
+        { status: 404, headers: corsHeaders() }
       )
     }
 
@@ -59,12 +72,12 @@ export async function GET(
       }
     }
 
-    return NextResponse.json({ ticket })
+    return NextResponse.json({ ticket }, { headers: corsHeaders() })
   } catch (error) {
     console.error("[API] Error fetching repair ticket:", error)
     return NextResponse.json(
       { error: "Failed to fetch repair ticket" },
-      { status: 500 }
+      { status: 500, headers: corsHeaders() }
     )
   }
 }
@@ -81,7 +94,7 @@ export async function PUT(
     if (!userId) {
       return NextResponse.json(
         { error: "User ID is required" },
-        { status: 400 }
+        { status: 400, headers: corsHeaders() }
       )
     }
 
@@ -94,7 +107,7 @@ export async function PUT(
     if (!user) {
       return NextResponse.json(
         { error: "User not found" },
-        { status: 404 }
+        { status: 404, headers: corsHeaders() }
       )
     }
 
@@ -105,7 +118,7 @@ export async function PUT(
     if (!ticketId) {
       return NextResponse.json(
         { error: "Ticket ID is required" },
-        { status: 400 }
+        { status: 400, headers: corsHeaders() }
       )
     }
 
@@ -130,7 +143,7 @@ export async function PUT(
     if (!originalTicket) {
       return NextResponse.json(
         { error: "Ticket not found" },
-        { status: 404 }
+        { status: 404, headers: corsHeaders() }
       )
     }
 
@@ -256,7 +269,7 @@ export async function PUT(
     if (updateFields.length === 0) {
       return NextResponse.json(
         { error: "No fields to update" },
-        { status: 400 }
+        { status: 400, headers: corsHeaders() }
       )
     }
 
@@ -336,7 +349,7 @@ export async function PUT(
     if (!ticket) {
       return NextResponse.json(
         { error: "Ticket not found after update" },
-        { status: 404 }
+        { status: 404, headers: corsHeaders() }
       )
     }
 
@@ -359,7 +372,7 @@ export async function PUT(
       }
     }
 
-    return NextResponse.json({ ticket })
+    return NextResponse.json({ ticket }, { headers: corsHeaders() })
   } catch (error: any) {
     console.error("[API] Error updating repair ticket:", error)
     console.error("[API] Error details:", {
@@ -390,7 +403,7 @@ export async function PUT(
           message: error?.message
         } : undefined
       },
-      { status: 500 }
+      { status: 500, headers: corsHeaders() }
     )
   }
 }
@@ -439,11 +452,11 @@ export async function DELETE(
         `DELETE FROM ${repairTable} WHERE id = ? AND userId = ? AND deleted = TRUE`,
         [ticketId, userId]
       )
-      return NextResponse.json({ message: "Ticket permanently deleted" })
+      return NextResponse.json({ message: "Ticket permanently deleted" }, { headers: corsHeaders() })
     } else {
       return NextResponse.json(
         { error: "Permanent deletion requires permanent=true parameter" },
-        { status: 400 }
+        { status: 400, headers: corsHeaders() }
       )
     }
   } catch (error: any) {
@@ -476,7 +489,7 @@ export async function DELETE(
           sqlMessage: error?.sqlMessage,
         } : undefined
       },
-      { status: 500 }
+      { status: 500, headers: corsHeaders() }
     )
   }
 }
