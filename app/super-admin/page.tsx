@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-// Removed DashboardLayout to use website UI styling
+import { SuperAdminLayout } from "@/components/super-admin-layout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -184,17 +184,8 @@ export default function SuperAdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen w-full relative bg-black">
-      {/* Pearl Mist Background with Top Glow */}
-      <div
-        className="absolute inset-0 z-0"
-        style={{
-          background: "radial-gradient(ellipse 50% 35% at 50% 0%, rgba(226, 232, 240, 0.12), transparent 60%), #000000",
-        }}
-      />
-      
-      <div className="relative z-10 container mx-auto px-4 py-8">
-        <div className="space-y-6 text-white">
+    <SuperAdminLayout>
+      <div className="space-y-6 text-white">
           <div>
             <h1 className="text-3xl font-bold tracking-tight text-white">Super Admin Dashboard</h1>
             <p className="text-gray-300">Overview of all users, subscriptions, and system status</p>
@@ -202,65 +193,73 @@ export default function SuperAdminDashboard() {
 
         {/* Stats Cards */}
         <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-          <Card className="shadow-xl border border-gray-800/50 bg-gradient-to-br from-gray-900/95 via-black/95 to-gray-900/95 backdrop-blur-sm hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
-            <CardHeader className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-b border-gray-800/50 rounded-t-lg">
-              <CardTitle className="text-sm font-semibold text-white uppercase tracking-wide flex items-center gap-2">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                </svg>
-                Total Users
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="text-4xl font-bold text-white mb-1">{stats.totalUsers}</div>
-              <p className="text-xs text-gray-400">Registered users</p>
-            </CardContent>
-          </Card>
+          <Link href="/super-admin/users">
+            <Card className="shadow-xl border border-gray-800/50 bg-gradient-to-br from-gray-900/95 via-black/95 to-gray-900/95 backdrop-blur-sm hover:shadow-2xl hover:border-blue-500/50 transition-all duration-300 transform hover:-translate-y-1 cursor-pointer animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
+              <CardHeader className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-b border-gray-800/50 rounded-t-lg">
+                <CardTitle className="text-sm font-semibold text-white uppercase tracking-wide flex items-center gap-2">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                  </svg>
+                  Total Users
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="text-4xl font-bold text-white mb-1">{stats.totalUsers}</div>
+                <p className="text-xs text-gray-400">Registered users</p>
+              </CardContent>
+            </Card>
+          </Link>
 
-          <Card className="shadow-xl border border-gray-800/50 bg-gradient-to-br from-gray-900/95 via-black/95 to-gray-900/95 backdrop-blur-sm hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
-            <CardHeader className="bg-gradient-to-r from-green-600/20 to-emerald-600/20 border-b border-gray-800/50 rounded-t-lg">
-              <CardTitle className="text-sm font-semibold text-white uppercase tracking-wide flex items-center gap-2">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                Active Subscriptions
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="text-4xl font-bold text-white mb-1">{stats.activeSubscriptions}</div>
-              <p className="text-xs text-gray-400">Currently active</p>
-            </CardContent>
-          </Card>
+          <Link href="/super-admin/subscriptions">
+            <Card className="shadow-xl border border-gray-800/50 bg-gradient-to-br from-gray-900/95 via-black/95 to-gray-900/95 backdrop-blur-sm hover:shadow-2xl hover:border-green-500/50 transition-all duration-300 transform hover:-translate-y-1 cursor-pointer animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
+              <CardHeader className="bg-gradient-to-r from-green-600/20 to-emerald-600/20 border-b border-gray-800/50 rounded-t-lg">
+                <CardTitle className="text-sm font-semibold text-white uppercase tracking-wide flex items-center gap-2">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Active Subscriptions
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="text-4xl font-bold text-white mb-1">{stats.activeSubscriptions}</div>
+                <p className="text-xs text-gray-400">Currently active</p>
+              </CardContent>
+            </Card>
+          </Link>
 
-          <Card className="shadow-xl border border-gray-800/50 bg-gradient-to-br from-gray-900/95 via-black/95 to-gray-900/95 backdrop-blur-sm hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
-            <CardHeader className="bg-gradient-to-r from-yellow-600/20 to-orange-600/20 border-b border-gray-800/50 rounded-t-lg">
-              <CardTitle className="text-sm font-semibold text-white uppercase tracking-wide flex items-center gap-2">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
-                Expiring Soon
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="text-4xl font-bold text-white mb-1">{stats.expiringSubscriptions}</div>
-              <p className="text-xs text-gray-400">Within 7 days</p>
-            </CardContent>
-          </Card>
+          <Link href="/super-admin/subscriptions?filter=expiring">
+            <Card className="shadow-xl border border-gray-800/50 bg-gradient-to-br from-gray-900/95 via-black/95 to-gray-900/95 backdrop-blur-sm hover:shadow-2xl hover:border-yellow-500/50 transition-all duration-300 transform hover:-translate-y-1 cursor-pointer animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
+              <CardHeader className="bg-gradient-to-r from-yellow-600/20 to-orange-600/20 border-b border-gray-800/50 rounded-t-lg">
+                <CardTitle className="text-sm font-semibold text-white uppercase tracking-wide flex items-center gap-2">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                  Expiring Soon
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="text-4xl font-bold text-white mb-1">{stats.expiringSubscriptions}</div>
+                <p className="text-xs text-gray-400">Within 7 days</p>
+              </CardContent>
+            </Card>
+          </Link>
 
-          <Card className="shadow-xl border border-gray-800/50 bg-gradient-to-br from-gray-900/95 via-black/95 to-gray-900/95 backdrop-blur-sm hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
-            <CardHeader className="bg-gradient-to-r from-purple-600/20 to-pink-600/20 border-b border-gray-800/50 rounded-t-lg">
-              <CardTitle className="text-sm font-semibold text-white uppercase tracking-wide flex items-center gap-2">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                Total Revenue
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="text-4xl font-bold text-white mb-1">€{stats.totalRevenue.toFixed(2)}</div>
-              <p className="text-xs text-gray-400">From active subscriptions</p>
-            </CardContent>
-          </Card>
+          <Link href="/super-admin/analytics">
+            <Card className="shadow-xl border border-gray-800/50 bg-gradient-to-br from-gray-900/95 via-black/95 to-gray-900/95 backdrop-blur-sm hover:shadow-2xl hover:border-purple-500/50 transition-all duration-300 transform hover:-translate-y-1 cursor-pointer animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
+              <CardHeader className="bg-gradient-to-r from-purple-600/20 to-pink-600/20 border-b border-gray-800/50 rounded-t-lg">
+                <CardTitle className="text-sm font-semibold text-white uppercase tracking-wide flex items-center gap-2">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Total Revenue
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="text-4xl font-bold text-white mb-1">€{stats.totalRevenue.toFixed(2)}</div>
+                <p className="text-xs text-gray-400">From active subscriptions</p>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
 
         {/* Expiring Subscriptions Alert */}
@@ -400,8 +399,7 @@ export default function SuperAdminDashboard() {
             </CardContent>
           </Card>
         </div>
-        </div>
       </div>
-    </div>
+    </SuperAdminLayout>
   )
 }

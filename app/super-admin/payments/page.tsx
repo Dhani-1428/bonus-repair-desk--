@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-// Removed DashboardLayout to use website UI styling
+import { SuperAdminLayout } from "@/components/super-admin-layout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -196,17 +196,8 @@ export default function PaymentsPage() {
   }
 
   return (
-    <div className="min-h-screen w-full relative bg-black">
-      {/* Pearl Mist Background with Top Glow */}
-      <div
-        className="absolute inset-0 z-0"
-        style={{
-          background: "radial-gradient(ellipse 50% 35% at 50% 0%, rgba(226, 232, 240, 0.12), transparent 60%), #000000",
-        }}
-      />
-      
-      <div className="relative z-10 container mx-auto px-4 py-8">
-        <div className="space-y-6 text-white">
+    <SuperAdminLayout>
+      <div className="space-y-6 text-white">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold tracking-tight text-white">Payment Approvals</h1>
@@ -347,9 +338,8 @@ export default function PaymentsPage() {
             ))
           )}
         </div>
-        </div>
       </div>
-    </div>
+    </SuperAdminLayout>
   )
 }
 

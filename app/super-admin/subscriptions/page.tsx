@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-// Removed DashboardLayout to use website UI styling
+import { SuperAdminLayout } from "@/components/super-admin-layout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -138,16 +138,7 @@ export default function SubscriptionsPage() {
   }
 
   return (
-    <div className="min-h-screen w-full relative bg-black">
-      {/* Pearl Mist Background with Top Glow */}
-      <div
-        className="absolute inset-0 z-0"
-        style={{
-          background: "radial-gradient(ellipse 50% 35% at 50% 0%, rgba(226, 232, 240, 0.12), transparent 60%), #000000",
-        }}
-      />
-      
-      <div className="relative z-10 container mx-auto px-4 py-8">
+    <SuperAdminLayout>
       <div className="space-y-6 text-white">
         <div className="flex items-center justify-between">
           <div>
@@ -429,8 +420,7 @@ export default function SubscriptionsPage() {
             </div>
           </DialogContent>
         </Dialog>
-        </div>
       </div>
-    </div>
+    </SuperAdminLayout>
   )
 }
