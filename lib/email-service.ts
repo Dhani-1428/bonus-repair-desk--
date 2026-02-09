@@ -581,6 +581,86 @@ ${FROM_EMAIL}
 }
 
 /**
+ * Send subscription expired today email for paid subscriptions
+ */
+export async function sendSubscriptionExpiredTodayEmail(user: User, subscription: Subscription) {
+  // Use calculated end date to ensure accuracy
+  const calculatedEndDate = getSubscriptionEndDate(subscription)
+  const endDate = calculatedEndDate.toLocaleDateString()
+  const planDetails = PLAN_PRICING[subscription.plan]
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+          .header { background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+          .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
+          .warning-box { background: #f8d7da; border-left: 4px solid #dc3545; padding: 15px; margin: 20px 0; border-radius: 5px; }
+          .button { display: inline-block; padding: 12px 30px; background: #dc3545; color: white; text-decoration: none; border-radius: 5px; margin-top: 20px; font-weight: bold; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>🔴 Your Subscription Expires Today</h1>
+          </div>
+          <div class="content">
+            <p>Dear ${user.name || "Valued Customer"},</p>
+            
+            <div class="warning-box">
+              <p><strong>Important:</strong> Your <strong>subscription</strong> expires <strong>today</strong> (${endDate}).</p>
+            </div>
+            
+            <p><strong>Current Plan:</strong> ${planDetails?.name || subscription.plan} (€${planDetails?.price || 0})</p>
+            
+            <p>To continue enjoying uninterrupted access to your admin panel, please renew your subscription immediately.</p>
+            
+            <p>Don't lose access to your data and settings! Renew now to ensure uninterrupted service.</p>
+            
+            <p style="text-align: center;">
+              <a href="${typeof window !== "undefined" ? window.location.origin : ""}/subscription" class="button">Renew Subscription Now</a>
+            </p>
+            
+            <p>If you have any questions or need assistance, please don't hesitate to contact our support team.</p>
+            
+            <p>Best regards,<br><strong>Bonus Repair Desk Team</strong><br>${FROM_EMAIL}</p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `
+
+  const text = `
+Your Subscription Expires Today
+
+Dear ${user.name || "Valued Customer"},
+
+Important: Your subscription expires today (${endDate}).
+
+Current Plan: ${planDetails?.name || subscription.plan} (€${planDetails?.price || 0})
+
+To continue enjoying uninterrupted access to your admin panel, please renew your subscription immediately.
+
+Don't lose access to your data and settings! Renew now to ensure uninterrupted service.
+
+Renew your subscription here: ${typeof window !== "undefined" ? window.location.origin : ""}/subscription
+
+If you have any questions or need assistance, please don't hesitate to contact our support team.
+
+Best regards,
+Bonus Repair Desk Team
+${FROM_EMAIL}
+  `.trim()
+
+  // Use user's login email (user.email) as requested
+  return sendEmail(user.email, "Your Subscription Expires Today - Renew Now", html, text)
+}
+
+/**
  * Send payment approved email
  */
 export async function sendPaymentApprovedEmail(user: User, subscription: Subscription) {

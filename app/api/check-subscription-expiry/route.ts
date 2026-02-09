@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { execute } from "@/lib/mysql"
 import { getDaysUntilExpiration, getSubscriptionEndDate } from "@/lib/subscription-utils"
-import { send7DaysReminderEmail, sendFreeTrialEndingEmail, sendAdminSubscriptionEndingNotification, sendFreeTrialExpiringEmail } from "@/lib/email-service"
+import { send7DaysReminderEmail, sendFreeTrialEndingEmail, sendAdminSubscriptionEndingNotification, sendFreeTrialExpiringEmail, sendSubscriptionExpiredTodayEmail } from "@/lib/email-service"
 import type { User, Subscription } from "@/lib/constants"
 
 /**
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
 
         // Skip if subscription is not expiring within 7 days (for free trials) or not at specific days (7, 3, 1, 0)
         // For free trials, check all days from 0-7
-        // For paid subscriptions, only check at 7 days
+        // For paid subscriptions, check at 7 days and on expiration day (0)
         const isFreeTrialCheck = subscription.isFreeTrial || subscription.status === "free_trial" || subscription.status === "FREE_TRIAL"
         if (isFreeTrialCheck) {
           // For free trials, only process at 7, 3, 1, or 0 days
@@ -69,8 +69,8 @@ export async function POST(request: NextRequest) {
             continue
           }
         } else {
-          // For paid subscriptions, only check at 7 days
-          if (daysUntilExpiration !== 7) {
+          // For paid subscriptions, check at 7 days and on expiration day (0)
+          if (daysUntilExpiration !== 7 && daysUntilExpiration !== 0) {
             continue
           }
         }
@@ -153,29 +153,42 @@ export async function POST(request: NextRequest) {
               sent: true
             })
           }
-        } else if (daysUntilExpiration === 7) {
-          // Send 7 days reminder for paid subscriptions
-          await send7DaysReminderEmail({ ...user, email: emailToSend }, subscription)
+        } else {
+          // Paid subscription handling
+          let emailSent = false
+          let emailType = ""
           
-          // Mark as sent (with graceful fallback if table doesn't exist)
-          try {
-            await execute(
-              `INSERT INTO email_notifications (id, userId, notificationType, createdAt)
-               VALUES (UUID(), ?, ?, NOW())
-               ON DUPLICATE KEY UPDATE createdAt = NOW()`,
-              [user.id, notificationKey]
-            )
-          } catch (error: any) {
-            console.warn("[check-subscription-expiry] Could not save notification to database:", error.message)
+          if (daysUntilExpiration === 7) {
+            // Send 7 days reminder for paid subscriptions
+            emailSent = await send7DaysReminderEmail({ ...user, email: emailToSend }, subscription)
+            emailType = "subscription_7_days"
+          } else if (daysUntilExpiration === 0) {
+            // Send expiration day email for paid subscriptions
+            emailSent = await sendSubscriptionExpiredTodayEmail({ ...user, email: emailToSend }, subscription)
+            emailType = "subscription_expired_today"
           }
+          
+          if (emailSent) {
+            // Mark as sent (with graceful fallback if table doesn't exist)
+            try {
+              await execute(
+                `INSERT INTO email_notifications (id, userId, notificationType, createdAt)
+                 VALUES (UUID(), ?, ?, NOW())
+                 ON DUPLICATE KEY UPDATE createdAt = NOW()`,
+                [user.id, notificationKey]
+              )
+            } catch (error: any) {
+              console.warn("[check-subscription-expiry] Could not save notification to database:", error.message)
+            }
 
-          results.push({
-            userId: user.id,
-            email: emailToSend,
-            type: "7_days_reminder",
-            daysLeft: daysUntilExpiration,
-            sent: true
-          })
+            results.push({
+              userId: user.id,
+              email: emailToSend,
+              type: emailType,
+              daysLeft: daysUntilExpiration,
+              sent: true
+            })
+          }
         }
 
         // Always send admin notification if subscription is ending within 7 days
