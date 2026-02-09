@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { apiService } from '../../services/api';
 import { Ionicons } from '@expo/vector-icons';
 import { format } from 'date-fns';
@@ -17,9 +18,30 @@ import { format } from 'date-fns';
 export default function SubscriptionScreen() {
   const { user } = useAuth();
   const theme = useTheme();
+  const { t } = useLanguage();
   const [subscriptions, setSubscriptions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+
+  const getPlanTranslation = (planId: string) => {
+    const planMap: Record<string, string> = {
+      'SIX_MONTH': t('subscription.plan.6months'),
+      'TWELVE_MONTH': t('subscription.plan.12months'),
+    };
+    return planMap[planId] || planId;
+  };
+
+  const getStatusTranslation = (status: string) => {
+    const statusLower = (status || '').toLowerCase();
+    if (statusLower === 'active') {
+      return t('subscription.active');
+    } else if (statusLower === 'expired') {
+      return t('subscription.expired') || 'Expired';
+    } else if (statusLower === 'pending') {
+      return t('ticket.status.pending');
+    }
+    return status;
+  };
 
   useEffect(() => {
     loadSubscriptions();
@@ -62,16 +84,16 @@ export default function SubscriptionScreen() {
       }
     >
       <View style={styles.header}>
-        <Text style={styles.title}>Subscription</Text>
-        <Text style={styles.subtitle}>Manage your subscription plans</Text>
+        <Text style={styles.title}>{t('page.subscription.title')}</Text>
+        <Text style={styles.subtitle}>{t('page.subscription.subtitle')}</Text>
       </View>
 
       {subscriptions.length === 0 ? (
         <View style={styles.emptyState}>
           <Ionicons name="card-outline" size={48} color={theme.colors.textSecondary} />
-          <Text style={styles.emptyText}>No active subscription</Text>
+          <Text style={styles.emptyText}>{t('subscription.noActive') || 'No active subscription'}</Text>
           <Text style={styles.emptySubtext}>
-            Subscribe to a plan to access all features
+            {t('subscription.subscribeToAccess') || 'Subscribe to a plan to access all features'}
           </Text>
         </View>
       ) : (
@@ -79,9 +101,9 @@ export default function SubscriptionScreen() {
           <View key={subscription.id} style={styles.subscriptionCard}>
             <View style={styles.subscriptionHeader}>
               <View>
-                <Text style={styles.planName}>{subscription.planName || subscription.plan}</Text>
+                <Text style={styles.planName}>{subscription.planName || getPlanTranslation(subscription.plan)}</Text>
                 <Text style={styles.planDuration}>
-                  {subscription.months} month{subscription.months > 1 ? 's' : ''}
+                  {subscription.months} {subscription.months === 1 ? (t('subscription.month') || 'month') : (t('subscription.months') || 'months')}
                 </Text>
               </View>
               <View
@@ -110,22 +132,22 @@ export default function SubscriptionScreen() {
                     },
                   ]}
                 >
-                  {subscription.status || 'pending'}
+                  {getStatusTranslation(subscription.status || 'pending')}
                 </Text>
               </View>
             </View>
 
             <View style={styles.subscriptionDetails}>
-              <DetailRow label="Price" value={`€${parseFloat(subscription.price || 0).toFixed(2)}`} />
+              <DetailRow label={t('form.price')} value={`€${parseFloat(subscription.price || 0).toFixed(2)}`} />
               {subscription.startDate && (
                 <DetailRow
-                  label="Start Date"
+                  label={t('subscription.startDate') || 'Start Date'}
                   value={format(new Date(subscription.startDate), 'MMM dd, yyyy')}
                 />
               )}
               {subscription.endDate && (
                 <DetailRow
-                  label="End Date"
+                  label={t('subscription.endDate') || 'End Date'}
                   value={format(new Date(subscription.endDate), 'MMM dd, yyyy')}
                 />
               )}

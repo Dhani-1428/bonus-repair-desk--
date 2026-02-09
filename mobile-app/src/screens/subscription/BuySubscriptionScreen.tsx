@@ -69,6 +69,26 @@ export default function BuySubscriptionScreen() {
     loadSubscription();
   }, [user]);
 
+  const getPlanTranslation = (planId: string) => {
+    const planMap: Record<string, string> = {
+      'SIX_MONTH': t('subscription.plan.6months'),
+      'TWELVE_MONTH': t('subscription.plan.12months'),
+    };
+    return planMap[planId] || planId;
+  };
+
+  const getStatusTranslation = (status: string) => {
+    const statusLower = (status || '').toLowerCase();
+    if (statusLower === 'active') {
+      return t('subscription.active');
+    } else if (statusLower === 'expired') {
+      return t('subscription.expired') || 'Expired';
+    } else if (statusLower === 'pending') {
+      return t('common.status') + ': ' + (t('ticket.status.pending') || 'Pending');
+    }
+    return status;
+  };
+
   const loadSubscription = async () => {
     if (!user?.id) return;
     try {
@@ -159,10 +179,10 @@ export default function BuySubscriptionScreen() {
               <Text style={styles.currentSubscriptionTitle}>{t('subscription.current')}</Text>
             </View>
             <Text style={styles.currentSubscriptionPlan}>
-              {subscription.planName || subscription.plan}
+              {subscription.planName || getPlanTranslation(subscription.plan)}
             </Text>
             <Text style={styles.currentSubscriptionStatus}>
-              {t('common.status')}: {subscription.status || t('subscription.active')}
+              {getStatusTranslation(subscription.status)}
             </Text>
           </BlurView>
         )}
