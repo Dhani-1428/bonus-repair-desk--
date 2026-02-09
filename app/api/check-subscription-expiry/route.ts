@@ -29,13 +29,13 @@ export async function POST(request: NextRequest) {
         users = [userRows[0]]
       }
     } else {
-      // Get all users with active subscriptions
+      // Get all users with active subscriptions (including those expiring today)
       const [userRows] = await execute(
         `SELECT DISTINCT u.id, u.name, u.email, u.role, u.shopName, u.contactNumber, u.tenantId, u.address, u.companyEmail, u.website, u.vatNumber, u.createdAt, u.updatedAt
          FROM users u
          INNER JOIN subscriptions s ON u.id = s.userId
          WHERE s.status IN ('ACTIVE', 'active', 'FREE_TRIAL', 'free_trial')
-         AND s.endDate >= CURDATE()`,
+         AND s.endDate >= DATE_SUB(CURDATE(), INTERVAL 1 DAY)`,
         []
       ) as any[]
 
