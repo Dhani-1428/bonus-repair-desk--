@@ -168,6 +168,24 @@ class ApiService {
     }
   }
 
+  // Test connection to backend
+  async testConnection(): Promise<boolean> {
+    try {
+      console.log('[API] Testing connection to:', this.baseURL);
+      const response = await fetch(`${this.baseURL.replace('/api', '')}/api/auth/login`, {
+        method: 'OPTIONS',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      console.log('[API] Connection test response:', response.status);
+      return response.status < 500; // Any status < 500 means server is reachable
+    } catch (error: any) {
+      console.error('[API] Connection test failed:', error.message);
+      return false;
+    }
+  }
+
   // Authentication
   async login(email: string, password: string) {
     try {
