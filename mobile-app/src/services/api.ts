@@ -30,20 +30,21 @@ class ApiService {
       const response = await request;
       
       // Check if response has content
-      const contentType = response.headers.get('content-type');
+      const contentType = response.headers.get('content-type') || '';
       let data: any;
       
-      if (contentType && contentType.includes('application/json')) {
+      // Try to get response text first to see what we're dealing with
+      const responseText = await response.text();
+      
+      if (contentType.includes('application/json') || responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
         try {
-          data = await response.json();
+          data = JSON.parse(responseText);
         } catch (jsonError) {
-          const text = await response.text();
-          console.error('[API] Failed to parse JSON response:', text);
-          throw new Error('Invalid response from server');
+          console.error('[API] Failed to parse JSON response:', responseText.substring(0, 200));
+          throw new Error('Invalid JSON response from server');
         }
       } else {
-        const text = await response.text();
-        console.error('[API] Non-JSON response:', text);
+        console.error('[API] Non-JSON response:', responseText.substring(0, 200));
         throw new Error('Server returned invalid response format');
       }
       
@@ -60,6 +61,11 @@ class ApiService {
       
       return data;
     } catch (error: any) {
+      // If error already has a message and is a network/timeout error, re-throw as-is
+      if (error.message?.startsWith('NETWORK_ERROR:') || error.message?.startsWith('TIMEOUT:')) {
+        throw error;
+      }
+      
       if (error.message) {
         console.error('[API] Request error:', error.message);
         throw error;
@@ -70,23 +76,41 @@ class ApiService {
   }
 
   private async fetchWithTimeout(url: string, options: RequestInit = {}, timeout: number = 30000): Promise<Response> {
-    return Promise.race([
-      fetch(url, options).catch((fetchError: any) => {
+    try {
+      const fetchPromise = fetch(url, options).catch((fetchError: any) => {
         // Wrap fetch errors to provide better context
-        console.error('[API] Fetch error:', fetchError);
+        console.error('[API] Fetch error:', {
+          message: fetchError.message,
+          name: fetchError.name,
+          url: url,
+        });
+        
+        // Check for network-related errors
         if (fetchError.message?.includes('Network request failed') || 
             fetchError.message?.includes('Failed to fetch') ||
-            fetchError.name === 'TypeError') {
+            fetchError.message?.includes('NetworkError') ||
+            fetchError.name === 'TypeError' ||
+            fetchError.code === 'NETWORK_ERROR') {
           throw new Error(`NETWORK_ERROR:${url}`);
         }
         throw fetchError;
-      }),
-      new Promise<Response>((_, reject) =>
+      });
+      
+      const timeoutPromise = new Promise<Response>((_, reject) =>
         setTimeout(() => {
           reject(new Error(`TIMEOUT:${url}`));
         }, timeout)
-      ),
-    ]);
+      );
+      
+      return await Promise.race([fetchPromise, timeoutPromise]);
+    } catch (error: any) {
+      // Re-throw with proper error type
+      if (error.message?.startsWith('NETWORK_ERROR:') || error.message?.startsWith('TIMEOUT:')) {
+        throw error;
+      }
+      // Wrap any other errors
+      throw new Error(`NETWORK_ERROR:${url}`);
+    }
   }
 
   private async fetchRequest<T>(
