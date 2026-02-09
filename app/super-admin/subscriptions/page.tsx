@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { SuperAdminLayout } from "@/components/super-admin-layout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -25,16 +25,36 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Textarea } from "@/components/ui/textarea"
+import { Badge } from "@/components/ui/badge"
 import { useAuth } from "@/hooks/use-auth"
 import { isSuperAdmin } from "@/lib/storage"
 import { PLAN_PRICING } from "@/lib/constants"
 import { toast } from "sonner"
 import Link from "next/link"
-import { Edit, Trash2, Plus } from "lucide-react"
+import { Edit, Trash2, Plus, Users, ArrowLeft, CheckCircle } from "lucide-react"
+
+interface UserWithSubscription {
+  userId: string
+  userName: string
+  userEmail: string
+  shopName?: string
+  subscriptionId: string
+  plan: string
+  planName: string
+  status: string
+  startDate: string
+  endDate: string
+  price: number
+  isFreeTrial: boolean
+}
 
 export default function SubscriptionsPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { user, loading } = useAuth()
+  const [viewMode, setViewMode] = useState<"plans" | "active-users">("plans")
+  const [activeUsers, setActiveUsers] = useState<UserWithSubscription[]>([])
+  const [loadingUsers, setLoadingUsers] = useState(false)
   const [planPricing, setPlanPricing] = useState(() => {
     if (typeof window !== "undefined") {
       const stored = localStorage.getItem("plan_pricing")
@@ -65,7 +85,57 @@ export default function SubscriptionsPage() {
       router.push("/dashboard")
       return
     }
-  }, [user, loading, router])
+
+    // Check if we should show active users view
+    const showActiveUsers = searchParams?.get("view") === "active-users" || searchParams?.get("filter") === "active"
+    setViewMode(showActiveUsers ? "active-users" : "plans")
+
+    if (showActiveUsers) {
+      loadActiveUsers()
+    }
+  }, [user, loading, router, searchParams])
+
+  const loadActiveUsers = async () => {
+    setLoadingUsers(true)
+    try {
+      const response = await fetch("/api/subscriptions/all")
+      if (response.ok) {
+        const data = await response.json()
+        const subscriptions = data.subscriptions || []
+        
+        // Filter for active subscriptions
+        const activeSubs = subscriptions.filter((sub: any) => {
+          const status = sub.status?.toUpperCase()
+          return status === "ACTIVE" || status === "FREE_TRIAL"
+        })
+
+        // Map to user with subscription format
+        const usersWithSubs: UserWithSubscription[] = activeSubs.map((sub: any) => ({
+          userId: sub.userId || sub.user_id,
+          userName: sub.user?.name || sub.user_name || "Unknown",
+          userEmail: sub.user?.email || sub.user_email || "Unknown",
+          shopName: sub.user?.shopName || sub.user_shopName,
+          subscriptionId: sub.id,
+          plan: sub.plan,
+          planName: PLAN_PRICING[sub.plan]?.name || sub.plan,
+          status: sub.status,
+          startDate: sub.startDate,
+          endDate: sub.endDate,
+          price: sub.price || PLAN_PRICING[sub.plan]?.price || 0,
+          isFreeTrial: sub.isFreeTrial || sub.status?.toUpperCase() === "FREE_TRIAL",
+        }))
+
+        setActiveUsers(usersWithSubs)
+      } else {
+        toast.error("Failed to load active subscriptions")
+      }
+    } catch (error) {
+      console.error("Error loading active users:", error)
+      toast.error("Error loading active subscriptions")
+    } finally {
+      setLoadingUsers(false)
+    }
+  }
 
   const handleEditPlan = (planKey: "THREE_MONTH" | "SIX_MONTH" | "TWELVE_MONTH") => {
     const plan = planPricing[planKey]
@@ -152,10 +222,79 @@ export default function SubscriptionsPage() {
           </Link>
         </div>
 
-        <Card className="shadow-2xl border border-gray-800/50 bg-gradient-to-br from-gray-900/95 via-black/95 to-gray-900/95 backdrop-blur-sm">
-          <CardHeader className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-b border-gray-800/50 rounded-t-lg px-6 py-4">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-xl text-white">Available Plans</CardTitle>
+        {viewMode === "active-users" ? (
+          <Card className="shadow-2xl border border-gray-800/50 bg-gradient-to-br from-gray-900/95 via-black/95 to-gray-900/95 backdrop-blur-sm">
+            <CardHeader className="bg-gradient-to-r from-green-600/20 to-emerald-600/20 border-b border-gray-800/50 rounded-t-lg px-6 py-4">
+              <CardTitle className="text-xl text-white flex items-center gap-2">
+                <CheckCircle className="w-5 h-5" />
+                Active Subscriptions ({activeUsers.length})
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              {loadingUsers ? (
+                <div className="flex items-center justify-center py-12">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                  <p className="ml-4 text-gray-300">Loading active subscriptions...</p>
+                </div>
+              ) : activeUsers.length === 0 ? (
+                <div className="text-center py-12">
+                  <Users className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+                  <p className="text-gray-400">No active subscriptions found</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {activeUsers.map((userSub) => (
+                    <div
+                      key={userSub.subscriptionId}
+                      className="p-4 bg-gray-800/50 rounded-lg border border-gray-700/50 hover:border-green-500/50 transition-all duration-200"
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-2">
+                            <h3 className="text-lg font-semibold text-white">{userSub.userName}</h3>
+                            <Badge className={userSub.isFreeTrial ? "bg-yellow-600/20 text-yellow-400 border-yellow-500/30" : "bg-green-600/20 text-green-400 border-green-500/30"}>
+                              {userSub.isFreeTrial ? "Free Trial" : "Active"}
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-gray-400 mb-1">{userSub.userEmail}</p>
+                          {userSub.shopName && (
+                            <p className="text-sm text-gray-500 mb-3">Shop: {userSub.shopName}</p>
+                          )}
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-3">
+                            <div>
+                              <p className="text-xs text-gray-500 mb-1">Subscription Plan</p>
+                              <p className="text-sm font-semibold text-white">{userSub.planName}</p>
+                            </div>
+                            <div>
+                              <p className="text-xs text-gray-500 mb-1">Price</p>
+                              <p className="text-sm font-semibold text-white">€{userSub.price.toFixed(2)}</p>
+                            </div>
+                            <div>
+                              <p className="text-xs text-gray-500 mb-1">Start Date</p>
+                              <p className="text-sm text-gray-300">
+                                {new Date(userSub.startDate).toLocaleDateString()}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-xs text-gray-500 mb-1">End Date</p>
+                              <p className="text-sm text-gray-300">
+                                {new Date(userSub.endDate).toLocaleDateString()}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        ) : (
+          <Card className="shadow-2xl border border-gray-800/50 bg-gradient-to-br from-gray-900/95 via-black/95 to-gray-900/95 backdrop-blur-sm">
+            <CardHeader className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-b border-gray-800/50 rounded-t-lg px-6 py-4">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-xl text-white">Available Plans</CardTitle>
               <Button
                 onClick={() => {
                   setSelectedPlan(null)
