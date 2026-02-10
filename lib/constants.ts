@@ -35,7 +35,7 @@ export interface Subscription {
 
 export const PLAN_PRICING = {
   SIX_MONTH: {
-    name: "6 Months",
+    name: "Professional",
     price: 100,
     months: 6,
     features: [
@@ -48,7 +48,7 @@ export const PLAN_PRICING = {
     ],
   },
   TWELVE_MONTH: {
-    name: "12 Months",
+    name: "Enterprise",
     price: 150,
     months: 12,
     features: [

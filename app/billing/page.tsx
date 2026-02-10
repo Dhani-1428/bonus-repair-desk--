@@ -301,45 +301,61 @@ function BillingContent() {
   return (
     <DashboardLayout>
       <div className="space-y-6 text-black">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-black">Billing & Payment</h1>
-          <p className="text-gray-600 mt-2">Select your subscription plan and complete payment</p>
+        <div className="text-center">
+          <h1 className="text-3xl font-bold tracking-tight text-black">Upgrade or Change Plan</h1>
         </div>
 
         <div className="grid gap-6 lg:grid-cols-3">
           {/* Plan Selection */}
           <div className="lg:col-span-2 space-y-6">
-            <Card className="shadow-xl border border-blue-200 bg-white">
-              <CardHeader className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-b border-blue-200 rounded-t-lg">
-                <CardTitle className="text-xl text-black">Select Subscription Plan</CardTitle>
-              </CardHeader>
-              <CardContent className="p-6">
-                <div className="grid gap-4 md:grid-cols-2">
-                  {plans.map((plan) => (
-                    <Card
-                      key={plan.id}
-                      className={`cursor-pointer transition-all border-2 ${
-                        selectedPlan === plan.id
-                          ? "border-blue-500 bg-blue-50"
-                          : "border-gray-300 bg-white hover:border-blue-300"
-                      }`}
-                      onClick={() => setSelectedPlan(plan.id)}
+            <div className="grid gap-4 md:grid-cols-2">
+              {plans.map((plan) => (
+                <Card
+                  key={plan.id}
+                  className={`relative cursor-pointer transition-all border-2 ${
+                    selectedPlan === plan.id
+                      ? "border-blue-500 bg-blue-50"
+                      : "border-blue-200 bg-white hover:border-blue-300"
+                  }`}
+                  onClick={() => setSelectedPlan(plan.id)}
+                >
+                  {plan.id === "SIX_MONTH" && (
+                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
+                      <span className="bg-blue-500 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md">
+                        Most Popular
+                      </span>
+                    </div>
+                  )}
+                  <CardContent className="p-6">
+                    <h3 className="text-2xl font-bold text-black mb-2">{plan.name}</h3>
+                    <p className="text-sm text-gray-600 mb-4">{plan.months} months subscription</p>
+                    <p className="text-3xl font-bold text-black mb-6">€{plan.price} / {plan.months} months</p>
+                    
+                    <ul className="space-y-3 mb-6">
+                      {plan.features.map((feature, idx) => (
+                        <li key={idx} className="flex items-start gap-2">
+                          <CheckCircle className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
+                          <span className="text-sm text-gray-700">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    
+                    <Button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setSelectedPlan(plan.id)
+                        setTimeout(() => {
+                          handlePayment()
+                        }, 100)
+                      }}
+                      className="w-full bg-blue-400 hover:bg-blue-500 text-white"
                     >
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-between mb-2">
-                          <h3 className="font-semibold text-black">{plan.name}</h3>
-                          {selectedPlan === plan.id && (
-                            <CheckCircle className="w-5 h-5 text-blue-500" />
-                          )}
-                        </div>
-                        <p className="text-2xl font-bold text-black mb-1">€{plan.price}</p>
-                        <p className="text-sm text-gray-600">for {plan.months === 6 ? "6 months" : plan.months === 12 ? "12 months" : `${plan.months} months`}</p>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+                      Subscribe
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
 
             {/* Payment Method Info */}
             <Card className="shadow-xl border border-blue-200 bg-white">
