@@ -1965,3 +1965,108 @@ Action Required: The user will lose access to their admin panel after the subscr
 
   return sendEmail(ADMIN_EMAIL, `Subscription Ending: ${user.name || user.email} - ${daysLeft} day(s) left`, html, text)
 }
+
+/**
+ * Send subscription expired email to user
+ * This email is sent when subscription expires and as follow-up if they don't renew
+ */
+export async function sendSubscriptionExpiredEmail(user: User, subscription: Subscription, daysSinceExpiration: number = 0) {
+  const calculatedEndDate = getSubscriptionEndDate(subscription)
+  const endDate = calculatedEndDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' })
+  const companyName = user.shopName || user.name || "your company"
+  
+  // Determine subject and greeting based on days since expiration
+  let subject = "Your Subscription Has Expired - Renew Now"
+  let greeting = `Dear ${user.name || "Valued Customer"},`
+  let urgencyMessage = ""
+  
+  if (daysSinceExpiration === 0) {
+    urgencyMessage = "Your subscription has just expired today."
+  } else if (daysSinceExpiration === 1) {
+    urgencyMessage = "Your subscription expired yesterday."
+    subject = "Reminder: Your Subscription Expired - Renew Now"
+  } else if (daysSinceExpiration === 2) {
+    urgencyMessage = "Your subscription expired 2 days ago."
+    subject = "Final Reminder: Your Subscription Expired - Renew Now"
+  } else {
+    urgencyMessage = `Your subscription expired ${daysSinceExpiration} days ago.`
+  }
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.8; color: #333; }
+          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+          .header { background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+          .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
+          .warning-box { background: #f8d7da; border-left: 4px solid #dc3545; padding: 20px; margin: 20px 0; border-radius: 5px; }
+          .button { display: inline-block; padding: 15px 30px; background: #dc3545; color: white; text-decoration: none; border-radius: 5px; margin-top: 20px; font-weight: bold; }
+          .footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; color: #666; font-size: 14px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>⚠️ Subscription Expired</h1>
+          </div>
+          <div class="content">
+            <p>${greeting}</p>
+            
+            <p>We hope you are doing well.</p>
+            
+            <div class="warning-box">
+              <p><strong>This is to inform you that the <strong>subscription for your admin panel at BonusRepairDesk has expired</strong>.</strong> ${urgencyMessage}</p>
+              <p><strong>Expiration Date:</strong> ${endDate}</p>
+              <p>As a result, access to your admin panel and related services is currently inactive.</p>
+            </div>
+            
+            <p>To <strong>continue using your admin panel and services without interruption</strong>, kindly renew your subscription at your earliest convenience.</p>
+            
+            <p style="text-align: center;">
+              <a href="${typeof window !== "undefined" ? window.location.origin : ""}/subscription" class="button">Renew Subscription Now</a>
+            </p>
+            
+            <p>If you need assistance with the renewal process or have any questions regarding your subscription, please feel free to contact our support team. We'll be happy to help.</p>
+            
+            <div class="footer">
+              <p>Thank you for choosing <strong>BonusRepairDesk</strong>. We appreciate your business and look forward to continuing our partnership with <strong>${companyName}</strong>.</p>
+              
+              <p>Best regards,<br><strong>BonusRepairDesk Team</strong><br>${FROM_EMAIL}</p>
+            </div>
+          </div>
+        </div>
+      </body>
+    </html>
+  `
+
+  const text = `
+Subscription Expired
+
+${greeting}
+
+We hope you are doing well.
+
+This is to inform you that the subscription for your admin panel at BonusRepairDesk has expired. ${urgencyMessage}
+
+Expiration Date: ${endDate}
+
+As a result, access to your admin panel and related services is currently inactive.
+
+To continue using your admin panel and services without interruption, kindly renew your subscription at your earliest convenience.
+
+Renew your subscription here: ${typeof window !== "undefined" ? window.location.origin : ""}/subscription
+
+If you need assistance with the renewal process or have any questions regarding your subscription, please feel free to contact our support team. We'll be happy to help.
+
+Thank you for choosing BonusRepairDesk. We appreciate your business and look forward to continuing our partnership with ${companyName}.
+
+Best regards,
+BonusRepairDesk Team
+${FROM_EMAIL}
+  `.trim()
+
+  return sendEmail(user.email, subject, html, text)
+}
