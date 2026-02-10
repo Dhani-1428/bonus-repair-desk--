@@ -78,13 +78,45 @@ function BillingContent() {
     return null
   }
 
-  const handlePayment = () => {
+  const handlePayment = async () => {
     if (!selectedPlan) {
       toast.error("Please select a subscription plan")
       return
     }
-    // Show MBWay payment modal
-    setShowMbwayModal(true)
+
+    setLoading(true)
+    try {
+      const response = await fetch("/api/checkout/create-session", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          plan: selectedPlan,
+          userId: user.id,
+          userEmail: user.email,
+          userName: user.name,
+        }),
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || "Failed to create checkout session")
+      }
+
+      const data = await response.json()
+      
+      if (data.url) {
+        // Redirect to Stripe Checkout
+        window.location.href = data.url
+      } else {
+        throw new Error("No checkout URL received")
+      }
+    } catch (error: any) {
+      console.error("[Billing] Payment error:", error)
+      toast.error(error.message || "Failed to initiate payment")
+      setLoading(false)
+    }
   }
 
   const handleConfirmPayment = async () => {
@@ -421,7 +453,7 @@ function BillingContent() {
                       )}
                     </Button>
                     <p className="text-xs text-center text-gray-600">
-                      Your admin panel will be activated within 15 minutes after admin approval
+                      You will be redirected to Stripe to complete your secure payment
                     </p>
                   </>
                 ) : (

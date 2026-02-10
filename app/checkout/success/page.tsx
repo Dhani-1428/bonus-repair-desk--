@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState, Suspense } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { CheckCircle, Loader2 } from "lucide-react"
@@ -9,15 +9,39 @@ import { Navbar } from "@/components/navbar"
 
 function SuccessContent() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [verifying, setVerifying] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    const timer = setTimeout(() => {
+    const sessionId = searchParams.get("session_id")
+    
+    if (!sessionId) {
+      setError("No session ID found")
       setVerifying(false)
-    }, 1500)
+      return
+    }
 
-    return () => clearTimeout(timer)
-  }, [])
+    // Verify the session with the backend
+    const verifySession = async () => {
+      try {
+        const response = await fetch(`/api/checkout/verify-session?session_id=${sessionId}`)
+        if (!response.ok) {
+          throw new Error("Failed to verify session")
+        }
+        // Session verified, webhook will handle subscription activation
+        setTimeout(() => {
+          setVerifying(false)
+        }, 2000)
+      } catch (err) {
+        console.error("Session verification error:", err)
+        setError("Failed to verify payment session")
+        setVerifying(false)
+      }
+    }
+
+    verifySession()
+  }, [searchParams])
 
   if (verifying) {
     return (
@@ -27,9 +51,9 @@ function SuccessContent() {
           <Card className="max-w-md w-full bg-zinc-900 border-zinc-800">
             <CardHeader className="text-center">
               <Loader2 className="h-16 w-16 animate-spin text-white mx-auto mb-4" />
-              <CardTitle className="text-white">Processing Your Subscription</CardTitle>
+              <CardTitle className="text-white">Processing Your Payment</CardTitle>
               <CardDescription className="text-gray-400">
-                Please wait while we set up your admin panel...
+                Please wait while we verify your payment and activate your subscription...
               </CardDescription>
             </CardHeader>
           </Card>
@@ -65,17 +89,34 @@ function SuccessContent() {
                 <CheckCircle className="h-10 w-10 text-green-400" />
               </div>
             </div>
-            <CardTitle className="text-2xl text-white">Subscription Activated!</CardTitle>
-            <CardDescription className="text-gray-400">Your custom admin panel is now ready</CardDescription>
+            <CardTitle className="text-2xl text-white">
+              {error ? "Payment Verification Failed" : "Payment Successful!"}
+            </CardTitle>
+            <CardDescription className="text-gray-400">
+              {error ? "There was an issue verifying your payment" : "Your subscription is being activated"}
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="bg-zinc-800 rounded-lg p-4 space-y-2">
-              <p className="text-sm text-gray-300">
-                Thank you for subscribing! Your custom admin panel is now ready to use.
-              </p>
-              <p className="text-sm text-gray-400">
-                You can now access all features and manage your business efficiently.
-              </p>
+              {error ? (
+                <>
+                  <p className="text-sm text-red-300">
+                    {error}
+                  </p>
+                  <p className="text-sm text-gray-400">
+                    Please contact support if you have already been charged.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="text-sm text-gray-300">
+                    Thank you for your payment! Your subscription is being processed.
+                  </p>
+                  <p className="text-sm text-gray-400">
+                    Your admin panel will be activated shortly. You will receive a confirmation email once it's ready.
+                  </p>
+                </>
+              )}
             </div>
             <Button className="w-full bg-white text-black hover:bg-gray-200" onClick={() => router.push("/dashboard")}>
               Go to Dashboard
