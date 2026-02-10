@@ -29,13 +29,15 @@ export async function POST(request: NextRequest) {
         users = [userRows[0]]
       }
     } else {
-      // Get all users with active subscriptions (including those expiring today)
+      // Get all users with subscriptions (active, expiring, or expired within last 3 days)
       const [userRows] = await execute(
         `SELECT DISTINCT u.id, u.name, u.email, u.role, u.shopName, u.contactNumber, u.tenantId, u.address, u.companyEmail, u.website, u.vatNumber, u.createdAt, u.updatedAt
          FROM users u
          INNER JOIN subscriptions s ON u.id = s.userId
-         WHERE s.status IN ('ACTIVE', 'active', 'FREE_TRIAL', 'free_trial')
-         AND s.endDate >= DATE_SUB(CURDATE(), INTERVAL 1 DAY)`,
+         WHERE (s.status IN ('ACTIVE', 'active', 'FREE_TRIAL', 'free_trial', 'EXPIRED', 'expired')
+         AND s.endDate >= DATE_SUB(CURDATE(), INTERVAL 3 DAY))
+         OR (s.status IN ('ACTIVE', 'active', 'FREE_TRIAL', 'free_trial')
+         AND s.endDate >= DATE_SUB(CURDATE(), INTERVAL 1 DAY))`,
         []
       ) as any[]
 
@@ -58,6 +60,59 @@ export async function POST(request: NextRequest) {
 
         const subscription: Subscription = subscriptionRows[0]
         const daysUntilExpiration = getDaysUntilExpiration(subscription)
+        const daysSinceExpiration = daysUntilExpiration < 0 ? Math.abs(daysUntilExpiration) : 0
+
+        // Check if subscription is expired (daysUntilExpiration < 0)
+        if (daysUntilExpiration < 0) {
+          // Subscription has expired - send expired email
+          // Only send on expiration day (0 days since), 1 day after, and 2 days after
+          if (daysSinceExpiration <= 2) {
+            const notificationKey = `subscription_expired_${subscription.id}_${daysSinceExpiration}_${new Date().toISOString().split('T')[0]}`
+            
+            // Check if we've already sent this notification today
+            let alreadySent = false
+            try {
+              const [existingNotifications] = await execute(
+                `SELECT * FROM email_notifications 
+                 WHERE userId = ? AND notificationType = ? AND DATE(createdAt) = CURDATE()`,
+                [user.id, notificationKey]
+              ) as any[]
+
+              if (existingNotifications && existingNotifications.length > 0) {
+                alreadySent = true
+              }
+            } catch (error: any) {
+              console.warn("[check-subscription-expiry] Could not check expired notifications:", error.message)
+            }
+
+            if (!alreadySent) {
+              const emailSent = await sendSubscriptionExpiredEmail({ ...user, email: user.email }, subscription, daysSinceExpiration)
+              
+              if (emailSent) {
+                // Mark as sent
+                try {
+                  await execute(
+                    `INSERT INTO email_notifications (id, userId, notificationType, createdAt)
+                     VALUES (UUID(), ?, ?, NOW())
+                     ON DUPLICATE KEY UPDATE createdAt = NOW()`,
+                    [user.id, notificationKey]
+                  )
+                } catch (error: any) {
+                  console.warn("[check-subscription-expiry] Could not save expired notification to database:", error.message)
+                }
+
+                results.push({
+                  userId: user.id,
+                  email: user.email,
+                  type: `subscription_expired_${daysSinceExpiration}_days`,
+                  daysSinceExpiration: daysSinceExpiration,
+                  sent: true
+                })
+              }
+            }
+          }
+          continue // Skip the rest of the processing for expired subscriptions
+        }
 
         // Skip if subscription is not expiring within 7 days (for free trials) or not at specific days (7, 3, 1, 0)
         // For free trials, check all days from 0-7
