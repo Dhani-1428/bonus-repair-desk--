@@ -9,6 +9,7 @@ import {
   RefreshControl,
   Alert,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
@@ -18,6 +19,7 @@ import { format } from 'date-fns';
 import { BlurView } from 'expo-blur';
 
 export default function TrashScreen() {
+  const navigation = useNavigation();
   const { user } = useAuth();
   const theme = useTheme();
   const { t } = useLanguage();
@@ -28,6 +30,14 @@ export default function TrashScreen() {
   useEffect(() => {
     loadDeletedTickets();
   }, [user]);
+
+  // Refresh when screen comes into focus to sync changes from web
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      loadDeletedTickets();
+    });
+    return unsubscribe;
+  }, [navigation, user]);
 
   const loadDeletedTickets = async () => {
     if (!user?.id) {
@@ -61,19 +71,31 @@ export default function TrashScreen() {
 
   const handleRestore = async (ticketId: string) => {
     Alert.alert(
-      'Restore Device',
-      'Are you sure you want to restore this device?',
+      t('common.restore'),
+      t('trash.restoreConfirmation') || 'Are you sure you want to restore this device?',
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Restore',
+          text: t('common.restore'),
           onPress: async () => {
             try {
-              // Note: You may need to add a restore endpoint to your API
+              if (!user?.id) {
+                Alert.alert(t('common.error'), t('error.userNotFound') || 'User not found');
+                return;
+              }
+
+              // Restore via PUT - set deleted = false and deletedAt = null (same as web)
+              await apiService.updateTicket(ticketId, {
+                userId: user.id,
+                deleted: false,
+                deletedAt: null,
+              });
+
               await loadDeletedTickets();
-              Alert.alert('Success', 'Device restored successfully');
-            } catch (error) {
-              Alert.alert('Error', 'Failed to restore device');
+              Alert.alert(t('common.success'), t('trash.deviceRestored') || 'Device restored successfully');
+            } catch (error: any) {
+              console.error('Error restoring device:', error);
+              Alert.alert(t('common.error'), error.message || t('trash.deviceRestoreFailed') || 'Failed to restore device');
             }
           },
         },
@@ -83,20 +105,21 @@ export default function TrashScreen() {
 
   const handlePermanentDelete = async (ticketId: string) => {
     Alert.alert(
-      'Permanently Delete',
-      'This action cannot be undone. Are you sure?',
+      t('common.deletePermanently'),
+      t('trash.confirmPermanentDelete') || 'This action cannot be undone. Are you sure?',
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Delete',
+          text: t('common.delete'),
           style: 'destructive',
           onPress: async () => {
             try {
               await apiService.deleteTicket(ticketId, true); // true = permanent delete
               await loadDeletedTickets();
-              Alert.alert('Success', 'Device permanently deleted');
-            } catch (error) {
-              Alert.alert('Error', 'Failed to delete device');
+              Alert.alert(t('common.success'), t('trash.devicePermanentlyDeleted') || 'Device permanently deleted');
+            } catch (error: any) {
+              console.error('Error permanently deleting device:', error);
+              Alert.alert(t('common.error'), error.message || t('trash.deviceDeleteFailed') || 'Failed to delete device');
             }
           },
         },

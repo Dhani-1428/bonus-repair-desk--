@@ -10,6 +10,7 @@ import {
   RefreshControl,
   Alert,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
@@ -19,7 +20,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { format } from 'date-fns';
 import { BlurView } from 'expo-blur';
 
-export default function TicketsScreen({ navigation }: any) {
+export default function TicketsScreen() {
+  const navigation = useNavigation();
   const { user } = useAuth();
   const theme = useTheme();
   const { t } = useLanguage();
@@ -34,6 +36,14 @@ export default function TicketsScreen({ navigation }: any) {
   useEffect(() => {
     loadTickets();
   }, [user]);
+
+  // Refresh when screen comes into focus to sync changes from web
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      loadTickets();
+    });
+    return unsubscribe;
+  }, [navigation, user]);
 
   const handlePrint = async (ticket: any) => {
     try {
@@ -108,8 +118,11 @@ export default function TicketsScreen({ navigation }: any) {
       'pending': 'ticket.status.pending',
       'in_progress': 'ticket.status.in_progress',
       'completed': 'ticket.status.completed',
+      'delivered': 'ticket.status.delivered',
+      'cancelled': 'ticket.status.cancelled',
       'cannot_repaired': 'ticket.status.cannot_repaired',
       'out': 'ticket.status.out',
+      'not_ok': 'ticket.status.not_ok',
     };
     return t(statusMap[status?.toLowerCase()] || 'ticket.status.pending');
   };
@@ -120,9 +133,9 @@ export default function TicketsScreen({ navigation }: any) {
       return theme.colors.success;
     } else if (statusLower === 'pending' || statusLower === 'in_progress') {
       return theme.colors.warning;
-    } else if (statusLower === 'cannot_repaired') {
+    } else if (statusLower === 'cannot_repaired' || statusLower === 'not_ok' || statusLower === 'cancelled') {
       return theme.colors.error;
-    } else if (statusLower === 'out') {
+    } else if (statusLower === 'delivered' || statusLower === 'out') {
       return theme.colors.secondary;
     }
     return theme.colors.warning;
@@ -225,6 +238,30 @@ export default function TicketsScreen({ navigation }: any) {
         >
           <Text style={[styles.filterText, filterStatus === 'out' && styles.filterTextActive]}>
             {getStatusTranslation('out')}
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.filterButton, filterStatus === 'delivered' && styles.filterButtonActive]}
+          onPress={() => setFilterStatus('delivered')}
+        >
+          <Text style={[styles.filterText, filterStatus === 'delivered' && styles.filterTextActive]}>
+            {getStatusTranslation('delivered')}
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.filterButton, filterStatus === 'cancelled' && styles.filterButtonActive]}
+          onPress={() => setFilterStatus('cancelled')}
+        >
+          <Text style={[styles.filterText, filterStatus === 'cancelled' && styles.filterTextActive]}>
+            {getStatusTranslation('cancelled')}
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.filterButton, filterStatus === 'not_ok' && styles.filterButtonActive]}
+          onPress={() => setFilterStatus('not_ok')}
+        >
+          <Text style={[styles.filterText, filterStatus === 'not_ok' && styles.filterTextActive]}>
+            {getStatusTranslation('not_ok')}
           </Text>
         </TouchableOpacity>
       </View>

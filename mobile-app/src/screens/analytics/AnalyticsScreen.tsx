@@ -8,13 +8,15 @@ import {
   RefreshControl,
   TouchableOpacity,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { apiService } from '../../services/api';
 import { Ionicons } from '@expo/vector-icons';
 
-export default function AnalyticsScreen({ navigation }: any) {
+export default function AnalyticsScreen() {
+  const navigation = useNavigation();
   const { user } = useAuth();
   const theme = useTheme();
   const { t } = useLanguage();
@@ -26,6 +28,14 @@ export default function AnalyticsScreen({ navigation }: any) {
     loadAnalytics();
   }, [user]);
 
+  // Refresh when screen comes into focus to sync changes from web
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      loadAnalytics();
+    });
+    return unsubscribe;
+  }, [navigation, user]);
+
   const loadAnalytics = async () => {
     if (!user?.id) return;
 
@@ -34,14 +44,23 @@ export default function AnalyticsScreen({ navigation }: any) {
       const response = await apiService.getTickets(user.id);
       const tickets = response.tickets || [];
 
-      // Calculate analytics
+      // Calculate analytics (case-insensitive status matching)
       const totalTickets = tickets.length;
-      const completedTickets = tickets.filter((t: any) => t.status === 'completed').length;
-      const pendingTickets = tickets.filter((t: any) => t.status === 'pending').length;
-      const inProgressTickets = tickets.filter((t: any) => t.status === 'in_progress').length;
+      const completedTickets = tickets.filter((t: any) => (t.status || '').toLowerCase() === 'completed').length;
+      const pendingTickets = tickets.filter((t: any) => {
+        const status = (t.status || '').toLowerCase();
+        return status === 'pending' || status === 'in_progress';
+      }).length;
+      const inProgressTickets = tickets.filter((t: any) => (t.status || '').toLowerCase() === 'in_progress').length;
+      const deliveredTickets = tickets.filter((t: any) => (t.status || '').toLowerCase() === 'delivered').length;
+      const cancelledTickets = tickets.filter((t: any) => (t.status || '').toLowerCase() === 'cancelled').length;
+      const cannotRepairedTickets = tickets.filter((t: any) => (t.status || '').toLowerCase() === 'cannot_repaired').length;
+      const notOkTickets = tickets.filter((t: any) => (t.status || '').toLowerCase() === 'not_ok').length;
+      const outTickets = tickets.filter((t: any) => (t.status || '').toLowerCase() === 'out').length;
+      
       const totalRevenue = tickets
-        .filter((t: any) => t.status === 'completed')
-        .reduce((sum: number, t: any) => sum + (parseFloat(t.price) || 0), 0);
+        .filter((t: any) => (t.status || '').toLowerCase() === 'completed')
+        .reduce((sum: number, t: any) => sum + (parseFloat(t.price || t.budget || 0) || 0), 0);
       const averageTicketValue = completedTickets > 0 ? totalRevenue / completedTickets : 0;
 
       setAnalytics({
@@ -49,6 +68,11 @@ export default function AnalyticsScreen({ navigation }: any) {
         completedTickets,
         pendingTickets,
         inProgressTickets,
+        deliveredTickets,
+        cancelledTickets,
+        cannotRepairedTickets,
+        notOkTickets,
+        outTickets,
         totalRevenue,
         averageTicketValue,
       });

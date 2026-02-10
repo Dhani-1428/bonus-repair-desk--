@@ -44,9 +44,13 @@ export default function DeviceListScreen({ route, navigation }: any) {
   const getStatusTranslation = (status: string) => {
     const statusMap: Record<string, string> = {
       'pending': 'ticket.status.pending',
+      'in_progress': 'ticket.status.in_progress',
       'completed': 'ticket.status.completed',
+      'delivered': 'ticket.status.delivered',
+      'cancelled': 'ticket.status.cancelled',
       'cannot_repaired': 'ticket.status.cannot_repaired',
       'out': 'ticket.status.out',
+      'not_ok': 'ticket.status.not_ok',
     };
     return t(statusMap[status?.toLowerCase()] || 'ticket.status.pending');
   };
@@ -55,11 +59,11 @@ export default function DeviceListScreen({ route, navigation }: any) {
     const statusLower = status?.toLowerCase();
     if (statusLower === 'completed') {
       return theme.colors.success;
-    } else if (statusLower === 'pending') {
+    } else if (statusLower === 'pending' || statusLower === 'in_progress') {
       return theme.colors.warning;
-    } else if (statusLower === 'cannot_repaired') {
+    } else if (statusLower === 'cannot_repaired' || statusLower === 'not_ok' || statusLower === 'cancelled') {
       return theme.colors.error;
-    } else if (statusLower === 'out') {
+    } else if (statusLower === 'delivered' || statusLower === 'out') {
       return theme.colors.secondary;
     }
     return theme.colors.warning;

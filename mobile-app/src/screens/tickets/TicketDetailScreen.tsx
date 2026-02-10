@@ -32,9 +32,13 @@ export default function TicketDetailScreen() {
   const getStatusTranslation = (status: string) => {
     const statusMap: Record<string, string> = {
       'pending': 'ticket.status.pending',
+      'in_progress': 'ticket.status.in_progress',
       'completed': 'ticket.status.completed',
+      'delivered': 'ticket.status.delivered',
+      'cancelled': 'ticket.status.cancelled',
       'cannot_repaired': 'ticket.status.cannot_repaired',
       'out': 'ticket.status.out',
+      'not_ok': 'ticket.status.not_ok',
     };
     return t(statusMap[status?.toLowerCase()] || 'ticket.status.pending');
   };
@@ -43,11 +47,11 @@ export default function TicketDetailScreen() {
     const statusLower = status?.toLowerCase();
     if (statusLower === 'completed') {
       return theme.colors.success;
-    } else if (statusLower === 'pending') {
+    } else if (statusLower === 'pending' || statusLower === 'in_progress') {
       return theme.colors.warning;
-    } else if (statusLower === 'cannot_repaired') {
+    } else if (statusLower === 'cannot_repaired' || statusLower === 'not_ok' || statusLower === 'cancelled') {
       return theme.colors.error;
-    } else if (statusLower === 'out') {
+    } else if (statusLower === 'delivered' || statusLower === 'out') {
       return theme.colors.secondary;
     }
     return theme.colors.warning;
@@ -56,6 +60,14 @@ export default function TicketDetailScreen() {
   useEffect(() => {
     loadTicket();
   }, [ticketId, user]);
+
+  // Refresh when screen comes into focus to sync changes from web
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      loadTicket();
+    });
+    return unsubscribe;
+  }, [navigation, ticketId, user]);
 
   const loadTicket = async () => {
     if (!user?.id) {
@@ -152,8 +164,8 @@ export default function TicketDetailScreen() {
   };
 
   const showActionMenu = () => {
-    // Only allow these 4 statuses: pending, completed, cannot_repaired, out
-    const statusOptions = ['pending', 'completed', 'cannot_repaired', 'out'];
+    // All available statuses matching web admin panel
+    const statusOptions = ['pending', 'in_progress', 'completed', 'delivered', 'cancelled', 'cannot_repaired', 'out', 'not_ok'];
     
     Alert.alert(
       t('common.status'),
