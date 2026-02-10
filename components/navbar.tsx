@@ -24,9 +24,7 @@ export function Navbar() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         <div className="flex h-16 items-center justify-between">
           <Link href="/" className="flex items-center space-x-2 group">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-foreground text-background font-bold text-lg transition-transform group-hover:scale-110">
-              B
-            </div>
+            <img src="/BRD LOGO..png" alt="BRD Logo" className="h-11 w-11 rounded-full object-cover" />
             <span className="font-bold text-xl">Bonus Repair Desk</span>
           </Link>
 

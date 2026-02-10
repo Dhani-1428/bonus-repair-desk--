@@ -81,14 +81,9 @@ export default function Home() {
           }`}
           href="/"
         >
-          <div className="relative flex-shrink-0">
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl blur opacity-75 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <div className="relative bg-gradient-to-br from-blue-600 to-purple-700 p-2.5 rounded-xl shadow-lg transform group-hover:scale-105 transition-transform duration-300">
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-              </svg>
-            </div>
-          </div>
+          <img src="/BRD LOGO..png" alt="BRD Logo" className={`rounded-full object-cover ${
+            isScrolled ? "h-8 w-8 hidden sm:block" : "h-10 w-10"
+          }`} />
           <span className={`text-foreground font-bold tracking-tight group-hover:text-blue-300 transition-colors duration-300 ${
             isScrolled ? "text-base hidden sm:inline" : "text-lg"
           }`}>
@@ -236,14 +231,7 @@ export default function Home() {
           className="flex items-center justify-center gap-2 group"
           href="/"
         >
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl blur opacity-75 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <div className="relative bg-gradient-to-br from-blue-600 to-purple-700 p-2 rounded-xl shadow-lg transform group-hover:scale-105 transition-transform duration-300">
-              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-              </svg>
-            </div>
-          </div>
+          <img src="/BRD LOGO..png" alt="BRD Logo" className="h-8 w-8 rounded-full object-cover" />
           <span className="text-foreground font-bold text-base tracking-tight group-hover:text-blue-300 transition-colors duration-300">
             Bonus Repair Desk
           </span>
