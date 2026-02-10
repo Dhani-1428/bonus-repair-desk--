@@ -2000,42 +2000,30 @@ export async function sendSubscriptionExpiredEmail(user: User, subscription: Sub
         <style>
           body { font-family: Arial, sans-serif; line-height: 1.8; color: #333; }
           .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-          .header { background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
-          .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
-          .warning-box { background: #f8d7da; border-left: 4px solid #dc3545; padding: 20px; margin: 20px 0; border-radius: 5px; }
-          .button { display: inline-block; padding: 15px 30px; background: #dc3545; color: white; text-decoration: none; border-radius: 5px; margin-top: 20px; font-weight: bold; }
-          .footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; color: #666; font-size: 14px; }
+          .content { background: #ffffff; padding: 30px; border: 1px solid #e0e0e0; border-radius: 5px; }
+          .button { display: inline-block; padding: 12px 24px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; margin-top: 20px; font-weight: bold; }
         </style>
       </head>
       <body>
         <div class="container">
-          <div class="header">
-            <h1>⚠️ Subscription Expired</h1>
-          </div>
           <div class="content">
             <p>${greeting}</p>
             
             <p>We hope you are doing well.</p>
             
-            <div class="warning-box">
-              <p><strong>This is to inform you that the <strong>subscription for your admin panel at BonusRepairDesk has expired</strong>.</strong> ${urgencyMessage}</p>
-              <p><strong>Expiration Date:</strong> ${endDate}</p>
-              <p>As a result, access to your admin panel and related services is currently inactive.</p>
-            </div>
+            <p>This is to inform you that the <strong>subscription for your admin panel at BonusRepairDesk has expired</strong>. As a result, access to your admin panel and related services is currently inactive.</p>
             
             <p>To <strong>continue using your admin panel and services without interruption</strong>, kindly renew your subscription at your earliest convenience.</p>
             
             <p style="text-align: center;">
-              <a href="${typeof window !== "undefined" ? window.location.origin : ""}/subscription" class="button">Renew Subscription Now</a>
+              <a href="${typeof window !== "undefined" ? window.location.origin : ""}/subscription" class="button">Renew Subscription</a>
             </p>
             
             <p>If you need assistance with the renewal process or have any questions regarding your subscription, please feel free to contact our support team. We'll be happy to help.</p>
             
-            <div class="footer">
-              <p>Thank you for choosing <strong>BonusRepairDesk</strong>. We appreciate your business and look forward to continuing our partnership with <strong>${companyName}</strong>.</p>
-              
-              <p>Best regards,<br><strong>BonusRepairDesk Team</strong><br>${FROM_EMAIL}</p>
-            </div>
+            <p>Thank you for choosing <strong>BonusRepairDesk</strong>. We appreciate your business and look forward to continuing our partnership with <strong>${companyName}</strong>.</p>
+            
+            <p>Best regards,<br><strong>BonusRepairDesk Team</strong></p>
           </div>
         </div>
       </body>
@@ -2043,17 +2031,11 @@ export async function sendSubscriptionExpiredEmail(user: User, subscription: Sub
   `
 
   const text = `
-Subscription Expired
-
 ${greeting}
 
 We hope you are doing well.
 
-This is to inform you that the subscription for your admin panel at BonusRepairDesk has expired. ${urgencyMessage}
-
-Expiration Date: ${endDate}
-
-As a result, access to your admin panel and related services is currently inactive.
+This is to inform you that the subscription for your admin panel at BonusRepairDesk has expired. As a result, access to your admin panel and related services is currently inactive.
 
 To continue using your admin panel and services without interruption, kindly renew your subscription at your earliest convenience.
 
@@ -2065,7 +2047,6 @@ Thank you for choosing BonusRepairDesk. We appreciate your business and look for
 
 Best regards,
 BonusRepairDesk Team
-${FROM_EMAIL}
   `.trim()
 
   return sendEmail(user.email, subject, html, text)
