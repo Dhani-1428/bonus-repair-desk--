@@ -89,11 +89,12 @@ export default function SubscriptionPage() {
                 // If not in history, save it
                 if (!alreadyInHistory) {
                   try {
-                    await fetch("/api/subscriptions", {
+                    await fetch("/api/subscriptions/history", {
                       method: "POST",
                       headers: { "Content-Type": "application/json" },
                       body: JSON.stringify({
                         userId: currentSub.userId,
+                        subscriptionId: currentSub.id,
                         plan: currentSub.plan,
                         status: "EXPIRED",
                         startDate: currentSub.startDate,
