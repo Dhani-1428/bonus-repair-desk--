@@ -78,14 +78,14 @@ export default function SubscriptionPage() {
   const plans = [
     {
       id: "SIX_MONTH" as SubscriptionPlan,
-      name: t("plan.professional"),
+      name: PLAN_PRICING.SIX_MONTH.name,
       price: 100,
       period: t("subscription.sixMonths"),
       popular: true,
     },
     {
       id: "TWELVE_MONTH" as SubscriptionPlan,
-      name: t("plan.enterprise"),
+      name: PLAN_PRICING.TWELVE_MONTH.name,
       price: 150,
       period: t("subscription.twelveMonths"),
       popular: false,
@@ -450,56 +450,30 @@ export default function SubscriptionPage() {
                 }`}
               >
                 {plan.popular && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                    <div className="inline-flex items-center justify-center rounded-full bg-blue-600 px-4 py-1 text-xs font-medium text-white">
-                      {t("subscription.mostPopular")}
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
+                    <div className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-500 px-4 py-1 text-xs font-semibold text-white shadow-md">
+                      Most Popular
                     </div>
                   </div>
                 )}
                 <CardHeader className="pb-4 bg-blue-50 border-b border-blue-200">
                   <CardTitle className="text-xl text-black">{plan.name}</CardTitle>
-                  <CardDescription className="text-black">
-                    {plan.period === t("subscription.sixMonths") ? t("subscription.sixMonthSubscription") :
-                     plan.period === t("subscription.twelveMonths") ? t("subscription.twelveMonthSubscription") :
-                     `${plan.period} subscription`}
+                  <CardDescription className="text-gray-600">
+                    {plan.id === "SIX_MONTH" ? "6 months" : "12 months"}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="flex items-baseline gap-2">
+                  <div>
                     <span className="text-4xl font-bold text-black">€{plan.price}</span>
-                    <span className="text-black">/ {plan.period}</span>
                   </div>
+                  <p className="text-sm text-gray-600">{PLAN_PRICING[plan.id]?.description || ""}</p>
                   <ul className="space-y-2">
-                    {PLAN_PRICING[plan.id]?.features.map((feature) => {
-                      // Map feature names to translation keys
-                      const featureKeyMap: Record<string, string> = {
-                        "Repair Device Management": "repairTicketManagement",
-                        "Customer Database": "customerDatabase",
-                        "Payment Processing": "paymentProcessing",
-                        "Analytics & Reports": "analyticsReports",
-                        "Email Support": "emailSupport",
-                        "Team Management": "teamManagement",
-                        "Everything in 3 Months": "everythingIn3Months",
-                        "Advanced Analytics": "advancedAnalytics",
-                        "Priority Support": "prioritySupport",
-                        "Custom Reports": "customReports",
-                        "API Access": "apiAccess",
-                        "Data Export": "dataExport",
-                        "Everything in 6 Months": "everythingIn6Months",
-                        "Unlimited Devices": "unlimitedTickets",
-                        "Dedicated Support": "dedicatedSupport",
-                        "Custom Integrations": "customIntegrations",
-                        "White Label Options": "whiteLabelOptions",
-                        "Advanced Security": "advancedSecurity",
-                      };
-                      const translationKey = featureKeyMap[feature] || feature.toLowerCase().replace(/\s+/g, "").replace(/&/g, "").replace(/[^a-z0-9]/g, "");
-                      return (
-                        <li key={feature} className="flex items-start gap-2">
-                          <Check className="w-4 h-4 text-green-600 mt-0.5 shrink-0" />
-                          <span className="text-sm text-black">{t(`feature.${translationKey}`) || feature}</span>
-                        </li>
-                      );
-                    })}
+                    {PLAN_PRICING[plan.id]?.features.map((feature) => (
+                      <li key={feature} className="flex items-start gap-2">
+                        <Check className="w-4 h-4 text-orange-500 mt-0.5 shrink-0" />
+                        <span className="text-sm text-black">{feature}</span>
+                      </li>
+                    ))}
                   </ul>
                 </CardContent>
                 <CardFooter>
@@ -507,8 +481,11 @@ export default function SubscriptionPage() {
                     <Button
                       onClick={() => handleRenew(plan.id)}
                       disabled={loading}
-                      variant="outline"
-                      className="w-full border-blue-300 bg-white text-black hover:bg-blue-50"
+                      className={`w-full ${
+                        plan.popular 
+                          ? "bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white"
+                          : "bg-gray-700 hover:bg-gray-600 border border-gray-600 text-white"
+                      }`}
                     >
                       {loading ? t("subscription.processing") : t("subscription.renewPlan")}
                     </Button>
@@ -522,11 +499,14 @@ export default function SubscriptionPage() {
                           router.push(`/billing?plan=${plan.id}`)
                         }
                       }}
-                      variant={plan.popular ? "default" : "outline"}
-                      className="w-full"
+                      className={`w-full ${
+                        plan.popular 
+                          ? "bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white"
+                          : "bg-gray-700 hover:bg-gray-600 border border-gray-600 text-white"
+                      }`}
                       disabled={!user}
                     >
-                      {!user ? t("subscription.loginRequired") || "Login Required" : t("subscription.subscribe")}
+                      {!user ? t("subscription.loginRequired") || "Login Required" : "Subscribe"}
                     </Button>
                   )}
                 </CardFooter>

@@ -35,29 +35,29 @@ export interface Subscription {
 
 export const PLAN_PRICING = {
   SIX_MONTH: {
-    name: "Professional",
+    name: "6 Months",
     price: 100,
     months: 6,
+    description: "Great value for medium-term needs.",
     features: [
-      "Everything in 3 Months",
-      "Advanced Analytics",
-      "Priority Support",
-      "Custom Reports",
-      "API Access",
-      "Data Export",
+      "Repair device management",
+      "Customer database",
+      "Payment processing",
+      "Analytics & reports",
+      "Email support",
     ],
   },
   TWELVE_MONTH: {
-    name: "Enterprise",
+    name: "12 Months",
     price: 150,
     months: 12,
+    description: "Best value for long-term commitment.",
     features: [
-      "Everything in 6 Months",
-      "Unlimited Tickets",
-      "Dedicated Support",
-      "Custom Integrations",
-      "White Label Options",
-      "Advanced Security",
+      "Repair device management",
+      "Customer database",
+      "Payment processing",
+      "Analytics & reports",
+      "Email support",
     ],
   },
 }

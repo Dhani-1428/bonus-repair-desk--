@@ -328,13 +328,14 @@ function BillingContent() {
                   )}
                   <CardContent className="p-6">
                     <h3 className="text-2xl font-bold text-black mb-2">{plan.name}</h3>
-                    <p className="text-sm text-gray-600 mb-4">{plan.months} months subscription</p>
-                    <p className="text-3xl font-bold text-black mb-6">€{plan.price} / {plan.months} months</p>
+                    <p className="text-sm text-gray-600 mb-2">{plan.months === 6 ? "6 months" : "12 months"}</p>
+                    <p className="text-3xl font-bold text-black mb-2">€{plan.price}</p>
+                    <p className="text-sm text-gray-600 mb-4">{PLAN_PRICING[plan.id]?.description || ""}</p>
                     
                     <ul className="space-y-3 mb-6">
                       {plan.features.map((feature, idx) => (
                         <li key={idx} className="flex items-start gap-2">
-                          <CheckCircle className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
+                          <CheckCircle className="w-5 h-5 text-orange-500 mt-0.5 flex-shrink-0" />
                           <span className="text-sm text-gray-700">{feature}</span>
                         </li>
                       ))}
