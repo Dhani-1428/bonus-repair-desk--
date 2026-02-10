@@ -25,7 +25,14 @@ export default function LoginPage() {
   // Redirect if already logged in
   useEffect(() => {
     if (!authLoading && user) {
-      if (user.role === "super_admin") {
+      // Check if user is super admin (check role or email)
+      const isSuperAdmin = 
+        user.role === "SUPER_ADMIN" || 
+        user.role === "super_admin" || 
+        user.email === "superadmin@admin.com" ||
+        user.email?.toLowerCase() === "superadmin@admin.com"
+      
+      if (isSuperAdmin) {
         router.replace("/super-admin")
       } else {
         router.replace("/dashboard")
@@ -61,8 +68,16 @@ export default function LoginPage() {
       // Check for redirect parameter
       const redirectTo = searchParams.get("redirect")
       
-      // Check if user is super admin and redirect accordingly
-      if (loggedInUser && (loggedInUser.role === "super_admin" || loggedInUser.role === "SUPER_ADMIN")) {
+      // Check if user is super admin and redirect accordingly (check role or email)
+      const isSuperAdmin = 
+        loggedInUser && (
+          loggedInUser.role === "super_admin" || 
+          loggedInUser.role === "SUPER_ADMIN" ||
+          loggedInUser.email === "superadmin@admin.com" ||
+          loggedInUser.email?.toLowerCase() === "superadmin@admin.com"
+        )
+      
+      if (isSuperAdmin) {
         router.replace(redirectTo || "/super-admin")
       } else {
         router.replace(redirectTo || "/dashboard")

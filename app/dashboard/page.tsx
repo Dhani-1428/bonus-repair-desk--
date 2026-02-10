@@ -23,6 +23,19 @@ export default function DashboardPage() {
       router.push("/login")
       return
     }
+    
+    // Redirect super admin to super admin panel
+    const isSuperAdmin = 
+      user.role === "SUPER_ADMIN" || 
+      user.role === "super_admin" || 
+      user.email === "superadmin@admin.com" ||
+      user.email?.toLowerCase() === "superadmin@admin.com"
+    
+    if (isSuperAdmin) {
+      router.replace("/super-admin")
+      return
+    }
+    
     loadUserDetails()
   }, [user, router])
 

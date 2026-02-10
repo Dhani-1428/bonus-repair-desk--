@@ -63,6 +63,16 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       user?.email === "superadmin@admin.com" ||
       user?.email?.toLowerCase() === "superadmin@admin.com"
     
+    // Redirect super admin to super admin panel
+    if (user && isSuperAdmin && typeof window !== "undefined") {
+      const currentPath = window.location.pathname
+      // Only redirect if not already on super admin pages
+      if (!currentPath.startsWith("/super-admin")) {
+        router.replace("/super-admin")
+        return
+      }
+    }
+    
     if (user && !isSuperAdmin && typeof window !== "undefined") {
       const currentPath = window.location.pathname
       // Don't redirect if already on subscription, pricing, billing, or login page
