@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { query, queryOne, execute } from "@/lib/mysql"
 import { v4 as uuidv4 } from "uuid"
+import { sendAdminSubscriptionPurchaseNotification } from "@/lib/email-service"
 
 // GET subscription for a user
 export async function GET(request: NextRequest) {
@@ -144,6 +145,38 @@ export async function POST(request: NextRequest) {
         `SELECT * FROM subscriptions WHERE id = ?`,
         [subscriptionId]
       )
+    }
+
+    // Send email notification to admin when subscription is created/updated
+    // Only send if it's a paid subscription (not free trial) or if status is ACTIVE
+    if (subscription && (subscription.status === "ACTIVE" || subscription.status === "active" || subscription.paymentStatus === "APPROVED")) {
+      try {
+        // Get full user information
+        const user = await queryOne(
+          `SELECT id, name, email, shopName, contactNumber, tenantId, createdAt FROM users WHERE id = ?`,
+          [userId]
+        )
+        
+        if (user) {
+          const userForEmail = {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            shopName: user.shopName || null,
+            contactNumber: user.contactNumber || null,
+            role: "USER" as const,
+            tenantId: user.tenantId,
+            createdAt: user.createdAt || new Date().toISOString(),
+          }
+          
+          console.log("[API] Sending subscription notification to bonusrepairdesk@gmail.com for subscription:", subscription.id)
+          await sendAdminSubscriptionPurchaseNotification(userForEmail, subscription)
+          console.log("[API] ✅ Subscription notification sent successfully to bonusrepairdesk@gmail.com")
+        }
+      } catch (emailError: any) {
+        console.error("[API] ❌ Error sending subscription notification:", emailError?.message || emailError)
+        // Don't fail subscription creation if email fails
+      }
     }
 
     return NextResponse.json({ subscription })
