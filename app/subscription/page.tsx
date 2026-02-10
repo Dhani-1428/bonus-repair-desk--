@@ -11,7 +11,7 @@ import { useTranslation } from "@/components/language-provider"
 import { PLAN_PRICING, type SubscriptionPlan } from "@/lib/constants"
 import { isExpired, isExpiringSoon, getDaysUntilExpiration, isNotStarted, getSubscriptionEndDate } from "@/lib/subscription-utils"
 import { toast } from "sonner"
-import { Check, AlertCircle, Calendar, Mail, Clock } from "lucide-react"
+import { Check, AlertCircle, Calendar, Mail, Clock, History } from "lucide-react"
 import { scheduleSubscriptionChecks } from "@/lib/subscription-notifications"
 
 export default function SubscriptionPage() {
@@ -20,6 +20,8 @@ export default function SubscriptionPage() {
   const { t } = useTranslation()
   const [loading, setLoading] = useState(false)
   const [subscriptionHistory, setSubscriptionHistory] = useState<any[]>([])
+  const [showHistory, setShowHistory] = useState(false)
+  const [loadingHistory, setLoadingHistory] = useState(false)
 
   // Redirect to login if not authenticated (required for subscription flow)
   useEffect(() => {
@@ -32,14 +34,38 @@ export default function SubscriptionPage() {
     // Initialize subscription notification checks
     scheduleSubscriptionChecks()
     
-    // Load subscription history
+    // Load subscription history from API
     if (user?.id) {
-      const history = JSON.parse(localStorage.getItem(`subscription_history_${user.id}`) || "[]")
-      setSubscriptionHistory(history)
+      loadSubscriptionHistory()
     }
   }, [user])
 
-  // Auto-refresh subscription status every 5 seconds to catch payment status changes
+  const loadSubscriptionHistory = async () => {
+    if (!user?.id) return
+    
+    setLoadingHistory(true)
+    try {
+      // Try to load from API first
+      const response = await fetch(`/api/subscriptions/history?userId=${user.id}`)
+      if (response.ok) {
+        const data = await response.json()
+        setSubscriptionHistory(data.history || [])
+      } else {
+        // Fallback to localStorage
+        const history = JSON.parse(localStorage.getItem(`subscription_history_${user.id}`) || "[]")
+        setSubscriptionHistory(history)
+      }
+    } catch (error) {
+      console.error("Error loading subscription history:", error)
+      // Fallback to localStorage
+      const history = JSON.parse(localStorage.getItem(`subscription_history_${user.id}`) || "[]")
+      setSubscriptionHistory(history)
+    } finally {
+      setLoadingHistory(false)
+    }
+  }
+
+  // Auto-refresh subscription status and save expired subscriptions to history
   useEffect(() => {
     if (!user?.id) return
 
@@ -49,13 +75,48 @@ export default function SubscriptionPage() {
         if (response.ok) {
           const data = await response.json()
           if (data.subscription) {
+            const currentSub = data.subscription
+            
+            // Check if subscription is expired and save to history if not already saved
+            if (isExpired(currentSub) && !isNotStarted(currentSub)) {
+              // Check if already in history
+              const historyResponse = await fetch(`/api/subscriptions/history?userId=${user.id}`)
+              if (historyResponse.ok) {
+                const historyData = await historyResponse.json()
+                const history = historyData.history || []
+                const alreadyInHistory = history.some((h: any) => h.id === currentSub.id)
+                
+                // If not in history, save it
+                if (!alreadyInHistory) {
+                  try {
+                    await fetch("/api/subscriptions", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        userId: currentSub.userId,
+                        plan: currentSub.plan,
+                        status: "EXPIRED",
+                        startDate: currentSub.startDate,
+                        endDate: currentSub.endDate,
+                        price: currentSub.price,
+                        paymentStatus: currentSub.paymentStatus,
+                        paymentId: currentSub.paymentId,
+                        isFreeTrial: currentSub.isFreeTrial,
+                      }),
+                    })
+                  } catch (error) {
+                    console.error("Error saving expired subscription to history:", error)
+                  }
+                }
+              }
+            }
+            
             // Update subscription in sessionStorage and trigger update
-            sessionStorage.setItem("subscription", JSON.stringify(data.subscription))
-            updateSubscription(data.subscription)
+            sessionStorage.setItem("subscription", JSON.stringify(currentSub))
+            updateSubscription(currentSub)
             
             // Reload history
-            const history = JSON.parse(localStorage.getItem(`subscription_history_${user.id}`) || "[]")
-            setSubscriptionHistory(history)
+            await loadSubscriptionHistory()
           }
         }
       } catch (error) {
@@ -175,17 +236,32 @@ export default function SubscriptionPage() {
   return (
     <DashboardLayout>
       <div className="space-y-6 text-black">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-balance text-black">
-            {t("subscription.title")}
-          </h1>
-          <p className="text-black text-balance">
-            {t("subscription.subtitle")}
-          </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight text-balance text-black">
+              {t("subscription.title")}
+            </h1>
+            <p className="text-black text-balance">
+              {t("subscription.subtitle")}
+            </p>
+          </div>
+          <Button
+            variant="outline"
+            onClick={() => {
+              setShowHistory(!showHistory)
+              if (!showHistory) {
+                loadSubscriptionHistory()
+              }
+            }}
+            className="flex items-center gap-2 border-blue-300 bg-white text-black hover:bg-blue-50"
+          >
+            <History className="w-4 h-4" />
+            {showHistory ? "Hide History" : "View History"}
+          </Button>
         </div>
 
         {/* Free Trial Status */}
-        {subscription && (subscription.status === "free_trial" || subscription.isFreeTrial) && (
+        {subscription && (subscription.status === "free_trial" || subscription.isFreeTrial) && !isExpired(subscription) && (
           <Card className="shadow-2xl border-2 border-blue-300 bg-white">
             <CardContent className="p-6">
               <div className="flex items-start gap-4">
@@ -196,13 +272,13 @@ export default function SubscriptionPage() {
                 </div>
                 <div className="flex-1">
                   <h3 className="text-xl font-bold text-blue-600 mb-2">
-                    {t("subscription.freePlanDays").replace("{days}", getDaysUntilExpiration(subscription).toString())}
+                    Free Plan - {getDaysUntilExpiration(subscription) >= 0 ? `${getDaysUntilExpiration(subscription)} Days` : `${Math.abs(getDaysUntilExpiration(subscription))} Days`}
                   </h3>
                   <p className="text-black mb-2">
-                    {t("subscription.freeTrialMessage")} {getSubscriptionEndDate(subscription).toLocaleDateString()}.
+                    You're currently on a FREE trial. Your trial will end on {getSubscriptionEndDate(subscription).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}.
                   </p>
                   <p className="text-sm text-black">
-                    {t("subscription.afterTrial")}
+                    After the trial ends, you'll need to subscribe to continue accessing your admin panel. All your data will be safe.
                   </p>
                 </div>
               </div>
@@ -269,16 +345,20 @@ export default function SubscriptionPage() {
                   </div>
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xl font-bold text-red-600 mb-2">{t("subscription.expired")}</h3>
+                  <h3 className="text-xl font-bold text-red-600 mb-2">
+                    {subscription.isFreeTrial || subscription.status === "FREE_TRIAL" || subscription.status === "free_trial"
+                      ? "Subscription Expired"
+                      : "Subscription Expired"}
+                  </h3>
                   <p className="text-black mb-4">
                     {subscription.isFreeTrial || subscription.status === "FREE_TRIAL" || subscription.status === "free_trial"
-                      ? "Your free trial has ended. Please subscribe to continue using the admin panel."
-                      : t("subscription.expiredMessage")}
+                      ? `Your free trial ended on ${getSubscriptionEndDate(subscription).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}. Subscribe from below then you can use your panel.`
+                      : `Your subscription ended on ${getSubscriptionEndDate(subscription).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}. Please subscribe to continue using the admin panel.`}
                   </p>
                   <p className="text-sm text-black mb-4">
                     {subscription.isFreeTrial || subscription.status === "FREE_TRIAL" || subscription.status === "free_trial"
                       ? "Select a subscription plan below to continue accessing all features."
-                      : t("subscription.expiredInfo")}
+                      : "Select a subscription plan below to continue accessing all features."}
                   </p>
                   <Button
                     onClick={() => {
@@ -290,7 +370,7 @@ export default function SubscriptionPage() {
                     }}
                     className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
                   >
-                    {t("subscription.choosePlan") || "Choose a Plan"}
+                    {t("subscription.choosePlan") || "Choose Your Plan"}
                   </Button>
                 </div>
               </div>
@@ -369,10 +449,14 @@ export default function SubscriptionPage() {
                     <AlertCircle className="w-5 h-5 text-yellow-600 mt-0.5" />
                     <div className="flex-1">
                       <p className="text-sm font-semibold text-yellow-700 mb-1">
-                        {t("subscription.expiringSoon")}
+                        {subscription.isFreeTrial || subscription.status === "FREE_TRIAL" || subscription.status === "free_trial"
+                          ? "Free Trial Expiring Soon"
+                          : "Subscription Expiring Soon"}
                       </p>
                       <p className="text-xs text-black">
-                        {t("subscription.expiringSoonMessage").replace("{days}", daysUntilExpiration.toString())}
+                        {subscription.isFreeTrial || subscription.status === "FREE_TRIAL" || subscription.status === "free_trial"
+                          ? `Your free trial will end on ${getSubscriptionEndDate(subscription).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}. Subscribe now to continue using your admin panel.`
+                          : `Your subscription will expire on ${getSubscriptionEndDate(subscription).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}. Renew now to continue accessing all features.`}
                       </p>
                     </div>
                   </div>
@@ -516,15 +600,18 @@ export default function SubscriptionPage() {
         </div>
 
         {/* Subscription History */}
-        <div>
-          <h2 className="text-xl font-semibold mb-4 text-black">{t("subscription.history")}</h2>
-          <Card className="shadow-xl border border-blue-200 bg-white">
-            <CardContent className="p-6">
-              {subscriptionHistory.length === 0 ? (
-                <p className="text-black text-center py-8">{t("subscription.noHistory")}</p>
-              ) : (
-                <div className="space-y-4">
-                  {subscriptionHistory.map((historyItem: any, index: number) => (
+        {showHistory && (
+          <div>
+            <h2 className="text-xl font-semibold mb-4 text-black">{t("subscription.history")}</h2>
+            <Card className="shadow-xl border border-blue-200 bg-white">
+              <CardContent className="p-6">
+                {loadingHistory ? (
+                  <p className="text-black text-center py-8">Loading history...</p>
+                ) : subscriptionHistory.length === 0 ? (
+                  <p className="text-black text-center py-8">{t("subscription.noHistory")}</p>
+                ) : (
+                  <div className="space-y-4">
+                    {subscriptionHistory.map((historyItem: any, index: number) => (
                     <div
                       key={`${historyItem.id}_${index}`}
                       className="p-4 bg-blue-50 rounded-lg border border-blue-200 hover:border-blue-300 transition-colors"
@@ -552,10 +639,14 @@ export default function SubscriptionPage() {
                               ? "bg-yellow-100 text-yellow-700 border-yellow-300"
                               : historyItem.paymentStatus === "REJECTED" || historyItem.paymentStatus === "rejected"
                               ? "bg-red-100 text-red-700 border-red-300"
+                              : historyItem.isFreeTrial || historyItem.status === "FREE_TRIAL" || historyItem.status === "free_trial"
+                              ? "bg-blue-100 text-blue-700 border-blue-300"
                               : "bg-gray-100 text-gray-700 border-gray-300"
                           }
                         >
-                          {historyItem.paymentStatus === "REJECTED" || historyItem.paymentStatus === "rejected"
+                          {historyItem.isFreeTrial || historyItem.status === "FREE_TRIAL" || historyItem.status === "free_trial"
+                            ? "Free Trial"
+                            : historyItem.paymentStatus === "REJECTED" || historyItem.paymentStatus === "rejected"
                             ? t("subscription.paymentDeclined")
                             : historyItem.paymentStatus === "APPROVED" || historyItem.paymentStatus === "approved"
                             ? t("subscription.paymentApproved")
@@ -602,11 +693,12 @@ export default function SubscriptionPage() {
                       )}
                     </div>
                   ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
         {/* Email Notification Info */}
         <Card className="shadow-xl border border-blue-200 bg-white">
