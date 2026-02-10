@@ -52,6 +52,7 @@ export default function UsersInformationPage() {
   const { user, loading } = useAuth()
   const [users, setUsers] = useState<any[]>([])
   const [userAnalytics, setUserAnalytics] = useState<UserAnalytics[]>([])
+  const [allSubscriptions, setAllSubscriptions] = useState<any[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [showPasswords, setShowPasswords] = useState<Record<string, boolean>>({})
   const [selectedUserForSubscription, setSelectedUserForSubscription] = useState<UserAnalytics | null>(null)
@@ -120,14 +121,56 @@ export default function UsersInformationPage() {
   }
 
   const calculateAnalytics = async (allUsers: any[]) => {
-    const allSubscriptions = getAllSubscriptions()
+    // Fetch subscriptions from API instead of localStorage
+    let subscriptionsData: any[] = []
+    try {
+      const subscriptionsResponse = await fetch("/api/subscriptions/all")
+      if (subscriptionsResponse.ok) {
+        const data = await subscriptionsResponse.json()
+        subscriptionsData = data.subscriptions || []
+        setAllSubscriptions(subscriptionsData)
+      } else {
+        // Fallback to localStorage if API fails
+        subscriptionsData = getAllSubscriptions()
+        setAllSubscriptions(subscriptionsData)
+      }
+    } catch (error) {
+      console.error("Error fetching subscriptions:", error)
+      // Fallback to localStorage if API fails
+      subscriptionsData = getAllSubscriptions()
+      setAllSubscriptions(subscriptionsData)
+    }
+
     const analytics: UserAnalytics[] = []
 
     // Fetch user data without device/repair ticket information
     const userDataPromises = allUsers.map(async (u: any) => {
-      // Get subscription info
-      const userSub = allSubscriptions.find((s: any) => s.userId === u.id)
+      // Get subscription info - find the most recent subscription for this user
+      const userSubs = subscriptionsData.filter((s: any) => (s.userId || s.user_id) === u.id)
+      const userSub = userSubs.length > 0 
+        ? userSubs.sort((a: any, b: any) => new Date(b.createdAt || b.startDate).getTime() - new Date(a.createdAt || a.startDate).getTime())[0]
+        : null
+      
       const daysUntilExpiration = userSub ? getDaysUntilExpiration(userSub) : 0
+      
+      // Determine subscription status
+      let subscriptionStatus = "No Subscription"
+      if (userSub) {
+        const status = (userSub.status || "").toUpperCase()
+        const isFreeTrial = userSub.isFreeTrial || status === "FREE_TRIAL" || status === "free_trial"
+        
+        if (isExpired(userSub)) {
+          subscriptionStatus = "Expired"
+        } else if (isFreeTrial) {
+          subscriptionStatus = "Free Trial"
+        } else if (status === "PENDING") {
+          subscriptionStatus = "Pending"
+        } else if (status === "ACTIVE") {
+          subscriptionStatus = "Active"
+        } else {
+          subscriptionStatus = status || "Unknown"
+        }
+      }
       
       // Get login history from database
       let lastLogin: string | null = null
@@ -156,8 +199,8 @@ export default function UsersInformationPage() {
         userEmail: u.email,
         shopName: u.shopName || "-",
         password: u.password || "N/A",
-        subscriptionPlan: userSub ? PLAN_PRICING[userSub.plan]?.name || userSub.plan : "No Subscription",
-        subscriptionStatus: userSub ? (isExpired(userSub) ? "Expired" : userSub.status === "free_trial" ? "Free Trial" : userSub.status === "pending" ? "Pending" : "Active") : "No Subscription",
+        subscriptionPlan: userSub ? (PLAN_PRICING[userSub.plan]?.name || userSub.plan) : "No Subscription",
+        subscriptionStatus: subscriptionStatus,
         daysUntilExpiration: daysUntilExpiration,
         signupDate: u.createdAt,
         lastLogin: lastLogin,
@@ -192,7 +235,10 @@ export default function UsersInformationPage() {
     ]
 
     const rows = filteredAnalytics.map(analytics => {
-      const userSub = allSubscriptions.find((s: any) => s.userId === analytics.userId)
+      const userSubs = allSubscriptions.filter((s: any) => (s.userId || s.user_id) === analytics.userId)
+      const userSub = userSubs.length > 0 
+        ? userSubs.sort((a: any, b: any) => new Date(b.createdAt || b.startDate).getTime() - new Date(a.createdAt || a.startDate).getTime())[0]
+        : null
       const expiryDate = userSub ? getSubscriptionEndDate(userSub).toLocaleDateString() : "No Subscription"
       const daysLeft = analytics.daysUntilExpiration >= 0 ? analytics.daysUntilExpiration : "Expired"
       
@@ -246,8 +292,6 @@ export default function UsersInformationPage() {
   if (user.role !== "SUPER_ADMIN" && user.role !== "super_admin" && user.email !== "superadmin@admin.com") {
     return null
   }
-
-  const allSubscriptions = getAllSubscriptions()
 
   return (
     <SuperAdminLayout>
@@ -405,6 +449,10 @@ export default function UsersInformationPage() {
                           className={
                             analytics.subscriptionStatus === "Active"
                               ? "bg-green-500/20 text-green-400 border-green-500/50"
+                              : analytics.subscriptionStatus === "Free Trial"
+                              ? "bg-blue-500/20 text-blue-400 border-blue-500/50"
+                              : analytics.subscriptionStatus === "Pending"
+                              ? "bg-yellow-500/20 text-yellow-400 border-yellow-500/50"
                               : analytics.subscriptionStatus === "Expired"
                               ? "bg-red-500/20 text-red-400 border-red-500/50"
                               : "bg-gray-500/20 text-gray-400 border-gray-500/50"
@@ -415,36 +463,33 @@ export default function UsersInformationPage() {
                       </td>
                       <td className="border-r border-gray-700/50 px-4 py-3 text-sm text-center">
                         {(() => {
-                          const userSub = allSubscriptions.find((s: any) => s.userId === analytics.userId)
+                          // Find subscription from state
+                          const userSubs = allSubscriptions.filter((s: any) => (s.userId || s.user_id) === analytics.userId)
+                          const userSub = userSubs.length > 0 
+                            ? userSubs.sort((a: any, b: any) => new Date(b.createdAt || b.startDate).getTime() - new Date(a.createdAt || a.startDate).getTime())[0]
+                            : null
+                          
                           if (!userSub) {
                             return <span className="text-gray-400">No Subscription</span>
                           }
+                          
                           const endDate = getSubscriptionEndDate(userSub)
                           const daysLeft = analytics.daysUntilExpiration
                           const isExpired = daysLeft < 0
                           const isExpiringSoon = daysLeft >= 0 && daysLeft <= 7
-                          const isTrial = userSub.isFreeTrial || userSub.status === "free_trial" || userSub.status === "FREE_TRIAL"
-                          const isSixMonth = userSub.plan === "SIX_MONTH"
-                          const isTwelveMonth = userSub.plan === "TWELVE_MONTH"
-                          
-                          // Determine label based on subscription type
-                          let label = "Expiry Date"
-                          if (isTrial) {
-                            label = "Trial Expire Date"
-                          } else if (isSixMonth) {
-                            label = "6 Months Subscription Expire Date"
-                          } else if (isTwelveMonth) {
-                            label = "12 Months Subscription Expire Date"
-                          }
+                          const status = (userSub.status || "").toUpperCase()
+                          const isTrial = userSub.isFreeTrial || status === "FREE_TRIAL" || status === "free_trial"
                           
                           return (
                             <div className="flex flex-col items-center gap-1">
-                              <span className={`text-xs text-gray-400 mb-0.5`}>{label}</span>
+                              <span className={`text-xs text-gray-400 mb-0.5`}>
+                                {isTrial ? "Trial Expires" : "Expires"}
+                              </span>
                               <span className={isExpired ? "text-red-400 font-semibold" : isExpiringSoon ? "text-yellow-400 font-semibold" : "text-gray-300"}>
                                 {endDate.toLocaleDateString()}
                               </span>
                               <span className={`text-xs ${isExpired ? "text-red-400" : isExpiringSoon ? "text-yellow-400" : "text-gray-500"}`}>
-                                {isExpired ? "Expired" : `${daysLeft} day${daysLeft !== 1 ? 's' : ''} left`}
+                                {isExpired ? "Expired" : daysLeft >= 0 ? `${daysLeft} day${daysLeft !== 1 ? 's' : ''} left` : "Expired"}
                               </span>
                             </div>
                           )
@@ -508,8 +553,10 @@ export default function UsersInformationPage() {
               </DialogTitle>
             </DialogHeader>
             {selectedUserForSubscription && (() => {
-              const allSubscriptions = getAllSubscriptions()
-              const userSub = allSubscriptions.find((s: any) => s.userId === selectedUserForSubscription.userId)
+              const userSubs = allSubscriptions.filter((s: any) => (s.userId || s.user_id) === selectedUserForSubscription.userId)
+              const userSub = userSubs.length > 0 
+                ? userSubs.sort((a: any, b: any) => new Date(b.createdAt || b.startDate).getTime() - new Date(a.createdAt || a.startDate).getTime())[0]
+                : null
               
               return (
                 <div className="space-y-4">

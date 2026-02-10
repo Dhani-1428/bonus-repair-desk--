@@ -11,9 +11,9 @@ export async function GET(request: NextRequest) {
     const userId = searchParams.get("id")
     
     if (userId) {
-      // Get single user with all fields
+      // Get single user with all fields (including password for super admin)
       const user = await queryOne(`
-        SELECT id, name, email, role, shopName, contactNumber, tenantId, address, companyEmail, website, vatNumber, createdAt, updatedAt
+        SELECT id, name, email, role, shopName, contactNumber, tenantId, address, companyEmail, website, vatNumber, password, createdAt, updatedAt
         FROM users
         WHERE id = ?
       `, [userId])
@@ -27,9 +27,9 @@ export async function GET(request: NextRequest) {
       
       return NextResponse.json({ user })
     } else {
-      // Get all users with all fields
+      // Get all users with all fields (including password for super admin)
       const users = await query(`
-        SELECT id, name, email, role, shopName, contactNumber, tenantId, address, companyEmail, website, vatNumber, createdAt, updatedAt
+        SELECT id, name, email, role, shopName, contactNumber, tenantId, address, companyEmail, website, vatNumber, password, createdAt, updatedAt
         FROM users
         ORDER BY createdAt DESC
       `)
