@@ -112,9 +112,9 @@ const pool = mysql.createPool({
 console.log(`[MySQL] Connection pool configured: limit=${connectionLimit}, queueLimit=${queueLimit}`)
 
 /**
- * Get connection pool statistics
+ * Get connection pool statistics (exported for external use)
  */
-function getPoolStats() {
+export function getPoolStats() {
   const poolState = pool as any
   return {
     totalConnections: poolState._allConnections?.length || 0,
@@ -126,9 +126,9 @@ function getPoolStats() {
 }
 
 /**
- * Log connection pool status (useful for debugging)
+ * Log connection pool status (exported for external use)
  */
-function logPoolStatus() {
+export function logPoolStatus() {
   const stats = getPoolStats()
   console.log("[MySQL] Pool Status:", {
     active: stats.totalConnections - stats.freeConnections,
@@ -351,35 +351,6 @@ export async function testConnection(): Promise<boolean> {
     console.error("[MySQL] Connection test failed:", error)
     return false
   }
-}
-
-/**
- * Get connection pool statistics (exported for external use)
- */
-export function getPoolStats() {
-  const poolState = pool as any
-  return {
-    totalConnections: poolState._allConnections?.length || 0,
-    freeConnections: poolState._freeConnections?.length || 0,
-    connectionLimit: connectionLimit,
-    queueLength: poolState._connectionQueue?.length || 0,
-    queueLimit: queueLimit,
-  }
-}
-
-/**
- * Log connection pool status (exported for external use)
- */
-export function logPoolStatus() {
-  const stats = getPoolStats()
-  console.log("[MySQL] Pool Status:", {
-    active: stats.totalConnections - stats.freeConnections,
-    free: stats.freeConnections,
-    total: stats.totalConnections,
-    limit: stats.connectionLimit,
-    queue: stats.queueLength,
-    utilization: `${Math.round(((stats.totalConnections - stats.freeConnections) / stats.connectionLimit) * 100)}%`
-  })
 }
 
 /**
