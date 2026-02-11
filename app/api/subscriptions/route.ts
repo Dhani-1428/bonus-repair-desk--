@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { query, queryOne, execute } from "@/lib/mysql"
+import { query, queryOne, execute, toMySQLDateTime } from "@/lib/mysql"
 import { v4 as uuidv4 } from "uuid"
 import { sendAdminSubscriptionPurchaseNotification } from "@/lib/email-service"
 
@@ -35,6 +35,18 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
+    console.log("[API] Subscription POST request body:", {
+      userId: body.userId,
+      plan: body.plan,
+      status: body.status,
+      startDate: body.startDate,
+      endDate: body.endDate,
+      price: body.price,
+      hasPaymentStatus: !!body.paymentStatus,
+      hasPaymentId: !!body.paymentId,
+      isFreeTrial: body.isFreeTrial
+    })
+    
     const {
       userId,
       plan,
@@ -48,26 +60,48 @@ export async function POST(request: NextRequest) {
     } = body
 
     if (!userId || !plan || !startDate || !endDate) {
+      console.error("[API] Missing required fields:", {
+        hasUserId: !!userId,
+        hasPlan: !!plan,
+        hasStartDate: !!startDate,
+        hasEndDate: !!endDate
+      })
       return NextResponse.json(
-        { error: "Missing required fields" },
+        { error: "Missing required fields: userId, plan, startDate, and endDate are required" },
         { status: 400 }
       )
     }
 
     // Get user to find tenantId
+    console.log("[API] Fetching user for tenantId:", userId)
     const user = await queryOne(
       `SELECT tenantId FROM users WHERE id = ?`,
       [userId]
     )
 
     if (!user) {
+      console.error("[API] User not found:", userId)
       return NextResponse.json(
         { error: "User not found" },
         { status: 404 }
       )
     }
+    
+    console.log("[API] User found, tenantId:", user.tenantId)
+    
+    // Convert dates to MySQL format
+    const startDateMySQL = toMySQLDateTime(startDate)
+    const endDateMySQL = toMySQLDateTime(endDate)
+    
+    console.log("[API] Date conversion:", {
+      startDateOriginal: startDate,
+      startDateMySQL: startDateMySQL,
+      endDateOriginal: endDate,
+      endDateMySQL: endDateMySQL
+    })
 
     // Check if subscription exists
+    console.log("[API] Checking for existing subscription for userId:", userId)
     const existing = await queryOne(
       `SELECT * FROM subscriptions WHERE userId = ? ORDER BY createdAt DESC LIMIT 1`,
       [userId]
@@ -76,27 +110,45 @@ export async function POST(request: NextRequest) {
     let subscription
 
     if (existing) {
+      console.log("[API] Existing subscription found, updating:", existing.id)
       // Save old subscription to history
-      await execute(
-        `INSERT INTO subscription_history 
-         (id, userId, tenantId, plan, status, startDate, endDate, price, paymentStatus, paymentId, isFreeTrial)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [
-          uuidv4(),
-          existing.userId,
-          user.tenantId,
-          existing.plan,
-          existing.status,
-          existing.startDate,
-          existing.endDate,
-          existing.price,
-          existing.paymentStatus,
-          existing.paymentId,
-          existing.isFreeTrial,
-        ]
-      )
+      try {
+        await execute(
+          `INSERT INTO subscription_history 
+           (id, userId, tenantId, plan, status, startDate, endDate, price, paymentStatus, paymentId, isFreeTrial)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          [
+            uuidv4(),
+            existing.userId,
+            user.tenantId,
+            existing.plan,
+            existing.status,
+            toMySQLDateTime(existing.startDate),
+            toMySQLDateTime(existing.endDate),
+            existing.price,
+            existing.paymentStatus,
+            existing.paymentId,
+            existing.isFreeTrial,
+          ]
+        )
+        console.log("[API] ✅ Saved subscription to history")
+      } catch (historyError: any) {
+        console.error("[API] ⚠️  Failed to save to history (non-critical):", historyError?.message || historyError)
+        // Continue even if history save fails
+      }
 
       // Update existing subscription
+      console.log("[API] Updating subscription with:", {
+        plan,
+        status: status || existing.status,
+        startDate: startDateMySQL,
+        endDate: endDateMySQL,
+        price: price || existing.price,
+        paymentStatus: paymentStatus || existing.paymentStatus,
+        paymentId: paymentId || existing.paymentId,
+        isFreeTrial: isFreeTrial !== undefined ? isFreeTrial : existing.isFreeTrial
+      })
+      
       await execute(
         `UPDATE subscriptions SET 
          plan = ?, status = ?, startDate = ?, endDate = ?, price = ?, 
@@ -105,9 +157,9 @@ export async function POST(request: NextRequest) {
         [
           plan,
           status || existing.status,
-          startDate,
-          endDate,
-          price || existing.price,
+          startDateMySQL,
+          endDateMySQL,
+          price !== undefined ? price : existing.price,
           paymentStatus || existing.paymentStatus,
           paymentId || existing.paymentId,
           isFreeTrial !== undefined ? isFreeTrial : existing.isFreeTrial,
@@ -119,9 +171,25 @@ export async function POST(request: NextRequest) {
         `SELECT * FROM subscriptions WHERE id = ?`,
         [existing.id]
       )
+      console.log("[API] ✅ Subscription updated successfully")
     } else {
+      console.log("[API] No existing subscription, creating new one")
       // Create new subscription
       const subscriptionId = uuidv4()
+      console.log("[API] Creating subscription with:", {
+        subscriptionId,
+        userId,
+        tenantId: user.tenantId,
+        plan,
+        status: status || "FREE_TRIAL",
+        startDate: startDateMySQL,
+        endDate: endDateMySQL,
+        price: price || null,
+        paymentStatus: paymentStatus || null,
+        paymentId: paymentId || null,
+        isFreeTrial: isFreeTrial !== undefined ? isFreeTrial : true
+      })
+      
       await execute(
         `INSERT INTO subscriptions 
          (id, userId, tenantId, plan, status, startDate, endDate, price, paymentStatus, paymentId, isFreeTrial)
@@ -132,9 +200,9 @@ export async function POST(request: NextRequest) {
           user.tenantId,
           plan,
           status || "FREE_TRIAL",
-          startDate,
-          endDate,
-          price || null,
+          startDateMySQL,
+          endDateMySQL,
+          price !== undefined ? price : null,
           paymentStatus || null,
           paymentId || null,
           isFreeTrial !== undefined ? isFreeTrial : true,
@@ -145,6 +213,7 @@ export async function POST(request: NextRequest) {
         `SELECT * FROM subscriptions WHERE id = ?`,
         [subscriptionId]
       )
+      console.log("[API] ✅ Subscription created successfully")
     }
 
     // Send email notification to admin when subscription is created/updated
@@ -180,10 +249,29 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ subscription })
-  } catch (error) {
+  } catch (error: any) {
     console.error("[API] Error creating/updating subscription:", error)
+    console.error("[API] Error details:", {
+      code: error?.code,
+      errno: error?.errno,
+      sqlState: error?.sqlState,
+      sqlMessage: error?.sqlMessage,
+      message: error?.message,
+      stack: error?.stack?.substring(0, 500)
+    })
+    
+    // Provide more specific error messages
+    let errorMessage = "Failed to create/update subscription"
+    if (error?.code === "ER_CON_COUNT_ERROR" || error?.errno === 1040) {
+      errorMessage = "Database is temporarily busy. Please try again in a moment."
+    } else if (error?.code === "ER_NO_SUCH_TABLE") {
+      errorMessage = "Database table not found. Please check database setup."
+    } else if (error?.message) {
+      errorMessage = error.message
+    }
+    
     return NextResponse.json(
-      { error: "Failed to create/update subscription" },
+      { error: errorMessage, details: process.env.NODE_ENV === "development" ? error?.message : undefined },
       { status: 500 }
     )
   }
