@@ -13,7 +13,7 @@ import { getAllSubscriptions, isExpired, getDaysUntilExpiration, getSubscription
 import { PLAN_PRICING } from "@/lib/constants"
 import { toast } from "sonner"
 import Link from "next/link"
-import { Download, Eye, EyeOff, Info, Edit, Trash2 } from "lucide-react"
+import { Download, Eye, EyeOff, Info, Edit, Trash2, CreditCard } from "lucide-react"
 import { UserDetailsDialog } from "@/components/user-details-dialog"
 import {
   Dialog,
@@ -72,6 +72,10 @@ export default function UsersInformationPage() {
   })
   const [isDeleting, setIsDeleting] = useState(false)
   const [userToDelete, setUserToDelete] = useState<string | null>(null)
+  const [selectedUserForSetSubscription, setSelectedUserForSetSubscription] = useState<UserAnalytics | null>(null)
+  const [isSetSubscriptionDialogOpen, setIsSetSubscriptionDialogOpen] = useState(false)
+  const [selectedSubscriptionPlan, setSelectedSubscriptionPlan] = useState<"FREE_TRIAL" | "SIX_MONTH" | "TWELVE_MONTH" | null>(null)
+  const [isSettingSubscription, setIsSettingSubscription] = useState(false)
 
   useEffect(() => {
     if (loading) return
@@ -502,6 +506,19 @@ export default function UsersInformationPage() {
                             variant="ghost"
                             size="sm"
                             onClick={() => {
+                              setSelectedUserForSetSubscription(analytics)
+                              setIsSetSubscriptionDialogOpen(true)
+                            }}
+                            className="h-8 w-8 p-0 text-green-400 hover:text-green-300 hover:bg-green-500/20"
+                            title="Set subscription"
+                          >
+                            <CreditCard className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
                               const user = users.find((u: any) => u.id === analytics.userId)
                               if (user) {
                                 setEditFormData({
@@ -725,6 +742,159 @@ export default function UsersInformationPage() {
                 </div>
               )
             })()}
+          </DialogContent>
+        </Dialog>
+
+        {/* Set Subscription Dialog */}
+        <Dialog open={isSetSubscriptionDialogOpen} onOpenChange={setIsSetSubscriptionDialogOpen}>
+          <DialogContent className="max-w-md bg-white border-blue-200 text-black">
+            <DialogHeader>
+              <DialogTitle className="text-black text-xl">
+                Set Subscription - {selectedUserForSetSubscription?.userName}
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label className="text-black font-semibold">Select Subscription Plan</Label>
+                <div className="grid grid-cols-1 gap-3">
+                  <Button
+                    type="button"
+                    variant={selectedSubscriptionPlan === "FREE_TRIAL" ? "default" : "outline"}
+                    onClick={() => setSelectedSubscriptionPlan("FREE_TRIAL")}
+                    className={`w-full justify-start text-left h-auto py-3 ${
+                      selectedSubscriptionPlan === "FREE_TRIAL"
+                        ? "bg-blue-500 text-white hover:bg-blue-600"
+                        : "border-blue-300 bg-white text-black hover:bg-blue-50"
+                    }`}
+                  >
+                    <div className="flex flex-col items-start">
+                      <span className="font-semibold">Free Trial</span>
+                      <span className="text-xs opacity-80">7 days free access</span>
+                    </div>
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={selectedSubscriptionPlan === "SIX_MONTH" ? "default" : "outline"}
+                    onClick={() => setSelectedSubscriptionPlan("SIX_MONTH")}
+                    className={`w-full justify-start text-left h-auto py-3 ${
+                      selectedSubscriptionPlan === "SIX_MONTH"
+                        ? "bg-blue-500 text-white hover:bg-blue-600"
+                        : "border-blue-300 bg-white text-black hover:bg-blue-50"
+                    }`}
+                  >
+                    <div className="flex flex-col items-start">
+                      <span className="font-semibold">6 Months</span>
+                      <span className="text-xs opacity-80">€{PLAN_PRICING.SIX_MONTH.price} - 6 months access</span>
+                    </div>
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={selectedSubscriptionPlan === "TWELVE_MONTH" ? "default" : "outline"}
+                    onClick={() => setSelectedSubscriptionPlan("TWELVE_MONTH")}
+                    className={`w-full justify-start text-left h-auto py-3 ${
+                      selectedSubscriptionPlan === "TWELVE_MONTH"
+                        ? "bg-blue-500 text-white hover:bg-blue-600"
+                        : "border-blue-300 bg-white text-black hover:bg-blue-50"
+                    }`}
+                  >
+                    <div className="flex flex-col items-start">
+                      <span className="font-semibold">12 Months</span>
+                      <span className="text-xs opacity-80">€{PLAN_PRICING.TWELVE_MONTH.price} - 12 months access</span>
+                    </div>
+                  </Button>
+                </div>
+              </div>
+              <div className="flex gap-3 pt-4 border-t border-blue-200">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setIsSetSubscriptionDialogOpen(false)
+                    setSelectedSubscriptionPlan(null)
+                  }}
+                  className="flex-1 border-blue-300 bg-white text-black hover:bg-blue-50"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={async () => {
+                    if (!selectedUserForSetSubscription || !selectedSubscriptionPlan) {
+                      toast.error("Please select a subscription plan")
+                      return
+                    }
+
+                    setIsSettingSubscription(true)
+                    try {
+                      const today = new Date()
+                      today.setHours(0, 0, 0, 0)
+                      today.setMinutes(0, 0)
+                      today.setSeconds(0, 0)
+                      today.setMilliseconds(0)
+
+                      let startDate = new Date(today)
+                      let endDate = new Date(today)
+                      let price = 0
+                      let status = "ACTIVE"
+                      let isFreeTrial = false
+
+                      if (selectedSubscriptionPlan === "FREE_TRIAL") {
+                        endDate.setDate(endDate.getDate() + 7) // 7 days free trial
+                        status = "FREE_TRIAL"
+                        isFreeTrial = true
+                        price = 0
+                      } else if (selectedSubscriptionPlan === "SIX_MONTH") {
+                        endDate.setMonth(endDate.getMonth() + 6)
+                        price = PLAN_PRICING.SIX_MONTH.price
+                      } else if (selectedSubscriptionPlan === "TWELVE_MONTH") {
+                        endDate.setMonth(endDate.getMonth() + 12)
+                        price = PLAN_PRICING.TWELVE_MONTH.price
+                      }
+
+                      endDate.setHours(23, 59, 59, 999)
+
+                      // Create or update subscription via API
+                      const response = await fetch("/api/subscriptions", {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                          userId: selectedUserForSetSubscription.userId,
+                          plan: selectedSubscriptionPlan === "FREE_TRIAL" ? "SIX_MONTH" : selectedSubscriptionPlan, // Use SIX_MONTH as base for free trial
+                          status: status,
+                          startDate: startDate.toISOString(),
+                          endDate: endDate.toISOString(),
+                          price: price,
+                          paymentStatus: "APPROVED",
+                          paymentId: `manual_${Date.now()}`,
+                          isFreeTrial: isFreeTrial,
+                        }),
+                      })
+
+                      if (!response.ok) {
+                        const error = await response.json()
+                        throw new Error(error.error || "Failed to set subscription")
+                      }
+
+                      const data = await response.json()
+                      toast.success(`Subscription set successfully! ${selectedSubscriptionPlan === "FREE_TRIAL" ? "Free Trial" : selectedSubscriptionPlan === "SIX_MONTH" ? "6 Months" : "12 Months"} subscription activated.`)
+                      
+                      setIsSetSubscriptionDialogOpen(false)
+                      setSelectedSubscriptionPlan(null)
+                      loadUsers()
+                    } catch (error: any) {
+                      console.error("Error setting subscription:", error)
+                      toast.error(error.message || "Failed to set subscription")
+                    } finally {
+                      setIsSettingSubscription(false)
+                    }
+                  }}
+                  disabled={!selectedSubscriptionPlan || isSettingSubscription}
+                  className="flex-1 bg-blue-500 hover:bg-blue-600 text-white disabled:opacity-50"
+                >
+                  {isSettingSubscription ? "Setting..." : "Set Subscription"}
+                </Button>
+              </div>
+            </div>
           </DialogContent>
         </Dialog>
 
