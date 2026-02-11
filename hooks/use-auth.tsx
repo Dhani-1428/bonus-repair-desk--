@@ -121,9 +121,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       let response: Response
       try {
-        // Add timeout and better error handling for fetch - optimized for speed
+        // Add timeout and better error handling for fetch
+        // Set timeout to 60s to allow database operations to complete
         const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), 10000) // 10 second timeout for faster failure
+        const timeoutId = setTimeout(() => controller.abort(), 60000) // 60 second timeout to allow database operations
         
         response = await fetch("/api/auth/login", {
           method: "POST",
@@ -138,7 +139,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         
         // Handle specific connection errors
         if (fetchError?.name === "AbortError") {
-          throw new Error("Request timed out. Please check your connection and try again.")
+          throw new Error("Request timed out. The server is taking longer than usual to respond. Please try again in a moment.")
         }
         if (fetchError?.message?.includes("ECONNRESET") || fetchError?.message?.includes("Connection lost")) {
           throw new Error("Connection was reset. Please try again in a moment.")

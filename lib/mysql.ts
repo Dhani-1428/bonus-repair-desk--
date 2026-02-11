@@ -89,15 +89,15 @@ const pool = mysql.createPool({
   queueLimit: 20, // Allow more queuing requests when pool is full
   enableKeepAlive: true,
   keepAliveInitialDelay: 0,
-  connectTimeout: 30000, // 30 seconds timeout for faster failure detection
+  connectTimeout: 60000, // 60 seconds timeout to allow for slower connections
   // Additional options for better connection stability
   multipleStatements: false,
   dateStrings: false,
   supportBigNumbers: true,
   bigNumberStrings: false,
   // Connection pool options to prevent leaks
-  acquireTimeout: 30000, // Wait up to 30s for a connection (faster failure)
-  timeout: 30000, // Connection timeout (faster failure)
+  acquireTimeout: 60000, // Wait up to 60s for a connection
+  timeout: 60000, // Connection timeout
   // Auto-reconnect options
   reconnect: true,
 })
