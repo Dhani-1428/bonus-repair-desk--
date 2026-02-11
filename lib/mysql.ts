@@ -85,19 +85,21 @@ const pool = mysql.createPool({
   database: process.env.DB_NAME || "admin_panel_db",
   ssl: getSSLConfig(),
   waitForConnections: true,
-  connectionLimit: 5, // Reduced to prevent too many connections
-  queueLimit: 10, // Allow queuing requests when pool is full
+  connectionLimit: 15, // Increased to handle more concurrent requests
+  queueLimit: 20, // Allow more queuing requests when pool is full
   enableKeepAlive: true,
   keepAliveInitialDelay: 0,
-  connectTimeout: 60000, // 60 seconds timeout for cloud databases
+  connectTimeout: 30000, // 30 seconds timeout for faster failure detection
   // Additional options for better connection stability
   multipleStatements: false,
   dateStrings: false,
   supportBigNumbers: true,
   bigNumberStrings: false,
   // Connection pool options to prevent leaks
-  acquireTimeout: 60000, // Wait up to 60s for a connection
-  timeout: 60000, // Connection timeout
+  acquireTimeout: 30000, // Wait up to 30s for a connection (faster failure)
+  timeout: 30000, // Connection timeout (faster failure)
+  // Auto-reconnect options
+  reconnect: true,
 })
 
 // Handle pool errors
@@ -156,6 +158,7 @@ export async function query(sql: string, params?: any[], retries = 2): Promise<a
 
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
+      // Use pool.execute which automatically handles connection lifecycle
       const [results] = await pool.execute(sql, params || [])
       return results
     } catch (error: any) {

@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
     console.log(`[API] Fetching ${deleted ? 'deleted ' : ''}repair tickets from table: ${tableName} for userId: ${userId}, tenantId: ${userTenantId}`)
     console.log(`[API] Database: ${process.env.DB_NAME || "admin_panel_db"}`)
     
-    let tickets
+    let tickets: any[] = []
     try {
       if (deleted) {
         // For deleted tickets, show all deleted tickets for the tenant
@@ -94,7 +94,16 @@ export async function GET(request: NextRequest) {
               `SELECT * FROM ${tableName} ORDER BY createdAt DESC`
             )
           } else {
-            throw deletedColumnError
+            // Check if it's a connection error and retry
+            if (deletedColumnError?.code === "ER_CON_COUNT_ERROR" || deletedColumnError?.errno === 1040) {
+              console.warn(`[API] ⚠️  Database busy, retrying once...`)
+              await new Promise(resolve => setTimeout(resolve, 500))
+              tickets = await query(
+                `SELECT * FROM ${tableName} WHERE (deleted = FALSE OR deleted = 0 OR deleted IS NULL) ORDER BY createdAt DESC`
+              )
+            } else {
+              throw deletedColumnError
+            }
           }
         }
       }
@@ -116,15 +125,38 @@ export async function GET(request: NextRequest) {
         sqlState: queryError?.sqlState,
         sqlMessage: queryError?.sqlMessage,
         tableName: tableName,
-        userId: userId
+        userId: userId,
+        tenantId: userTenantId
       })
       
       // If table doesn't exist, return empty array instead of error
       if (queryError?.code === "ER_NO_SUCH_TABLE" || queryError?.message?.includes("doesn't exist")) {
         console.warn(`[API] ⚠️  Table ${tableName} does not exist. Returning empty array.`)
         tickets = []
+      } else if (queryError?.code === "ER_CON_COUNT_ERROR" || queryError?.errno === 1040) {
+        // Database busy - retry once
+        console.warn(`[API] ⚠️  Database busy, retrying once...`)
+        try {
+          await new Promise(resolve => setTimeout(resolve, 500))
+          if (deleted) {
+            tickets = await query(
+              `SELECT * FROM ${tableName} WHERE (deleted = TRUE OR deleted = 1) ORDER BY deletedAt DESC`
+            )
+          } else {
+            tickets = await query(
+              `SELECT * FROM ${tableName} WHERE (deleted = FALSE OR deleted = 0 OR deleted IS NULL) ORDER BY createdAt DESC`
+            )
+          }
+          console.log(`[API] ✅ Retry successful, found ${tickets.length} tickets`)
+        } catch (retryError) {
+          console.error(`[API] ❌ Retry failed:`, retryError)
+          // Return empty array instead of error to prevent UI blocking
+          tickets = []
+        }
       } else {
-        throw queryError
+        // For other errors, return empty array to prevent UI blocking
+        console.error(`[API] ❌ Returning empty array due to error`)
+        tickets = []
       }
     }
 
@@ -152,12 +184,20 @@ export async function GET(request: NextRequest) {
     console.log(`[API] ✅ Returning ${parsedTickets.length} ${deleted ? 'deleted ' : ''}tickets`)
 
     return NextResponse.json({ tickets: parsedTickets })
-  } catch (error) {
+  } catch (error: any) {
     console.error("[API] Error fetching repair tickets:", error)
-    return NextResponse.json(
-      { error: "Failed to fetch repair tickets" },
-      { status: 500 }
-    )
+    
+    // If it's a connection error, return empty array instead of error to prevent UI blocking
+    if (error?.code === "ER_CON_COUNT_ERROR" || error?.errno === 1040 || 
+        error?.message?.includes("Too many connections") || 
+        error?.message?.includes("Database is temporarily busy")) {
+      console.warn("[API] Database busy, returning empty array to prevent UI blocking")
+      return NextResponse.json({ tickets: [] })
+    }
+    
+    // For other errors, still return empty array to prevent UI blocking
+    console.error("[API] Returning empty array due to error:", error?.message || error)
+    return NextResponse.json({ tickets: [] })
   }
 }
 
