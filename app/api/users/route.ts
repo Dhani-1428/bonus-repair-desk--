@@ -28,18 +28,42 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ user })
     } else {
       // Get all users with all fields (including password for super admin)
+      console.log("[API] Fetching all users from database...")
       const users = await query(`
         SELECT id, name, email, role, shopName, contactNumber, tenantId, address, companyEmail, website, vatNumber, password, createdAt, updatedAt
         FROM users
         ORDER BY createdAt DESC
       `)
+      
+      console.log("[API] Found users:", users.length)
+      if (users.length > 0) {
+        console.log("[API] Sample user:", {
+          id: users[0].id,
+          name: users[0].name,
+          email: users[0].email,
+          role: users[0].role
+        })
+      }
 
       return NextResponse.json({ users })
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error("[API] Error fetching users:", error)
+    console.error("[API] Error details:", {
+      code: error?.code,
+      errno: error?.errno,
+      message: error?.message,
+      sqlState: error?.sqlState
+    })
+    
+    // Return empty array instead of error to prevent UI blocking
+    if (error?.code === "ER_CON_COUNT_ERROR" || error?.errno === 1040) {
+      console.warn("[API] Database busy, returning empty array")
+      return NextResponse.json({ users: [] })
+    }
+    
     return NextResponse.json(
-      { error: "Failed to fetch users" },
+      { error: error?.message || "Failed to fetch users", users: [] },
       { status: 500 }
     )
   }

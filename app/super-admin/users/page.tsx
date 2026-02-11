@@ -95,51 +95,84 @@ export default function UsersInformationPage() {
 
   const loadUsers = async () => {
     try {
+      console.log("[UsersPage] Fetching users from API...")
       // Fetch users from API
       const response = await fetch("/api/users")
+      console.log("[UsersPage] Response status:", response.status, response.statusText)
+      
       if (response.ok) {
         const data = await response.json()
+        console.log("[UsersPage] Received data:", { 
+          hasUsers: !!data.users, 
+          userCount: data.users?.length || 0,
+          sampleUser: data.users?.[0] 
+        })
+        
         const allUsers = data.users ? data.users.filter((u: any) => u.role !== "SUPER_ADMIN" && u.role !== "super_admin") : []
+        console.log("[UsersPage] Filtered users count:", allUsers.length)
         setUsers(allUsers)
         await calculateAnalytics(allUsers)
       } else {
+        // Get error message from response
+        const errorData = await response.json().catch(() => ({}))
+        console.error("[UsersPage] API error:", response.status, errorData)
+        toast.error(`Failed to load users: ${errorData.error || response.statusText}`)
+        
         // Fallback to API function
-        const allUsers = await getAllUsers()
-        const filtered = allUsers.filter((u: any) => u.role !== "SUPER_ADMIN" && u.role !== "super_admin")
-        setUsers(filtered)
-        await calculateAnalytics(filtered)
+        try {
+          console.log("[UsersPage] Trying fallback getAllUsers()...")
+          const allUsers = await getAllUsers()
+          const filtered = allUsers.filter((u: any) => u.role !== "SUPER_ADMIN" && u.role !== "super_admin")
+          console.log("[UsersPage] Fallback users count:", filtered.length)
+          setUsers(filtered)
+          await calculateAnalytics(filtered)
+        } catch (fallbackError) {
+          console.error("[UsersPage] Fallback also failed:", fallbackError)
+          toast.error("Failed to load users. Please refresh the page.")
+          setUsers([])
+        }
       }
-    } catch (error) {
-      console.error("Error loading users:", error)
+    } catch (error: any) {
+      console.error("[UsersPage] Error loading users:", error)
+      toast.error(`Error loading users: ${error?.message || "Unknown error"}`)
+      
       // Fallback to API function
       try {
+        console.log("[UsersPage] Trying fallback getAllUsers() after error...")
         const allUsers = await getAllUsers()
         const filtered = allUsers.filter((u: any) => u.role !== "SUPER_ADMIN" && u.role !== "super_admin")
+        console.log("[UsersPage] Fallback users count:", filtered.length)
         setUsers(filtered)
         await calculateAnalytics(filtered)
       } catch (fallbackError) {
-        console.error("Fallback also failed:", fallbackError)
+        console.error("[UsersPage] Fallback also failed:", fallbackError)
+        toast.error("Failed to load users. Please check your connection and refresh.")
         setUsers([])
       }
     }
   }
 
   const calculateAnalytics = async (allUsers: any[]) => {
+    console.log("[UsersPage] Calculating analytics for", allUsers.length, "users")
+    
     // Fetch subscriptions from API instead of localStorage
     let subscriptionsData: any[] = []
     try {
+      console.log("[UsersPage] Fetching subscriptions from API...")
       const subscriptionsResponse = await fetch("/api/subscriptions/all")
       if (subscriptionsResponse.ok) {
         const data = await subscriptionsResponse.json()
         subscriptionsData = data.subscriptions || []
+        console.log("[UsersPage] Found subscriptions:", subscriptionsData.length)
         setAllSubscriptions(subscriptionsData)
       } else {
+        console.warn("[UsersPage] Subscriptions API failed, using fallback")
         // Fallback to localStorage if API fails
         subscriptionsData = getAllSubscriptions()
         setAllSubscriptions(subscriptionsData)
       }
     } catch (error) {
-      console.error("Error fetching subscriptions:", error)
+      console.error("[UsersPage] Error fetching subscriptions:", error)
       // Fallback to localStorage if API fails
       subscriptionsData = getAllSubscriptions()
       setAllSubscriptions(subscriptionsData)

@@ -4,6 +4,7 @@ import { query } from "@/lib/mysql"
 // GET all subscriptions with user data
 export async function GET(request: NextRequest) {
   try {
+    console.log("[API] Fetching all subscriptions from database...")
     const subscriptions = await query(`
       SELECT 
         s.*,
@@ -16,6 +17,8 @@ export async function GET(request: NextRequest) {
       LEFT JOIN users u ON s.userId = u.id
       ORDER BY s.createdAt DESC
     `)
+    
+    console.log("[API] Found subscriptions:", subscriptions.length)
 
     // Transform results to match expected format
     const formatted = (subscriptions as any[]).map((sub) => ({
@@ -30,11 +33,22 @@ export async function GET(request: NextRequest) {
     }))
 
     return NextResponse.json({ subscriptions: formatted })
-  } catch (error) {
+  } catch (error: any) {
     console.error("[API] Error fetching all subscriptions:", error)
-    return NextResponse.json(
-      { error: "Failed to fetch subscriptions" },
-      { status: 500 }
-    )
+    console.error("[API] Error details:", {
+      code: error?.code,
+      errno: error?.errno,
+      message: error?.message,
+      sqlState: error?.sqlState
+    })
+    
+    // Return empty array instead of error to prevent UI blocking
+    if (error?.code === "ER_CON_COUNT_ERROR" || error?.errno === 1040) {
+      console.warn("[API] Database busy, returning empty array")
+      return NextResponse.json({ subscriptions: [] })
+    }
+    
+    // Return empty array on any error to prevent UI blocking
+    return NextResponse.json({ subscriptions: [] })
   }
 }
