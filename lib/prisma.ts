@@ -26,9 +26,10 @@ const getDatabaseUrl = () => {
 const getDatabaseUrlWithPool = () => {
   const baseUrl = getDatabaseUrl()
   // Add connection pool parameters to the URL
-  // Prisma connection pool settings (max 5 connections to match MySQL pool)
-  const poolSize = process.env.PRISMA_CONNECTION_LIMIT || "5"
-  const connectionTimeout = process.env.PRISMA_CONNECTION_TIMEOUT || "30"
+  // Prisma connection pool settings - increased to match MySQL pool
+  // Set to 50 by default, can be increased via PRISMA_CONNECTION_LIMIT environment variable
+  const poolSize = process.env.PRISMA_CONNECTION_LIMIT || "50"
+  const connectionTimeout = process.env.PRISMA_CONNECTION_TIMEOUT || "60"
   
   // Parse URL and add connection_limit parameter
   try {
@@ -53,9 +54,9 @@ if (!process.env.DATABASE_URL) {
   const existingUrl = process.env.DATABASE_URL
   if (!existingUrl.includes("connection_limit")) {
     // Add connection_limit if not present
-    const poolSize = process.env.PRISMA_CONNECTION_LIMIT || "5"
+    const poolSize = process.env.PRISMA_CONNECTION_LIMIT || "50"
     const separator = existingUrl.includes("?") ? "&" : "?"
-    process.env.DATABASE_URL = `${existingUrl}${separator}connection_limit=${poolSize}`
+    process.env.DATABASE_URL = `${existingUrl}${separator}connection_limit=${poolSize}&connect_timeout=60&pool_timeout=60`
   }
 }
 

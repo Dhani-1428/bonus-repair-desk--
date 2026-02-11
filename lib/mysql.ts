@@ -77,11 +77,12 @@ if (!process.env.DB_HOST || !process.env.DB_USER || !process.env.DB_PASSWORD || 
   console.error("   DB_NAME:", process.env.DB_NAME ? "✓" : "✗ MISSING")
 }
 
-// Connection pool configuration - balanced limit to prevent "too many connections" errors
-// Most MySQL servers have a default max_connections of 151, so we use a balanced limit
-// Increased from 5 to 10 to handle more concurrent requests while still being conservative
-const connectionLimit = parseInt(process.env.DB_CONNECTION_LIMIT || "10")
-const queueLimit = parseInt(process.env.DB_QUEUE_LIMIT || "20")
+// Connection pool configuration - increased limit to handle high concurrency
+// Most MySQL servers have a default max_connections of 151
+// Set to 50 by default, can be increased via DB_CONNECTION_LIMIT environment variable
+// For unlimited-like behavior, set DB_CONNECTION_LIMIT to a high value (e.g., 100)
+const connectionLimit = parseInt(process.env.DB_CONNECTION_LIMIT || "50")
+const queueLimit = parseInt(process.env.DB_QUEUE_LIMIT || "100")
 
 const pool = mysql.createPool({
   host: process.env.DB_HOST || "localhost",
@@ -91,8 +92,8 @@ const pool = mysql.createPool({
   database: process.env.DB_NAME || "admin_panel_db",
   ssl: getSSLConfig(),
   waitForConnections: true,
-  connectionLimit: connectionLimit, // Reduced to 5 to prevent connection exhaustion
-  queueLimit: queueLimit, // Reduced queue limit
+  connectionLimit: connectionLimit, // Increased to 50 to handle high concurrency
+  queueLimit: queueLimit, // Increased queue limit to 100
   enableKeepAlive: true,
   keepAliveInitialDelay: 0,
   connectTimeout: 60000, // 60 seconds to allow for slower connections
@@ -109,6 +110,35 @@ const pool = mysql.createPool({
 })
 
 console.log(`[MySQL] Connection pool configured: limit=${connectionLimit}, queueLimit=${queueLimit}`)
+
+/**
+ * Get connection pool statistics
+ */
+function getPoolStats() {
+  const poolState = pool as any
+  return {
+    totalConnections: poolState._allConnections?.length || 0,
+    freeConnections: poolState._freeConnections?.length || 0,
+    connectionLimit: connectionLimit,
+    queueLength: poolState._connectionQueue?.length || 0,
+    queueLimit: queueLimit,
+  }
+}
+
+/**
+ * Log connection pool status (useful for debugging)
+ */
+function logPoolStatus() {
+  const stats = getPoolStats()
+  console.log("[MySQL] Pool Status:", {
+    active: stats.totalConnections - stats.freeConnections,
+    free: stats.freeConnections,
+    total: stats.totalConnections,
+    limit: stats.connectionLimit,
+    queue: stats.queueLength,
+    utilization: `${Math.round(((stats.totalConnections - stats.freeConnections) / stats.connectionLimit) * 100)}%`
+  })
+}
 
 // Handle pool errors and monitor connection usage
 pool.on("connection", (connection) => {
@@ -127,10 +157,20 @@ pool.on("connection", (connection) => {
 pool.on("error", (err: any) => {
   console.error("[MySQL] Pool error:", err?.code || err?.message)
   if (err.code === "ER_CON_COUNT_ERROR" || err.errno === 1040) {
+    const stats = getPoolStats()
     console.error(`[MySQL] ⚠️  Too many connections! Pool limit: ${connectionLimit}`)
-    console.error(`[MySQL] Consider reducing connectionLimit or increasing MySQL max_connections`)
+    console.error(`[MySQL] Current pool stats:`, stats)
+    console.error(`[MySQL] To increase limit, set DB_CONNECTION_LIMIT environment variable (current: ${connectionLimit})`)
+    console.error(`[MySQL] To check MySQL server limit, run: SHOW VARIABLES LIKE 'max_connections';`)
   }
 })
+
+// Log pool status periodically in development mode
+if (process.env.NODE_ENV === "development") {
+  setInterval(() => {
+    logPoolStatus()
+  }, 60000) // Every 60 seconds
+}
 
 /**
  * Execute a query with retry logic for connection errors
@@ -234,9 +274,31 @@ export async function execute(sql: string, params?: any[], retries = 2): Promise
 
 /**
  * Get a connection from the pool
+ * IMPORTANT: Always release the connection when done using connection.release()
  */
 export async function getConnection() {
-  return await pool.getConnection()
+  const connection = await pool.getConnection()
+  // Add automatic release on error to prevent leaks
+  const originalRelease = connection.release.bind(connection)
+  let released = false
+  
+  connection.release = function() {
+    if (!released) {
+      released = true
+      return originalRelease()
+    }
+  }
+  
+  // Auto-release on connection error
+  connection.on('error', (err: any) => {
+    if (!released) {
+      console.error("[MySQL] Connection error, releasing connection:", err?.message)
+      released = true
+      originalRelease()
+    }
+  })
+  
+  return connection
 }
 
 /**
@@ -289,6 +351,35 @@ export async function testConnection(): Promise<boolean> {
     console.error("[MySQL] Connection test failed:", error)
     return false
   }
+}
+
+/**
+ * Get connection pool statistics (exported for external use)
+ */
+export function getPoolStats() {
+  const poolState = pool as any
+  return {
+    totalConnections: poolState._allConnections?.length || 0,
+    freeConnections: poolState._freeConnections?.length || 0,
+    connectionLimit: connectionLimit,
+    queueLength: poolState._connectionQueue?.length || 0,
+    queueLimit: queueLimit,
+  }
+}
+
+/**
+ * Log connection pool status (exported for external use)
+ */
+export function logPoolStatus() {
+  const stats = getPoolStats()
+  console.log("[MySQL] Pool Status:", {
+    active: stats.totalConnections - stats.freeConnections,
+    free: stats.freeConnections,
+    total: stats.totalConnections,
+    limit: stats.connectionLimit,
+    queue: stats.queueLength,
+    utilization: `${Math.round(((stats.totalConnections - stats.freeConnections) / stats.connectionLimit) * 100)}%`
+  })
 }
 
 /**
