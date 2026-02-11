@@ -62,9 +62,6 @@ export default function LoginPage() {
         throw new Error("Login failed. Please try again.")
       }
       
-      // Wait a bit for state to update, then redirect
-      await new Promise(resolve => setTimeout(resolve, 100))
-      
       // Check for redirect parameter
       const redirectTo = searchParams.get("redirect")
       
@@ -77,6 +74,7 @@ export default function LoginPage() {
           loggedInUser.email?.toLowerCase() === "superadmin@admin.com"
         )
       
+      // Immediate redirect without delay
       if (isSuperAdmin) {
         router.replace(redirectTo || "/super-admin")
       } else {
@@ -94,9 +92,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md space-y-6 animate-fade-in">
         <div className="text-center space-y-2">
           <Link href="/" className="inline-flex items-center space-x-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-black font-bold text-xl">
-              B
-            </div>
+            <img src="/BRD LOGO..png" alt="BRD Logo" className="h-12 w-12 rounded-full object-cover" />
             <span className="font-bold text-2xl text-white">Bonus Repair Desk</span>
           </Link>
           <h1 className="text-3xl font-bold mt-4 text-white">Welcome Back</h1>

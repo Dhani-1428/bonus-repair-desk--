@@ -121,9 +121,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       let response: Response
       try {
-        // Add timeout and better error handling for fetch
+        // Add timeout and better error handling for fetch - optimized for speed
         const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), 60000) // 60 second timeout
+        const timeoutId = setTimeout(() => controller.abort(), 10000) // 10 second timeout for faster failure
         
         response = await fetch("/api/auth/login", {
           method: "POST",
@@ -263,55 +263,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return userData
       }
 
-      // Check subscription status for regular users
-      try {
-        const subResponse = await fetch(`/api/subscriptions?userId=${userData.id}`)
-        if (!subResponse.ok) {
-          console.warn("[Login] Failed to fetch subscription, but allowing login:", subResponse.status)
-          // Don't block login if subscription check fails - allow user to proceed
-        } else {
-          const subData = await subResponse.json()
-          const sub = subData.subscription
-
-          if (sub) {
-            const now = new Date()
-            const endDate = new Date(sub.endDate)
-            const isExpired = endDate < now
-            const isFreeTrial = sub.status === "FREE_TRIAL" || sub.status === "free_trial" || sub.isFreeTrial
-            const paymentStatus = sub.paymentStatus || "PENDING"
-            const isPaymentApproved = paymentStatus === "APPROVED"
-            
-            // Don't block login if subscription is expired - allow them to access subscription page
-            // The dashboard layout will redirect them to subscription page
-            // Just store the subscription info so they can see it on subscription page
-            if (isExpired) {
-              // Allow login but subscription will be marked as expired
-              // Dashboard layout will handle redirect to subscription page
-              console.log("[Login] Subscription expired, allowing login to access subscription page")
-            } else if (!isFreeTrial && !isPaymentApproved) {
-              // Don't block login if payment is pending - allow them to see status on subscription page
-              console.log("[Login] Payment pending, allowing login to access subscription page")
-            }
-          } else {
-            // No subscription found - allow login but they'll be redirected to subscription page
-            console.log("[Login] No subscription found, allowing login to access subscription page")
-          }
-        }
-      } catch (subError: any) {
-        // If subscription check fails, log but don't block login
-        console.error("[Login] Error checking subscription:", subError)
-        // Only throw if it's a subscription-related error (expired, etc.)
-        if (subError instanceof Error && subError.message.includes("subscription") || subError.message.includes("trial")) {
-          throw subError
-        }
-      }
-
+      // Set user immediately for fast login
       setUser(userData)
       sessionStorage.setItem("user", JSON.stringify(userData))
       sessionStorage.setItem("auth-token", "demo-token")
 
-      // Load subscription
-      await loadSubscription(userData.id)
+      // Load subscription asynchronously (non-blocking) - don't await
+      loadSubscription(userData.id).catch((subError) => {
+        console.error("[Login] Error loading subscription (non-critical):", subError)
+        // Don't block login if subscription check fails
+      })
 
       return userData
     } catch (error: any) {

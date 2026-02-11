@@ -53,87 +53,37 @@ export async function POST(request: NextRequest) {
 
     console.log("[API] Login attempt for email:", email)
 
-    // Find user (case-insensitive email comparison) with retry on connection errors
+    // Find user (case-insensitive email comparison) - optimized for speed
     let user
-    const maxRetries = 3
-    let lastError: any = null
-    
-    for (let attempt = 0; attempt <= maxRetries; attempt++) {
-      try {
-        user = await queryOne(
-          `SELECT * FROM users WHERE LOWER(email) = LOWER(?)`,
-          [email.trim()]
-        )
-        // Success - break out of retry loop
-        break
-      } catch (dbError: any) {
-        lastError = dbError
-        
-        // Check if it's a connection-related error that we should retry
-        const isConnectionError = 
-          dbError?.code === "ER_CON_COUNT_ERROR" || 
-          dbError?.errno === 1040 || 
-          dbError?.code === "ECONNRESET" ||
-          dbError?.code === "ETIMEDOUT" ||
-          dbError?.code === "ECONNREFUSED" ||
-          dbError?.code === "PROTOCOL_CONNECTION_LOST" ||
-          dbError?.message?.includes("Too many connections") ||
-          dbError?.message?.includes("too many connections") ||
-          dbError?.message?.includes("ECONNRESET") ||
-          dbError?.message?.includes("Connection lost") ||
-          dbError?.message?.includes("read ECONNRESET")
-        
-        // If it's a connection error and we have retries left, retry with exponential backoff
-        if (isConnectionError && attempt < maxRetries) {
-          const isTooManyConnections = dbError?.code === "ER_CON_COUNT_ERROR" || 
-                                       dbError?.errno === 1040 || 
-                                       dbError?.message?.includes("Too many connections") ||
-                                       dbError?.message?.includes("too many connections")
-          
-          // Use longer backoff for "too many connections" errors
-          const backoffDelay = isTooManyConnections 
-            ? Math.min(Math.pow(2, attempt) * 2000, 10000) // 2s, 4s, 8s, max 10s
-            : Math.pow(2, attempt) * 1000 // 1s, 2s, 4s
-          
-          console.warn(`[API] Database connection error (attempt ${attempt + 1}/${maxRetries + 1}), retrying in ${backoffDelay}ms...`, {
-            code: dbError?.code,
-            errno: dbError?.errno,
-            message: dbError?.message,
-          })
-          
-          await new Promise(resolve => setTimeout(resolve, backoffDelay))
-          continue // Retry
+    try {
+      user = await queryOne(
+        `SELECT * FROM users WHERE LOWER(email) = LOWER(?)`,
+        [email.trim()]
+      )
+    } catch (dbError: any) {
+      // Only retry once for critical connection errors
+      if ((dbError?.code === "ER_CON_COUNT_ERROR" || dbError?.errno === 1040) && 
+          dbError?.message?.includes("Too many connections")) {
+        console.warn("[API] Database busy, retrying once...")
+        await new Promise(resolve => setTimeout(resolve, 300)) // Short delay
+        try {
+          user = await queryOne(
+            `SELECT * FROM users WHERE LOWER(email) = LOWER(?)`,
+            [email.trim()]
+          )
+        } catch (retryError) {
+          throw new Error("Database is temporarily busy. Please try again in a moment.")
         }
-        
-        // Handle DNS resolution errors (ENOTFOUND) - don't retry these
-        if (dbError?.code === "ENOTFOUND" || dbError?.message?.includes("ENOTFOUND") || dbError?.message?.includes("getaddrinfo")) {
-          console.error("[API] Database hostname cannot be resolved:", {
-            code: dbError?.code,
-            message: dbError?.message,
-            host: process.env.DB_HOST,
-          })
-          throw new Error("Database connection failed: Cannot resolve database hostname. Please check your database configuration.")
-        }
-        
-        // If we've exhausted retries or it's not a connection error, throw
-        if (attempt === maxRetries) {
-          if (isConnectionError) {
-            throw new Error("Database is temporarily busy. Please try again in a moment.")
-          }
-          throw dbError
-        }
+      } else if (dbError?.code === "ENOTFOUND" || dbError?.message?.includes("ENOTFOUND") || dbError?.message?.includes("getaddrinfo")) {
+        console.error("[API] Database hostname cannot be resolved:", {
+          code: dbError?.code,
+          message: dbError?.message,
+          host: process.env.DB_HOST,
+        })
+        throw new Error("Database connection failed: Cannot resolve database hostname. Please check your database configuration.")
+      } else {
+        throw dbError
       }
-    }
-    
-    // If we still don't have a user after all retries, throw the last error
-    if (!user && lastError) {
-      if (lastError?.code === "ER_CON_COUNT_ERROR" || 
-          lastError?.errno === 1040 || 
-          lastError?.message?.includes("Too many connections") ||
-          lastError?.message?.includes("too many connections")) {
-        throw new Error("Database is temporarily busy. Please try again in a moment.")
-      }
-      throw lastError
     }
 
     if (!user) {
@@ -161,31 +111,32 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Track login history (non-blocking)
-    try {
-      const loginId = `login_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-      await query(
-        `INSERT INTO login_history (id, userId, tenantId, ip) VALUES (?, ?, ?, ?)`,
-        [
-          loginId,
-          user.id,
-          user.tenantId,
-          request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || null,
-        ]
-      )
-    } catch (historyError) {
-      console.error("[API] Failed to log login history (non-critical):", historyError)
-      // Continue with login even if history logging fails
-    }
+    // Track login history (truly non-blocking - fire and forget)
+    Promise.resolve().then(async () => {
+      try {
+        const loginId = `login_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+        await query(
+          `INSERT INTO login_history (id, userId, tenantId, ip) VALUES (?, ?, ?, ?)`,
+          [
+            loginId,
+            user.id,
+            user.tenantId,
+            request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || null,
+          ]
+        )
+      } catch (historyError) {
+        console.error("[API] Failed to log login history (non-critical):", historyError)
+        // Continue with login even if history logging fails
+      }
+    }).catch(() => {}) // Silently fail
 
     // Return user data (password excluded)
     const { password: _, ...userWithoutPassword } = user
 
     console.log("[API] Login successful for:", email, "Role:", user.role)
 
-    // Send login emails (non-blocking) - wrapped in separate try-catch to not block login
-    // Use setTimeout to make it truly non-blocking
-    setTimeout(async () => {
+    // Send login emails (truly non-blocking - fire and forget)
+    Promise.resolve().then(async () => {
       try {
         const userForEmail = {
           id: user.id,
@@ -198,32 +149,22 @@ export async function POST(request: NextRequest) {
           createdAt: user.createdAt || new Date().toISOString(),
         }
         
-        console.log("[API] Sending login emails for user:", user.email)
-        
         // Send email to user
-        try {
-          const userEmailResult = await sendLoginEmail(userForEmail)
-          console.log("[API] User login email sent:", userEmailResult ? "Success" : "Failed")
-        } catch (userEmailError: any) {
-          console.error("[API] Error sending user login email:", userEmailError?.message || userEmailError)
-        }
+        sendLoginEmail(userForEmail).catch((err) => {
+          console.error("[API] Error sending user login email:", err?.message || err)
+        })
         
         // Send notification to admin (skip for super admin)
         if (user.role !== "SUPER_ADMIN" && user.role !== "super_admin") {
-          try {
-            const adminEmailResult = await sendAdminLoginNotification(userForEmail)
-            console.log("[API] Admin login notification sent:", adminEmailResult ? "Success" : "Failed")
-          } catch (adminEmailError: any) {
-            console.error("[API] Error sending admin login notification:", adminEmailError?.message || adminEmailError)
-          }
-        } else {
-          console.log("[API] Skipping admin login notification for super admin")
+          sendAdminLoginNotification(userForEmail).catch((err) => {
+            console.error("[API] Error sending admin login notification:", err?.message || err)
+          })
         }
       } catch (emailError: any) {
         console.error("[API] Error in login email sending block:", emailError?.message || emailError)
         // Don't fail login if email fails
       }
-    }, 0)
+    }).catch(() => {}) // Silently fail
 
     return NextResponse.json({
       message: "Login successful",
