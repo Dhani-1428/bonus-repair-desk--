@@ -53,17 +53,29 @@ export async function GET(request: NextRequest) {
       code: error?.code,
       errno: error?.errno,
       message: error?.message,
-      sqlState: error?.sqlState
+      sqlState: error?.sqlState,
+      stack: error?.stack
     })
     
-    // Return empty array instead of error to prevent UI blocking
+    // Return empty array for connection errors to prevent UI blocking
     if (error?.code === "ER_CON_COUNT_ERROR" || error?.errno === 1040) {
-      console.warn("[API] Database busy, returning empty array")
-      return NextResponse.json({ users: [] })
+      console.warn("[API] Database busy (too many connections), returning empty array")
+      return NextResponse.json({ users: [], error: "Database is temporarily busy. Please try again." })
     }
     
+    // For other errors, still return empty array but log the error
+    console.error("[API] Query failed, returning empty array. Error:", error?.message)
     return NextResponse.json(
-      { error: error?.message || "Failed to fetch users", users: [] },
+      { 
+        error: error?.message || "Failed to fetch users", 
+        users: [],
+        errorCode: error?.code,
+        errorDetails: process.env.NODE_ENV === "development" ? {
+          code: error?.code,
+          errno: error?.errno,
+          sqlState: error?.sqlState
+        } : undefined
+      },
       { status: 500 }
     )
   }

@@ -77,6 +77,12 @@ if (!process.env.DB_HOST || !process.env.DB_USER || !process.env.DB_PASSWORD || 
   console.error("   DB_NAME:", process.env.DB_NAME ? "✓" : "✗ MISSING")
 }
 
+// Connection pool configuration - balanced limit to prevent "too many connections" errors
+// Most MySQL servers have a default max_connections of 151, so we use a balanced limit
+// Increased from 5 to 10 to handle more concurrent requests while still being conservative
+const connectionLimit = parseInt(process.env.DB_CONNECTION_LIMIT || "10")
+const queueLimit = parseInt(process.env.DB_QUEUE_LIMIT || "20")
+
 const pool = mysql.createPool({
   host: process.env.DB_HOST || "localhost",
   port: parseInt(process.env.DB_PORT || "3306"),
@@ -85,26 +91,30 @@ const pool = mysql.createPool({
   database: process.env.DB_NAME || "admin_panel_db",
   ssl: getSSLConfig(),
   waitForConnections: true,
-  connectionLimit: 15, // Increased to handle more concurrent requests
-  queueLimit: 20, // Allow more queuing requests when pool is full
+  connectionLimit: connectionLimit, // Reduced to 5 to prevent connection exhaustion
+  queueLimit: queueLimit, // Reduced queue limit
   enableKeepAlive: true,
   keepAliveInitialDelay: 0,
-  connectTimeout: 60000, // 60 seconds timeout to allow for slower connections
+  connectTimeout: 60000, // 60 seconds to allow for slower connections
   // Additional options for better connection stability
   multipleStatements: false,
   dateStrings: false,
   supportBigNumbers: true,
   bigNumberStrings: false,
   // Connection pool options to prevent leaks
-  acquireTimeout: 60000, // Wait up to 60s for a connection
+  acquireTimeout: 60000, // Wait up to 60s for a connection from pool
   timeout: 60000, // Connection timeout
   // Auto-reconnect options
   reconnect: true,
 })
 
-// Handle pool errors
+console.log(`[MySQL] Connection pool configured: limit=${connectionLimit}, queueLimit=${queueLimit}`)
+
+// Handle pool errors and monitor connection usage
 pool.on("connection", (connection) => {
-  console.log("[MySQL] New connection established")
+  if (process.env.NODE_ENV === "development") {
+    console.log(`[MySQL] New connection established (pool limit: ${connectionLimit})`)
+  }
   
   connection.on("error", (err: any) => {
     console.error("[MySQL] Connection error:", err?.code || err?.message)
@@ -116,6 +126,10 @@ pool.on("connection", (connection) => {
 
 pool.on("error", (err: any) => {
   console.error("[MySQL] Pool error:", err?.code || err?.message)
+  if (err.code === "ER_CON_COUNT_ERROR" || err.errno === 1040) {
+    console.error(`[MySQL] ⚠️  Too many connections! Pool limit: ${connectionLimit}`)
+    console.error(`[MySQL] Consider reducing connectionLimit or increasing MySQL max_connections`)
+  }
 })
 
 /**
@@ -123,22 +137,7 @@ pool.on("error", (err: any) => {
  * Note: For table/column names, use escapeId() before passing to query
  */
 export async function query(sql: string, params?: any[], retries = 2): Promise<any> {
-  // Check if required env vars are set before attempting query
-  // Log what we're actually seeing (for debugging)
-  const envCheck = {
-    DB_HOST: process.env.DB_HOST ? `Set (${process.env.DB_HOST.substring(0, 10)}...)` : "NOT SET",
-    DB_PORT: process.env.DB_PORT ? `Set (${process.env.DB_PORT})` : "NOT SET",
-    DB_USER: process.env.DB_USER ? `Set (${process.env.DB_USER})` : "NOT SET",
-    DB_PASSWORD: process.env.DB_PASSWORD ? "Set (***)" : "NOT SET",
-    DB_NAME: process.env.DB_NAME ? `Set (${process.env.DB_NAME})` : "NOT SET",
-    DB_SSL: process.env.DB_SSL ? `Set (${process.env.DB_SSL})` : "NOT SET",
-    NODE_ENV: process.env.NODE_ENV,
-    VERCEL: process.env.VERCEL,
-    VERCEL_ENV: process.env.VERCEL_ENV,
-  }
-  
-  console.log("[MySQL] Environment check:", envCheck)
-  
+  // Check if required env vars are set before attempting query (only log once per session)
   if (!process.env.DB_HOST || !process.env.DB_USER || !process.env.DB_PASSWORD || !process.env.DB_NAME) {
     const missing = []
     if (!process.env.DB_HOST) missing.push("DB_HOST")
@@ -147,12 +146,10 @@ export async function query(sql: string, params?: any[], retries = 2): Promise<a
     if (!process.env.DB_NAME) missing.push("DB_NAME")
     
     console.error("[MySQL] ❌ Missing environment variables:", missing)
-    console.error("[MySQL] All environment variables:", Object.keys(process.env).filter(k => k.startsWith("DB_")))
     
     const error = new Error(`Missing required database environment variables: ${missing.join(", ")}. Please configure them in Vercel project settings and redeploy.`)
     ;(error as any).code = "ENV_MISSING"
     ;(error as any).missing = missing
-    ;(error as any).envCheck = envCheck
     throw error
   }
 
@@ -160,6 +157,10 @@ export async function query(sql: string, params?: any[], retries = 2): Promise<a
     try {
       // Use pool.execute which automatically handles connection lifecycle
       const [results] = await pool.execute(sql, params || [])
+      // Log successful query only in development mode and for non-SELECT queries
+      if (process.env.NODE_ENV === "development" && !sql.trim().toUpperCase().startsWith("SELECT")) {
+        console.log(`[MySQL] Query executed successfully (${sql.substring(0, 50)}...)`)
+      }
       return results
     } catch (error: any) {
       const isConnectionError = 
