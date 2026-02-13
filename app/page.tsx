@@ -12,6 +12,8 @@ import { ContactSection } from "@/components/contact-section"
 import { PricingSection } from "@/components/pricing-section"
 import { ScrollToTop } from "@/components/scroll-to-top"
 import { WhatsAppFloat } from "@/components/whatsapp-float"
+import { WebsiteLanguageSelector } from "@/components/website-language-selector"
+import { useTranslation } from "@/components/language-provider"
 
 export default function Home() {
   const { t } = useTranslation()
