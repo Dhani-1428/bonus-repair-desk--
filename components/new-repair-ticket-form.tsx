@@ -2055,7 +2055,9 @@ function translateWarrantyValue(storedValue: string | null | undefined, targetLa
 }
 
 // Helper function to get translations for receipt printing
-function getReceiptTranslations(lang: "en" | "pt" | "de" | "fr" | "ur" | "pa" | "hi" = "en") {
+type ReceiptLanguage = "en" | "pt" | "de" | "fr" | "es" | "it" | "nl" | "pl" | "ro" | "el" | "cs" | "hu" | "sv" | "fi" | "da" | "bg" | "hr" | "sk" | "sl" | "lt" | "lv" | "et" | "ga" | "mt" | "ur" | "pa" | "hi"
+
+function getReceiptTranslations(lang: ReceiptLanguage = "en") {
   const translations: Record<string, Record<string, string>> = {
     en: {
       "receipt.clientCopy": "CLIENT COPY",
@@ -2340,7 +2342,48 @@ function getReceiptTranslations(lang: "en" | "pt" | "de" | "fr" | "ur" | "pa" | 
       "form.price": "कीमत",
       "form.budget": "बजट",
     },
+    es: {
+      "receipt.clientCopy": "COPIA DEL CLIENTE",
+      "receipt.adminCopy": "COPIA DEL ADMINISTRADOR",
+      "receipt.clientId": "ID del Cliente",
+      "receipt.name": "Nombre",
+      "receipt.clientPhone": "Teléfono del Cliente",
+      "receipt.receivedBy": "Dispositivo Recibido Por",
+      "receipt.entryDate": "Fecha de Entrada",
+      "receipt.outDate": "Fecha de Salida",
+      "receipt.repairN": "Reparación n",
+      "receipt.imei": "IMEI",
+      "receipt.brandModel": "Marca-Modelo",
+      "receipt.laptopSerialN": "Número de Serie del Portátil",
+      "receipt.warranty": "Garantía",
+      "receipt.equipmentCheck": "Verificación del Equipo",
+      "receipt.equipmentObs": "Obs. del Equipo",
+      "receipt.repairObs": "Obs. de Reparación",
+      "receipt.services": "Servicios",
+      "receipt.problem": "Problema",
+      "receipt.price": "Presupuesto",
+      "receipt.responsibleText": "SOMOS RESPONSABLES DE LA ASISTENCIA / REPARACIÓN DE LAS ANOMALÍAS DESCRITAS.",
+      "receipt.storageTitle": "Condiciones de Almacenamiento y Retiro",
+      "receipt.storageText1": "El equipo debe ser retirado en un plazo máximo de sesenta (60) días después de la conclusión de la reparación y la notificación correspondiente por",
+      "receipt.storageText2": "Transcurrido este plazo, se aplicará una tasa de almacenamiento de 0,95 € por día, a partir del día 61, hasta el límite máximo de ciento veinte (120) días, aplicable independientemente de si la reparación ha sido realizada o si el presupuesto ha sido rechazado.",
+      "receipt.storageText3": "Al aceptar este documento, el cliente declara que ha leído, comprendido y acepta los términos y condiciones de reparación.",
+      "receipt.repairReference": "Referencia de la Reparación",
+      "receipt.cutHere": "CORTAR AQUÍ",
+      "common.yes": "Sí",
+      "common.no": "No",
+      "form.warrantyUntil30Days": "Garantía hasta 30 días",
+      "form.withoutWarranty": "Sin Garantía",
+      "form.simCard": "Tarjeta SIM",
+      "form.simTray": "Bandeja SIM",
+      "form.memoryCard": "Tarjeta de Memoria",
+      "form.charger": "Cargador",
+      "form.battery": "Batería",
+      "form.waterDamaged": "Dañado por Agua",
+      "form.price": "Precio",
+      "form.budget": "Presupuesto",
+    },
   }
+  // For languages not yet translated, fall back to English
   return translations[lang] || translations.en
 }
 
@@ -2352,16 +2395,36 @@ function LanguageSelectionDialog({
 }: { 
   open: boolean
   onClose: () => void
-  onSelect: (lang: "en" | "pt" | "de" | "fr" | "ur" | "pa" | "hi") => void 
+  onSelect: (lang: ReceiptLanguage) => void 
 }) {
-  const languages = [
-    { code: "en" as const, name: "English" },
-    { code: "pt" as const, name: "Português" },
-    { code: "de" as const, name: "Deutsch" },
-    { code: "fr" as const, name: "Français" },
-    { code: "ur" as const, name: "اردو" },
-    { code: "pa" as const, name: "ਪੰਜਾਬੀ" },
-    { code: "hi" as const, name: "हिंदी" },
+  const languages: { code: ReceiptLanguage; name: string }[] = [
+    { code: "en", name: "English" },
+    { code: "es", name: "Español" },
+    { code: "pt", name: "Português" },
+    { code: "de", name: "Deutsch" },
+    { code: "fr", name: "Français" },
+    { code: "it", name: "Italiano" },
+    { code: "nl", name: "Nederlands" },
+    { code: "pl", name: "Polski" },
+    { code: "ro", name: "Română" },
+    { code: "el", name: "Ελληνικά" },
+    { code: "cs", name: "Čeština" },
+    { code: "hu", name: "Magyar" },
+    { code: "sv", name: "Svenska" },
+    { code: "fi", name: "Suomi" },
+    { code: "da", name: "Dansk" },
+    { code: "bg", name: "Български" },
+    { code: "hr", name: "Hrvatski" },
+    { code: "sk", name: "Slovenčina" },
+    { code: "sl", name: "Slovenščina" },
+    { code: "lt", name: "Lietuvių" },
+    { code: "lv", name: "Latviešu" },
+    { code: "et", name: "Eesti" },
+    { code: "ga", name: "Gaeilge" },
+    { code: "mt", name: "Malti" },
+    { code: "ur", name: "اردو" },
+    { code: "pa", name: "ਪੰਜਾਬੀ" },
+    { code: "hi", name: "हिंदी" },
   ]
 
   return (
@@ -2397,7 +2460,7 @@ function LanguageSelectionDialog({
 export async function printReceiptWithLanguageSelection(
   tickets: any[], 
   preferredPrinter: string | null = null,
-  language: "en" | "pt" | "de" | "fr" | "ur" | "pa" | "hi" = "en",
+  language: ReceiptLanguage = "en",
   printerType: "thermal" | "a4" = "a4"
 ) {
   // Validate tickets
@@ -2445,17 +2508,45 @@ export async function printReceiptWithLanguageSelection(
     position: "relative"
   })
   
+  const languagesList = [
+    { code: "en", name: "English" },
+    { code: "es", name: "Español" },
+    { code: "pt", name: "Português" },
+    { code: "de", name: "Deutsch" },
+    { code: "fr", name: "Français" },
+    { code: "it", name: "Italiano" },
+    { code: "nl", name: "Nederlands" },
+    { code: "pl", name: "Polski" },
+    { code: "ro", name: "Română" },
+    { code: "el", name: "Ελληνικά" },
+    { code: "cs", name: "Čeština" },
+    { code: "hu", name: "Magyar" },
+    { code: "sv", name: "Svenska" },
+    { code: "fi", name: "Suomi" },
+    { code: "da", name: "Dansk" },
+    { code: "bg", name: "Български" },
+    { code: "hr", name: "Hrvatski" },
+    { code: "sk", name: "Slovenčina" },
+    { code: "sl", name: "Slovenščina" },
+    { code: "lt", name: "Lietuvių" },
+    { code: "lv", name: "Latviešu" },
+    { code: "et", name: "Eesti" },
+    { code: "ga", name: "Gaeilge" },
+    { code: "mt", name: "Malti" },
+    { code: "ur", name: "اردو" },
+    { code: "pa", name: "ਪੰਜਾਬੀ" },
+    { code: "hi", name: "हिंदी" },
+  ]
+  
+  const languageButtons = languagesList.map(lang => 
+    `<button data-lang="${lang.code}" style="padding: 12px 16px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer; text-align: left; font-size: 14px; color: #000; transition: background 0.2s;">${lang.name}</button>`
+  ).join('')
+  
   contentDiv.innerHTML = `
     <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 8px; color: #000;">Select Receipt Language</h2>
     <p style="font-size: 14px; color: #666; margin-bottom: 16px;">Choose the language for the printed receipt</p>
-    <div style="display: flex; flex-direction: column; gap: 8px;">
-      <button data-lang="en" style="padding: 12px 16px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer; text-align: left; font-size: 14px; color: #000; transition: background 0.2s;">English</button>
-      <button data-lang="pt" style="padding: 12px 16px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer; text-align: left; font-size: 14px; color: #000; transition: background 0.2s;">Português</button>
-      <button data-lang="de" style="padding: 12px 16px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer; text-align: left; font-size: 14px; color: #000; transition: background 0.2s;">Deutsch</button>
-      <button data-lang="fr" style="padding: 12px 16px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer; text-align: left; font-size: 14px; color: #000; transition: background 0.2s;">Français</button>
-      <button data-lang="ur" style="padding: 12px 16px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer; text-align: left; font-size: 14px; color: #000; transition: background 0.2s;">اردو</button>
-      <button data-lang="pa" style="padding: 12px 16px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer; text-align: left; font-size: 14px; color: #000; transition: background 0.2s;">ਪੰਜਾਬੀ</button>
-      <button data-lang="hi" style="padding: 12px 16px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer; text-align: left; font-size: 14px; color: #000; transition: background 0.2s;">हिंदी</button>
+    <div style="display: flex; flex-direction: column; gap: 8px; max-height: 400px; overflow-y: auto;">
+      ${languageButtons}
       <button data-cancel style="padding: 12px 16px; border: 1px solid #ddd; border-radius: 4px; background: #f5f5f5; cursor: pointer; text-align: center; font-size: 14px; margin-top: 8px; color: #000; transition: background 0.2s;">Cancel</button>
     </div>
   `
@@ -2496,7 +2587,7 @@ export async function printReceiptWithLanguageSelection(
   langButtons.forEach((btn) => {
     btn.addEventListener("click", async (e) => {
       e.stopPropagation()
-      const lang = btn.getAttribute("data-lang") as "en" | "pt" | "de" | "fr" | "ur" | "pa" | "hi" | null
+      const lang = btn.getAttribute("data-lang") as ReceiptLanguage | null
       if (document.body.contains(dialog)) {
         document.body.removeChild(dialog)
       }
@@ -2512,7 +2603,7 @@ export async function printReceiptWithLanguageSelection(
 export async function printReceiptForTickets(
   tickets: any[], 
   preferredPrinter: string | null = null,
-  language: "en" | "pt" | "de" | "fr" | "ur" | "pa" | "hi" = "en",
+  language: ReceiptLanguage = "en",
   printerType: "thermal" | "a4" = "a4"
 ) {
   // Validate tickets parameter

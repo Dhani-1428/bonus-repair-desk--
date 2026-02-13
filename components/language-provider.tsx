@@ -186,6 +186,7 @@ const translations: Record<Language, Record<string, string>> = {
     "service.network": "Network",
     "service.software": "Software",
     "service.shutOff": "Shut off",
+    "service.camera": "Camera",
 
     // Common phone problems/issues
     "problem.screenBroken": "Screen Broken",
@@ -3420,6 +3421,44 @@ const translations: Record<Language, Record<string, string>> = {
     "form.charger": "Cargador",
     "form.battery": "Batería",
     "form.waterDamaged": "Dañado por Agua",
+
+    // Service names
+    "service.lcd": "LCD",
+    "service.battery": "Batería",
+    "service.chargingPort": "Puerto de Carga",
+    "service.microphone": "Micrófono",
+    "service.earSpeaker": "Altavoz",
+    "service.backCover": "Tapa Trasera",
+    "service.wifiBluetooth": "Wifi/Bluetooth",
+    "service.network": "Red",
+    "service.software": "Software",
+    "service.shutOff": "Apagar",
+    "service.camera": "Cámara",
+
+    // Common phone problems/issues
+    "problem.screenBroken": "Pantalla Rota",
+    "problem.crackedScreen": "Pantalla Agrietada",
+    "problem.screenNotWorking": "Pantalla No Funciona",
+    "problem.displayNotWorking": "Pantalla No Funciona",
+    "problem.touchNotWorking": "Táctil No Funciona",
+    "problem.batteryNotCharging": "Batería No Carga",
+    "problem.chargingIssue": "Problema de Carga",
+    "problem.notCharging": "No Carga",
+    "problem.waterDamage": "Daño por Agua",
+    "problem.waterDamaged": "Dañado por Agua",
+    "problem.speakerNotWorking": "Altavoz No Funciona",
+    "problem.microphoneNotWorking": "Micrófono No Funciona",
+    "problem.cameraNotWorking": "Cámara No Funciona",
+    "problem.wifiNotWorking": "Wifi No Funciona",
+    "problem.bluetoothNotWorking": "Bluetooth No Funciona",
+    "problem.networkIssue": "Problema de Red",
+    "problem.softwareIssue": "Problema de Software",
+    "problem.phoneNotTurningOn": "Teléfono No Enciende",
+    "problem.wontTurnOn": "No Enciende",
+    "problem.dead": "Muerto",
+    "problem.deadRepair": "Muerto / No Enciende",
+    "problem.powerButtonNotWorking": "Botón de Encendido No Funciona",
+    "problem.homeButtonNotWorking": "Botón Home No Funciona",
 
     // Common
     "common.show": "Mostrar",
