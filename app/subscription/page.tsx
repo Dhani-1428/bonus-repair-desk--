@@ -200,8 +200,8 @@ export default function SubscriptionPage() {
       <DashboardLayout>
         <div className="space-y-6 text-black p-6">
           <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <h2 className="text-xl font-bold text-black mb-2">Loading...</h2>
-            <p className="text-gray-600">Please wait while we verify your account.</p>
+            <h2 className="text-xl font-bold text-black mb-2">{t("subscription.loading")}</h2>
+            <p className="text-gray-600">{t("subscription.loadingMessage")}</p>
           </div>
         </div>
       </DashboardLayout>
@@ -215,9 +215,9 @@ export default function SubscriptionPage() {
         <div className="space-y-6 text-black p-6">
           <Card className="shadow-xl border border-blue-200 bg-white">
             <CardHeader className="bg-blue-50 border-b border-blue-200">
-              <CardTitle className="text-xl text-black">Login Required</CardTitle>
+              <CardTitle className="text-xl text-black">{t("subscription.loginRequired")}</CardTitle>
               <CardDescription className="text-black">
-                Please login to view and manage your subscription
+                {t("subscription.loginRequiredMessage")}
               </CardDescription>
             </CardHeader>
             <CardContent className="p-6">
@@ -225,7 +225,7 @@ export default function SubscriptionPage() {
                 onClick={() => router.push("/login?redirect=/subscription")}
                 className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
               >
-                Go to Login
+                {t("subscription.goToLogin")}
               </Button>
             </CardContent>
           </Card>
@@ -257,7 +257,7 @@ export default function SubscriptionPage() {
             className="flex items-center gap-2 border-blue-300 bg-white text-black hover:bg-blue-50"
           >
             <History className="w-4 h-4" />
-            {showHistory ? "Hide History" : "View History"}
+            {showHistory ? t("subscription.hideHistory") : t("subscription.viewHistory")}
           </Button>
         </div>
 

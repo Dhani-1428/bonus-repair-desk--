@@ -49,9 +49,9 @@ export default function SettingsPage() {
       setIsAuthenticated(true)
       // Load user data
       await loadUserData()
-      toast.success("Access granted")
+      toast.success(t("settings.accessGranted"))
     } catch (error: any) {
-      toast.error("Incorrect password. Please try again.")
+      toast.error(t("settings.incorrectPassword"))
       setPassword("")
     } finally {
       setLoading(false)
@@ -77,7 +77,7 @@ export default function SettingsPage() {
       }
     } catch (error) {
       console.error("Error loading user data:", error)
-      toast.error("Failed to load user data")
+      toast.error(t("settings.loadFailed"))
     }
   }
 
@@ -107,7 +107,7 @@ export default function SettingsPage() {
         throw new Error(data.error || "Failed to update credentials")
       }
 
-      toast.success("Credentials updated successfully! You and the super admin will receive email notifications.")
+      toast.success(t("settings.credentialsUpdated"))
       
       // Update local user data
       const updatedUser = await response.json()
@@ -117,7 +117,7 @@ export default function SettingsPage() {
       }
     } catch (error: any) {
       console.error("Error updating credentials:", error)
-      toast.error(error.message || "Failed to update credentials")
+      toast.error(error.message || t("settings.updateFailed"))
     } finally {
       setSaving(false)
     }
@@ -133,16 +133,16 @@ export default function SettingsPage() {
             <CardHeader className="bg-blue-50 border-b border-blue-200 rounded-t-lg p-4 sm:p-6">
               <CardTitle className="text-xl sm:text-2xl flex items-center gap-2 text-black">
                 <Lock className="w-5 h-5 sm:w-6 sm:h-6" />
-                Password Required
+                {t("settings.passwordRequired")}
               </CardTitle>
               <CardDescription className="text-black text-sm sm:text-base">
-                Enter your password to view and edit your account credentials
+                {t("settings.passwordDescription")}
               </CardDescription>
             </CardHeader>
             <CardContent className="p-4 sm:p-6">
               <form onSubmit={handlePasswordSubmit} className="space-y-4">
                 <div>
-                  <Label htmlFor="password" className="text-black">Password</Label>
+                  <Label htmlFor="password" className="text-black">{t("settings.passwordLabel")}</Label>
                   <div className="relative">
                     <Input
                       id="password"
@@ -150,7 +150,7 @@ export default function SettingsPage() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className="pr-10 text-black"
-                      placeholder="Enter your password"
+                      placeholder={t("settings.passwordPlaceholder")}
                       required
                     />
                     <button
@@ -163,7 +163,7 @@ export default function SettingsPage() {
                   </div>
                 </div>
                 <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? "Verifying..." : "Access Credentials"}
+                  {loading ? t("settings.verifying") : t("settings.accessCredentials")}
                 </Button>
               </form>
             </CardContent>
@@ -178,25 +178,25 @@ export default function SettingsPage() {
       <div className="space-y-4 sm:space-y-6 text-black">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-black">
-            Account Settings
+            {t("settings.title")}
           </h1>
           <p className="text-black mt-2 text-sm sm:text-base">
-            Update your account credentials. Changes will be reflected on receipts and you'll receive email notifications.
+            {t("settings.subtitle")}
           </p>
         </div>
 
         <Card className="shadow-xl border border-blue-200 bg-white">
           <CardHeader className="bg-blue-50 border-b border-blue-200 rounded-t-lg p-4 sm:p-6">
-            <CardTitle className="text-xl sm:text-2xl text-black">Account Credentials</CardTitle>
+            <CardTitle className="text-xl sm:text-2xl text-black">{t("settings.accountCredentials")}</CardTitle>
             <CardDescription className="text-black text-sm sm:text-base">
-              These details will appear on your receipts
+              {t("settings.credentialsDescription2")}
             </CardDescription>
           </CardHeader>
           <CardContent className="p-4 sm:p-6">
             <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
               <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
                 <div>
-                  <Label htmlFor="name" className="text-black">Name</Label>
+                  <Label htmlFor="name" className="text-black">{t("settings.name")}</Label>
                   <Input
                     id="name"
                     name="name"
@@ -207,7 +207,7 @@ export default function SettingsPage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="email" className="text-black">Email</Label>
+                  <Label htmlFor="email" className="text-black">{t("settings.email")}</Label>
                   <Input
                     id="email"
                     name="email"
@@ -219,7 +219,7 @@ export default function SettingsPage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="shopName" className="text-black">Shop Name</Label>
+                  <Label htmlFor="shopName" className="text-black">{t("settings.shopName")}</Label>
                   <Input
                     id="shopName"
                     name="shopName"
@@ -229,7 +229,7 @@ export default function SettingsPage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="contactNumber" className="text-black">Contact Number</Label>
+                  <Label htmlFor="contactNumber" className="text-black">{t("settings.contactNumber")}</Label>
                   <Input
                     id="contactNumber"
                     name="contactNumber"
@@ -239,7 +239,7 @@ export default function SettingsPage() {
                   />
                 </div>
                 <div className="md:col-span-2">
-                  <Label htmlFor="address" className="text-black">Address</Label>
+                  <Label htmlFor="address" className="text-black">{t("settings.address")}</Label>
                   <Input
                     id="address"
                     name="address"
@@ -249,7 +249,7 @@ export default function SettingsPage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="companyEmail" className="text-black">Company Email</Label>
+                  <Label htmlFor="companyEmail" className="text-black">{t("settings.companyEmail")}</Label>
                   <Input
                     id="companyEmail"
                     name="companyEmail"
@@ -260,7 +260,7 @@ export default function SettingsPage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="website" className="text-black">Website</Label>
+                  <Label htmlFor="website" className="text-black">{t("settings.website")}</Label>
                   <Input
                     id="website"
                     name="website"
@@ -277,11 +277,11 @@ export default function SettingsPage() {
                   onClick={() => setIsAuthenticated(false)}
                   className="text-black"
                 >
-                  Lock
+                  {t("settings.lock")}
                 </Button>
                 <Button type="submit" disabled={saving} className="bg-blue-600 hover:bg-blue-700">
                   <Save className="w-4 h-4 mr-2" />
-                  {saving ? "Saving..." : "Save Changes"}
+                  {saving ? t("settings.saving") : t("settings.saveChanges")}
                 </Button>
               </div>
             </form>

@@ -294,7 +294,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
         return
       }
 
-      toast.loading("Migrating client IDs to 4-digit format...", { id: "migrate-ids" })
+      toast.loading(t("search.migrating"), { id: "migrate-ids" })
 
       const response = await fetch("/api/migrate/client-ids", {
         method: "POST",
@@ -306,7 +306,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
 
       if (response.ok) {
         const data = await response.json()
-        toast.success(data.message || `Migrated ${data.migrated} client IDs to 4-digit format (CLI-0001, CLI-0002, etc.)`, { id: "migrate-ids" })
+        toast.success(data.message || t("search.migrated").replace("{count}", data.migrated.toString()), { id: "migrate-ids" })
         // Reload tickets
         const reloadResponse = await fetch(`/api/repairs?userId=${currentUser.id}`)
         if (reloadResponse.ok) {
@@ -317,11 +317,11 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
         }
       } else {
         const errorData = await response.json()
-        toast.error(errorData.error || "Migration failed", { id: "migrate-ids" })
+        toast.error(errorData.error || t("search.migrationFailed"), { id: "migrate-ids" })
       }
     } catch (error: any) {
       console.error("[SearchRepairTickets] Error migrating client IDs:", error)
-      toast.error("Failed to migrate client IDs", { id: "migrate-ids" })
+      toast.error(t("search.migrationFailed"), { id: "migrate-ids" })
     }
   }
 
@@ -333,7 +333,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
         return
       }
 
-      toast.loading("Consolidating client IDs...", { id: "consolidate-ids" })
+      toast.loading(t("search.consolidating"), { id: "consolidate-ids" })
 
       const response = await fetch("/api/migrate/consolidate-client-ids", {
         method: "POST",
@@ -347,7 +347,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
         const data = await response.json()
         toast.success(
           data.message || 
-          `Consolidated ${data.consolidated} customers, updated ${data.updated} tickets.`, 
+          t("search.consolidated").replace("{consolidated}", data.consolidated.toString()).replace("{updated}", data.updated.toString()), 
           { id: "consolidate-ids", duration: 5000 }
         )
         // Reload tickets
@@ -360,11 +360,11 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
         }
       } else {
         const errorData = await response.json()
-        toast.error(errorData.error || "Consolidation failed", { id: "consolidate-ids" })
+        toast.error(errorData.error || t("search.consolidationFailed"), { id: "consolidate-ids" })
       }
     } catch (error: any) {
       console.error("[SearchRepairTickets] Error consolidating client IDs:", error)
-      toast.error("Failed to consolidate client IDs", { id: "consolidate-ids" })
+      toast.error(t("search.consolidationFailed"), { id: "consolidate-ids" })
     }
   }
 
@@ -949,27 +949,27 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
               <Button
                 onClick={migrateClientIds}
                 className="bg-orange-600 hover:bg-orange-700 text-white shadow-md hover:shadow-lg text-xs px-3 py-1.5"
-                title="Migrate all client IDs to 4-digit format (CLI-0001, CLI-0002, etc.)"
+                title={t("search.migrateTooltip")}
               >
                 <svg className="w-3 h-3 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                 </svg>
-                Migrate IDs
+                {t("search.migrateIds")}
               </Button>
               <Button
                 onClick={consolidateClientIds}
                 className="bg-purple-600 hover:bg-purple-700 text-white shadow-md hover:shadow-lg text-xs px-3 py-1.5 ml-2"
-                title="Consolidate client IDs - ensure one client has only one client ID"
+                title={t("search.consolidateTooltip")}
               >
                 <svg className="w-3 h-3 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
-                Consolidate IDs
+                {t("search.consolidateIds")}
               </Button>
               <Button
                 onClick={() => {
                   if (filteredTickets.length === 0) {
-                    toast.error("No data to export")
+                    toast.error(t("search.noDataToExport"))
                     return
                   }
                   const headers = [
@@ -1005,7 +1005,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                     }
                   })
                   exportToCSV(formattedTickets, "devices", headers)
-                  toast.success("Data exported to Excel successfully!")
+                  toast.success(t("search.exportSuccess"))
                 }}
                 className="bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg text-xs px-3 py-1.5"
               >
@@ -1111,7 +1111,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                   <SelectValue placeholder={t("status.all")} />
                 </SelectTrigger>
                 <SelectContent className="bg-white border-blue-200" side="bottom" sideOffset={4}>
-                  <SelectItem value="all" className="text-black">{t("status.all")}</SelectItem>
+                  <SelectItem value="all" className="text-black">{t("search.allStatuses") || t("status.all")}</SelectItem>
                   <SelectItem value="pending" className="text-black">{t("status.pending")}</SelectItem>
                   <SelectItem value="not_ok" className="text-black">{t("status.notOk") || "Not OK"}</SelectItem>
                   <SelectItem value="completed" className="text-black">{t("status.completed")}</SelectItem>
@@ -1153,7 +1153,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                 <thead>
                   <tr className="bg-blue-50 border-b-2 border-blue-300">
                     <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[8%]">{t("table.date")}</th>
-                    <th className="border-r border-blue-300 px-0.5 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[6%]">{t("form.clientId") || "Client ID"}</th>
+                    <th className="border-r border-blue-300 px-0.5 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[6%]">{t("table.clientId") || t("form.clientId") || "Client ID"}</th>
                     <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[13%]">{t("table.client") || t("form.clientName")}</th>
                     <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[10%]">{t("table.contact")}</th>
                     <th className="border-r border-blue-300 px-1 py-1.5 text-left text-[10px] font-semibold text-black uppercase tracking-wider w-[12%]">{t("table.model")}</th>
