@@ -8,8 +8,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Mail, Send, MessageSquare } from "lucide-react"
+import { useTranslation } from "@/components/language-provider"
 
 export function ContactSection() {
+  const { t } = useTranslation()
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, amount: 0.2 })
   const [formState, setFormState] = useState({
@@ -176,10 +178,10 @@ bonusrepairdesk@gmail.com
             </span>
           </div>
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-6 bg-gradient-to-r from-white via-gray-200 to-white bg-clip-text text-transparent">
-            Get in Touch
+            {t("website.contact.title")}
           </h2>
           <p className="text-lg sm:text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
-            Have questions? We're here to help. Send us a message and we'll respond within 24 hours.
+            {t("website.contact.subtitle")}
           </p>
         </motion.div>
 
@@ -196,8 +198,8 @@ bonusrepairdesk@gmail.com
                   <Mail className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-white font-semibold text-lg">Email Us</h3>
-                  <p className="text-gray-400 text-sm">Response within 24 hours</p>
+                  <h3 className="text-white font-semibold text-lg">{t("website.contact.emailUs")}</h3>
+                  <p className="text-gray-400 text-sm">{t("website.contact.emailUsDesc")}</p>
                 </div>
               </div>
               <a
@@ -221,8 +223,8 @@ bonusrepairdesk@gmail.com
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-white font-semibold text-lg">WhatsApp</h3>
-                  <p className="text-gray-400 text-sm">Chat with us instantly</p>
+                  <h3 className="text-white font-semibold text-lg">{t("website.contact.whatsapp")}</h3>
+                  <p className="text-gray-400 text-sm">{t("website.contact.whatsappDesc")}</p>
                 </div>
               </div>
               <a
@@ -253,7 +255,7 @@ bonusrepairdesk@gmail.com
                     name="name"
                     value={formState.name}
                     onChange={handleChange}
-                    placeholder="Your name"
+                    placeholder={t("website.contact.name")}
                     className="h-11 bg-gray-900/50 border-gray-700 text-white"
                     required
                   />
@@ -268,7 +270,7 @@ bonusrepairdesk@gmail.com
                     type="email"
                     value={formState.email}
                     onChange={handleChange}
-                    placeholder="your@email.com"
+                    placeholder={t("website.contact.email")}
                     className="h-11 bg-gray-900/50 border-gray-700 text-white"
                     required
                   />
@@ -284,7 +286,7 @@ bonusrepairdesk@gmail.com
                   name="subject"
                   value={formState.subject}
                   onChange={handleChange}
-                  placeholder="What is this regarding?"
+                  placeholder={t("website.contact.subject")}
                   className="h-11 bg-gray-900/50 border-gray-700 text-white"
                   required
                 />
@@ -299,7 +301,7 @@ bonusrepairdesk@gmail.com
                   name="message"
                   value={formState.message}
                   onChange={handleChange}
-                  placeholder="Tell us more..."
+                  placeholder={t("website.contact.message")}
                   rows={6}
                   className="bg-gray-900/50 border-gray-700 text-white"
                   required
@@ -308,7 +310,7 @@ bonusrepairdesk@gmail.com
 
               {submitted && (
                 <div className="p-4 rounded-xl bg-green-500/10 border border-green-500/30 text-sm text-green-400">
-                  ✓ Message sent! We'll get back to you soon.
+                  ✓ {t("website.contact.success")}
                 </div>
               )}
 
@@ -318,7 +320,7 @@ bonusrepairdesk@gmail.com
                 disabled={loading}
               >
                 <Send className="h-4 w-4 mr-2" />
-                {loading ? "Sending..." : "Send message"}
+                {loading ? t("website.contact.sending") : t("website.contact.sendMessage")}
               </Button>
             </form>
           </motion.div>

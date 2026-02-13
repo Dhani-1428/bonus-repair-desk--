@@ -10,8 +10,10 @@ import { motion, useInView } from "framer-motion"
 import { Suspense, useEffect, useRef, useState } from "react"
 import { geist } from "@/lib/fonts"
 import { cn } from "@/lib/utils"
+import { useTranslation } from "@/components/language-provider"
 
 export default function Features() {
+  const { t } = useTranslation()
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, amount: 0.3 })
   const { theme } = useTheme()
@@ -57,13 +59,13 @@ export default function Features() {
             geist.className,
           )}
         >
-          Features
+          {t("website.features.title")}
         </h2>
         <FollowerPointerCard
           title={
             <div className="flex items-center gap-2">
               <span>✨</span>
-              <span>Interactive Features</span>
+              <span>{t("website.features.interactive")}</span>
             </div>
           }
         >
@@ -87,10 +89,10 @@ export default function Features() {
                 style={{ transition: "all 0.3s ease-in-out" }}
               >
                 <div className="flex flex-col gap-4">
-                  <h3 className="text-2xl leading-none font-semibold tracking-tight">Repair Device Management</h3>
+                  <h3 className="text-2xl leading-none font-semibold tracking-tight">{t("website.features.repairManagementTitle")}</h3>
                   <div className="text-md text-muted-foreground flex flex-col gap-2 text-sm">
                     <p className="max-w-[460px]">
-                      Create, track, and manage repair devices with ease. Organize by status, priority, and customer for seamless workflow management.
+                      {t("website.features.repairManagementDesc")}
                     </p>
                   </div>
                 </div>
@@ -278,10 +280,10 @@ export default function Features() {
                 style={{ transition: "all 0.3s ease-in-out" }}
               >
                 <div className="flex flex-col gap-4">
-                  <h3 className="text-2xl leading-none font-semibold tracking-tight">Customer Management</h3>
+                  <h3 className="text-2xl leading-none font-semibold tracking-tight">{t("website.features.customerManagementTitle")}</h3>
                   <div className="text-md text-muted-foreground flex flex-col gap-2 text-sm">
                     <p className="max-w-[460px]">
-                      Keep detailed customer records, track repair history, and manage contact information all in one centralized system.
+                      {t("website.features.customerManagementDesc")}
                     </p>
                   </div>
                 </div>
@@ -355,10 +357,10 @@ export default function Features() {
                 style={{ transition: "all 0.3s ease-in-out" }}
               >
                 <div className="flex flex-col gap-4">
-                  <h3 className="text-2xl leading-none font-semibold tracking-tight">Payment Processing</h3>
+                  <h3 className="text-2xl leading-none font-semibold tracking-tight">{t("website.features.paymentProcessingTitle")}</h3>
                   <div className="text-md text-muted-foreground flex flex-col gap-2 text-sm">
                     <p className="max-w-[460px]">
-                      Handle payments securely, track transactions, and manage billing with integrated payment processing.
+                      {t("website.features.paymentProcessingDesc")}
                     </p>
                   </div>
                 </div>
@@ -407,10 +409,10 @@ export default function Features() {
                 style={{ transition: "all 0.3s ease-in-out" }}
               >
                 <div className="flex flex-col gap-4">
-                  <h3 className="text-2xl leading-none font-semibold tracking-tight">Analytics & Reports</h3>
+                  <h3 className="text-2xl leading-none font-semibold tracking-tight">{t("website.features.analyticsReportsTitle")}</h3>
                   <div className="text-md text-muted-foreground flex flex-col gap-2 text-sm">
                     <p className="max-w-[460px]">
-                      Get insights into your business performance with detailed analytics, reports, and data visualization tools.
+                      {t("website.features.analyticsReportsDesc")}
                     </p>
                   </div>
                 </div>

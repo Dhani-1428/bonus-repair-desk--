@@ -3,31 +3,33 @@
 import { motion, useInView } from "framer-motion"
 import { useRef } from "react"
 import { Shield, Users, Zap, Target } from "lucide-react"
+import { useTranslation } from "@/components/language-provider"
 
 export function AboutSection() {
+  const { t } = useTranslation()
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, amount: 0.2 })
 
   const features = [
     {
       icon: Shield,
-      title: "Secure & Reliable",
-      description: "Your data is protected with industry-standard security measures. We ensure your business information stays safe and accessible.",
+      title: t("website.about.secureReliable"),
+      description: t("website.about.secureReliableDesc"),
     },
     {
       icon: Users,
-      title: "Built for Repair Shops",
-      description: "Designed specifically for repair businesses, understanding your unique needs and workflow challenges.",
+      title: t("website.about.builtForRepairShops"),
+      description: t("website.about.builtForRepairShopsDesc"),
     },
     {
       icon: Zap,
-      title: "Fast & Efficient",
-      description: "Streamline your operations with powerful tools that save time and reduce manual work. Get more done in less time.",
+      title: t("website.about.fastEfficient"),
+      description: t("website.about.fastEfficientDesc"),
     },
     {
       icon: Target,
-      title: "Growth Focused",
-      description: "Analytics and insights help you understand your business better and make data-driven decisions to grow.",
+      title: t("website.about.growthFocused"),
+      description: t("website.about.growthFocusedDesc"),
     },
   ]
 
@@ -45,15 +47,14 @@ export function AboutSection() {
         >
           <div className="inline-flex items-center justify-center mb-4">
             <span className="px-4 py-1.5 rounded-full border border-blue-500/30 bg-gradient-to-r from-blue-600/20 to-purple-600/20 text-sm font-medium text-blue-400">
-              About Us
+              {t("website.about.badge")}
             </span>
           </div>
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-6 bg-gradient-to-r from-white via-gray-200 to-white bg-clip-text text-transparent">
-            Empowering Repair Businesses
+            {t("website.about.title")}
           </h2>
           <p className="text-lg sm:text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
-            Bonus Repair Desk was created to solve the real challenges repair shop owners face every day. 
-            We understand that managing tickets, customers, and payments shouldn't be complicated.
+            {t("website.about.description")}
           </p>
         </motion.div>
 
@@ -64,15 +65,12 @@ export function AboutSection() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="space-y-6"
           >
-            <h3 className="text-2xl sm:text-3xl font-bold text-white mb-4">Our Mission</h3>
+            <h3 className="text-2xl sm:text-3xl font-bold text-white mb-4">{t("website.about.mission")}</h3>
             <p className="text-gray-300 text-lg leading-relaxed">
-              We believe every repair shop deserves professional tools to manage their business efficiently. 
-              Our mission is to provide an affordable, easy-to-use platform that helps repair businesses 
-              streamline operations, improve customer service, and grow their revenue.
+              {t("website.about.missionText1")}
             </p>
             <p className="text-gray-300 text-lg leading-relaxed">
-              Whether you're a small local shop or a growing business, Bonus Repair Desk gives you the 
-              tools you need to compete professionally and serve your customers better.
+              {t("website.about.missionText2")}
             </p>
           </motion.div>
 
@@ -90,8 +88,8 @@ export function AboutSection() {
                     <Shield className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h4 className="text-white font-semibold">Trusted Platform</h4>
-                    <p className="text-gray-400 text-sm">Secure and reliable</p>
+                    <h4 className="text-white font-semibold">{t("website.about.trustedPlatform")}</h4>
+                    <p className="text-gray-400 text-sm">{t("website.about.trustedPlatformDesc")}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -99,8 +97,8 @@ export function AboutSection() {
                     <Zap className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h4 className="text-white font-semibold">Easy to Use</h4>
-                    <p className="text-gray-400 text-sm">Intuitive interface</p>
+                    <h4 className="text-white font-semibold">{t("website.about.easyToUse")}</h4>
+                    <p className="text-gray-400 text-sm">{t("website.about.easyToUseDesc")}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -108,8 +106,8 @@ export function AboutSection() {
                     <Users className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h4 className="text-white font-semibold">Customer Focused</h4>
-                    <p className="text-gray-400 text-sm">Built for your success</p>
+                    <h4 className="text-white font-semibold">{t("website.about.customerFocused")}</h4>
+                    <p className="text-gray-400 text-sm">{t("website.about.customerFocusedDesc")}</p>
                   </div>
                 </div>
               </div>

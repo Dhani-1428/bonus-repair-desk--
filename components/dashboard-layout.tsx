@@ -269,13 +269,33 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                 <span className="hidden md:inline">{t("header.language")}:</span>
                 <select
                   value={language}
-                  onChange={(e) => setLanguage(e.target.value as "en" | "pt" | "de" | "fr" | "ur" | "pa" | "hi")}
+                  onChange={(e) => setLanguage(e.target.value as any)}
                   className="border border-blue-300 rounded-lg text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-1.5 bg-white text-black hover:border-blue-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all font-medium"
                 >
                   <option value="en">{t("header.english")}</option>
+                  <option value="es">{t("header.spanish")}</option>
                   <option value="pt">{t("header.portuguese")}</option>
                   <option value="de">{t("header.german")}</option>
                   <option value="fr">{t("header.french")}</option>
+                  <option value="it">Italiano</option>
+                  <option value="nl">Nederlands</option>
+                  <option value="pl">Polski</option>
+                  <option value="ro">Română</option>
+                  <option value="el">Ελληνικά</option>
+                  <option value="cs">Čeština</option>
+                  <option value="hu">Magyar</option>
+                  <option value="sv">Svenska</option>
+                  <option value="fi">Suomi</option>
+                  <option value="da">Dansk</option>
+                  <option value="bg">Български</option>
+                  <option value="hr">Hrvatski</option>
+                  <option value="sk">Slovenčina</option>
+                  <option value="sl">Slovenščina</option>
+                  <option value="lt">Lietuvių</option>
+                  <option value="lv">Latviešu</option>
+                  <option value="et">Eesti</option>
+                  <option value="ga">Gaeilge</option>
+                  <option value="mt">Malti</option>
                   <option value="ur">{t("header.urdu")}</option>
                   <option value="pa">{t("header.punjabi")}</option>
                   <option value="hi">{t("header.hindi")}</option>

@@ -3,8 +3,10 @@
 import { useState } from "react"
 import { Plus, Minus } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+import { useTranslation } from "@/components/language-provider"
 
 export function FAQSection() {
+  const { t } = useTranslation()
   const [openItems, setOpenItems] = useState<number[]>([])
 
   const toggleItem = (index: number) => {
@@ -13,29 +15,24 @@ export function FAQSection() {
 
   const faqs = [
     {
-      question: "What is Bonus Repair Desk?",
-      answer:
-        "Bonus Repair Desk is a comprehensive repair shop management system that helps you track repair tickets, manage customers, process payments, and analyze your business performance all in one place.",
+      question: t("website.faq.question1"),
+      answer: t("website.faq.answer1"),
     },
     {
-      question: "How does the free trial work?",
-      answer:
-        "You get full access to all features for 15 days completely free. After the trial period ends, you can continue with our affordable monthly subscription plan at €25 per month, or choose from our longer-term plans.",
+      question: t("website.faq.question2"),
+      answer: t("website.faq.answer2"),
     },
     {
-      question: "What features are included?",
-      answer:
-        "All plans include repair ticket management, customer database, payment processing, analytics and reports, team management, and email support. You get full access to all features regardless of your plan.",
+      question: t("website.faq.question3"),
+      answer: t("website.faq.answer3"),
     },
     {
-      question: "Can I cancel my subscription anytime?",
-      answer:
-        "Yes, you can cancel your subscription at any time. There are no long-term contracts or cancellation fees. Your access will continue until the end of your current billing period.",
+      question: t("website.faq.question4"),
+      answer: t("website.faq.answer4"),
     },
     {
-      question: "Is my data secure?",
-      answer:
-        "Absolutely. We use industry-standard security measures to protect your data. All information is encrypted, and we perform regular backups to ensure your data is safe and recoverable.",
+      question: t("website.faq.question5"),
+      answer: t("website.faq.answer5"),
     },
   ]
 
@@ -66,10 +63,7 @@ export function FAQSection() {
           transition={{ duration: 0.6, delay: 0.2 }}
           viewport={{ once: true }}
         >
-          Questions? We've got{" "}
-          <span className="bg-gradient-to-b from-foreground via-blue-300 to-purple-400 bg-clip-text text-transparent">
-            answers
-          </span>
+          {t("website.faq.title")}
         </motion.h2>
 
         <div className="mx-auto mt-12 flex max-w-xl flex-col gap-6">
