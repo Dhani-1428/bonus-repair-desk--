@@ -71,25 +71,25 @@ export default function DashboardPage() {
         <div className="flex flex-col sm:flex-row justify-between items-start gap-4 pt-4">
           <div className="space-y-2">
             <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-black">
-              Your Account Credentials
+              {t("settings.accountCredentials")}
             </h2>
             <p className="text-black text-sm sm:text-base">
-              These details are used on your receipts and invoices
+              {t("settings.credentialsDescription")}
             </p>
           </div>
           <Link href="/settings">
             <Button className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto">
               <Settings className="w-4 h-4 mr-2" />
-              Edit Credentials
+              {t("settings.editCredentials")}
             </Button>
           </Link>
         </div>
 
         <Card className="shadow-xl border border-blue-200 bg-white">
           <CardHeader className="bg-blue-50 border-b border-blue-200 rounded-t-lg p-4 sm:p-6">
-            <CardTitle className="text-xl sm:text-2xl text-black">Account Information</CardTitle>
+            <CardTitle className="text-xl sm:text-2xl text-black">{t("settings.accountInformation")}</CardTitle>
             <CardDescription className="text-black text-sm sm:text-base">
-              These details are used on your receipts and invoices
+              {t("settings.credentialsDescription")}
             </CardDescription>
           </CardHeader>
           <CardContent className="p-4 sm:p-6">
@@ -99,8 +99,8 @@ export default function DashboardPage() {
                   <User className="w-6 h-6 text-blue-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-500">Name</p>
-                  <p className="text-lg font-semibold text-black">{displayUser.name || "N/A"}</p>
+                  <p className="text-sm font-medium text-gray-500">{t("settings.name")}</p>
+                  <p className="text-lg font-semibold text-black">{displayUser.name || t("common.notAvailable")}</p>
                 </div>
               </div>
 
@@ -109,8 +109,8 @@ export default function DashboardPage() {
                   <Mail className="w-6 h-6 text-blue-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-500">Email</p>
-                  <p className="text-lg font-semibold text-black">{displayUser.email || "N/A"}</p>
+                  <p className="text-sm font-medium text-gray-500">{t("settings.email")}</p>
+                  <p className="text-lg font-semibold text-black">{displayUser.email || t("common.notAvailable")}</p>
                 </div>
               </div>
 
@@ -120,7 +120,7 @@ export default function DashboardPage() {
                     <Building2 className="w-6 h-6 text-blue-600" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-500">Shop Name</p>
+                    <p className="text-sm font-medium text-gray-500">{t("settings.shopName")}</p>
                     <p className="text-lg font-semibold text-black">{displayUser.shopName}</p>
                   </div>
                 </div>
@@ -132,7 +132,7 @@ export default function DashboardPage() {
                     <Phone className="w-6 h-6 text-blue-600" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-500">Contact Number</p>
+                    <p className="text-sm font-medium text-gray-500">{t("settings.contactNumber")}</p>
                     <p className="text-lg font-semibold text-black">{displayUser.contactNumber}</p>
                   </div>
                 </div>
@@ -144,7 +144,7 @@ export default function DashboardPage() {
                     <MapPin className="w-6 h-6 text-blue-600" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-500">Address</p>
+                    <p className="text-sm font-medium text-gray-500">{t("settings.address")}</p>
                     <p className="text-lg font-semibold text-black">{displayUser.address}</p>
                   </div>
                 </div>
@@ -156,7 +156,7 @@ export default function DashboardPage() {
                     <Mail className="w-6 h-6 text-blue-600" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-500">Company Email</p>
+                    <p className="text-sm font-medium text-gray-500">{t("settings.companyEmail")}</p>
                     <p className="text-lg font-semibold text-black">{displayUser.companyEmail}</p>
                   </div>
                 </div>
@@ -168,7 +168,7 @@ export default function DashboardPage() {
                     <Globe className="w-6 h-6 text-blue-600" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-500">Website</p>
+                    <p className="text-sm font-medium text-gray-500">{t("settings.website")}</p>
                     <p className="text-lg font-semibold text-black">{displayUser.website}</p>
                   </div>
                 </div>
@@ -177,8 +177,7 @@ export default function DashboardPage() {
 
             <div className="mt-6 pt-6 border-t border-gray-200">
               <p className="text-sm text-gray-500">
-                To update these credentials, click the "Edit Credentials" button above. 
-                You'll need to enter your password to make changes.
+                {t("settings.updateInstructions")}
               </p>
             </div>
           </CardContent>
