@@ -2164,45 +2164,95 @@ function translateServicesForReceipt(services: string | string[] | null | undefi
   let servicesArray: string[] = []
   
   if (typeof services === 'string') {
-    try {
-      const parsed = JSON.parse(services)
-      servicesArray = Array.isArray(parsed) ? parsed : [services]
-    } catch {
-      servicesArray = services.split(',').map(s => s.trim()).filter(s => s)
-    }
+    // If it's a single string, treat it as one service (don't split by comma)
+    // This handles cases like "BATTERY NEW" or "CHANGE TOUCH+LCD OK"
+    servicesArray = [services]
   } else if (Array.isArray(services)) {
     servicesArray = services
   }
   
   if (servicesArray.length === 0) return "-"
   
-  // Map common service names to translation keys
+  // Map common service names to translation keys (expanded with all variations)
   const serviceMap: Record<string, string> = {
+    // Battery services
     "battery new": "service.battery",
     "battery": "service.battery",
+    "new battery": "service.battery",
+    
+    // LCD/Touch services - handle all variations including typos
     "change touch+lcd": "service.lcd",
+    "change touch+lcd ok": "service.lcd",
     "touch+lcd change": "service.lcd",
+    "touch+lcd change ok": "service.lcd",
+    "thouch+lcd change": "service.lcd", // Handle typo "THOUCH"
+    "thouch+lcd change ok": "service.lcd",
     "lcd change": "service.lcd",
     "lcd new": "service.lcd",
     "lcd ok": "service.lcd",
+    "change lcd": "service.lcd",
+    "lcd": "service.lcd",
+    
+    // Back cover services
     "back glass ok": "service.backCover",
+    "back glass": "service.backCover",
+    "back cover": "service.backCover",
+    
+    // Charging services
     "charging board change": "service.chargingPort",
+    "charging board": "service.chargingPort",
+    "charging port": "service.chargingPort",
+    
+    // Network services
     "network jeck": "service.network",
+    "network flex jeck": "service.network",
+    "network": "service.network",
+    
+    // Camera services
     "camera pana": "service.camera",
+    "camera": "service.camera",
+    
+    // Software services
     "only clean water": "service.software",
+    "clean": "service.software",
+    
+    // Generic "CHANGE" - map to LCD as it's most common
+    "change": "service.lcd",
   }
   
   // Translate each service
   const translated = servicesArray.map(service => {
-    const lowerService = service.toLowerCase().trim()
+    if (!service || service.trim() === "") return service
+    
+    // Normalize: remove extra spaces, convert to lowercase for matching
+    const normalized = service.trim().toLowerCase()
+    // Remove "OK" suffix if present (for matching purposes)
+    const withoutOk = normalized.replace(/\s+ok\s*$/, "").trim()
+    
+    // Try exact match first (with and without "OK")
     for (const [key, translationKey] of Object.entries(serviceMap)) {
-      if (lowerService.includes(key) || key.includes(lowerService)) {
+      if (normalized === key || withoutOk === key) {
         const translated = t[translationKey]
         if (translated && translated !== translationKey) {
           return translated
         }
       }
     }
+    
+    // Try partial match - check if service contains key or key contains service
+    for (const [key, translationKey] of Object.entries(serviceMap)) {
+      // Match if the key is a significant part of the service (at least 3 chars)
+      if (key.length >= 3) {
+        if (normalized.includes(key) || withoutOk.includes(key) || key.includes(withoutOk)) {
+          const translated = t[translationKey]
+          if (translated && translated !== translationKey) {
+            return translated
+          }
+        }
+      }
+    }
+    
+    // If no match found, return original
     return service
   })
   
