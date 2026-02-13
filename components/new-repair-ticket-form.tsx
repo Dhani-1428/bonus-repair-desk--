@@ -1895,25 +1895,65 @@ export function NewRepairTicketForm() {
 }
 
 // Helper function to translate warranty value to selected language
-function translateWarrantyValue(storedValue: string | null | undefined, targetLang: "en" | "pt" | "de" | "fr" | "ur" | "pa" | "hi"): string {
+function translateWarrantyValue(storedValue: string | null | undefined, targetLang: ReceiptLanguage): string {
   if (!storedValue) return "Without Warranty"
   
   // All possible warranty translations across all languages
-  const warrantyTranslations: Record<string, Record<string, string>> = {
+  const warrantyTranslations: Record<string, Record<ReceiptLanguage, string>> = {
     "Warranty Until 30 days": {
       en: "Warranty Until 30 days",
+      es: "Garantía hasta 30 días",
       pt: "Garantia até 30 dias",
       de: "Garantie bis 30 Tage",
       fr: "Garantie jusqu'à 30 jours",
+      it: "Garanzia fino a 30 giorni",
+      nl: "Garantie tot 30 dagen",
+      pl: "Gwarancja do 30 dni",
+      ro: "Garanție până la 30 de zile",
+      el: "Εγγύηση έως 30 ημέρες",
+      cs: "Záruka do 30 dnů",
+      hu: "30 napig érvényes garancia",
+      sv: "Garanti i 30 dagar",
+      fi: "Takuu 30 päivään",
+      da: "Garanti i 30 dage",
+      bg: "Гаранция до 30 дни",
+      hr: "Garancija do 30 dana",
+      sk: "Záruka do 30 dní",
+      sl: "Garancija do 30 dni",
+      lt: "Garantija iki 30 dienų",
+      lv: "Garantija līdz 30 dienām",
+      et: "Garantii 30 päevaks",
+      ga: "Barránta go dtí 30 lá",
+      mt: "Garanzija saħansitra 30 jum",
       ur: "30 دن تک گارنٹی",
       pa: "30 ਦਿਨਾਂ ਤੱਕ ਵਾਰੰਟੀ",
       hi: "30 दिनों तक वारंटी"
     },
     "Without Warranty": {
       en: "Without Warranty",
+      es: "Sin Garantía",
       pt: "Sem Garantia",
       de: "Ohne Garantie",
       fr: "Sans garantie",
+      it: "Senza garanzia",
+      nl: "Zonder garantie",
+      pl: "Bez gwarancji",
+      ro: "Fără garanție",
+      el: "Χωρίς εγγύηση",
+      cs: "Bez záruky",
+      hu: "Garancia nélkül",
+      sv: "Utan garanti",
+      fi: "Ilman takuuta",
+      da: "Uden garanti",
+      bg: "Без гаранция",
+      hr: "Bez garancije",
+      sk: "Bez záruky",
+      sl: "Brez garancije",
+      lt: "Be garantijos",
+      lv: "Bez garantijas",
+      et: "Ilma garantii",
+      ga: "Gan bharánta",
+      mt: "Bla garanzija",
       ur: "بغیر گارنٹی",
       pa: "ਵਾਰੰਟੀ ਤੋਂ ਬਿਨਾਂ",
       hi: "वारंटी के बिना"
@@ -2041,11 +2081,31 @@ function translateWarrantyValue(storedValue: string | null | undefined, targetLa
   }
   
   // If no match found, return default based on target language
-  const defaults: Record<string, string> = {
+  const defaults: Record<ReceiptLanguage, string> = {
     en: "Without Warranty",
+    es: "Sin Garantía",
     pt: "Sem Garantia",
     de: "Ohne Garantie",
     fr: "Sans garantie",
+    it: "Senza garanzia",
+    nl: "Zonder garantie",
+    pl: "Bez gwarancji",
+    ro: "Fără garanție",
+    el: "Χωρίς εγγύηση",
+    cs: "Bez záruky",
+    hu: "Garancia nélkül",
+    sv: "Utan garanti",
+    fi: "Ilman takuuta",
+    da: "Uden garanti",
+    bg: "Без гаранция",
+    hr: "Bez garancije",
+    sk: "Bez záruky",
+    sl: "Brez garancije",
+    lt: "Be garantijos",
+    lv: "Bez garantijas",
+    et: "Ilma garantii",
+    ga: "Gan bharánta",
+    mt: "Bla garanzija",
     ur: "بغیر گارنٹی",
     pa: "ਵਾਰੰਟੀ ਤੋਂ ਬਿਨਾਂ",
     hi: "वारंटी के बिना"
@@ -2056,6 +2116,98 @@ function translateWarrantyValue(storedValue: string | null | undefined, targetLa
 
 // Helper function to get translations for receipt printing
 type ReceiptLanguage = "en" | "pt" | "de" | "fr" | "es" | "it" | "nl" | "pl" | "ro" | "el" | "cs" | "hu" | "sv" | "fi" | "da" | "bg" | "hr" | "sk" | "sl" | "lt" | "lv" | "et" | "ga" | "mt" | "ur" | "pa" | "hi"
+
+// Helper function to translate problem text for receipts
+function translateProblemForReceipt(problem: string | null | undefined, lang: ReceiptLanguage): string {
+  if (!problem || problem.trim() === "") return "-"
+  
+  const problemText = problem.trim()
+  const lowerProblem = problemText.toLowerCase()
+  const t = getReceiptTranslations(lang)
+  
+  // Map common problem descriptions to translation keys
+  const problemMap: Record<string, string> = {
+    "battery problem": "problem.batteryNotCharging",
+    "touch problem": "problem.touchNotWorking",
+    "lcd not work": "problem.screenNotWorking",
+    "lcd brokin": "problem.screenBroken",
+    "lcd broken": "problem.screenBroken",
+    "back glass": "problem.screenBroken",
+    "touch+lcd": "problem.touchNotWorking",
+    "charging problem": "problem.chargingIssue",
+    "no charge": "problem.notCharging",
+    "water damage": "problem.waterDamage",
+    "network flex jeck broken": "problem.networkIssue",
+    "lcd partido": "problem.screenBroken",
+    "camera pana": "problem.cameraNotWorking",
+  }
+  
+  // Try exact match first (case-insensitive)
+  for (const [key, translationKey] of Object.entries(problemMap)) {
+    if (lowerProblem === key.toLowerCase() || lowerProblem.includes(key.toLowerCase())) {
+      const translated = t[translationKey]
+      if (translated && translated !== translationKey) {
+        return translated
+      }
+    }
+  }
+  
+  // If no translation found, return original
+  return problemText
+}
+
+// Helper function to translate service names for receipts
+function translateServicesForReceipt(services: string | string[] | null | undefined, lang: ReceiptLanguage): string {
+  if (!services) return "-"
+  
+  const t = getReceiptTranslations(lang)
+  let servicesArray: string[] = []
+  
+  if (typeof services === 'string') {
+    try {
+      const parsed = JSON.parse(services)
+      servicesArray = Array.isArray(parsed) ? parsed : [services]
+    } catch {
+      servicesArray = services.split(',').map(s => s.trim()).filter(s => s)
+    }
+  } else if (Array.isArray(services)) {
+    servicesArray = services
+  }
+  
+  if (servicesArray.length === 0) return "-"
+  
+  // Map common service names to translation keys
+  const serviceMap: Record<string, string> = {
+    "battery new": "service.battery",
+    "battery": "service.battery",
+    "change touch+lcd": "service.lcd",
+    "touch+lcd change": "service.lcd",
+    "lcd change": "service.lcd",
+    "lcd new": "service.lcd",
+    "lcd ok": "service.lcd",
+    "back glass ok": "service.backCover",
+    "charging board change": "service.chargingPort",
+    "network jeck": "service.network",
+    "camera pana": "service.camera",
+    "only clean water": "service.software",
+  }
+  
+  // Translate each service
+  const translated = servicesArray.map(service => {
+    const lowerService = service.toLowerCase().trim()
+    for (const [key, translationKey] of Object.entries(serviceMap)) {
+      if (lowerService.includes(key) || key.includes(lowerService)) {
+        const translated = t[translationKey]
+        if (translated && translated !== translationKey) {
+          return translated
+        }
+      }
+    }
+    return service
+  })
+  
+  return translated.join(", ")
+}
 
 function getReceiptTranslations(lang: ReceiptLanguage = "en") {
   const translations: Record<string, Record<string, string>> = {
@@ -2078,6 +2230,7 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "receipt.repairObs": "Repair Obs.",
       "receipt.services": "Services",
       "receipt.problem": "Problem",
+      "receipt.mobileCondition": "Mobile Condition (On Arrival)",
       "receipt.price": "Budget",
       "receipt.responsibleText": "WE ARE RESPONSIBLE FOR THE ASSISTANCE / REPAIRING OF THE DESCRIBED ANOMALIES.",
       "receipt.storageTitle": "We are responsible for resolving and repairing the reported anomalies.",
@@ -2118,7 +2271,44 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "receipt.repairObs": "Obs. de Reparação",
       "receipt.services": "Serviços",
       "receipt.problem": "Problema",
+      "receipt.mobileCondition": "Condição do Móvel (Na Chegada)",
       "receipt.price": "Orçamento",
+      // Service names
+      "service.lcd": "LCD",
+      "service.battery": "Bateria",
+      "service.chargingPort": "Porta de Carregamento",
+      "service.microphone": "Microfone",
+      "service.earSpeaker": "Altifalante",
+      "service.backCover": "Tampa Traseira",
+      "service.wifiBluetooth": "Wifi/Bluetooth",
+      "service.network": "Rede",
+      "service.software": "Software",
+      "service.shutOff": "Desligar",
+      "service.camera": "Câmera",
+      // Common phone problems/issues
+      "problem.screenBroken": "Ecrã Partido",
+      "problem.crackedScreen": "Ecrã Rachado",
+      "problem.screenNotWorking": "Ecrã Não Funciona",
+      "problem.displayNotWorking": "Ecrã Não Funciona",
+      "problem.touchNotWorking": "Táctil Não Funciona",
+      "problem.batteryNotCharging": "Bateria Não Carrega",
+      "problem.chargingIssue": "Problema de Carregamento",
+      "problem.notCharging": "Não Carrega",
+      "problem.waterDamage": "Danos por Água",
+      "problem.waterDamaged": "Danificado por Água",
+      "problem.speakerNotWorking": "Altifalante Não Funciona",
+      "problem.microphoneNotWorking": "Microfone Não Funciona",
+      "problem.cameraNotWorking": "Câmera Não Funciona",
+      "problem.wifiNotWorking": "Wifi Não Funciona",
+      "problem.bluetoothNotWorking": "Bluetooth Não Funciona",
+      "problem.networkIssue": "Problema de Rede",
+      "problem.softwareIssue": "Problema de Software",
+      "problem.phoneNotTurningOn": "Telefone Não Liga",
+      "problem.wontTurnOn": "Não Liga",
+      "problem.dead": "Morto",
+      "problem.deadRepair": "Morto / Não Liga",
+      "problem.powerButtonNotWorking": "Botão de Energia Não Funciona",
+      "problem.homeButtonNotWorking": "Botão Home Não Funciona",
       "receipt.responsibleText": "SOMOS RESPONSÁVEIS PELA ASSISTÊNCIA / REPARAÇÃO DAS ANOMALIAS DESCRITAS.",
       "receipt.storageTitle": "Condições de Armazenamento e Levantamento",
       "receipt.storageText1": "O equipamento deverá ser levantado no prazo máximo de sessenta (60) dias após a conclusão da reparação e respetiva notificação por",
@@ -2359,6 +2549,43 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "receipt.equipmentCheck": "Verificación del Equipo",
       "receipt.equipmentObs": "Obs. del Equipo",
       "receipt.repairObs": "Obs. de Reparación",
+      "receipt.mobileCondition": "Condición del Móvil (Al Llegar)",
+      // Service names
+      "service.lcd": "LCD",
+      "service.battery": "Batería",
+      "service.chargingPort": "Puerto de Carga",
+      "service.microphone": "Micrófono",
+      "service.earSpeaker": "Altavoz",
+      "service.backCover": "Tapa Trasera",
+      "service.wifiBluetooth": "Wifi/Bluetooth",
+      "service.network": "Red",
+      "service.software": "Software",
+      "service.shutOff": "Apagar",
+      "service.camera": "Cámara",
+      // Common phone problems/issues
+      "problem.screenBroken": "Pantalla Rota",
+      "problem.crackedScreen": "Pantalla Agrietada",
+      "problem.screenNotWorking": "Pantalla No Funciona",
+      "problem.displayNotWorking": "Pantalla No Funciona",
+      "problem.touchNotWorking": "Táctil No Funciona",
+      "problem.batteryNotCharging": "Batería No Carga",
+      "problem.chargingIssue": "Problema de Carga",
+      "problem.notCharging": "No Carga",
+      "problem.waterDamage": "Daño por Agua",
+      "problem.waterDamaged": "Dañado por Agua",
+      "problem.speakerNotWorking": "Altavoz No Funciona",
+      "problem.microphoneNotWorking": "Micrófono No Funciona",
+      "problem.cameraNotWorking": "Cámara No Funciona",
+      "problem.wifiNotWorking": "Wifi No Funciona",
+      "problem.bluetoothNotWorking": "Bluetooth No Funciona",
+      "problem.networkIssue": "Problema de Red",
+      "problem.softwareIssue": "Problema de Software",
+      "problem.phoneNotTurningOn": "Teléfono No Enciende",
+      "problem.wontTurnOn": "No Enciende",
+      "problem.dead": "Muerto",
+      "problem.deadRepair": "Muerto / No Enciende",
+      "problem.powerButtonNotWorking": "Botón de Encendido No Funciona",
+      "problem.homeButtonNotWorking": "Botón Home No Funciona",
       "receipt.services": "Servicios",
       "receipt.problem": "Problema",
       "receipt.price": "Presupuesto",
@@ -2920,10 +3147,11 @@ export async function printReceiptForTickets(
     const ticketCharger = ticket.charger ? t["common.yes"] : t["common.no"]
     const ticketBattery = ticket.battery ? t["common.yes"] : t["common.no"]
     const ticketWaterDamaged = ticket.waterDamaged ? t["common.yes"] : t["common.no"]
-    const ticketEquipmentObs = ticket.equipmentObs || "-"
-    const ticketPhoneIssue = ticket.phoneIssue || "-"
-    const ticketRepairObs = ticket.repairObs || "-"
-    const ticketProblem = ticket.problem || "-"
+    // Translate equipment observations, phone issue, repair observations, and problem
+    const ticketEquipmentObs = translateProblemForReceipt(ticket.equipmentObs || ticket.phoneIssue, language) || "-"
+    const ticketPhoneIssue = translateProblemForReceipt(ticket.phoneIssue, language) || "-"
+    const ticketRepairObs = translateServicesForReceipt(ticket.repairObs || ticket.selectedServices || ticket.serviceName, language) || "-"
+    const ticketProblem = translateProblemForReceipt(ticket.problem, language) || "-"
     const ticketPrice = Number.parseFloat(ticket.price || 0).toFixed(2)
     
     // Parse selectedServices if it's a string (from database JSON)
@@ -2937,9 +3165,11 @@ export async function printReceiptForTickets(
       }
     }
     
-    const services = Array.isArray(servicesArray) 
-      ? servicesArray.join(", ") 
-      : (servicesArray || ticket.serviceName || t["common.notAvailable"] || "N/A")
+    // Translate services
+    const services = translateServicesForReceipt(
+      Array.isArray(servicesArray) ? servicesArray : (servicesArray || ticket.serviceName || ticket.repairObs),
+      language
+    ) || (t["common.notAvailable"] || "N/A")
     
     const entryDate = new Date(ticket?.createdAt || Date.now())
     const formattedDate = entryDate.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })
