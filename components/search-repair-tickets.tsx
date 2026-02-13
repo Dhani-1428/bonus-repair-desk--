@@ -1207,12 +1207,12 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                             // Show Phone Issue - phoneIssue field
                             const phoneIssue = ticket.phoneIssue || ""
                             if (phoneIssue && phoneIssue.trim() !== "") {
-                              return phoneIssue.trim()
+                              return translateProblem(phoneIssue.trim())
                             }
                             // Fallback to equipmentObs for backward compatibility
                             const mobileCondition = ticket.equipmentObs || ticket.equipmentObservations || ticket.condition || ""
                             if (mobileCondition && mobileCondition.trim() !== "") {
-                              return mobileCondition.trim()
+                              return translateProblem(mobileCondition.trim())
                             }
                             // Fallback to problem if no condition is available (for backward compatibility)
                             return translateProblem(ticket.problem)

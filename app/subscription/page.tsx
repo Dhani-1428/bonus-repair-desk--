@@ -537,28 +537,40 @@ export default function SubscriptionPage() {
                 {plan.popular && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
                     <div className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-500 px-4 py-1 text-xs font-semibold text-white shadow-md">
-                      Most Popular
+                      {t("plan.mostPopular")}
                     </div>
                   </div>
                 )}
                 <CardHeader className="pb-4 bg-blue-50 border-b border-blue-200">
-                  <CardTitle className="text-xl text-black">{plan.name}</CardTitle>
+                  <CardTitle className="text-xl text-black">
+                    {plan.id === "SIX_MONTH" ? t("plan.sixMonthsName") : plan.id === "TWELVE_MONTH" ? t("plan.twelveMonthsName") : plan.name}
+                  </CardTitle>
                   <CardDescription className="text-gray-600">
-                    {plan.id === "SIX_MONTH" ? "6 months" : "12 months"}
+                    {plan.id === "SIX_MONTH" ? t("subscription.sixMonths") : plan.id === "TWELVE_MONTH" ? t("subscription.twelveMonths") : ""}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
                     <span className="text-4xl font-bold text-black">€{plan.price}</span>
                   </div>
-                  <p className="text-sm text-gray-600">{PLAN_PRICING[plan.id]?.description || ""}</p>
+                  <p className="text-sm text-gray-600">
+                    {plan.id === "SIX_MONTH" ? t("plan.sixMonthsDescription") : plan.id === "TWELVE_MONTH" ? t("plan.twelveMonthsDescription") : PLAN_PRICING[plan.id]?.description || ""}
+                  </p>
                   <ul className="space-y-2">
-                    {PLAN_PRICING[plan.id]?.features.map((feature) => (
-                      <li key={feature} className="flex items-start gap-2">
-                        <Check className="w-4 h-4 text-orange-500 mt-0.5 shrink-0" />
-                        <span className="text-sm text-black">{feature}</span>
-                      </li>
-                    ))}
+                    {PLAN_PRICING[plan.id]?.features.map((feature) => {
+                      // Map feature text to translation key
+                      const featureKey = feature === "Repair device management" ? "feature.repairTicketManagement" :
+                                        feature === "Customer database" ? "feature.customerDatabase" :
+                                        feature === "Payment processing" ? "feature.paymentProcessing" :
+                                        feature === "Analytics & reports" ? "feature.analyticsReports" :
+                                        feature === "Email support" ? "feature.emailSupport" : null
+                      return (
+                        <li key={feature} className="flex items-start gap-2">
+                          <Check className="w-4 h-4 text-orange-500 mt-0.5 shrink-0" />
+                          <span className="text-sm text-black">{featureKey ? t(featureKey) : feature}</span>
+                        </li>
+                      )
+                    })}
                   </ul>
                 </CardContent>
                 <CardFooter>
@@ -591,7 +603,7 @@ export default function SubscriptionPage() {
                       }`}
                       disabled={!user}
                     >
-                      {!user ? t("subscription.loginRequired") || "Login Required" : "Subscribe"}
+                      {!user ? t("subscription.loginRequired") || "Login Required" : t("subscription.subscribe")}
                     </Button>
                   )}
                 </CardFooter>

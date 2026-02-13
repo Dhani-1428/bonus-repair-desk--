@@ -453,6 +453,11 @@ const translations: Record<Language, Record<string, string>> = {
     "feature.paymentProcessing": "Payment Processing",
     "feature.analyticsReports": "Analytics & Reports",
     "feature.emailSupport": "Email Support",
+    "plan.mostPopular": "Most Popular",
+    "plan.sixMonthsName": "6 Months",
+    "plan.twelveMonthsName": "12 Months",
+    "plan.sixMonthsDescription": "Great value for medium-term needs.",
+    "plan.twelveMonthsDescription": "Best value for long-term commitment.",
     "feature.teamManagement": "Team Management",
     "feature.everythingIn3Months": "Everything in 3 Months",
     "feature.advancedAnalytics": "Advanced Analytics",
@@ -3610,6 +3615,18 @@ const translations: Record<Language, Record<string, string>> = {
     "plan.threeMonths": "3 Meses",
     "plan.sixMonths": "6 Meses",
     "plan.twelveMonths": "12 Meses",
+    "plan.mostPopular": "Más Popular",
+    "plan.sixMonthsName": "6 Meses",
+    "plan.twelveMonthsName": "12 Meses",
+    "plan.sixMonthsDescription": "Excelente valor para necesidades a mediano plazo.",
+    "plan.twelveMonthsDescription": "Mejor valor para compromiso a largo plazo.",
+
+    // Plan features
+    "feature.repairTicketManagement": "Gestión de Dispositivos de Reparación",
+    "feature.customerDatabase": "Base de Datos de Clientes",
+    "feature.paymentProcessing": "Procesamiento de Pagos",
+    "feature.analyticsReports": "Análisis e Informes",
+    "feature.emailSupport": "Soporte por Correo Electrónico",
 
     // Website translations - other keys fall back to English
     "website.login.title": "Bienvenido de nuevo",
