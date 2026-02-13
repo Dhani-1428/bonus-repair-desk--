@@ -14,6 +14,7 @@ import { ScrollToTop } from "@/components/scroll-to-top"
 import { WhatsAppFloat } from "@/components/whatsapp-float"
 
 export default function Home() {
+  const { t } = useTranslation()
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
@@ -109,7 +110,7 @@ export default function Home() {
               }
             }}
           >
-            <span className="relative z-20 group-hover:text-blue-300 whitespace-nowrap">About</span>
+            <span className="relative z-20 group-hover:text-blue-300 whitespace-nowrap">{t("website.nav.about")}</span>
             <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-600 group-hover:w-full transition-all duration-300"></span>
           </a>
           <a
@@ -127,7 +128,7 @@ export default function Home() {
               }
             }}
           >
-            <span className="relative z-20 group-hover:text-blue-300 whitespace-nowrap">Features</span>
+            <span className="relative z-20 group-hover:text-blue-300 whitespace-nowrap">{t("website.nav.features")}</span>
             <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-600 group-hover:w-full transition-all duration-300"></span>
           </a>
           <a
@@ -145,7 +146,7 @@ export default function Home() {
               }
             }}
           >
-            <span className="relative z-20 group-hover:text-blue-300 whitespace-nowrap">Pricing</span>
+            <span className="relative z-20 group-hover:text-blue-300 whitespace-nowrap">{t("website.nav.pricing")}</span>
             <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-600 group-hover:w-full transition-all duration-300"></span>
           </a>
           <a
@@ -163,7 +164,7 @@ export default function Home() {
               }
             }}
           >
-            <span className="relative z-20 group-hover:text-blue-300 whitespace-nowrap">Testimonials</span>
+            <span className="relative z-20 group-hover:text-blue-300 whitespace-nowrap">{t("website.nav.testimonials")}</span>
             <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-600 group-hover:w-full transition-all duration-300"></span>
           </a>
           <a
@@ -181,7 +182,7 @@ export default function Home() {
               }
             }}
           >
-            <span className="relative z-20 group-hover:text-blue-300 whitespace-nowrap">FAQ</span>
+            <span className="relative z-20 group-hover:text-blue-300 whitespace-nowrap">{t("website.nav.faq")}</span>
             <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-600 group-hover:w-full transition-all duration-300"></span>
           </a>
           <a
@@ -199,19 +200,20 @@ export default function Home() {
               }
             }}
           >
-            <span className="relative z-20 group-hover:text-blue-300 whitespace-nowrap">Contact</span>
+            <span className="relative z-20 group-hover:text-blue-300 whitespace-nowrap">{t("website.nav.contact")}</span>
             <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-600 group-hover:w-full transition-all duration-300"></span>
           </a>
             </div>
 
         <div className="flex items-center gap-2 sm:gap-4 relative z-10 flex-shrink-0">
+          <WebsiteLanguageSelector />
           <Link
             href="/login"
             className={`font-medium transition-all duration-300 hover:text-blue-300 text-gray-300 cursor-pointer relative z-10 whitespace-nowrap ${
               isScrolled ? "text-xs px-2" : "text-sm"
             }`}
           >
-            Log In
+            {t("website.nav.logIn")}
           </Link>
 
           <Link
@@ -220,7 +222,7 @@ export default function Home() {
               isScrolled ? "px-3 py-1.5 text-xs" : "px-4 py-2 text-sm"
             }`}
           >
-            Sign Up
+            {t("website.nav.signUp")}
           </Link>
                   </div>
       </header>
@@ -265,50 +267,50 @@ export default function Home() {
                 onClick={() => handleMobileNavClick("about")}
                 className="text-left px-4 py-3 text-lg font-medium text-gray-300 hover:text-white hover:bg-gradient-to-r hover:from-blue-600/20 hover:to-purple-600/20 transition-all duration-300 rounded-lg"
               >
-                About
+                {t("website.nav.about")}
               </button>
               <button
                 onClick={() => handleMobileNavClick("features")}
                 className="text-left px-4 py-3 text-lg font-medium text-gray-300 hover:text-white hover:bg-gradient-to-r hover:from-blue-600/20 hover:to-purple-600/20 transition-all duration-300 rounded-lg"
               >
-                Features
+                {t("website.nav.features")}
               </button>
               <button
                 onClick={() => handleMobileNavClick("pricing")}
                 className="text-left px-4 py-3 text-lg font-medium text-gray-300 hover:text-white hover:bg-gradient-to-r hover:from-blue-600/20 hover:to-purple-600/20 transition-all duration-300 rounded-lg"
               >
-                Pricing
+                {t("website.nav.pricing")}
               </button>
               <button
                 onClick={() => handleMobileNavClick("testimonials")}
                 className="text-left px-4 py-3 text-lg font-medium text-gray-300 hover:text-white hover:bg-gradient-to-r hover:from-blue-600/20 hover:to-purple-600/20 transition-all duration-300 rounded-lg"
               >
-                Testimonials
+                {t("website.nav.testimonials")}
               </button>
               <button
                 onClick={() => handleMobileNavClick("faq")}
                 className="text-left px-4 py-3 text-lg font-medium text-gray-300 hover:text-white hover:bg-gradient-to-r hover:from-blue-600/20 hover:to-purple-600/20 transition-all duration-300 rounded-lg"
               >
-                FAQ
+                {t("website.nav.faq")}
               </button>
               <button
                 onClick={() => handleMobileNavClick("contact")}
                 className="text-left px-4 py-3 text-lg font-medium text-gray-300 hover:text-white hover:bg-gradient-to-r hover:from-blue-600/20 hover:to-purple-600/20 transition-all duration-300 rounded-lg"
               >
-                Contact
+                {t("website.nav.contact")}
               </button>
               <div className="border-t border-gray-800/50 pt-4 mt-4 flex flex-col space-y-3">
                 <Link
                   href="/login"
                   className="px-4 py-3 text-lg font-medium text-gray-300 hover:text-white hover:bg-gradient-to-r hover:from-blue-600/20 hover:to-purple-600/20 transition-all duration-300 rounded-lg cursor-pointer"
                 >
-                  Log In
+                  {t("website.nav.logIn")}
                 </Link>
                 <Link
                   href="/register"
                   className="px-4 py-3 text-lg font-bold text-center bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-lg shadow-lg hover:shadow-xl hover:shadow-blue-500/20 hover:-translate-y-0.5 transition-all duration-300 transform hover:scale-105"
                 >
-                  Sign Up
+                  {t("website.nav.signUp")}
                 </Link>
             </div>
             </nav>
@@ -357,7 +359,7 @@ export default function Home() {
           <div className="flex flex-col items-center justify-center space-y-4">
             {/* Developed by Bonus IT Solutions */}
             <p className="text-center text-base text-gray-300">
-              Developed by{" "}
+              {t("website.footer.developedBy")}{" "}
               <a
                 href="https://bonusitsolutions.com/"
                 target="_blank"
@@ -370,7 +372,7 @@ export default function Home() {
             
             {/* Copyright Notice */}
             <p className="text-center text-base text-white font-medium">
-              © 2025 Bonus IT Solutions. All rights reserved.
+              {t("website.footer.copyright")}
             </p>
           </div>
         </div>

@@ -10,11 +10,14 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useAuth } from "@/hooks/use-auth"
 import { AlertCircle, Loader2 } from "lucide-react"
+import { useTranslation } from "@/components/language-provider"
+import { WebsiteLanguageSelector } from "@/components/website-language-selector"
 
 export default function LoginPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { login, user, loading: authLoading } = useAuth()
+  const { t } = useTranslation()
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -89,32 +92,35 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-black via-zinc-900 to-black">
+      <div className="absolute top-4 right-4">
+        <WebsiteLanguageSelector />
+      </div>
       <div className="w-full max-w-md space-y-6 animate-fade-in">
         <div className="text-center space-y-2">
           <Link href="/" className="inline-flex items-center space-x-2">
             <img src="/BRD LOGO..png" alt="BRD Logo" className="h-12 w-12 rounded-full object-cover" />
             <span className="font-bold text-2xl text-white">Bonus Repair Desk</span>
           </Link>
-          <h1 className="text-3xl font-bold mt-4 text-white">Welcome Back</h1>
-          <p className="text-gray-400">Log in to access your admin panel</p>
+          <h1 className="text-3xl font-bold mt-4 text-white">{t("website.login.title")}</h1>
+          <p className="text-gray-400">{t("website.login.subtitle")}</p>
         </div>
 
         <Card className="bg-zinc-900/50 border-zinc-800 backdrop-blur-sm">
           <CardHeader>
-            <CardTitle className="text-white">Log in to your account</CardTitle>
-            <CardDescription className="text-gray-400">Enter your credentials to access your dashboard</CardDescription>
+            <CardTitle className="text-white">{t("website.login.logInToAccount")}</CardTitle>
+            <CardDescription className="text-gray-400">{t("website.login.enterCredentials")}</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-gray-200">
-                  Email
+                  {t("website.login.email")}
                 </Label>
                 <Input
                   id="email"
                   name="email"
                   type="email"
-                  placeholder="your@email.com"
+                  placeholder={t("website.login.emailPlaceholder")}
                   value={formData.email}
                   onChange={handleChange}
                   required
@@ -125,13 +131,13 @@ export default function LoginPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="password" className="text-gray-200">
-                  Password
+                  {t("website.login.password")}
                 </Label>
                 <Input
                   id="password"
                   name="password"
                   type="password"
-                  placeholder="Enter your password"
+                  placeholder={t("website.login.passwordPlaceholder")}
                   value={formData.password}
                   onChange={handleChange}
                   required
@@ -145,7 +151,7 @@ export default function LoginPage() {
                   <div className="flex items-start gap-2 p-4 rounded-lg bg-red-500/10 text-red-400 text-sm border border-red-500/20">
                     <AlertCircle className="h-5 w-5 mt-0.5 shrink-0" />
                     <div className="flex-1">
-                      <p className="font-semibold mb-1">Access Denied</p>
+                      <p className="font-semibold mb-1">{t("website.login.error")}</p>
                       <p className="text-red-300">{error}</p>
                     </div>
                   </div>
@@ -166,18 +172,18 @@ export default function LoginPage() {
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Logging in...
-                  </>
+                    {t("website.login.submitting")}
+                  </> 
                 ) : (
-                  "Log in"
+                  t("website.login.submit")
                 )}
               </Button>
             </form>
 
             <div className="mt-6 text-center text-sm">
-              <span className="text-gray-400">Don't have an account? </span>
+              <span className="text-gray-400">{t("website.login.noAccount")} </span>
               <Link href="/register" className="text-white font-medium hover:underline">
-                Sign up
+                {t("website.login.signUp")}
               </Link>
             </div>
             
@@ -186,7 +192,7 @@ export default function LoginPage() {
 
         <div className="text-center text-sm text-gray-400">
           <Link href="/" className="hover:text-white transition-colors">
-            ← Back to home
+            {t("website.login.backToHome")}
           </Link>
         </div>
       </div>

@@ -79,15 +79,15 @@ export function PricingSection() {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-gray-900/50 to-black/50 border border-gray-800/50 backdrop-blur-sm mb-6 shadow-lg"
           >
             <Sparkles className="w-4 h-4 text-blue-400" />
-            <span className="text-sm font-medium text-white/80">Pricing</span>
+            <span className="text-sm font-medium text-white/80">{t("website.pricing.badge")}</span>
           </motion.div>
 
           <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-white via-white to-white/60 bg-clip-text text-transparent mb-4">
-            Choose your plan
+            {t("website.pricing.title")}
           </h2>
 
           <p className="text-lg text-white/60 max-w-2xl mx-auto mb-8">
-            Start with a 15-day free trial, then choose from our flexible subscription plans. All plans include full access to all features.
+            {t("website.pricing.description")}
           </p>
         </motion.div>
 

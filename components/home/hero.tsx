@@ -5,8 +5,10 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { Sparkles } from "lucide-react"
+import { useTranslation } from "@/components/language-provider"
 
 export default function Hero() {
+  const { t } = useTranslation()
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -31,7 +33,7 @@ export default function Hero() {
             >
               <Badge className="inline-flex items-center gap-2 px-4 py-2 text-sm bg-gradient-to-r from-gray-900/50 to-black/50 border border-gray-800/50 backdrop-blur-sm text-white shadow-lg">
                 <Sparkles className="h-4 w-4 text-blue-400" />
-                Professional Repair Management
+                {t("website.hero.badge")}
               </Badge>
             </motion.div>
 
@@ -43,8 +45,8 @@ export default function Hero() {
               className="mb-8"
             >
               <h1 id="main-title" className="text-4xl font-bold tracking-tight text-foreground sm:text-6xl lg:text-7xl">
-                Manage Your <strong>Repair Business</strong> <br />
-                <em className="italic">Efficiently</em> & <strong>Professionally</strong>
+                {t("website.hero.title")} <br />
+                <em className="italic">{t("website.hero.titleEfficiently")}</em> & <strong>{t("website.hero.titleProfessionally")}</strong>
               </h1>
             </motion.div>
 
@@ -55,7 +57,7 @@ export default function Hero() {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="mx-auto mb-12 max-w-2xl text-lg text-muted-foreground"
             >
-              Streamline your repair shop operations with our comprehensive management system. Track devices, manage customers, handle payments, and grow your business all in one place.
+              {t("website.hero.description")}
             </motion.p>
 
             <motion.div
@@ -102,7 +104,7 @@ export default function Hero() {
                           <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
                           <path d="M2 12h20"></path>
                         </svg>
-                        Get started
+                        {t("website.nav.getStarted")}
                       </p>
                     </div>
                     <div className="text-gray-400 group-hover:text-white group-hover:ml-4 ease-in-out transition-all size-[24px] flex items-center justify-center rounded-full border-2 border-gray-700/50 group-hover:border-blue-500/50">
@@ -136,7 +138,7 @@ export default function Hero() {
             className="mt-auto pb-8"
           >
             <div className="text-center">
-              <p className="text-sm text-muted-foreground mb-6">Trusted by repair shops worldwide</p>
+              <p className="text-sm text-muted-foreground mb-6">{t("website.hero.trustedBy")}</p>
               <div className="flex items-center justify-center gap-8">
                 {/* Vercel Logo */}
                 <div className="opacity-60 grayscale hover:opacity-100 hover:grayscale-0 hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.3)] transition-all duration-300">
