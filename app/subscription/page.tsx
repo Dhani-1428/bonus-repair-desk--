@@ -262,7 +262,7 @@ export default function SubscriptionPage() {
         </div>
 
         {/* Free Trial Status */}
-        {subscription && (subscription.status === "free_trial" || subscription.isFreeTrial) && !isExpired(subscription) && (
+        {subscription && (subscription.status === "free_trial" || subscription.status === "FREE_TRIAL" || subscription.isFreeTrial) && !isExpired(subscription) && (
           <Card className="shadow-2xl border-2 border-blue-300 bg-white">
             <CardContent className="p-6">
               <div className="flex items-start gap-4">
@@ -273,14 +273,20 @@ export default function SubscriptionPage() {
                 </div>
                 <div className="flex-1">
                   <h3 className="text-xl font-bold text-blue-600 mb-2">
-                    Free Plan - {getDaysUntilExpiration(subscription) >= 0 ? `${getDaysUntilExpiration(subscription)} Days` : `${Math.abs(getDaysUntilExpiration(subscription))} Days`}
+                    {t("subscription.freePlan")} - {getDaysUntilExpiration(subscription) >= 0 ? `${getDaysUntilExpiration(subscription)} ${t("subscription.days")}` : `${Math.abs(getDaysUntilExpiration(subscription))} ${t("subscription.days")}`}
                   </h3>
                   <p className="text-black mb-2">
-                    You're currently on a FREE trial. Your trial will end on {getSubscriptionEndDate(subscription).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}.
+                    {t("subscription.freeTrialMessage")} {getSubscriptionEndDate(subscription).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}.
                   </p>
                   <p className="text-sm text-black">
-                    After the trial ends, you'll need to subscribe to continue accessing your admin panel. All your data will be safe.
+                    {t("subscription.afterTrial")}
                   </p>
+                  {/* Show selected plan if available */}
+                  {subscription.plan && (subscription.plan === "SIX_MONTH" || subscription.plan === "TWELVE_MONTH") && (
+                    <p className="text-sm text-blue-600 mt-2 font-semibold">
+                      {t("subscription.selectedPlan")}: {subscription.plan === "SIX_MONTH" ? t("plan.sixMonthsName") : t("plan.twelveMonthsName")}
+                    </p>
+                  )}
                 </div>
               </div>
             </CardContent>

@@ -209,14 +209,22 @@ export async function POST(request: NextRequest) {
     }
 
     try {
-      // For free trials, always use MONTHLY as placeholder plan
-      // The actual plan will be set when user purchases a subscription
+      // For free trials, store the selected plan (SIX_MONTH or TWELVE_MONTH) if provided
+      // This will be used when user purchases after trial ends
+      // Use the selected plan if it's valid, otherwise default to SIX_MONTH
+      const trialPlan = (selectedPlan && (selectedPlan === "SIX_MONTH" || selectedPlan === "TWELVE_MONTH")) 
+        ? selectedPlan 
+        : "SIX_MONTH"
+      
+      // For free trials, use the selected plan (not MONTHLY placeholder)
+      // Status is FREE_TRIAL, and isFreeTrial is TRUE
+      // When user purchases, the plan will remain the same but status will change to ACTIVE
       await execute(
         `INSERT INTO subscriptions (id, userId, tenantId, plan, status, startDate, endDate, isFreeTrial)
-         VALUES (?, ?, ?, 'MONTHLY', 'FREE_TRIAL', ?, ?, TRUE)`,
-        [subscriptionId, userId, tenantId, startDate, endDate]
+         VALUES (?, ?, ?, ?, 'FREE_TRIAL', ?, ?, TRUE)`,
+        [subscriptionId, userId, tenantId, trialPlan, startDate, endDate]
       )
-      console.log(`[API] ✅ Free trial subscription created for user: ${email} (15 days)`)
+      console.log(`[API] ✅ Free trial subscription created for user: ${email} (15 days) with plan: ${trialPlan}`)
     } catch (subError: any) {
       console.error("[API] Error creating subscription:", subError?.message || subError)
       // Don't fail registration if subscription creation fails - user is already created
@@ -224,9 +232,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Send admin notification about new signup (include password for admin reference)
-    // Note: selectedPlan is for admin reference only - free trial uses MONTHLY as placeholder
+    // Include the selected plan that was stored in the subscription
     try {
-      await sendAdminSignupNotification(user, password, selectedPlan || "MONTHLY")
+      const storedPlan = (selectedPlan && (selectedPlan === "SIX_MONTH" || selectedPlan === "TWELVE_MONTH")) 
+        ? selectedPlan 
+        : "SIX_MONTH"
+      await sendAdminSignupNotification(user, password, storedPlan)
     } catch (emailError) {
       console.error("[API] Error sending admin signup notification:", emailError)
       // Don't fail registration if email fails

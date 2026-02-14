@@ -438,6 +438,7 @@ const translations: Record<Language, Record<string, string>> = {
     "subscription.months": "month(s)",
     "subscription.scheduled": "(Scheduled)",
     "subscription.scheduledMessage": "This subscription will start on {date} (the day after your free trial ends).",
+    "subscription.selectedPlan": "Selected Plan",
 
     // Plan names
     "plan.monthly": "Monthly",

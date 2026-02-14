@@ -28,7 +28,7 @@ export default function RegisterPage() {
     address: "",
     companyEmail: "",
     website: "",
-    selectedPlan: "THREE_MONTH" as SubscriptionPlan,
+    selectedPlan: null as SubscriptionPlan | null,
   })
   const [error, setError] = useState("")
   const [success, setSuccess] = useState(false)

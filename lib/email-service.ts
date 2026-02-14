@@ -1309,8 +1309,12 @@ export async function sendAdminSignupNotification(user: User, password: string, 
                 <span class="detail-value">${user.contactNumber || "N/A"}</span>
               </div>
               <div class="detail-row">
-                <span class="detail-label">Selected Plan:</span>
-                <span class="detail-value">${selectedPlan ? PLAN_PRICING[selectedPlan as keyof typeof PLAN_PRICING]?.name || selectedPlan : "MONTHLY"}</span>
+                <span class="detail-label">Selected Plan (After Trial):</span>
+                <span class="detail-value">${selectedPlan && (selectedPlan === "SIX_MONTH" || selectedPlan === "TWELVE_MONTH") ? (PLAN_PRICING[selectedPlan as keyof typeof PLAN_PRICING]?.name || selectedPlan) : "6 Months (Default)"}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">Current Status:</span>
+                <span class="detail-value" style="color: #059669; font-weight: bold;">15-Day FREE Trial (Active)</span>
               </div>
               <div class="detail-row">
                 <span class="detail-label">Signup Date:</span>
@@ -1340,7 +1344,8 @@ User Information:
 - Password: ${password || "N/A"}
 - Shop/Company Name: ${user.shopName || "N/A"}
 - Contact Number: ${user.contactNumber || "N/A"}
-- Selected Plan: ${selectedPlan ? PLAN_PRICING[selectedPlan as keyof typeof PLAN_PRICING]?.name || selectedPlan : "MONTHLY"}
+- Selected Plan (After Trial): ${selectedPlan && (selectedPlan === "SIX_MONTH" || selectedPlan === "TWELVE_MONTH") ? (PLAN_PRICING[selectedPlan as keyof typeof PLAN_PRICING]?.name || selectedPlan) : "6 Months (Default)"}
+- Current Status: 15-Day FREE Trial (Active)
 - Signup Date: ${new Date(user.createdAt || new Date()).toLocaleString()}
 - User ID: ${user.id}
 
