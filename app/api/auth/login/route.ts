@@ -149,14 +149,14 @@ export async function POST(request: NextRequest) {
           createdAt: user.createdAt || new Date().toISOString(),
         }
         
-        // Send email to user
-        sendLoginEmail(userForEmail).catch((err) => {
+        // Send email to user (their email address)
+        await sendLoginEmail(userForEmail).catch((err) => {
           console.error("[API] Error sending user login email:", err?.message || err)
         })
         
-        // Send notification to admin (skip for super admin)
+        // Send notification to admin at bonusrepairdesk@gmail.com (skip for super admin)
         if (user.role !== "SUPER_ADMIN" && user.role !== "super_admin") {
-          sendAdminLoginNotification(userForEmail).catch((err) => {
+          await sendAdminLoginNotification(userForEmail).catch((err) => {
             console.error("[API] Error sending admin login notification:", err?.message || err)
           })
         }

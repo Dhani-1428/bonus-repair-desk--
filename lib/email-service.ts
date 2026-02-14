@@ -1592,7 +1592,7 @@ Bonus Repair Desk Team
 ${FROM_EMAIL}
   `.trim()
 
-  return sendEmail(user.email, "Login Successful - Admin Panel", html, text)
+  return await sendEmail(user.email, "Login Successful - Admin Panel", html, text)
 }
 
 /**
@@ -1672,7 +1672,7 @@ User Information:
 - User ID: ${user.id}
   `.trim()
 
-  return sendEmail(ADMIN_EMAIL, `User Logged In: ${user.name || user.email}`, html, text)
+  return await sendEmail(ADMIN_EMAIL, `User Logged In: ${user.name || user.email}`, html, text)
 }
 
 /**
