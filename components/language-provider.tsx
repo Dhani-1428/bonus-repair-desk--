@@ -3560,6 +3560,7 @@ const translations: Record<Language, Record<string, string>> = {
     "subscription.months": "mes(es)",
     "subscription.scheduled": "(Programado)",
     "subscription.scheduledMessage": "Esta suscripción comenzará el {date} (el día después de que termine su prueba gratuita).",
+    "subscription.selectedPlan": "Plan Seleccionado",
     "subscription.viewHistory": "Ver Historial",
     "subscription.hideHistory": "Ocultar Historial",
     "subscription.loading": "Cargando...",
