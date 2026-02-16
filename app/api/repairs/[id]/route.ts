@@ -276,11 +276,36 @@ export async function PUT(
       }
     }
 
+    // For delete operations, ensure at least deleted or deletedAt is included
     if (updateFields.length === 0) {
-      return NextResponse.json(
-        { error: "No fields to update" },
-        { status: 400, headers: corsHeaders() }
-      )
+      // If this is a delete operation but no fields were added, force add deleted and deletedAt
+      if (isDeleteOperation) {
+        // Check if deleted column exists
+        if (existingColumns.size === 0 || existingColumns.has("deleted")) {
+          updateFields.push("`deleted` = ?")
+          updateValues.push(1) // true
+        }
+        // Check if deletedAt column exists
+        if (existingColumns.size === 0 || existingColumns.has("deletedAt")) {
+          const deletedAtValue = updateData.deletedAt || new Date().toISOString()
+          let mysqlDateTime: string
+          if (typeof deletedAtValue === "string" && (deletedAtValue.includes('T') || deletedAtValue.includes('Z'))) {
+            mysqlDateTime = new Date(deletedAtValue).toISOString().slice(0, 19).replace('T', ' ')
+          } else {
+            mysqlDateTime = deletedAtValue
+          }
+          updateFields.push("`deletedAt` = ?")
+          updateValues.push(mysqlDateTime)
+        }
+      }
+      
+      // If still no fields after forcing delete fields, return error
+      if (updateFields.length === 0) {
+        return NextResponse.json(
+          { error: "No fields to update" },
+          { status: 400, headers: corsHeaders() }
+        )
+      }
     }
 
     // Check if editHistory column exists before trying to update it
