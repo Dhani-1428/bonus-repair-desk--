@@ -197,8 +197,13 @@ export async function PUT(
       
       const originalValue = originalTicket[key]
       
+      // Special handling for delete operations: always allow deleted and deletedAt to be set
+      // This ensures soft delete works even if the ticket is already marked as deleted
+      const isDeleteOperation = (key === "deleted" && value === true) || (key === "deletedAt" && value !== null && value !== undefined && value !== "")
+      
       // Skip fields that haven't changed (with proper comparison)
-      if (valuesEqual(originalValue, value)) return
+      // BUT: Always allow delete operations to proceed
+      if (!isDeleteOperation && valuesEqual(originalValue, value)) return
       
       // Track changes for edit history
       changes[key] = {
