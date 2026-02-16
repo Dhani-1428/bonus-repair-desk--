@@ -56,32 +56,43 @@ export async function POST(request: NextRequest) {
     // Find user (case-insensitive email comparison) - optimized for speed
     let user
     try {
+      // Use queryOne with built-in retry logic (default 2 retries)
+      // This will automatically retry on connection errors with exponential backoff
       user = await queryOne(
         `SELECT * FROM users WHERE LOWER(email) = LOWER(?)`,
-        [email.trim()]
+        [email.trim()],
+        3 // 3 retries total (initial + 3 retries = 4 attempts)
       )
     } catch (dbError: any) {
-      // Only retry once for critical connection errors
-      if ((dbError?.code === "ER_CON_COUNT_ERROR" || dbError?.errno === 1040) && 
-          dbError?.message?.includes("Too many connections")) {
-        console.warn("[API] Database busy, retrying once...")
-        await new Promise(resolve => setTimeout(resolve, 300)) // Short delay
-        try {
-          user = await queryOne(
-            `SELECT * FROM users WHERE LOWER(email) = LOWER(?)`,
-            [email.trim()]
-          )
-        } catch (retryError) {
-          throw new Error("Database is temporarily busy. Please try again in a moment.")
-        }
-      } else if (dbError?.code === "ENOTFOUND" || dbError?.message?.includes("ENOTFOUND") || dbError?.message?.includes("getaddrinfo")) {
+      // Log the error for debugging
+      console.error("[API] Database error during login:", {
+        code: dbError?.code,
+        errno: dbError?.errno,
+        message: dbError?.message,
+        sqlState: dbError?.sqlState,
+      })
+      
+      // Handle specific database errors
+      if (dbError?.code === "ENOTFOUND" || dbError?.message?.includes("ENOTFOUND") || dbError?.message?.includes("getaddrinfo")) {
         console.error("[API] Database hostname cannot be resolved:", {
           code: dbError?.code,
           message: dbError?.message,
           host: process.env.DB_HOST,
         })
         throw new Error("Database connection failed: Cannot resolve database hostname. Please check your database configuration.")
+      } else if (dbError?.code === "ER_CON_COUNT_ERROR" || dbError?.errno === 1040 || 
+                 dbError?.message?.includes("Too many connections") || 
+                 dbError?.message?.includes("too many connections")) {
+        // Connection pool exhausted - provide helpful message
+        console.error("[API] Database connection pool exhausted")
+        throw new Error("Database is temporarily busy with too many connections. Please wait a moment and try again.")
+      } else if (dbError?.code === "ECONNREFUSED" || dbError?.code === "ETIMEDOUT" || 
+                 dbError?.code === "ECONNRESET" || dbError?.code === "PROTOCOL_CONNECTION_LOST") {
+        // Connection refused or timed out
+        console.error("[API] Database connection failed:", dbError?.code)
+        throw new Error("Database connection failed. Please check your database server and try again.")
       } else {
+        // Re-throw other errors
         throw dbError
       }
     }
