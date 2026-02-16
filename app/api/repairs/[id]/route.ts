@@ -147,6 +147,23 @@ export async function PUT(
       )
     }
 
+    // Verify ticket belongs to the user's tenant (security check)
+    // Note: We allow any user in the tenant to delete tickets in that tenant
+    // This is intentional for multi-user tenant scenarios
+    if (originalTicket.userId && originalTicket.userId !== userId) {
+      // Check if both users belong to the same tenant
+      const ticketOwner = await queryOne(
+        `SELECT tenantId FROM users WHERE id = ?`,
+        [originalTicket.userId]
+      )
+      if (!ticketOwner || ticketOwner.tenantId !== user.tenantId) {
+        return NextResponse.json(
+          { error: "Access denied: You can only delete tickets from your tenant" },
+          { status: 403, headers: corsHeaders() }
+        )
+      }
+    }
+
     // Build update query dynamically
     const updateFields: string[] = []
     const updateValues: any[] = []
@@ -280,12 +297,30 @@ export async function PUT(
     if (updateFields.length === 0) {
       // If this is a delete operation but no fields were added, force add deleted and deletedAt
       if (isDeleteOperation) {
-        // Check if deleted column exists
+        // Ensure deleted and deletedAt columns exist, create them if they don't
+        try {
+          // Check if deleted column exists, add it if not
+          if (existingColumns.size > 0 && !existingColumns.has("deleted")) {
+            console.log("[API] Adding 'deleted' column to table")
+            await execute(`ALTER TABLE ${tableName} ADD COLUMN \`deleted\` BOOLEAN DEFAULT FALSE`)
+            existingColumns.add("deleted")
+          }
+          // Check if deletedAt column exists, add it if not
+          if (existingColumns.size > 0 && !existingColumns.has("deletedAt")) {
+            console.log("[API] Adding 'deletedAt' column to table")
+            await execute(`ALTER TABLE ${tableName} ADD COLUMN \`deletedAt\` DATETIME NULL`)
+            existingColumns.add("deletedAt")
+          }
+        } catch (alterError: any) {
+          // If column already exists or other error, log and continue
+          console.warn("[API] Could not add deleted/deletedAt columns (may already exist):", alterError?.message)
+        }
+        
+        // Now add the fields
         if (existingColumns.size === 0 || existingColumns.has("deleted")) {
           updateFields.push("`deleted` = ?")
           updateValues.push(1) // true
         }
-        // Check if deletedAt column exists
         if (existingColumns.size === 0 || existingColumns.has("deletedAt")) {
           const deletedAtValue = updateData.deletedAt || new Date().toISOString()
           let mysqlDateTime: string
@@ -299,10 +334,24 @@ export async function PUT(
         }
       }
       
-      // If still no fields after forcing delete fields, return error
+      // If still no fields after forcing delete fields, return error with more details
       if (updateFields.length === 0) {
+        console.error("[API] No fields to update for delete operation", {
+          ticketId,
+          userId,
+          isDeleteOperation,
+          updateData,
+          existingColumns: Array.from(existingColumns),
+          originalTicket: {
+            deleted: originalTicket.deleted,
+            deletedAt: originalTicket.deletedAt
+          }
+        })
         return NextResponse.json(
-          { error: "No fields to update" },
+          { 
+            error: "No fields to update",
+            details: isDeleteOperation ? "Delete operation failed: deleted/deletedAt columns may not exist" : "No changes detected"
+          },
           { status: 400, headers: corsHeaders() }
         )
       }
