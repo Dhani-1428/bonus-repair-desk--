@@ -228,7 +228,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       />
       
       {/* Header */}
-      <header className="sticky top-2 z-[9999] mx-auto w-full flex-row items-center justify-between self-start rounded-full bg-white dark:bg-zinc-900 backdrop-blur-md border border-blue-200 dark:border-zinc-800 shadow-lg transition-all duration-300 max-w-7xl px-2 sm:px-4 py-2 mt-2"
+      <header className="sticky top-2 z-[9999] mx-auto w-full flex-row items-center justify-between self-start rounded-full bg-white dark:bg-gradient-to-r dark:from-gray-900/90 dark:via-black/90 dark:to-gray-900/90 backdrop-blur-md border border-blue-200 dark:border-gray-800/50 shadow-lg dark:shadow-2xl transition-all duration-300 max-w-7xl px-2 sm:px-4 py-2 mt-2"
         style={{
           willChange: "transform",
           transform: "translateZ(0)",
@@ -352,7 +352,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         )}
 
         {/* Sidebar */}
-        <aside className={`fixed lg:static inset-y-0 left-0 z-[9999] w-72 bg-blue-500 border-r border-blue-600 min-h-[calc(100vh-140px)] p-4 sm:p-6 shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+        <aside className={`fixed lg:static inset-y-0 left-0 z-[9999] w-72 bg-blue-500 dark:bg-gradient-to-b dark:from-gray-900/90 dark:via-black/90 dark:to-gray-900/90 border-r border-blue-600 dark:border-gray-800/50 min-h-[calc(100vh-140px)] p-4 sm:p-6 shadow-lg dark:shadow-2xl transform transition-transform duration-300 ease-in-out lg:translate-x-0 ${
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
         }`}>
           <nav className="space-y-2 animate-fade-in">

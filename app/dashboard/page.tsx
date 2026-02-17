@@ -57,12 +57,12 @@ export default function DashboardPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6 sm:space-y-8 text-black">
+      <div className="space-y-6 sm:space-y-8 text-black dark:text-white">
         <div className="space-y-2">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-black">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-black dark:text-white">
             {t("dashboard.welcomeBack")} {user.name}!
           </h1>
-          <p className="text-black text-base sm:text-lg font-medium">
+          <p className="text-black dark:text-gray-300 text-base sm:text-lg font-medium">
             {t("dashboard.whatsHappening")}
           </p>
         </div>
@@ -70,113 +70,113 @@ export default function DashboardPage() {
         
         <div className="flex flex-col sm:flex-row justify-between items-start gap-4 pt-4">
           <div className="space-y-2">
-            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-black">
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-black dark:text-white">
               {t("settings.accountCredentials")}
             </h2>
-            <p className="text-black text-sm sm:text-base">
+            <p className="text-black dark:text-gray-300 text-sm sm:text-base">
               {t("settings.credentialsDescription")}
             </p>
           </div>
           <Link href="/settings">
-            <Button className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto">
+            <Button className="bg-blue-600 hover:bg-blue-700 dark:bg-gradient-to-r dark:from-blue-600 dark:to-purple-600 dark:hover:from-blue-700 dark:hover:to-purple-700 w-full sm:w-auto">
               <Settings className="w-4 h-4 mr-2" />
               {t("settings.editCredentials")}
             </Button>
           </Link>
         </div>
 
-        <Card className="shadow-xl border border-blue-200 bg-white">
-          <CardHeader className="bg-blue-50 border-b border-blue-200 rounded-t-lg p-4 sm:p-6">
-            <CardTitle className="text-xl sm:text-2xl text-black">{t("settings.accountInformation")}</CardTitle>
-            <CardDescription className="text-black text-sm sm:text-base">
+        <Card className="shadow-xl border border-blue-200 dark:border-gray-800/50 bg-white dark:bg-gradient-to-br dark:from-gray-900/50 dark:via-black/50 dark:to-gray-900/50 dark:backdrop-blur-sm">
+          <CardHeader className="bg-blue-50 dark:bg-gray-900/30 border-b border-blue-200 dark:border-gray-800/50 rounded-t-lg p-4 sm:p-6">
+            <CardTitle className="text-xl sm:text-2xl text-black dark:text-white">{t("settings.accountInformation")}</CardTitle>
+            <CardDescription className="text-black dark:text-gray-300 text-sm sm:text-base">
               {t("settings.credentialsDescription")}
             </CardDescription>
           </CardHeader>
           <CardContent className="p-4 sm:p-6">
             <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2">
               <div className="flex items-start gap-4">
-                <div className="p-3 bg-blue-100 rounded-lg">
-                  <User className="w-6 h-6 text-blue-600" />
+                <div className="p-3 bg-blue-100 dark:bg-gray-800/50 rounded-lg">
+                  <User className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-500">{t("settings.name")}</p>
-                  <p className="text-lg font-semibold text-black">{displayUser.name || t("common.notAvailable")}</p>
+                  <p className="text-sm font-medium text-gray-500 dark:text-gray-400">{t("settings.name")}</p>
+                  <p className="text-lg font-semibold text-black dark:text-white">{displayUser.name || t("common.notAvailable")}</p>
                 </div>
               </div>
 
               <div className="flex items-start gap-4">
-                <div className="p-3 bg-blue-100 rounded-lg">
-                  <Mail className="w-6 h-6 text-blue-600" />
+                <div className="p-3 bg-blue-100 dark:bg-gray-800/50 rounded-lg">
+                  <Mail className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-500">{t("settings.email")}</p>
-                  <p className="text-lg font-semibold text-black">{displayUser.email || t("common.notAvailable")}</p>
+                  <p className="text-sm font-medium text-gray-500 dark:text-gray-400">{t("settings.email")}</p>
+                  <p className="text-lg font-semibold text-black dark:text-white">{displayUser.email || t("common.notAvailable")}</p>
                 </div>
               </div>
 
               {displayUser.shopName && (
                 <div className="flex items-start gap-4">
-                  <div className="p-3 bg-blue-100 rounded-lg">
-                    <Building2 className="w-6 h-6 text-blue-600" />
+                  <div className="p-3 bg-blue-100 dark:bg-gray-800/50 rounded-lg">
+                    <Building2 className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-500">{t("settings.shopName")}</p>
-                    <p className="text-lg font-semibold text-black">{displayUser.shopName}</p>
+                    <p className="text-sm font-medium text-gray-500 dark:text-gray-400">{t("settings.shopName")}</p>
+                    <p className="text-lg font-semibold text-black dark:text-white">{displayUser.shopName}</p>
                   </div>
                 </div>
               )}
 
               {displayUser.contactNumber && (
                 <div className="flex items-start gap-4">
-                  <div className="p-3 bg-blue-100 rounded-lg">
-                    <Phone className="w-6 h-6 text-blue-600" />
+                  <div className="p-3 bg-blue-100 dark:bg-gray-800/50 rounded-lg">
+                    <Phone className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-500">{t("settings.contactNumber")}</p>
-                    <p className="text-lg font-semibold text-black">{displayUser.contactNumber}</p>
+                    <p className="text-sm font-medium text-gray-500 dark:text-gray-400">{t("settings.contactNumber")}</p>
+                    <p className="text-lg font-semibold text-black dark:text-white">{displayUser.contactNumber}</p>
                   </div>
                 </div>
               )}
 
               {displayUser.address && (
                 <div className="flex items-start gap-4 md:col-span-2">
-                  <div className="p-3 bg-blue-100 rounded-lg">
-                    <MapPin className="w-6 h-6 text-blue-600" />
+                  <div className="p-3 bg-blue-100 dark:bg-gray-800/50 rounded-lg">
+                    <MapPin className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-500">{t("settings.address")}</p>
-                    <p className="text-lg font-semibold text-black">{displayUser.address}</p>
+                    <p className="text-sm font-medium text-gray-500 dark:text-gray-400">{t("settings.address")}</p>
+                    <p className="text-lg font-semibold text-black dark:text-white">{displayUser.address}</p>
                   </div>
                 </div>
               )}
 
               {displayUser.companyEmail && (
                 <div className="flex items-start gap-4">
-                  <div className="p-3 bg-blue-100 rounded-lg">
-                    <Mail className="w-6 h-6 text-blue-600" />
+                  <div className="p-3 bg-blue-100 dark:bg-gray-800/50 rounded-lg">
+                    <Mail className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-500">{t("settings.companyEmail")}</p>
-                    <p className="text-lg font-semibold text-black">{displayUser.companyEmail}</p>
+                    <p className="text-sm font-medium text-gray-500 dark:text-gray-400">{t("settings.companyEmail")}</p>
+                    <p className="text-lg font-semibold text-black dark:text-white">{displayUser.companyEmail}</p>
                   </div>
                 </div>
               )}
 
               {displayUser.website && (
                 <div className="flex items-start gap-4">
-                  <div className="p-3 bg-blue-100 rounded-lg">
-                    <Globe className="w-6 h-6 text-blue-600" />
+                  <div className="p-3 bg-blue-100 dark:bg-gray-800/50 rounded-lg">
+                    <Globe className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-500">{t("settings.website")}</p>
-                    <p className="text-lg font-semibold text-black">{displayUser.website}</p>
+                    <p className="text-sm font-medium text-gray-500 dark:text-gray-400">{t("settings.website")}</p>
+                    <p className="text-lg font-semibold text-black dark:text-white">{displayUser.website}</p>
                   </div>
                 </div>
               )}
             </div>
 
-            <div className="mt-6 pt-6 border-t border-gray-200">
-              <p className="text-sm text-gray-500">
+            <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-800/50">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
                 {t("settings.updateInstructions")}
               </p>
             </div>
