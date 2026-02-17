@@ -1603,15 +1603,21 @@ ${FROM_EMAIL}
 
   // Send email to user's email address FROM bonusrepairdesk@gmail.com
   console.log("[Email] Sending login email to:", userEmail, "FROM:", FROM_EMAIL)
-  const result = await sendEmail(userEmail, "Login Successful - Admin Panel", html, text)
   
-  if (result) {
-    console.log("[Email] ✅ Login email sent successfully to:", userEmail)
-  } else {
-    console.error("[Email] ❌ Failed to send login email to:", userEmail)
+  try {
+    const result = await sendEmail(userEmail, "Login Successful - Admin Panel", html, text)
+    
+    if (result) {
+      console.log("[Email] ✅ Login email sent successfully to:", userEmail, "FROM:", FROM_EMAIL)
+    } else {
+      console.error("[Email] ❌ Failed to send login email to:", userEmail, "FROM:", FROM_EMAIL)
+    }
+    
+    return result
+  } catch (error: any) {
+    console.error("[Email] ❌ Exception sending login email to:", userEmail, "Error:", error?.message || error)
+    return false
   }
-  
-  return result
 }
 
 /**
