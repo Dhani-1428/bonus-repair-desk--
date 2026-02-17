@@ -10,6 +10,7 @@ import { useAuth } from "@/hooks/use-auth"
 import { scheduleSubscriptionChecks } from "@/lib/subscription-notifications"
 import { AlertCircle, CheckCircle, Clock, X } from "lucide-react"
 import { CardReaderIntegration } from "@/components/card-reader-integration"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
@@ -221,7 +222,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       />
       
       {/* Header */}
-      <header className="sticky top-2 z-[9999] mx-auto w-full flex-row items-center justify-between self-start rounded-full bg-white backdrop-blur-md border border-blue-200 shadow-lg transition-all duration-300 max-w-7xl px-2 sm:px-4 py-2 mt-2"
+      <header className="sticky top-2 z-[9999] mx-auto w-full flex-row items-center justify-between self-start rounded-full bg-white dark:bg-zinc-900 backdrop-blur-md border border-blue-200 dark:border-zinc-800 shadow-lg transition-all duration-300 max-w-7xl px-2 sm:px-4 py-2 mt-2"
         style={{
           willChange: "transform",
           transform: "translateZ(0)",
@@ -252,17 +253,20 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           <Link href={isSuperAdmin ? "/super-admin" : "/dashboard"} className="z-50 flex items-center justify-center gap-2 sm:gap-3 transition-all duration-300 group flex-shrink-0">
             <img src="/BRD LOGO..png" alt="BRD Logo" className="h-10 w-10 sm:h-12 sm:w-12 rounded-full object-cover" />
             <div className="flex flex-col">
-              <span className="text-black font-bold text-sm sm:text-lg tracking-tight group-hover:text-blue-600 transition-colors duration-300 truncate max-w-[120px] sm:max-w-none">
+              <span className="text-black dark:text-white font-bold text-sm sm:text-lg tracking-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300 truncate max-w-[120px] sm:max-w-none">
                 {shopName}
               </span>
               {isSuperAdmin && (
-                <span className="text-xs text-black font-medium hidden sm:block">Super Admin</span>
+                <span className="text-xs text-black dark:text-white font-medium hidden sm:block">Super Admin</span>
               )}
             </div>
           </Link>
           <div className="flex items-center gap-2 sm:gap-4 relative z-10">
+            {/* Theme Toggle */}
+            <ThemeToggle />
+            
             <div className="hidden sm:flex items-center gap-3">
-              <label className="text-sm text-black flex items-center gap-2 font-medium">
+              <label className="text-sm text-black dark:text-white flex items-center gap-2 font-medium">
                 <svg className="w-4 h-4 hidden md:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
                 </svg>
@@ -270,7 +274,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                 <select
                   value={language}
                   onChange={(e) => setLanguage(e.target.value as any)}
-                  className="border border-blue-300 rounded-lg text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-1.5 bg-white text-black hover:border-blue-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all font-medium"
+                  className="border border-blue-300 dark:border-zinc-700 rounded-lg text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-1.5 bg-white dark:bg-zinc-900 text-black dark:text-white hover:border-blue-400 dark:hover:border-zinc-600 focus:border-blue-500 dark:focus:border-zinc-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-zinc-700 transition-all font-medium"
                 >
                   <option value="en">{t("header.english")}</option>
                   <option value="es">{t("header.spanish")}</option>
@@ -321,7 +325,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               variant="outline" 
               size="sm" 
               onClick={logout}
-              className="border-blue-300 bg-white text-black hover:bg-red-50 hover:border-red-400 hover:text-red-600 font-medium transition-all duration-300 hover:shadow-lg hover:shadow-red-200 transform hover:scale-105 text-xs sm:text-sm px-2 sm:px-3"
+              className="border-blue-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-black dark:text-white hover:bg-red-50 dark:hover:bg-red-900/20 hover:border-red-400 dark:hover:border-red-600 hover:text-red-600 dark:hover:text-red-400 font-medium transition-all duration-300 hover:shadow-lg hover:shadow-red-200 dark:hover:shadow-red-900/20 transform hover:scale-105 text-xs sm:text-sm px-2 sm:px-3"
             >
               <svg className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -570,14 +574,14 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                 const ps = subscription.paymentStatus as string | undefined
                 return ps === "PENDING" || (ps && typeof ps === "string" && ps.toLowerCase() === "pending")
               })() ? (
-                <div className="bg-yellow-50 border-2 border-yellow-300 rounded-lg p-3 sm:p-4 mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md">
+                <div className="bg-yellow-50 dark:bg-yellow-900/20 border-2 border-yellow-300 dark:border-yellow-700 rounded-lg p-3 sm:p-4 mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md">
                   <div className="flex items-center gap-2 sm:gap-3 flex-1">
-                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-yellow-100 rounded-full flex items-center justify-center flex-shrink-0">
-                      <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-600" />
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-yellow-100 dark:bg-yellow-900/40 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-600 dark:text-yellow-400" />
                     </div>
                     <div>
-                      <p className="text-black font-semibold text-base sm:text-lg">{t("payment.inProcess")}</p>
-                      <p className="text-black text-xs sm:text-sm">{t("payment.inProcessMessage")}</p>
+                      <p className="text-black dark:text-white font-semibold text-base sm:text-lg">{t("payment.inProcess")}</p>
+                      <p className="text-black dark:text-white text-xs sm:text-sm">{t("payment.inProcessMessage")}</p>
                     </div>
                   </div>
                   <Button
@@ -595,7 +599,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         )}
 
         {/* Main Content */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 text-black relative z-10">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 text-black dark:text-white relative z-10">
           <div className="container mx-auto max-w-7xl animate-fade-in">{children}</div>
         </main>
       </div>

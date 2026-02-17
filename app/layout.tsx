@@ -39,7 +39,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <style>{`
 html {
@@ -49,8 +49,8 @@ html {
 }
         `}</style>
       </head>
-      <body className="dark">
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+      <body>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} storageKey="admin-panel-theme">
           <AuthProvider>
             <LanguageProvider>
               {children}
