@@ -160,16 +160,32 @@ export async function POST(request: NextRequest) {
           createdAt: user.createdAt || new Date().toISOString(),
         }
         
-        // Send email to user (their email address)
-        await sendLoginEmail(userForEmail).catch((err) => {
-          console.error("[API] Error sending user login email:", err?.message || err)
+        // Send email to user (their email address) - FROM bonusrepairdesk@gmail.com
+        console.log("[API] Sending login email to user:", userForEmail.email)
+        const userEmailResult = await sendLoginEmail(userForEmail).catch((err) => {
+          console.error("[API] ❌ Error sending user login email:", err?.message || err)
+          return false
         })
+        if (userEmailResult) {
+          console.log("[API] ✅ User login email sent successfully to:", userForEmail.email)
+        } else {
+          console.error("[API] ❌ Failed to send user login email to:", userForEmail.email)
+        }
         
         // Send notification to admin at bonusrepairdesk@gmail.com (skip for super admin)
         if (user.role !== "SUPER_ADMIN" && user.role !== "super_admin") {
-          await sendAdminLoginNotification(userForEmail).catch((err) => {
-            console.error("[API] Error sending admin login notification:", err?.message || err)
+          console.log("[API] Sending admin login notification to bonusrepairdesk@gmail.com for user:", userForEmail.email)
+          const adminEmailResult = await sendAdminLoginNotification(userForEmail).catch((err) => {
+            console.error("[API] ❌ Error sending admin login notification:", err?.message || err)
+            return false
           })
+          if (adminEmailResult) {
+            console.log("[API] ✅ Admin login notification sent successfully to bonusrepairdesk@gmail.com")
+          } else {
+            console.error("[API] ❌ Failed to send admin login notification to bonusrepairdesk@gmail.com")
+          }
+        } else {
+          console.log("[API] Skipping admin login notification (super admin)")
         }
       } catch (emailError: any) {
         console.error("[API] Error in login email sending block:", emailError?.message || emailError)
