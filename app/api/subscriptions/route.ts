@@ -102,15 +102,15 @@ export async function POST(request: NextRequest) {
 
     // Check if subscription exists
     console.log("[API] Checking for existing subscription for userId:", userId)
-    const existing = await queryOne(
+    const existingSubscription = await queryOne(
       `SELECT * FROM subscriptions WHERE userId = ? ORDER BY createdAt DESC LIMIT 1`,
       [userId]
     )
 
     let subscription
 
-    if (existing) {
-      console.log("[API] Existing subscription found, updating:", existing.id)
+    if (existingSubscription) {
+      console.log("[API] Existing subscription found, updating:", existingSubscription.id)
       // Save old subscription to history
       try {
         await execute(
@@ -119,16 +119,16 @@ export async function POST(request: NextRequest) {
            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
           [
             uuidv4(),
-            existing.userId,
+            existingSubscription.userId,
             user.tenantId,
-            existing.plan,
-            existing.status,
-            toMySQLDateTime(existing.startDate),
-            toMySQLDateTime(existing.endDate),
-            existing.price,
-            existing.paymentStatus,
-            existing.paymentId,
-            existing.isFreeTrial,
+            existingSubscription.plan,
+            existingSubscription.status,
+            toMySQLDateTime(existingSubscription.startDate),
+            toMySQLDateTime(existingSubscription.endDate),
+            existingSubscription.price,
+            existingSubscription.paymentStatus,
+            existingSubscription.paymentId,
+            existingSubscription.isFreeTrial,
           ]
         )
         console.log("[API] ✅ Saved subscription to history")
@@ -140,13 +140,13 @@ export async function POST(request: NextRequest) {
       // Update existing subscription
       console.log("[API] Updating subscription with:", {
         plan,
-        status: status || existing.status,
+        status: status || existingSubscription.status,
         startDate: startDateMySQL,
         endDate: endDateMySQL,
-        price: price || existing.price,
-        paymentStatus: paymentStatus || existing.paymentStatus,
-        paymentId: paymentId || existing.paymentId,
-        isFreeTrial: isFreeTrial !== undefined ? isFreeTrial : existing.isFreeTrial
+        price: price || existingSubscription.price,
+        paymentStatus: paymentStatus || existingSubscription.paymentStatus,
+        paymentId: paymentId || existingSubscription.paymentId,
+        isFreeTrial: isFreeTrial !== undefined ? isFreeTrial : existingSubscription.isFreeTrial
       })
       
       await execute(
@@ -159,17 +159,17 @@ export async function POST(request: NextRequest) {
           status || existing.status,
           startDateMySQL,
           endDateMySQL,
-          price !== undefined ? price : existing.price,
-          paymentStatus || existing.paymentStatus,
-          paymentId || existing.paymentId,
-          isFreeTrial !== undefined ? isFreeTrial : existing.isFreeTrial,
-          existing.id,
+          price !== undefined ? price : existingSubscription.price,
+          paymentStatus || existingSubscription.paymentStatus,
+          paymentId || existingSubscription.paymentId,
+          isFreeTrial !== undefined ? isFreeTrial : existingSubscription.isFreeTrial,
+          existingSubscription.id,
         ]
       )
 
       subscription = await queryOne(
         `SELECT * FROM subscriptions WHERE id = ?`,
-        [existing.id]
+        [existingSubscription.id]
       )
       console.log("[API] ✅ Subscription updated successfully")
     } else {
@@ -217,8 +217,20 @@ export async function POST(request: NextRequest) {
     }
 
     // Send email notification to admin when subscription is created/updated
-    // Only send if it's a paid subscription (not free trial) or if status is ACTIVE
-    if (subscription && (subscription.status === "ACTIVE" || subscription.status === "active" || subscription.paymentStatus === "APPROVED")) {
+    // IMPORTANT: Only send email for NEW subscriptions or when payment status changes to APPROVED
+    // Do NOT send email for existing subscriptions that are just being updated/read
+    // Check if this is a new subscription (no existing subscription found) or payment was just approved
+    const wasNewSubscription = !existingSubscription
+    const paymentJustApproved = existingSubscription && 
+                                 existingSubscription.paymentStatus !== "APPROVED" && 
+                                 (subscription.paymentStatus === "APPROVED" || subscription.paymentStatus === "approved")
+    
+    // Only send email if:
+    // 1. It's a new subscription (not a free trial) with ACTIVE status or APPROVED payment
+    // 2. OR payment status just changed to APPROVED (payment was just processed)
+    if (subscription && (wasNewSubscription || paymentJustApproved) && 
+        (subscription.status === "ACTIVE" || subscription.status === "active" || subscription.paymentStatus === "APPROVED") &&
+        !subscription.isFreeTrial) {
       try {
         // Get full user information
         const user = await queryOne(
@@ -238,7 +250,7 @@ export async function POST(request: NextRequest) {
             createdAt: user.createdAt || new Date().toISOString(),
           }
           
-          console.log("[API] Sending subscription notification to bonusrepairdesk@gmail.com for subscription:", subscription.id)
+          console.log("[API] Sending subscription purchase notification to bonusrepairdesk@gmail.com for subscription:", subscription.id, wasNewSubscription ? "(new subscription)" : "(payment approved)")
           await sendAdminSubscriptionPurchaseNotification(userForEmail, subscription)
           console.log("[API] ✅ Subscription notification sent successfully to bonusrepairdesk@gmail.com")
         }
@@ -246,6 +258,8 @@ export async function POST(request: NextRequest) {
         console.error("[API] ❌ Error sending subscription notification:", emailError?.message || emailError)
         // Don't fail subscription creation if email fails
       }
+    } else {
+      console.log("[API] Skipping subscription email (existing subscription, not a new purchase or payment approval)")
     }
 
     return NextResponse.json({ subscription })
