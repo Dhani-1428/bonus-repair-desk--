@@ -1510,6 +1510,15 @@ Change made on: ${new Date().toLocaleString()}
  * Send login confirmation email to user
  */
 export async function sendLoginEmail(user: User) {
+  // Validate user email
+  if (!user || !user.email || typeof user.email !== 'string' || user.email.trim() === '') {
+    console.error("[Email] ❌ Cannot send login email: Invalid user or email address", { user: user ? { id: user.id, email: user.email } : null })
+    return false
+  }
+
+  const userEmail = user.email.trim().toLowerCase()
+  console.log("[Email] Preparing login email for user:", userEmail)
+
   const loginTime = new Date().toLocaleString()
   const ipAddress = "Your device" // Could be passed from API if needed
 
@@ -1592,7 +1601,17 @@ Bonus Repair Desk Team
 ${FROM_EMAIL}
   `.trim()
 
-  return await sendEmail(user.email, "Login Successful - Admin Panel", html, text)
+  // Send email to user's email address FROM bonusrepairdesk@gmail.com
+  console.log("[Email] Sending login email to:", userEmail, "FROM:", FROM_EMAIL)
+  const result = await sendEmail(userEmail, "Login Successful - Admin Panel", html, text)
+  
+  if (result) {
+    console.log("[Email] ✅ Login email sent successfully to:", userEmail)
+  } else {
+    console.error("[Email] ❌ Failed to send login email to:", userEmail)
+  }
+  
+  return result
 }
 
 /**

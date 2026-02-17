@@ -110,6 +110,15 @@ export async function POST(request: NextRequest) {
 
     console.log("[API] User found:", { id: user.id, email: user.email, role: user.role })
 
+    // Validate user email before proceeding
+    if (!user.email || typeof user.email !== 'string' || user.email.trim() === '') {
+      console.error("[API] ❌ User email is invalid:", user.email)
+      return NextResponse.json(
+        { error: "User email is invalid. Please contact support." },
+        { status: 400, headers: corsHeaders() }
+      )
+    }
+
     // Compare password
     const isPasswordValid = await bcrypt.compare(password, user.password)
 
