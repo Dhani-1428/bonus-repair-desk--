@@ -194,10 +194,10 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-blue-50 flex items-center justify-center">
+      <div className="min-h-screen bg-blue-50 dark:bg-black flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="mt-4 text-black">{t("common.loading")}</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 dark:border-blue-400 mx-auto"></div>
+          <p className="mt-4 text-black dark:text-white">{t("common.loading")}</p>
         </div>
       </div>
     )
@@ -212,12 +212,18 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <CardReaderIntegration />
-      <div className="min-h-screen w-full relative bg-blue-50">
-      {/* Light Blue Background with Top Glow */}
+      <div className="min-h-screen w-full relative bg-blue-50 dark:bg-black">
+      {/* Light Blue Background with Top Glow (Light Mode) / Dark Background (Dark Mode) */}
       <div
-        className="absolute inset-0 z-0"
+        className="absolute inset-0 z-0 dark:hidden"
         style={{
           background: "radial-gradient(ellipse 50% 35% at 50% 0%, rgba(191, 219, 254, 0.3), transparent 60%), #f0f9ff",
+        }}
+      />
+      <div
+        className="absolute inset-0 z-0 hidden dark:block"
+        style={{
+          background: "radial-gradient(ellipse 50% 35% at 50% 0%, rgba(226, 232, 240, 0.12), transparent 60%), #000000",
         }}
       />
       
@@ -306,7 +312,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                 </select>
               </label>
             </div>
-            <div className="h-8 w-px bg-blue-200 hidden sm:block"></div>
+            <div className="h-8 w-px bg-blue-200 dark:bg-zinc-700 hidden sm:block"></div>
             <div className="flex items-center gap-2 sm:gap-3">
               <div className="relative group">
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl blur opacity-50 group-hover:opacity-75 transition-opacity duration-300"></div>
@@ -317,8 +323,8 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                 </div>
               </div>
               <div className="hidden md:block">
-                <p className="text-sm font-semibold text-black">{user?.name}</p>
-                <p className="text-xs text-black capitalize font-medium">{user?.role || "member"}</p>
+                <p className="text-sm font-semibold text-black dark:text-white">{user?.name}</p>
+                <p className="text-xs text-black dark:text-white capitalize font-medium">{user?.role || "member"}</p>
               </div>
             </div>
             <Button 
@@ -550,21 +556,21 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                 </div>
               ) : (subscription.paymentStatus === "APPROVED" || (typeof subscription.paymentStatus === "string" && subscription.paymentStatus.toLowerCase() === "approved")) ? (
                 (subscription.status === "ACTIVE" || (typeof subscription.status === "string" && subscription.status.toLowerCase() === "active")) ? (
-                  <div className="bg-green-50 border-2 border-green-300 rounded-lg p-3 sm:p-4 mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md">
+                  <div className="bg-green-50 dark:bg-green-900/20 border-2 border-green-300 dark:border-green-700 rounded-lg p-3 sm:p-4 mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md">
                     <div className="flex items-center gap-2 sm:gap-3 flex-1">
-                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                        <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-green-100 dark:bg-green-900/40 rounded-full flex items-center justify-center flex-shrink-0">
+                        <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-green-600 dark:text-green-400" />
                       </div>
                       <div>
-                        <p className="text-black font-semibold text-base sm:text-lg">{t("payment.successful")}</p>
-                        <p className="text-black text-xs sm:text-sm">{t("payment.successfulMessage")}</p>
+                        <p className="text-black dark:text-white font-semibold text-base sm:text-lg">{t("payment.successful")}</p>
+                        <p className="text-black dark:text-white text-xs sm:text-sm">{t("payment.successfulMessage")}</p>
                       </div>
                     </div>
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={dismissPaymentNotification}
-                      className="text-green-600 hover:text-green-700 self-end sm:self-auto"
+                      className="text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 self-end sm:self-auto"
                     >
                       <X className="w-4 h-4 sm:w-5 sm:h-5" />
                     </Button>
@@ -588,7 +594,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                     variant="ghost"
                     size="sm"
                     onClick={dismissPaymentNotification}
-                    className="text-yellow-600 hover:text-yellow-700 self-end sm:self-auto"
+                    className="text-yellow-600 dark:text-yellow-400 hover:text-yellow-700 dark:hover:text-yellow-300 self-end sm:self-auto"
                   >
                     <X className="w-4 h-4 sm:w-5 sm:h-5" />
                   </Button>
