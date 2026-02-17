@@ -156,12 +156,19 @@ export async function POST(request: NextRequest) {
     console.log("[API] Login successful for:", email, "Role:", user.role)
 
     // Send login emails (truly non-blocking - fire and forget)
+    // IMPORTANT: Don't await this - let it run in background so login isn't blocked
     Promise.resolve().then(async () => {
       try {
+        // Validate user email before creating userForEmail object
+        if (!user.email || typeof user.email !== 'string' || user.email.trim() === '') {
+          console.error("[API] ❌ Cannot send login email: User email is invalid", { userId: user.id, email: user.email })
+          return
+        }
+
         const userForEmail = {
           id: user.id,
           name: user.name,
-          email: user.email,
+          email: user.email.trim(), // Ensure email is trimmed
           role: user.role,
           shopName: user.shopName || null,
           contactNumber: user.contactNumber || null,
@@ -169,38 +176,51 @@ export async function POST(request: NextRequest) {
           createdAt: user.createdAt || new Date().toISOString(),
         }
         
-        // Send email to user (their email address) - FROM bonusrepairdesk@gmail.com
-        console.log("[API] Sending login email to user:", userForEmail.email)
-        const userEmailResult = await sendLoginEmail(userForEmail).catch((err) => {
-          console.error("[API] ❌ Error sending user login email:", err?.message || err)
-          return false
+        console.log("[API] 📧 Preparing to send login emails for user:", {
+          userId: userForEmail.id,
+          email: userForEmail.email,
+          name: userForEmail.name
         })
-        if (userEmailResult) {
-          console.log("[API] ✅ User login email sent successfully to:", userForEmail.email)
-        } else {
-          console.error("[API] ❌ Failed to send user login email to:", userForEmail.email)
+        
+        // Send email to user (their email address) - FROM bonusrepairdesk@gmail.com
+        console.log("[API] 📧 Sending login email to user:", userForEmail.email, "FROM: bonusrepairdesk@gmail.com")
+        try {
+          const userEmailResult = await sendLoginEmail(userForEmail)
+          if (userEmailResult) {
+            console.log("[API] ✅ User login email sent successfully to:", userForEmail.email, "FROM: bonusrepairdesk@gmail.com")
+          } else {
+            console.error("[API] ❌ Failed to send user login email to:", userForEmail.email, "- sendLoginEmail returned false")
+          }
+        } catch (userEmailError: any) {
+          console.error("[API] ❌ Exception sending user login email:", userEmailError?.message || userEmailError)
+          console.error("[API] Error stack:", userEmailError?.stack)
         }
         
         // Send notification to admin at bonusrepairdesk@gmail.com (skip for super admin)
         if (user.role !== "SUPER_ADMIN" && user.role !== "super_admin") {
-          console.log("[API] Sending admin login notification to bonusrepairdesk@gmail.com for user:", userForEmail.email)
-          const adminEmailResult = await sendAdminLoginNotification(userForEmail).catch((err) => {
-            console.error("[API] ❌ Error sending admin login notification:", err?.message || err)
-            return false
-          })
-          if (adminEmailResult) {
-            console.log("[API] ✅ Admin login notification sent successfully to bonusrepairdesk@gmail.com")
-          } else {
-            console.error("[API] ❌ Failed to send admin login notification to bonusrepairdesk@gmail.com")
+          console.log("[API] 📧 Sending admin login notification to bonusrepairdesk@gmail.com for user:", userForEmail.email)
+          try {
+            const adminEmailResult = await sendAdminLoginNotification(userForEmail)
+            if (adminEmailResult) {
+              console.log("[API] ✅ Admin login notification sent successfully to bonusrepairdesk@gmail.com")
+            } else {
+              console.error("[API] ❌ Failed to send admin login notification - sendAdminLoginNotification returned false")
+            }
+          } catch (adminEmailError: any) {
+            console.error("[API] ❌ Exception sending admin login notification:", adminEmailError?.message || adminEmailError)
+            console.error("[API] Error stack:", adminEmailError?.stack)
           }
         } else {
-          console.log("[API] Skipping admin login notification (super admin)")
+          console.log("[API] ⏭️  Skipping admin login notification (super admin)")
         }
       } catch (emailError: any) {
-        console.error("[API] Error in login email sending block:", emailError?.message || emailError)
+        console.error("[API] ❌ Error in login email sending block:", emailError?.message || emailError)
+        console.error("[API] Error stack:", emailError?.stack)
         // Don't fail login if email fails
       }
-    }).catch(() => {}) // Silently fail
+    }).catch((catchError) => {
+      console.error("[API] ❌ Unhandled error in login email promise:", catchError?.message || catchError)
+    })
 
     return NextResponse.json({
       message: "Login successful",
