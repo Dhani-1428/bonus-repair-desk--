@@ -9,12 +9,12 @@ export default function TrashPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6 text-black">
+      <div className="space-y-6 text-black dark:text-white">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-balance text-black">
+          <h1 className="text-3xl font-bold tracking-tight text-balance text-black dark:text-white">
             {t("page.trash.title")}
           </h1>
-          <p className="text-black text-balance">{t("page.trash.subtitle")}</p>
+          <p className="text-black dark:text-gray-300 text-balance">{t("page.trash.subtitle")}</p>
         </div>
         <TrashDevices />
       </div>

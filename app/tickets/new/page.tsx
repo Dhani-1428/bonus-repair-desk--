@@ -148,27 +148,27 @@ export default function NewTicketPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6 text-black">
+      <div className="space-y-6 text-black dark:text-white">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-balance text-black">
+          <h1 className="text-3xl font-bold tracking-tight text-balance text-black dark:text-white">
             {t("page.newTicket.title")}
           </h1>
-          <p className="text-black text-balance">
+          <p className="text-black dark:text-gray-300 text-balance">
             {t("page.newTicket.subtitle")}
           </p>
         </div>
 
         {/* New Repair Device Form */}
         <div className="mb-6">
-          <h2 className="text-xl font-semibold mb-4 text-black">{t("page.newTicket.title")}</h2>
+          <h2 className="text-xl font-semibold mb-4 text-black dark:text-white">{t("page.newTicket.title")}</h2>
           <NewRepairTicketForm />
         </div>
 
         {/* Devices Information Section */}
-        <Card id="devices-information-section" className="shadow-xl border-2 border-blue-200 bg-white">
-          <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-100 border-b-2 border-blue-300 rounded-t-lg px-6 py-4 shadow-sm">
+        <Card id="devices-information-section" className="shadow-xl border-2 border-blue-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+          <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-gray-800 dark:to-gray-800 border-b-2 border-blue-300 dark:border-gray-700 rounded-t-lg px-6 py-4 shadow-sm">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-2xl flex items-center gap-2 text-black">
+              <CardTitle className="text-2xl flex items-center gap-2 text-black dark:text-white">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
                 </svg>
@@ -178,7 +178,7 @@ export default function NewTicketPage() {
                 variant="outline"
                 size="sm"
                 onClick={() => setShowDevices(!showDevices)}
-                className="border-blue-300 bg-white text-black hover:bg-blue-50"
+                className="border-blue-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-black dark:text-white hover:bg-blue-50 dark:hover:bg-gray-700"
                 data-show-devices-button
               >
                 {showDevices ? t("common.hide") : t("common.show")} {t("page.tickets.title")} ({devices.length})
@@ -186,9 +186,9 @@ export default function NewTicketPage() {
             </div>
           </CardHeader>
           {showDevices && (
-            <CardContent className="p-6 text-black">
+            <CardContent className="p-6 text-black dark:text-white">
               {devices.length === 0 ? (
-                <div className="text-center py-8 text-black">
+                <div className="text-center py-8 text-black dark:text-gray-300">
                   <p>{t("dashboard.noDevicesRegistered")}</p>
                   <p className="text-sm mt-2">{t("dashboard.createNewTicketToStart")}</p>
                 </div>
@@ -222,30 +222,30 @@ export default function NewTicketPage() {
                       return (
                         <div
                           key={`repair-${firstDevice.clientId}-${firstDevice.customerName}-${groupIndex}`}
-                          className="border-2 border-blue-300 rounded-xl p-6 bg-white shadow-sm"
+                          className="border-2 border-blue-300 dark:border-gray-700 rounded-xl p-6 bg-white dark:bg-gray-800 shadow-sm"
                         >
                           {/* Customer/Repair Header */}
-                          <div className="mb-4 pb-3 border-b-2 border-blue-300">
+                          <div className="mb-4 pb-3 border-b-2 border-blue-300 dark:border-gray-700">
                             <div className="flex items-center justify-between mb-2">
-                              <h2 className="text-xl font-bold text-black">
+                              <h2 className="text-xl font-bold text-black dark:text-white">
                                 {t("ticket.repairNumber")}: {repairNumber}
                               </h2>
-                              <Badge className="bg-blue-100 text-blue-700 border-blue-300">
+                              <Badge className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border-blue-300 dark:border-blue-700">
                                 {deviceGroup.length} {deviceGroup.length === 1 ? t("search.results.device") : t("search.results.devices")}
                               </Badge>
                             </div>
                             <div className="grid gap-2 md:grid-cols-3 text-sm">
                               <div>
-                                <span className="text-black font-semibold">{t("form.customerName")}:</span>
-                                <span className="text-black ml-2">{firstDevice.customerName || t("common.notAvailable")}</span>
+                                <span className="text-black dark:text-white font-semibold">{t("form.customerName")}:</span>
+                                <span className="text-black dark:text-gray-300 ml-2">{firstDevice.customerName || t("common.notAvailable")}</span>
                               </div>
                               <div>
-                                <span className="text-black font-semibold">{t("table.contact")}:</span>
-                                <span className="text-black ml-2">{firstDevice.contact || t("common.notAvailable")}</span>
+                                <span className="text-black dark:text-white font-semibold">{t("table.contact")}:</span>
+                                <span className="text-black dark:text-gray-300 ml-2">{firstDevice.contact || t("common.notAvailable")}</span>
                               </div>
                               <div>
-                                <span className="text-black font-semibold">{t("ticket.clientNif")}:</span>
-                                <span className="text-black ml-2">{firstDevice.clientId || t("common.notAvailable")}</span>
+                                <span className="text-black dark:text-white font-semibold">{t("ticket.clientNif")}:</span>
+                                <span className="text-black dark:text-gray-300 ml-2">{firstDevice.clientId || t("common.notAvailable")}</span>
                               </div>
                             </div>
                           </div>
@@ -262,44 +262,44 @@ export default function NewTicketPage() {
                               return (
                                 <div
                                   key={device.id || `device-${deviceIndex}`}
-                                  className="border border-blue-200 rounded-lg p-4 bg-blue-50/30"
+                                  className="border border-blue-200 dark:border-gray-700 rounded-lg p-4 bg-blue-50/30 dark:bg-gray-800/50"
                                 >
-                                  <div className="mb-3 pb-2 border-b border-blue-200">
-                                    <h3 className="text-lg font-semibold text-black">
+                                  <div className="mb-3 pb-2 border-b border-blue-200 dark:border-gray-700">
+                                    <h3 className="text-lg font-semibold text-black dark:text-white">
                                       Device {deviceIndex + 1}
                                     </h3>
                                   </div>
                           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                             <div>
-                              <p className="text-sm text-black">{t("ticket.repairNumber")}</p>
-                              <p className="font-semibold text-black">{device.repairNumber || t("common.notAvailable")}</p>
+                              <p className="text-sm text-black dark:text-gray-300">{t("ticket.repairNumber")}</p>
+                              <p className="font-semibold text-black dark:text-white">{device.repairNumber || t("common.notAvailable")}</p>
                             </div>
                             <div>
-                              <p className="text-sm text-black">{t("form.customerName")}</p>
-                              <p className="font-semibold text-black">{device.customerName || t("common.notAvailable")}</p>
+                              <p className="text-sm text-black dark:text-gray-300">{t("form.customerName")}</p>
+                              <p className="font-semibold text-black dark:text-white">{device.customerName || t("common.notAvailable")}</p>
                             </div>
                             <div>
-                              <p className="text-sm text-black">{t("form.receivedBy")}</p>
-                              <p className="font-semibold text-black">{device.receivedBy || t("common.notAvailable")}</p>
+                              <p className="text-sm text-black dark:text-gray-300">{t("form.receivedBy")}</p>
+                              <p className="font-semibold text-black dark:text-white">{device.receivedBy || t("common.notAvailable")}</p>
                             </div>
                             <div>
-                              <p className="text-sm text-black">{t("ticket.clientNif")}</p>
-                              <p className="font-semibold text-black">{device.clientId || t("common.notAvailable")}</p>
+                              <p className="text-sm text-black dark:text-gray-300">{t("ticket.clientNif")}</p>
+                              <p className="font-semibold text-black dark:text-white">{device.clientId || t("common.notAvailable")}</p>
                             </div>
                             <div>
-                              <p className="text-sm text-black">{t("table.contact")}</p>
-                              <p className="font-semibold text-black">{device.contact || t("common.notAvailable")}</p>
+                              <p className="text-sm text-black dark:text-gray-300">{t("table.contact")}</p>
+                              <p className="font-semibold text-black dark:text-white">{device.contact || t("common.notAvailable")}</p>
                             </div>
                             <div>
-                              <p className="text-sm text-black">{t("ticket.brandModel")}</p>
-                              <p className="font-semibold text-black">{device.brand || t("common.notAvailable")} - {device.model || t("common.notAvailable")}</p>
+                              <p className="text-sm text-black dark:text-gray-300">{t("ticket.brandModel")}</p>
+                              <p className="font-semibold text-black dark:text-white">{device.brand || t("common.notAvailable")} - {device.model || t("common.notAvailable")}</p>
                             </div>
                             <div>
-                              <p className="text-sm text-black">{t("table.imei")}</p>
-                              <p className="font-semibold text-black">{device.imeiNo || t("common.notAvailable")}</p>
+                              <p className="text-sm text-black dark:text-gray-300">{t("table.imei")}</p>
+                              <p className="font-semibold text-black dark:text-white">{device.imeiNo || t("common.notAvailable")}</p>
                             </div>
                         <div>
-                          <p className="text-sm text-black mb-2">{t("table.status")}</p>
+                          <p className="text-sm text-black dark:text-gray-300 mb-2">{t("table.status")}</p>
                           <Select
                             value={device.status?.toLowerCase() || "pending"}
                             onValueChange={(value) => updateTicketStatus(device.id, value)}
@@ -313,27 +313,27 @@ export default function NewTicketPage() {
                                  device.status || t("status.pending")}
                               </SelectValue>
                             </SelectTrigger>
-                            <SelectContent className="bg-white border-blue-200">
-                              <SelectItem value="pending" className="text-black cursor-pointer hover:bg-blue-50">{t("status.pending")}</SelectItem>
-                              <SelectItem value="not_ok" className="text-black cursor-pointer hover:bg-blue-50">{t("status.notOk") || "Not OK"}</SelectItem>
-                              <SelectItem value="completed" className="text-black cursor-pointer hover:bg-blue-50">{t("status.completed")}</SelectItem>
-                              <SelectItem value="delivered" className="text-black cursor-pointer hover:bg-blue-50">{t("status.delivered")}</SelectItem>
+                            <SelectContent className="bg-white dark:bg-gray-800 border-blue-200 dark:border-gray-700">
+                              <SelectItem value="pending" className="text-black dark:text-white cursor-pointer hover:bg-blue-50 dark:hover:bg-gray-700">{t("status.pending")}</SelectItem>
+                              <SelectItem value="not_ok" className="text-black dark:text-white cursor-pointer hover:bg-blue-50 dark:hover:bg-gray-700">{t("status.notOk") || "Not OK"}</SelectItem>
+                              <SelectItem value="completed" className="text-black dark:text-white cursor-pointer hover:bg-blue-50 dark:hover:bg-gray-700">{t("status.completed")}</SelectItem>
+                              <SelectItem value="delivered" className="text-black dark:text-white cursor-pointer hover:bg-blue-50 dark:hover:bg-gray-700">{t("status.delivered")}</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
                         <div>
-                          <p className="text-sm text-black">{t("table.price")}</p>
-                          <p className="font-semibold text-black">€{device.price || "0.00"}</p>
+                          <p className="text-sm text-black dark:text-gray-300">{t("table.price")}</p>
+                          <p className="font-semibold text-black dark:text-white">€{device.price || "0.00"}</p>
                         </div>
                         <div>
-                          <p className="text-sm text-black">{t("ticket.created")}</p>
-                          <p className="font-semibold text-xs text-black">
+                          <p className="text-sm text-black dark:text-gray-300">{t("ticket.created")}</p>
+                          <p className="font-semibold text-xs text-black dark:text-white">
                             {device.createdAt ? new Date(device.createdAt).toLocaleDateString() : t("common.notAvailable")}
                           </p>
                         </div>
                       </div>
-                                  <div className="mt-4 pt-4 border-t border-blue-200">
-                                    <p className="text-sm text-black mb-2">{t("ticket.service")} {(() => {
+                                  <div className="mt-4 pt-4 border-t border-blue-200 dark:border-gray-700">
+                                    <p className="text-sm text-black dark:text-gray-300 mb-2">{t("ticket.service")} {(() => {
                                       if (Array.isArray(device.selectedServices) && device.selectedServices.length > 0) {
                                         return device.selectedServices.join(", ")
                                       }
@@ -347,7 +347,7 @@ export default function NewTicketPage() {
                                       }
                                       return device.serviceName || "-"
                                     })()}</p>
-                                    <p className="text-sm text-black">{t("ticket.problem")} {device.problem || t("common.notAvailable")}</p>
+                                    <p className="text-sm text-black dark:text-gray-300">{t("ticket.problem")} {device.problem || t("common.notAvailable")}</p>
                                   </div>
                                 </div>
                               )
@@ -372,7 +372,7 @@ export default function NewTicketPage() {
                       )
                     })
                   })() : (
-                    <div className="text-center py-8 text-black">
+                    <div className="text-center py-8 text-black dark:text-gray-300">
                       <p>No devices found. Please add a device first.</p>
                     </div>
                   )}

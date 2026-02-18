@@ -209,21 +209,21 @@ export function TrashDevices() {
   return (
     <div className="space-y-6">
           {deletedTickets.length > 0 ? (
-            <Card className="shadow-xl border border-blue-200 bg-white">
-              <CardHeader className="bg-blue-50 border-b border-blue-200 rounded-t-lg">
-                <CardTitle className="text-2xl flex items-center gap-2 text-black">
+            <Card className="shadow-xl border border-blue-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+              <CardHeader className="bg-blue-50 dark:bg-gray-800 border-b border-blue-200 dark:border-gray-700 rounded-t-lg">
+                <CardTitle className="text-2xl flex items-center gap-2 text-black dark:text-white">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                   </svg>
                   {t("trash.deletedDevices")}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-6 text-black">
+              <CardContent className="p-6 text-black dark:text-white">
                 <div className="space-y-4">
                   {deletedTickets.map((ticket) => (
                     <div
                       key={ticket.id}
-                      className="border-2 border-blue-200 rounded-xl p-6 space-y-4 bg-white hover:shadow-lg transition-all hover:border-blue-300"
+                      className="border-2 border-blue-200 dark:border-gray-700 rounded-xl p-6 space-y-4 bg-white dark:bg-gray-800 hover:shadow-lg transition-all hover:border-blue-300 dark:hover:border-gray-600"
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
@@ -232,7 +232,7 @@ export function TrashDevices() {
                               {ticket.customerName.charAt(0).toUpperCase()}
                             </div>
                             <div>
-                              <h3 className="font-semibold text-xl text-black">{ticket.customerName}</h3>
+                              <h3 className="font-semibold text-xl text-black dark:text-white">{ticket.customerName}</h3>
                               <Badge className={`${getStatusColor(ticket.status)} font-medium px-2.5 py-0.5 mt-1`} style={{ backgroundColor: ticket.status?.toLowerCase() === 'pending' ? '#eab308' : ticket.status?.toLowerCase() === 'not_ok' ? '#ef4444' : ticket.status?.toLowerCase() === 'completed' ? '#22c55e' : ticket.status?.toLowerCase() === 'delivered' ? '#3b82f6' : '#6b7280', color: 'white', borderColor: ticket.status?.toLowerCase() === 'pending' ? '#ca8a04' : ticket.status?.toLowerCase() === 'not_ok' ? '#dc2626' : ticket.status?.toLowerCase() === 'completed' ? '#16a34a' : ticket.status?.toLowerCase() === 'delivered' ? '#2563eb' : '#4b5563' }}>
                                 {ticket.status.replace("_", " ").toUpperCase()}
                               </Badge>
@@ -241,93 +241,93 @@ export function TrashDevices() {
                           <div className="grid gap-3 md:grid-cols-2 text-sm mt-4">
                             {ticket.clientId && (
                               <div className="flex items-center gap-2">
-                                <svg className="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-4 h-4 text-black dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
                                 </svg>
-                                <span className="text-black">{t("table.clientId") || "Client ID"}</span>
-                                <span className="font-medium text-black">{ticket.clientId}</span>
+                                <span className="text-black dark:text-gray-300">{t("table.clientId") || "Client ID"}</span>
+                                <span className="font-medium text-black dark:text-white">{ticket.clientId}</span>
                               </div>
                             )}
                             {ticket.contact && (
                               <div className="flex items-center gap-2">
-                                <svg className="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-4 h-4 text-black dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                                 </svg>
-                                <span className="text-black">{t("trash.contact")}</span>
-                                <span className="font-medium text-black">{ticket.contact}</span>
+                                <span className="text-black dark:text-gray-300">{t("trash.contact")}</span>
+                                <span className="font-medium text-black dark:text-white">{ticket.contact}</span>
                               </div>
                             )}
                             {ticket.brand && (
                               <div className="flex items-center gap-2">
-                                <svg className="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-4 h-4 text-black dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
                                 </svg>
-                                <span className="text-black">{t("table.brand") || "Brand"}</span>
-                                <span className="font-medium text-black">{ticket.brand}</span>
+                                <span className="text-black dark:text-gray-300">{t("table.brand") || "Brand"}</span>
+                                <span className="font-medium text-black dark:text-white">{ticket.brand}</span>
                               </div>
                             )}
                             {ticket.model && (
                               <div className="flex items-center gap-2">
-                                <svg className="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-4 h-4 text-black dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                                 </svg>
-                                <span className="text-black">{t("trash.model")}</span>
-                                <span className="font-medium text-black">{ticket.model}</span>
+                                <span className="text-black dark:text-gray-300">{t("trash.model")}</span>
+                                <span className="font-medium text-black dark:text-white">{ticket.model}</span>
                               </div>
                             )}
                             {ticket.imeiNo && (
                               <div className="flex items-center gap-2">
-                                <svg className="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-4 h-4 text-black dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
                                 </svg>
-                                <span className="text-black">{t("trash.imei")}</span>
-                                <span className="font-medium text-black">{ticket.imeiNo}</span>
+                                <span className="text-black dark:text-gray-300">{t("trash.imei")}</span>
+                                <span className="font-medium text-black dark:text-white">{ticket.imeiNo}</span>
                               </div>
                             )}
                             {ticket.serialNo && (
                               <div className="flex items-center gap-2">
-                                <svg className="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-4 h-4 text-black dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 20h10M7 20V4m0 16a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v12a2 2 0 01-2 2H7z" />
                                 </svg>
-                                <span className="text-black">{t("table.serialNo") || "Serial No"}</span>
-                                <span className="font-medium text-black">{ticket.serialNo}</span>
+                                <span className="text-black dark:text-gray-300">{t("table.serialNo") || "Serial No"}</span>
+                                <span className="font-medium text-black dark:text-white">{ticket.serialNo}</span>
                               </div>
                             )}
                             {ticket.receivedBy && (
                               <div className="flex items-center gap-2">
-                                <svg className="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-4 h-4 text-black dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                 </svg>
-                                <span className="text-black">{t("table.receivedBy") || "Received By"}</span>
-                                <span className="font-medium text-black">{ticket.receivedBy}</span>
+                                <span className="text-black dark:text-gray-300">{t("table.receivedBy") || "Received By"}</span>
+                                <span className="font-medium text-black dark:text-white">{ticket.receivedBy}</span>
                               </div>
                             )}
                             {ticket.repairNumber && (
                               <div className="flex items-center gap-2">
-                                <svg className="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-4 h-4 text-black dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                 </svg>
-                                <span className="text-black">{t("table.repairNumber") || "Repair Number"}</span>
-                                <span className="font-medium text-black">{ticket.repairNumber}</span>
+                                <span className="text-black dark:text-gray-300">{t("table.repairNumber") || "Repair Number"}</span>
+                                <span className="font-medium text-black dark:text-white">{ticket.repairNumber}</span>
                               </div>
                             )}
                             {ticket.serviceName && (
                               <div className="flex items-center gap-2">
-                                <svg className="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-4 h-4 text-black dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                 </svg>
-                                <span className="text-black">{t("trash.service")}</span>
-                                <span className="font-medium text-black">{ticket.serviceName}</span>
+                                <span className="text-black dark:text-gray-300">{t("trash.service")}</span>
+                                <span className="font-medium text-black dark:text-white">{ticket.serviceName}</span>
                               </div>
                             )}
                           </div>
-                          <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                            <p className="text-sm text-black">
-                              <span className="text-black font-medium">{t("trash.problem")}</span>
+                          <div className="mt-4 p-3 bg-blue-50 dark:bg-gray-800 rounded-lg border border-blue-200 dark:border-gray-700">
+                            <p className="text-sm text-black dark:text-gray-300">
+                              <span className="text-black dark:text-white font-medium">{t("trash.problem")}</span>
                               <span className="ml-2">{ticket.problem}</span>
                             </p>
                           </div>
-                          <p className="text-xs text-black mt-2 flex items-center gap-1">
+                          <p className="text-xs text-black dark:text-gray-300 mt-2 flex items-center gap-1">
                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
@@ -335,7 +335,7 @@ export function TrashDevices() {
                           </p>
                         </div>
                         <div className="text-right ml-6">
-                          <div className="bg-gradient-to-br from-blue-600 to-purple-600 p-4 rounded-xl border-2 border-blue-300">
+                          <div className="bg-gradient-to-br from-blue-600 to-purple-600 p-4 rounded-xl border-2 border-blue-300 dark:border-blue-700">
                             {ticket.budget ? (
                               <>
                                 <p className="font-bold text-2xl text-white">€{Number.parseFloat(ticket.budget || 0).toFixed(2)}</p>
@@ -357,12 +357,12 @@ export function TrashDevices() {
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2 pt-3 border-t border-blue-200">
+                      <div className="flex items-center gap-2 pt-3 border-t border-blue-200 dark:border-gray-700">
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => handleRestoreDevice(ticket.id)}
-                          className="hover:bg-blue-50 border-blue-300 text-black"
+                          className="hover:bg-blue-50 dark:hover:bg-gray-700 border-blue-300 dark:border-gray-600 text-black dark:text-white"
                         >
                           <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -373,7 +373,7 @@ export function TrashDevices() {
                           variant="outline"
                           size="sm"
                           onClick={() => handlePermanentDelete(ticket.id, ticket.customerName)}
-                          className="hover:bg-red-50 hover:text-red-600 hover:border-red-300 text-black border-blue-300"
+                          className="hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 hover:border-red-300 dark:hover:border-red-700 text-black dark:text-white border-blue-300 dark:border-gray-600"
                         >
                           <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -387,14 +387,14 @@ export function TrashDevices() {
               </CardContent>
             </Card>
           ) : (
-            <Card className="shadow-xl border border-blue-200 bg-white">
+            <Card className="shadow-xl border border-blue-200 dark:border-gray-700 bg-white dark:bg-gray-900">
               <CardContent className="p-12">
                 <div className="text-center">
-                  <svg className="w-16 h-16 mx-auto text-black mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-16 h-16 mx-auto text-black dark:text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
-                  <p className="text-black text-lg">{t("trash.noDeletedDevices")}</p>
-                  <p className="text-sm text-black mt-2">{t("trash.deletedDevicesWillAppear")}</p>
+                  <p className="text-black dark:text-white text-lg">{t("trash.noDeletedDevices")}</p>
+                  <p className="text-sm text-black dark:text-gray-300 mt-2">{t("trash.deletedDevicesWillAppear")}</p>
                 </div>
               </CardContent>
             </Card>
