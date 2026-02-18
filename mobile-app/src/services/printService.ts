@@ -125,8 +125,8 @@ function generateReceiptHTML(tickets: Ticket[], companyInfo?: CompanyInfo): stri
             </div>
             <div style="display: ${cellLayout}; width: ${cellWidth}; vertical-align: top; padding-left: ${printerType === 'thermal' ? '0' : '6px'}; margin-top: ${printerType === 'thermal' ? '4px' : '0'}; border-top: ${printerType === 'thermal' ? '1px solid #ccc' : 'none'}; padding-top: ${printerType === 'thermal' ? '4px' : '0'};">
               <div style="font-weight: bold; font-size: ${headerFontSize}; margin: 0 0 2px 0; padding: 0; color: #000; line-height: ${lineHeight};">Client ID: ${clientId}</div>
-              <div style="margin: 0 0 2px 0; padding: 0; font-size: ${baseFontSize}; color: #000; line-height: ${lineHeight};"><strong>Name:</strong> ${customerName}</div>
-              <div style="margin: 0 0 2px 0; padding: 0; font-size: ${baseFontSize}; color: #000; line-height: ${lineHeight};"><strong>Client Contact:</strong> ${contact}</div>
+              <div style="margin: 0 0 2px 0; padding: 0; font-size: ${baseFontSize}; color: #000; line-height: ${lineHeight};"><strong>Name:</strong> <strong>${customerName}</strong></div>
+              <div style="margin: 0 0 2px 0; padding: 0; font-size: ${baseFontSize}; color: #000; line-height: ${lineHeight};"><strong>Client Contact:</strong> <strong>${contact}</strong></div>
               <div style="margin: 0; padding: 0; font-size: ${baseFontSize}; color: #000; line-height: ${lineHeight};"><strong>Device Received By:</strong> ${receivedBy}</div>
             </div>
           </div>
