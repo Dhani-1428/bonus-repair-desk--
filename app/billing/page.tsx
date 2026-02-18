@@ -344,10 +344,10 @@ function BillingContent() {
               {plans.map((plan) => (
                 <Card
                   key={plan.id}
-                  className={`relative cursor-pointer transition-all border-2 ${
+                  className={`relative cursor-pointer transition-all border-2 !bg-white dark:!bg-gray-900 ${
                     selectedPlan === plan.id
-                      ? "border-blue-500 dark:border-blue-600 bg-blue-50 dark:bg-gray-800"
-                      : "border-blue-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:border-blue-300 dark:hover:border-gray-600"
+                      ? "border-blue-500 dark:border-blue-600 !bg-blue-50 dark:!bg-gray-800"
+                      : "border-blue-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-gray-600"
                   }`}
                   onClick={() => setSelectedPlan(plan.id)}
                 >
@@ -391,7 +391,7 @@ function BillingContent() {
             </div>
 
             {/* Payment Method Info */}
-            <Card className="shadow-xl border border-blue-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+            <Card className="shadow-xl border border-blue-200 dark:border-gray-700 !bg-white dark:!bg-gray-900">
               <CardHeader className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 dark:from-gray-800 dark:to-gray-800 border-b border-blue-200 dark:border-gray-700 rounded-t-lg">
                 <CardTitle className="text-xl text-black dark:text-white flex items-center gap-2">
                   <Smartphone className="w-5 h-5" />
@@ -412,7 +412,7 @@ function BillingContent() {
 
           {/* Order Summary */}
           <div className="lg:col-span-1">
-            <Card className="shadow-xl border border-blue-200 dark:border-gray-700 bg-white dark:bg-gray-900 sticky top-6">
+            <Card className="shadow-xl border border-blue-200 dark:border-gray-700 !bg-white dark:!bg-gray-900 sticky top-6">
               <CardHeader className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 dark:from-gray-800 dark:to-gray-800 border-b border-blue-200 dark:border-gray-700 rounded-t-lg">
                 <CardTitle className="text-xl text-black dark:text-white">Order Summary</CardTitle>
               </CardHeader>
