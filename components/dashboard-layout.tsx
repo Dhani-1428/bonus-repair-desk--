@@ -541,8 +541,8 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                       <X className="w-5 h-5 sm:w-6 sm:h-6 text-red-600" />
                     </div>
                     <div>
-                      <p className="text-black font-semibold text-base sm:text-lg">{t("payment.declined")}</p>
-                      <p className="text-black text-xs sm:text-sm">{t("payment.declinedMessage")}</p>
+                      <p className="text-black dark:text-white font-semibold text-base sm:text-lg">{t("payment.declined")}</p>
+                      <p className="text-black dark:text-white text-xs sm:text-sm">{t("payment.declinedMessage")}</p>
                     </div>
                   </div>
                   <Button
