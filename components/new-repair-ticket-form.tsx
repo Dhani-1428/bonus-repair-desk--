@@ -928,7 +928,8 @@ export function NewRepairTicketForm() {
 
   const printReceipt = (tickets: any[]) => {
     // Use the wrapper function that shows language selection dialog first
-    printReceiptWithLanguageSelection(tickets, selectedPrinter)
+    // Pass "auto" to enable automatic printer detection
+    printReceiptWithLanguageSelection(tickets, selectedPrinter, "en", "auto")
   }
 
   // Handle continue/close after viewing ticket details
@@ -2734,12 +2735,60 @@ function LanguageSelectionDialog({
 }
 
 // Wrapper function that shows language selection dialog first
+/**
+ * Detect printer type automatically using a simpler approach
+ * Attempts to detect if printer supports A4 size by checking media queries
+ * Returns 'a4' for standard page printers, 'thermal' for thermal printers
+ * Defaults to 'thermal' if detection fails (safer for receipt printing)
+ */
+async function detectPrinterType(): Promise<"thermal" | "a4"> {
+  return new Promise((resolve) => {
+    // Use a simpler detection method: check if window.matchMedia supports A4
+    // Most browsers will report A4 support for standard printers
+    try {
+      // Check if A4 media query is supported
+      const a4MediaQuery = window.matchMedia('print')
+      
+      // Create a test element to measure
+      const testDiv = document.createElement('div')
+      testDiv.style.position = 'absolute'
+      testDiv.style.left = '-9999px'
+      testDiv.style.width = '210mm' // A4 width
+      testDiv.style.height = '297mm' // A4 height
+      document.body.appendChild(testDiv)
+      
+      // Get computed width
+      const computed = window.getComputedStyle(testDiv)
+      const widthPx = parseFloat(computed.width)
+      
+      // Remove test element
+      document.body.removeChild(testDiv)
+      
+      // A4 width at 96dpi = ~794px, thermal = ~220-302px
+      // If width is significantly larger than thermal, likely A4
+      if (widthPx > 600) {
+        console.log(`[detectPrinterType] Detected A4 printer (width: ${widthPx}px)`)
+        resolve("a4")
+      } else {
+        console.log(`[detectPrinterType] Detected thermal printer (width: ${widthPx}px)`)
+        resolve("thermal")
+      }
+    } catch (error) {
+      console.log("[detectPrinterType] Detection failed, defaulting to thermal:", error)
+      resolve("thermal")
+    }
+  })
+}
+
 export async function printReceiptWithLanguageSelection(
   tickets: any[], 
   preferredPrinter: string | null = null,
   language: ReceiptLanguage = "en",
-  printerType: "thermal" | "a4" = "a4"
+  printerType: "thermal" | "a4" | "auto" = "auto"
 ) {
+  // Auto-detect printer type if "auto" is specified
+  let finalPrinterType: "thermal" | "a4" = printerType === "auto" ? await detectPrinterType() : printerType
+  console.log(`[printReceiptWithLanguageSelection] Using printer type: ${finalPrinterType}`)
   // Validate tickets
   if (!tickets || !Array.isArray(tickets) || tickets.length === 0) {
     console.error("[printReceiptWithLanguageSelection] Invalid tickets parameter:", tickets)
@@ -2869,7 +2918,7 @@ export async function printReceiptWithLanguageSelection(
         document.body.removeChild(dialog)
       }
       if (lang) {
-        await printReceiptForTickets(tickets, preferredPrinter, lang, printerType)
+        await printReceiptForTickets(tickets, preferredPrinter, lang, finalPrinterType)
       }
     })
   })
@@ -3044,8 +3093,16 @@ export async function printReceiptForTickets(
     
     console.log(`[generateReceiptHTMLForMultipleDevices] Generated HTML for ${tickets.length} device(s)`)
     
+    // Copy type label (only shown in thermal mode, A4 mode shows it in split-page wrapper)
+    const copyLabel = printerType === "thermal" 
+      ? `<div style="text-align: center; font-weight: bold; font-size: ${titleFontSize}; margin-bottom: 8px; border: 2px solid #000; padding: 4px; background-color: #f0f0f0;">
+           ${copyType === "ADMIN" ? "========== ADMIN COPY ==========" : "========== CLIENT COPY =========="}
+         </div>`
+      : ""
+    
     return `
       <div style="font-family: Arial, sans-serif; width: 100%; font-size: ${baseFontSize}; line-height: ${lineHeight}; page-break-inside: avoid !important; page-break-after: avoid !important; page-break-before: avoid !important; break-inside: avoid !important; break-after: avoid !important; break-before: avoid !important; margin: 0; padding: 0;">
+        ${copyLabel}
         <div style="display: ${printerType === "thermal" ? "block" : "table"}; width: 100%; margin: 0 0 4px 0; border-bottom: 1.5px solid #000; padding: 0 0 2px 0; page-break-inside: avoid;">
           <div style="display: ${printerType === "thermal" ? "block" : "table-row"};">
             <div style="display: ${cellLayout}; width: ${cellWidth}; vertical-align: top; padding-right: ${printerType === "thermal" ? "0" : "6px"}; margin-bottom: ${printerType === "thermal" ? "4px" : "0"};">
@@ -3234,8 +3291,16 @@ export async function printReceiptForTickets(
       outDateDisplay = `<div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.outDate"] || "Out Date"}:</span> ${formattedOutDate} ${formattedOutTime}</div>`
     }
     
+    // Copy type label (only shown in thermal mode, A4 mode shows it in split-page wrapper)
+    const copyLabel = printerType === "thermal" 
+      ? `<div style="text-align: center; font-weight: bold; font-size: ${titleFontSize}; margin-bottom: 8px; border: 2px solid #000; padding: 4px; background-color: #f0f0f0;">
+           ${copyType === "ADMIN" ? "========== ADMIN COPY ==========" : "========== CLIENT COPY =========="}
+         </div>`
+      : ""
+    
     return `
       <div style="font-family: Arial, sans-serif; width: 100%; font-size: ${baseFontSize}; line-height: ${lineHeight}; page-break-inside: avoid !important; page-break-after: avoid !important; page-break-before: avoid !important; break-inside: avoid !important; break-after: avoid !important; break-before: avoid !important; margin: 0; padding: 0;">
+        ${copyLabel}
         <div style="display: ${printerType === "thermal" ? "block" : "table"}; width: 100%; margin: 0 0 4px 0; border-bottom: 1.5px solid #000; padding: 0 0 2px 0;">
           <div style="display: ${printerType === "thermal" ? "block" : "table-row"};">
             <div style="display: ${cellLayout}; width: ${cellWidth}; vertical-align: top; padding-right: ${printerType === "thermal" ? "0" : "6px"}; margin-bottom: ${printerType === "thermal" ? "4px" : "0"};">
@@ -3346,41 +3411,104 @@ export async function printReceiptForTickets(
   
   console.log(`[printReceiptForTickets] Grouped into ${Object.keys(finalGroupedTickets).length} group(s)`)
   
-  // Generate receipts - one receipt per group (devices added together share one receipt)
-  const receiptsHTML = Object.values(finalGroupedTickets).map(ticketGroup => {
-    console.log(`[printReceiptForTickets] Processing group with ${ticketGroup.length} ticket(s)`)
-    // Sort tickets by creation date to maintain order
-    const sortedTickets = [...ticketGroup].sort((a, b) => {
-      const dateA = new Date(a.createdAt || 0).getTime()
-      const dateB = new Date(b.createdAt || 0).getTime()
-      return dateA - dateB
-    })
-    
-    // If multiple tickets in group, show all devices on one receipt
-    if (sortedTickets.length > 1) {
-      // Multiple devices added together - show on one receipt
-      console.log(`[printReceiptForTickets] Generating multi-device receipt for ${sortedTickets.length} devices`)
-      const receipt = generateReceiptHTMLForMultipleDevices(sortedTickets, 'CLIENT')
-      
-      return `
-        <div class="ticket-container" style="page-break-inside: avoid !important; page-break-after: avoid !important; page-break-before: avoid !important; break-inside: avoid !important; break-after: avoid !important; break-before: avoid !important; margin: 0 auto; padding: 0; width: 100%; display: block; box-sizing: border-box;">
-          ${receipt}
-        </div>
-      `
-    } else {
-      // Single device - show individual receipt
-      const ticket = sortedTickets[0]
-      const receipt = generateReceiptHTML(ticket, 'CLIENT')
-      
-      return `
-        <div class="ticket-container" style="page-break-inside: avoid !important; page-break-after: avoid !important; page-break-before: avoid !important; break-inside: avoid !important; break-after: avoid !important; break-before: avoid !important; margin: 0 auto; padding: 0; width: 100%; display: block; box-sizing: border-box;">
-          ${receipt}
-        </div>
-      `
-    }
-  }).join("")
+  // Generate receipts based on printer type
+  let ticketsHTML = ""
   
-  const ticketsHTML = receiptsHTML
+  if (printerType === "a4") {
+    // A4 PRINTER: Generate split-page format (Admin top, Client bottom on same page)
+    console.log("[printReceiptForTickets] Generating A4 split-page format (Admin top, Client bottom)")
+    
+    ticketsHTML = Object.values(finalGroupedTickets).map(ticketGroup => {
+      console.log(`[printReceiptForTickets] Processing group with ${ticketGroup.length} ticket(s)`)
+      const sortedTickets = [...ticketGroup].sort((a, b) => {
+        const dateA = new Date(a.createdAt || 0).getTime()
+        const dateB = new Date(b.createdAt || 0).getTime()
+        return dateA - dateB
+      })
+      
+      let adminReceipt = ""
+      let clientReceipt = ""
+      
+      if (sortedTickets.length > 1) {
+        // Multiple devices
+        adminReceipt = generateReceiptHTMLForMultipleDevices(sortedTickets, 'ADMIN')
+        clientReceipt = generateReceiptHTMLForMultipleDevices(sortedTickets, 'CLIENT')
+      } else {
+        // Single device
+        const ticket = sortedTickets[0]
+        adminReceipt = generateReceiptHTML(ticket, 'ADMIN')
+        clientReceipt = generateReceiptHTML(ticket, 'CLIENT')
+      }
+      
+      // A4 Split-page: Top half = Admin, Bottom half = Client
+      return `
+        <div class="a4-split-page" style="width: 100%; height: 100vh; display: flex; flex-direction: column; page-break-inside: avoid;">
+          <!-- ADMIN COPY - Top Half -->
+          <div class="admin-copy" style="flex: 1; height: 50%; border-bottom: 2px dashed #000; padding: 10px; box-sizing: border-box; overflow: hidden;">
+            <div style="text-align: center; font-weight: bold; font-size: 14pt; margin-bottom: 8px; border: 2px solid #000; padding: 4px; background-color: #f0f0f0;">
+              ADMIN COPY
+            </div>
+            ${adminReceipt}
+          </div>
+          <!-- CLIENT COPY - Bottom Half -->
+          <div class="client-copy" style="flex: 1; height: 50%; padding: 10px; box-sizing: border-box; overflow: hidden;">
+            <div style="text-align: center; font-weight: bold; font-size: 14pt; margin-bottom: 8px; border: 2px solid #000; padding: 4px; background-color: #f0f0f0;">
+              CLIENT COPY
+            </div>
+            ${clientReceipt}
+          </div>
+        </div>
+      `
+    }).join("")
+  } else {
+    // THERMAL PRINTER: Generate separate receipts (will print sequentially)
+    console.log("[printReceiptForTickets] Generating thermal format (separate Admin and Client receipts)")
+    
+    ticketsHTML = Object.values(finalGroupedTickets).map(ticketGroup => {
+      console.log(`[printReceiptForTickets] Processing group with ${ticketGroup.length} ticket(s)`)
+      const sortedTickets = [...ticketGroup].sort((a, b) => {
+        const dateA = new Date(a.createdAt || 0).getTime()
+        const dateB = new Date(b.createdAt || 0).getTime()
+        return dateA - dateB
+      })
+      
+      let adminReceipt = ""
+      let clientReceipt = ""
+      
+      if (sortedTickets.length > 1) {
+        adminReceipt = generateReceiptHTMLForMultipleDevices(sortedTickets, 'ADMIN')
+        clientReceipt = generateReceiptHTMLForMultipleDevices(sortedTickets, 'CLIENT')
+      } else {
+        const ticket = sortedTickets[0]
+        adminReceipt = generateReceiptHTML(ticket, 'ADMIN')
+        clientReceipt = generateReceiptHTML(ticket, 'CLIENT')
+      }
+      
+      // Thermal: Two separate receipts, will print sequentially
+      return `
+        <!-- ADMIN COPY - First Receipt -->
+        <div class="thermal-receipt admin-copy" style="page-break-after: always !important; page-break-inside: avoid !important; break-after: page !important; margin-bottom: 0; padding-bottom: 10px;">
+          <div style="text-align: center; font-weight: bold; font-size: 12pt; margin-bottom: 8px; border: 2px solid #000; padding: 4px; background-color: #f0f0f0;">
+            ========== ADMIN COPY ==========
+          </div>
+          ${adminReceipt}
+          <div style="margin-top: 10px; border-top: 2px dashed #000; padding-top: 5px; text-align: center; font-size: 8pt;">
+            End of Admin Copy
+          </div>
+        </div>
+        <!-- CLIENT COPY - Second Receipt -->
+        <div class="thermal-receipt client-copy" style="page-break-after: avoid !important; page-break-inside: avoid !important; break-after: avoid !important; padding-top: 10px;">
+          <div style="text-align: center; font-weight: bold; font-size: 12pt; margin-bottom: 8px; border: 2px solid #000; padding: 4px; background-color: #f0f0f0;">
+            ========== CLIENT COPY ==========
+          </div>
+          ${clientReceipt}
+          <div style="margin-top: 10px; border-top: 2px dashed #000; padding-top: 5px; text-align: center; font-size: 8pt;">
+            End of Client Copy
+          </div>
+        </div>
+      `
+    }).join("")
+  }
   
   // Validate that we have content to print
   if (!ticketsHTML || ticketsHTML.trim() === "") {
@@ -3391,12 +3519,12 @@ export async function printReceiptForTickets(
   
   console.log(`[printReceiptForTickets] Generated HTML content length: ${ticketsHTML.length} characters`)
   
-  // Determine page size - use long bill format (narrow width, auto height)
-  const pageSize = printerType === "thermal" ? "80mm" : "80mm"
-  const pageMargin = "0"
-  const bodyPadding = printerType === "thermal" ? "0 2mm" : "0 2mm"
-  const maxWidth = printerType === "thermal" ? "80mm" : "80mm"
-  const fontSize = printerType === "thermal" ? "8pt" : "8pt"
+  // Determine page size and formatting based on printer type
+  const pageSize = printerType === "thermal" ? "80mm" : "A4"
+  const pageMargin = printerType === "thermal" ? "0" : "5mm"
+  const bodyPadding = printerType === "thermal" ? "0 2mm" : "0"
+  const maxWidth = printerType === "thermal" ? "80mm" : "100%"
+  const fontSize = printerType === "thermal" ? "8pt" : "9pt"
   
   const printHTML = `
     <!DOCTYPE html>
@@ -3419,10 +3547,32 @@ export async function printReceiptForTickets(
                 padding: ${bodyPadding};
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
-                overflow: hidden;
+                overflow: ${printerType === "thermal" ? "hidden" : "visible"};
                 display: block;
                 max-width: ${maxWidth};
               }
+              ${printerType === "a4" ? `
+              /* A4 Split-page specific styles */
+              .a4-split-page {
+                height: 100vh !important;
+                page-break-inside: avoid !important;
+              }
+              .admin-copy {
+                height: 50% !important;
+                max-height: 50vh !important;
+              }
+              .client-copy {
+                height: 50% !important;
+                max-height: 50vh !important;
+              }
+              ` : `
+              /* Thermal printer specific styles */
+              .thermal-receipt {
+                width: 100% !important;
+                max-width: 80mm !important;
+                margin: 0 auto !important;
+              }
+              `}
               .no-print {
                 display: none !important;
               }
@@ -3431,9 +3581,9 @@ export async function printReceiptForTickets(
                 print-color-adjust: exact;
               }
               html, body {
-                overflow: hidden;
-                page-break-after: avoid;
-                height: 100vh;
+                overflow: ${printerType === "thermal" ? "hidden" : "visible"};
+                page-break-after: ${printerType === "thermal" ? "avoid" : "auto"};
+                height: ${printerType === "thermal" ? "100vh" : "auto"};
               }
               /* Hide all links and URLs in print */
               a {
@@ -3449,10 +3599,10 @@ export async function printReceiptForTickets(
               /* Prevent page breaks - keep receipt on single page */
               .ticket-container {
                 page-break-inside: avoid !important;
-                page-break-after: avoid !important;
+                page-break-after: ${printerType === "thermal" ? "always" : "avoid"} !important;
                 page-break-before: avoid !important;
                 break-inside: avoid !important;
-                break-after: avoid !important;
+                break-after: ${printerType === "thermal" ? "always" : "avoid"} !important;
                 break-before: avoid !important;
                 display: block !important;
                 margin: 0 auto !important;
@@ -3472,7 +3622,7 @@ export async function printReceiptForTickets(
             body {
               font-family: Arial, sans-serif;
               font-size: ${fontSize};
-              line-height: ${printerType === "thermal" ? "1.5" : "1.5"};
+              line-height: ${printerType === "thermal" ? "1.5" : "1.4"};
               margin: 0;
               padding: ${bodyPadding};
               color: #000;
@@ -3480,6 +3630,7 @@ export async function printReceiptForTickets(
               max-width: ${maxWidth};
               box-sizing: border-box;
               display: block;
+              ${printerType === "a4" ? "min-height: 100vh;" : ""}
             }
             .ticket-container {
               width: 100%;
@@ -3633,35 +3784,64 @@ export async function printReceiptForTickets(
       if (readyState === "complete" && hasBodyContent) {
         // Document is ready and has content, proceed with print
         console.log("Document ready, triggering print...")
+        console.log(`[printReceiptForTickets] Printer type: ${printerType}`)
         printWindow.focus()
         
-        // Store printer selection from print dialog
-        // Note: We can't programmatically select a printer due to browser security,
-        // but we can guide the user and remember their choice
-        const printHandler = () => {
-          // After printing, the browser will remember the last selected printer
-          // This helps with automatic printer detection for future prints
-          if (preferredPrinter) {
-            console.log(`Attempting to print to: ${preferredPrinter}`)
+        if (printerType === "thermal") {
+          // THERMAL PRINTER: Both receipts are in the document with page breaks
+          // The browser will print both pages when user clicks print once
+          // Admin copy comes first (page-break-after: always), then Client copy
+          console.log("[printReceiptForTickets] Thermal printer detected - both copies will print sequentially")
+          
+          const printHandler = () => {
+            if (preferredPrinter) {
+              console.log(`Attempting to print to: ${preferredPrinter}`)
+            }
           }
+          
+          printWindow.addEventListener('beforeprint', printHandler)
+          printWindow.print()
+          
+          // Remove event listener after print
+          setTimeout(() => {
+            if (printWindow && !printWindow.closed) {
+              printWindow.removeEventListener('beforeprint', printHandler)
+            }
+          }, 1000)
+          
+          // Close window after print (both copies will be printed)
+          setTimeout(() => {
+            if (printWindow && !printWindow.closed) {
+              printWindow.close()
+            }
+          }, 3000) // Give more time for both receipts to print
+        } else {
+          // A4 PRINTER: Print split-page (both copies on same page)
+          console.log("[printReceiptForTickets] A4 printer detected - printing split-page format")
+          
+          const printHandler = () => {
+            if (preferredPrinter) {
+              console.log(`Attempting to print to: ${preferredPrinter}`)
+            }
+          }
+          
+          printWindow.addEventListener('beforeprint', printHandler)
+          printWindow.print()
+          
+          // Remove event listener after print
+          setTimeout(() => {
+            if (printWindow && !printWindow.closed) {
+              printWindow.removeEventListener('beforeprint', printHandler)
+            }
+          }, 1000)
+          
+          // Close window after print
+          setTimeout(() => {
+            if (printWindow && !printWindow.closed) {
+              printWindow.close()
+            }
+          }, 2000)
         }
-        
-        printWindow.addEventListener('beforeprint', printHandler)
-        printWindow.print()
-        
-        // Remove event listener after print
-        setTimeout(() => {
-          if (printWindow && !printWindow.closed) {
-            printWindow.removeEventListener('beforeprint', printHandler)
-          }
-        }, 1000)
-        
-        // For receipt printers, keep the window open longer to allow print job to complete
-        setTimeout(() => {
-          if (printWindow && !printWindow.closed) {
-            printWindow.close()
-          }
-        }, 2000)
       } else if (readyState === "loading" || readyState === "interactive") {
         // Document is still loading, wait a bit more
         console.log("Document still loading, waiting...")
@@ -3676,12 +3856,23 @@ export async function printReceiptForTickets(
         setTimeout(() => {
           if (printWindow && !printWindow.closed && printWindow.document) {
             printWindow.focus()
-            printWindow.print()
-            setTimeout(() => {
-              if (printWindow && !printWindow.closed) {
-                printWindow.close()
-              }
-            }, 2000)
+            
+            if (printerType === "thermal") {
+              // Thermal: Both receipts in document, will print sequentially
+              printWindow.print()
+              setTimeout(() => {
+                if (printWindow && !printWindow.closed) {
+                  printWindow.close()
+                }
+              }, 3000)
+            } else {
+              printWindow.print()
+              setTimeout(() => {
+                if (printWindow && !printWindow.closed) {
+                  printWindow.close()
+                }
+              }, 2000)
+            }
           }
         }, 500)
       }
