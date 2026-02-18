@@ -1081,7 +1081,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
         <CardContent className="p-4 sm:p-6 text-black">
           <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             <div className="space-y-2">
-              <Label htmlFor="search" className="font-medium text-black">{t("search.searchLabel")}</Label>
+              <Label htmlFor="search" className="font-medium text-black dark:text-white">{t("search.searchLabel")}</Label>
               <div className="relative">
                 <svg className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-600 z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -1092,7 +1092,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                     type="date"
                     value={dateFilter}
                     onChange={(e) => setDateFilter(e.target.value || "")}
-                    className="pl-10 bg-white dark:bg-gray-800 border-blue-300 dark:border-gray-700 text-black dark:text-white focus:border-blue-500 dark:focus:border-gray-600"
+                    className="pl-10 !bg-white dark:!bg-gray-800 border-blue-300 dark:border-gray-700 text-black dark:text-white focus:border-blue-500 dark:focus:border-gray-600"
                   />
                 ) : (
                   <Input
@@ -1117,22 +1117,22 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                       if (suggestions.length > 0) setShowSuggestions(true)
                     }}
                     onBlur={() => setTimeout(() => { setSearchInputFocused(false); setShowSuggestions(false) }, 200)}
-                    className="pl-10 bg-white dark:bg-gray-800 border-blue-300 dark:border-gray-700 text-black dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-blue-500 dark:focus:border-gray-600"
+                    className="pl-10 !bg-white dark:!bg-gray-800 border-blue-300 dark:border-gray-700 text-black dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-blue-500 dark:focus:border-gray-600"
                   />
                 )}
                 {showSuggestions && suggestions.length > 0 && (
-                  <div className="absolute z-50 w-full mt-1 bg-white border-2 border-blue-200 rounded-lg shadow-xl max-h-64 overflow-y-auto">
+                  <div className="absolute z-50 w-full mt-1 !bg-white dark:!bg-gray-800 border-2 border-blue-200 dark:border-gray-700 rounded-lg shadow-xl max-h-64 overflow-y-auto">
                     {suggestions.map((suggestion, index) => (
                       <div
                         key={index}
                         onClick={() => handleSuggestionClick(suggestion)}
-                        className="px-4 py-3 hover:bg-blue-50 cursor-pointer border-b border-blue-100 last:border-b-0 transition-colors"
+                        className="px-4 py-3 hover:bg-blue-50 dark:hover:bg-gray-700 cursor-pointer border-b border-blue-100 dark:border-gray-700 last:border-b-0 transition-colors"
                       >
                         <div className="flex items-center gap-2">
-                          <svg className="w-4 h-4 text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4 text-gray-600 dark:text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                           </svg>
-                          <span className="text-sm font-medium text-black">{suggestion.display}</span>
+                          <span className="text-sm font-medium text-black dark:text-white">{suggestion.display}</span>
                         </div>
                       </div>
                     ))}
@@ -1141,7 +1141,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="searchType" className="font-medium text-black">{t("search.searchBy")}</Label>
+              <Label htmlFor="searchType" className="font-medium text-black dark:text-white">{t("search.searchBy")}</Label>
               <Select value={searchType} onValueChange={(value) => {
                 setSearchType(value)
                 if (value === "date") {
@@ -1151,32 +1151,32 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                   if (searchTerm.trim()) handleSearch(searchTerm, value)
                 }
               }}>
-                <SelectTrigger id="searchType" className="bg-white dark:bg-gray-800 border-blue-300 dark:border-gray-700 text-black dark:text-white">
+                <SelectTrigger id="searchType" className="!bg-white dark:!bg-gray-800 border-blue-300 dark:border-gray-700 text-black dark:text-white">
                   <SelectValue placeholder={t("search.field.all")} />
                 </SelectTrigger>
-                <SelectContent className="bg-white border-blue-200" side="bottom" sideOffset={4}>
-                  <SelectItem value="all" className="text-black">{t("search.field.all")}</SelectItem>
-                  <SelectItem value="id" className="text-black">ID</SelectItem>
-                  <SelectItem value="clientId" className="text-black">{t("form.clientId") || "Client ID"}</SelectItem>
-                  <SelectItem value="name" className="text-black">{t("search.field.name")}</SelectItem>
-                  <SelectItem value="contact" className="text-black">{t("search.field.contact")}</SelectItem>
-                  <SelectItem value="imei" className="text-black">{t("search.field.imei")}</SelectItem>
-                  <SelectItem value="model" className="text-black">{t("search.field.model")}</SelectItem>
+                <SelectContent className="!bg-white dark:!bg-gray-800 border-blue-200 dark:border-gray-700" side="bottom" sideOffset={4}>
+                  <SelectItem value="all" className="text-black dark:text-white cursor-pointer hover:bg-blue-50 dark:hover:bg-gray-700">{t("search.field.all")}</SelectItem>
+                  <SelectItem value="id" className="text-black dark:text-white cursor-pointer hover:bg-blue-50 dark:hover:bg-gray-700">ID</SelectItem>
+                  <SelectItem value="clientId" className="text-black dark:text-white cursor-pointer hover:bg-blue-50 dark:hover:bg-gray-700">{t("form.clientId") || "Client ID"}</SelectItem>
+                  <SelectItem value="name" className="text-black dark:text-white cursor-pointer hover:bg-blue-50 dark:hover:bg-gray-700">{t("search.field.name")}</SelectItem>
+                  <SelectItem value="contact" className="text-black dark:text-white cursor-pointer hover:bg-blue-50 dark:hover:bg-gray-700">{t("search.field.contact")}</SelectItem>
+                  <SelectItem value="imei" className="text-black dark:text-white cursor-pointer hover:bg-blue-50 dark:hover:bg-gray-700">{t("search.field.imei")}</SelectItem>
+                  <SelectItem value="model" className="text-black dark:text-white cursor-pointer hover:bg-blue-50 dark:hover:bg-gray-700">{t("search.field.model")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="statusFilter" className="font-medium text-black">{t("search.filterByStatus")}</Label>
+              <Label htmlFor="statusFilter" className="font-medium text-black dark:text-white">{t("search.filterByStatus")}</Label>
               <Select value={statusFilter} onValueChange={handleStatusFilter}>
-                <SelectTrigger id="statusFilter" className="bg-white dark:bg-gray-800 border-blue-300 dark:border-gray-700 text-black dark:text-white">
+                <SelectTrigger id="statusFilter" className="!bg-white dark:!bg-gray-800 border-blue-300 dark:border-gray-700 text-black dark:text-white">
                   <SelectValue placeholder={t("status.all")} />
                 </SelectTrigger>
-                <SelectContent className="bg-white border-blue-200" side="bottom" sideOffset={4}>
-                  <SelectItem value="all" className="text-black">{t("search.allStatuses") || t("status.all")}</SelectItem>
-                  <SelectItem value="pending" className="text-black">{t("status.pending")}</SelectItem>
-                  <SelectItem value="not_ok" className="text-black">{t("status.notOk") || "Not OK"}</SelectItem>
-                  <SelectItem value="completed" className="text-black">{t("status.completed")}</SelectItem>
-                  <SelectItem value="delivered" className="text-black">{t("status.delivered")}</SelectItem>
+                <SelectContent className="!bg-white dark:!bg-gray-800 border-blue-200 dark:border-gray-700" side="bottom" sideOffset={4}>
+                  <SelectItem value="all" className="text-black dark:text-white cursor-pointer hover:bg-blue-50 dark:hover:bg-gray-700">{t("search.allStatuses") || t("status.all")}</SelectItem>
+                  <SelectItem value="pending" className="text-black dark:text-white cursor-pointer hover:bg-blue-50 dark:hover:bg-gray-700">{t("status.pending")}</SelectItem>
+                  <SelectItem value="not_ok" className="text-black dark:text-white cursor-pointer hover:bg-blue-50 dark:hover:bg-gray-700">{t("status.notOk") || "Not OK"}</SelectItem>
+                  <SelectItem value="completed" className="text-black dark:text-white cursor-pointer hover:bg-blue-50 dark:hover:bg-gray-700">{t("status.completed")}</SelectItem>
+                  <SelectItem value="delivered" className="text-black dark:text-white cursor-pointer hover:bg-blue-50 dark:hover:bg-gray-700">{t("status.delivered")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
