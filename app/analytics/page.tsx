@@ -112,17 +112,17 @@ export default function AnalyticsPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6 text-black">
+      <div className="space-y-6 text-black dark:text-white">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-black">{t("analytics.title")}</h1>
-          <p className="text-black">{t("analytics.subtitle")}</p>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-black dark:text-white">{t("analytics.title")}</h1>
+          <p className="text-black dark:text-gray-300">{t("analytics.subtitle")}</p>
         </div>
 
         {/* Stats Cards */}
         <div className="grid gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-          <Card className="shadow-xl border-2 border-blue-200 bg-white">
-            <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-100 border-b-2 border-blue-300 rounded-t-lg shadow-sm">
-              <CardTitle className="text-sm font-semibold text-black uppercase tracking-wide flex items-center gap-2">
+          <Card className="shadow-xl border-2 border-blue-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+            <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-gray-800 dark:to-gray-800 border-b-2 border-blue-300 dark:border-gray-700 rounded-t-lg shadow-sm">
+              <CardTitle className="text-sm font-semibold text-black dark:text-white uppercase tracking-wide flex items-center gap-2">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
@@ -130,14 +130,14 @@ export default function AnalyticsPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-              <div className="text-3xl sm:text-4xl font-bold text-black mb-1">{analytics.totalDevices}</div>
-              <p className="text-xs text-black">{t("analytics.allRepairDevices")}</p>
+              <div className="text-3xl sm:text-4xl font-bold text-black dark:text-white mb-1">{analytics.totalDevices}</div>
+              <p className="text-xs text-black dark:text-gray-300">{t("analytics.allRepairDevices")}</p>
             </CardContent>
           </Card>
 
-          <Card className="shadow-xl border-2 border-blue-200 bg-white">
-            <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-100 border-b-2 border-blue-300 rounded-t-lg shadow-sm">
-              <CardTitle className="text-sm font-semibold text-black uppercase tracking-wide flex items-center gap-2">
+          <Card className="shadow-xl border-2 border-blue-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+            <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-gray-800 dark:to-gray-800 border-b-2 border-blue-300 dark:border-gray-700 rounded-t-lg shadow-sm">
+              <CardTitle className="text-sm font-semibold text-black dark:text-white uppercase tracking-wide flex items-center gap-2">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
@@ -145,14 +145,14 @@ export default function AnalyticsPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-              <div className="text-3xl sm:text-4xl font-bold text-black mb-1">€{Number.parseFloat(analytics.totalRevenue || 0).toFixed(2)}</div>
-              <p className="text-xs text-black">{t("analytics.fromAllCompleted")}</p>
+              <div className="text-3xl sm:text-4xl font-bold text-black dark:text-white mb-1">€{Number.parseFloat(analytics.totalRevenue || 0).toFixed(2)}</div>
+              <p className="text-xs text-black dark:text-gray-300">{t("analytics.fromAllCompleted")}</p>
             </CardContent>
           </Card>
 
-          <Card className="shadow-xl border-2 border-blue-200 bg-white">
-            <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-100 border-b-2 border-blue-300 rounded-t-lg shadow-sm">
-              <CardTitle className="text-sm font-semibold text-black uppercase tracking-wide flex items-center gap-2">
+          <Card className="shadow-xl border-2 border-blue-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+            <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-gray-800 dark:to-gray-800 border-b-2 border-blue-300 dark:border-gray-700 rounded-t-lg shadow-sm">
+              <CardTitle className="text-sm font-semibold text-black dark:text-white uppercase tracking-wide flex items-center gap-2">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
@@ -160,16 +160,16 @@ export default function AnalyticsPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-              <div className="text-3xl sm:text-4xl font-bold text-black mb-1">€{Number.parseFloat(analytics.averagePrice || 0).toFixed(2)}</div>
-              <p className="text-xs text-black">{t("analytics.perDeviceRepair")}</p>
+              <div className="text-3xl sm:text-4xl font-bold text-black dark:text-white mb-1">€{Number.parseFloat(analytics.averagePrice || 0).toFixed(2)}</div>
+              <p className="text-xs text-black dark:text-gray-300">{t("analytics.perDeviceRepair")}</p>
             </CardContent>
           </Card>
         </div>
 
         {/* Status Distribution */}
-        <Card className="shadow-xl border border-blue-200 bg-white">
-          <CardHeader className="bg-blue-50 border-b border-blue-200 rounded-t-lg">
-            <CardTitle className="text-xl sm:text-2xl font-bold text-black flex items-center gap-2 sm:gap-3">
+        <Card className="shadow-xl border border-blue-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+          <CardHeader className="bg-blue-50 dark:bg-gray-800 border-b border-blue-200 dark:border-gray-700 rounded-t-lg">
+            <CardTitle className="text-xl sm:text-2xl font-bold text-black dark:text-white flex items-center gap-2 sm:gap-3">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
@@ -178,30 +178,30 @@ export default function AnalyticsPage() {
           </CardHeader>
           <CardContent className="p-6">
             <div className="grid gap-4 grid-cols-2 sm:grid-cols-2 lg:grid-cols-4">
-              <div className="p-4 rounded-lg bg-yellow-50 border border-yellow-200">
-                <div className="text-2xl sm:text-3xl font-bold text-yellow-700 mb-1">{analytics.statusDistribution.pending}</div>
-                <p className="text-sm text-black">{t("analytics.pending")}</p>
+              <div className="p-4 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800">
+                <div className="text-2xl sm:text-3xl font-bold text-yellow-700 dark:text-yellow-400 mb-1">{analytics.statusDistribution.pending}</div>
+                <p className="text-sm text-black dark:text-gray-300">{t("analytics.pending")}</p>
               </div>
-              <div className="p-4 rounded-lg bg-blue-50 border border-blue-200">
-                <div className="text-3xl font-bold text-red-700 mb-1">{analytics.statusDistribution.notOk}</div>
-                <p className="text-sm text-black">{t("status.notOk") || "Not OK"}</p>
+              <div className="p-4 rounded-lg bg-blue-50 dark:bg-red-900/20 border border-blue-200 dark:border-red-800">
+                <div className="text-3xl font-bold text-red-700 dark:text-red-400 mb-1">{analytics.statusDistribution.notOk}</div>
+                <p className="text-sm text-black dark:text-gray-300">{t("status.notOk") || "Not OK"}</p>
               </div>
-              <div className="p-4 rounded-lg bg-green-50 border border-green-200">
-                <div className="text-3xl font-bold text-green-700 mb-1">{analytics.statusDistribution.completed}</div>
-                <p className="text-sm text-black">{t("analytics.completed")}</p>
+              <div className="p-4 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
+                <div className="text-3xl font-bold text-green-700 dark:text-green-400 mb-1">{analytics.statusDistribution.completed}</div>
+                <p className="text-sm text-black dark:text-gray-300">{t("analytics.completed")}</p>
               </div>
-              <div className="p-4 rounded-lg bg-purple-50 border border-purple-200">
-                <div className="text-3xl font-bold text-purple-700 mb-1">{analytics.statusDistribution.delivered}</div>
-                <p className="text-sm text-black">{t("analytics.delivered")}</p>
+              <div className="p-4 rounded-lg bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800">
+                <div className="text-3xl font-bold text-purple-700 dark:text-purple-400 mb-1">{analytics.statusDistribution.delivered}</div>
+                <p className="text-sm text-black dark:text-gray-300">{t("analytics.delivered")}</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
         {/* Recent Devices */}
-        <Card className="shadow-xl border border-blue-200 bg-white">
-          <CardHeader className="bg-blue-50 border-b border-blue-200 rounded-t-lg">
-            <CardTitle className="text-xl sm:text-2xl font-bold text-black flex items-center gap-2 sm:gap-3">
+        <Card className="shadow-xl border border-blue-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+          <CardHeader className="bg-blue-50 dark:bg-gray-800 border-b border-blue-200 dark:border-gray-700 rounded-t-lg">
+            <CardTitle className="text-xl sm:text-2xl font-bold text-black dark:text-white flex items-center gap-2 sm:gap-3">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
@@ -211,14 +211,14 @@ export default function AnalyticsPage() {
           <CardContent className="p-6">
             {analytics.recentDevices.length === 0 ? (
               <div className="text-center py-12">
-                <p className="text-black">{t("analytics.noDevicesYet")}</p>
+                <p className="text-black dark:text-gray-300">{t("analytics.noDevicesYet")}</p>
               </div>
             ) : (
               <div className="space-y-3">
                 {analytics.recentDevices.map((device) => (
                   <div
                     key={device.id}
-                    className="flex items-center justify-between p-4 border-2 border-blue-200 rounded-xl bg-white hover:bg-blue-50 transition-all shadow-md hover:shadow-lg hover:border-blue-300"
+                    className="flex items-center justify-between p-4 border-2 border-blue-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800 hover:bg-blue-50 dark:hover:bg-gray-700 transition-all shadow-md hover:shadow-lg hover:border-blue-300 dark:hover:border-gray-600"
                   >
                     <div className="flex items-center gap-4 flex-1">
                       <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md">
@@ -226,7 +226,7 @@ export default function AnalyticsPage() {
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-1">
-                          <h3 className="font-semibold text-lg text-black">{device.customerName}</h3>
+                          <h3 className="font-semibold text-lg text-black dark:text-white">{device.customerName}</h3>
                           <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(device.status)}`} style={{ backgroundColor: device.status?.toLowerCase() === 'pending' ? '#eab308' : device.status?.toLowerCase() === 'not_ok' ? '#ef4444' : device.status?.toLowerCase() === 'completed' ? '#22c55e' : device.status?.toLowerCase() === 'delivered' ? '#3b82f6' : '#6b7280', color: 'white', borderColor: device.status?.toLowerCase() === 'pending' ? '#ca8a04' : device.status?.toLowerCase() === 'not_ok' ? '#dc2626' : device.status?.toLowerCase() === 'completed' ? '#16a34a' : device.status?.toLowerCase() === 'delivered' ? '#2563eb' : '#4b5563' }}>
                             {device.status === "PENDING" || device.status === "pending" ? t("analytics.pending") :
                              device.status === "NOT_OK" || device.status === "not_ok" ? (t("status.notOk") || "Not OK") :
@@ -235,17 +235,17 @@ export default function AnalyticsPage() {
                              device.status.replace("_", " ")}
                           </span>
                         </div>
-                        <div className="flex items-center gap-4 text-sm text-black">
+                        <div className="flex items-center gap-4 text-sm text-black dark:text-gray-300">
                           <span>{device.model}</span>
                           <span>•</span>
                           <span className="font-mono text-xs">{device.imeiNo}</span>
                           <span>•</span>
-                          <span className="font-bold text-black">€{device.price}</span>
+                          <span className="font-bold text-black dark:text-white">€{device.price}</span>
                         </div>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-xs text-black">
+                      <p className="text-xs text-black dark:text-gray-300">
                         {new Date(device.createdAt).toLocaleDateString()}
                       </p>
                     </div>

@@ -129,27 +129,27 @@ export default function SettingsPage() {
     return (
       <DashboardLayout>
         <div className="max-w-md mx-auto mt-20">
-          <Card className="shadow-xl border border-blue-200 bg-white">
-            <CardHeader className="bg-blue-50 border-b border-blue-200 rounded-t-lg p-4 sm:p-6">
-              <CardTitle className="text-xl sm:text-2xl flex items-center gap-2 text-black">
+          <Card className="shadow-xl border border-blue-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+            <CardHeader className="bg-blue-50 dark:bg-gray-800 border-b border-blue-200 dark:border-gray-700 rounded-t-lg p-4 sm:p-6">
+              <CardTitle className="text-xl sm:text-2xl flex items-center gap-2 text-black dark:text-white">
                 <Lock className="w-5 h-5 sm:w-6 sm:h-6" />
                 {t("settings.passwordRequired")}
               </CardTitle>
-              <CardDescription className="text-black text-sm sm:text-base">
+              <CardDescription className="text-black dark:text-gray-300 text-sm sm:text-base">
                 {t("settings.passwordDescription")}
               </CardDescription>
             </CardHeader>
             <CardContent className="p-4 sm:p-6">
               <form onSubmit={handlePasswordSubmit} className="space-y-4">
                 <div>
-                  <Label htmlFor="password" className="text-black">{t("settings.passwordLabel")}</Label>
+                  <Label htmlFor="password" className="text-black dark:text-white">{t("settings.passwordLabel")}</Label>
                   <div className="relative">
                     <Input
                       id="password"
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="pr-10 text-black"
+                      className="pr-10 text-black dark:text-white"
                       placeholder={t("settings.passwordPlaceholder")}
                       required
                     />
@@ -175,20 +175,20 @@ export default function SettingsPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-4 sm:space-y-6 text-black">
+      <div className="space-y-4 sm:space-y-6 text-black dark:text-white">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-black">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-black dark:text-white">
             {t("settings.title")}
           </h1>
-          <p className="text-black mt-2 text-sm sm:text-base">
+          <p className="text-black dark:text-gray-300 mt-2 text-sm sm:text-base">
             {t("settings.subtitle")}
           </p>
         </div>
 
-        <Card className="shadow-xl border border-blue-200 bg-white">
-          <CardHeader className="bg-blue-50 border-b border-blue-200 rounded-t-lg p-4 sm:p-6">
-            <CardTitle className="text-xl sm:text-2xl text-black">{t("settings.accountCredentials")}</CardTitle>
-            <CardDescription className="text-black text-sm sm:text-base">
+        <Card className="shadow-xl border border-blue-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+          <CardHeader className="bg-blue-50 dark:bg-gray-800 border-b border-blue-200 dark:border-gray-700 rounded-t-lg p-4 sm:p-6">
+            <CardTitle className="text-xl sm:text-2xl text-black dark:text-white">{t("settings.accountCredentials")}</CardTitle>
+            <CardDescription className="text-black dark:text-gray-300 text-sm sm:text-base">
               {t("settings.credentialsDescription2")}
             </CardDescription>
           </CardHeader>
@@ -196,77 +196,77 @@ export default function SettingsPage() {
             <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
               <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
                 <div>
-                  <Label htmlFor="name" className="text-black">{t("settings.name")}</Label>
+                  <Label htmlFor="name" className="text-black dark:text-white">{t("settings.name")}</Label>
                   <Input
                     id="name"
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    className="text-black"
+                    className="text-black dark:text-white"
                     required
                   />
                 </div>
                 <div>
-                  <Label htmlFor="email" className="text-black">{t("settings.email")}</Label>
+                  <Label htmlFor="email" className="text-black dark:text-white">{t("settings.email")}</Label>
                   <Input
                     id="email"
                     name="email"
                     type="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className="text-black"
+                    className="text-black dark:text-white"
                     required
                   />
                 </div>
                 <div>
-                  <Label htmlFor="shopName" className="text-black">{t("settings.shopName")}</Label>
+                  <Label htmlFor="shopName" className="text-black dark:text-white">{t("settings.shopName")}</Label>
                   <Input
                     id="shopName"
                     name="shopName"
                     value={formData.shopName}
                     onChange={handleChange}
-                    className="text-black"
+                    className="text-black dark:text-white"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="contactNumber" className="text-black">{t("settings.contactNumber")}</Label>
+                  <Label htmlFor="contactNumber" className="text-black dark:text-white">{t("settings.contactNumber")}</Label>
                   <Input
                     id="contactNumber"
                     name="contactNumber"
                     value={formData.contactNumber}
                     onChange={handleChange}
-                    className="text-black"
+                    className="text-black dark:text-white"
                   />
                 </div>
                 <div className="md:col-span-2">
-                  <Label htmlFor="address" className="text-black">{t("settings.address")}</Label>
+                  <Label htmlFor="address" className="text-black dark:text-white">{t("settings.address")}</Label>
                   <Input
                     id="address"
                     name="address"
                     value={formData.address}
                     onChange={handleChange}
-                    className="text-black"
+                    className="text-black dark:text-white"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="companyEmail" className="text-black">{t("settings.companyEmail")}</Label>
+                  <Label htmlFor="companyEmail" className="text-black dark:text-white">{t("settings.companyEmail")}</Label>
                   <Input
                     id="companyEmail"
                     name="companyEmail"
                     type="email"
                     value={formData.companyEmail}
                     onChange={handleChange}
-                    className="text-black"
+                    className="text-black dark:text-white"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="website" className="text-black">{t("settings.website")}</Label>
+                  <Label htmlFor="website" className="text-black dark:text-white">{t("settings.website")}</Label>
                   <Input
                     id="website"
                     name="website"
                     value={formData.website}
                     onChange={handleChange}
-                    className="text-black"
+                    className="text-black dark:text-white"
                   />
                 </div>
               </div>
@@ -275,7 +275,7 @@ export default function SettingsPage() {
                   type="button"
                   variant="outline"
                   onClick={() => setIsAuthenticated(false)}
-                  className="text-black"
+                  className="text-black dark:text-white"
                 >
                   {t("settings.lock")}
                 </Button>

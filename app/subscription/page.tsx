@@ -198,10 +198,10 @@ export default function SubscriptionPage() {
   if (authLoading) {
     return (
       <DashboardLayout>
-        <div className="space-y-6 text-black p-6">
-          <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <h2 className="text-xl font-bold text-black mb-2">{t("subscription.loading")}</h2>
-            <p className="text-gray-600">{t("subscription.loadingMessage")}</p>
+        <div className="space-y-6 text-black dark:text-white p-6">
+          <div className="p-4 bg-blue-50 dark:bg-gray-800 border border-blue-200 dark:border-gray-700 rounded-lg">
+            <h2 className="text-xl font-bold text-black dark:text-white mb-2">{t("subscription.loading")}</h2>
+            <p className="text-gray-600 dark:text-gray-300">{t("subscription.loadingMessage")}</p>
           </div>
         </div>
       </DashboardLayout>
@@ -212,11 +212,11 @@ export default function SubscriptionPage() {
   if (!user) {
     return (
       <DashboardLayout>
-        <div className="space-y-6 text-black p-6">
-          <Card className="shadow-xl border border-blue-200 bg-white">
-            <CardHeader className="bg-blue-50 border-b border-blue-200">
-              <CardTitle className="text-xl text-black">{t("subscription.loginRequired")}</CardTitle>
-              <CardDescription className="text-black">
+        <div className="space-y-6 text-black dark:text-white p-6">
+          <Card className="shadow-xl border border-blue-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+            <CardHeader className="bg-blue-50 dark:bg-gray-800 border-b border-blue-200 dark:border-gray-700">
+              <CardTitle className="text-xl text-black dark:text-white">{t("subscription.loginRequired")}</CardTitle>
+              <CardDescription className="text-black dark:text-gray-300">
                 {t("subscription.loginRequiredMessage")}
               </CardDescription>
             </CardHeader>
@@ -236,13 +236,13 @@ export default function SubscriptionPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6 text-black">
+      <div className="space-y-6 text-black dark:text-white">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-balance text-black">
+            <h1 className="text-3xl font-bold tracking-tight text-balance text-black dark:text-white">
               {t("subscription.title")}
             </h1>
-            <p className="text-black text-balance">
+            <p className="text-black dark:text-gray-300 text-balance">
               {t("subscription.subtitle")}
             </p>
           </div>
@@ -254,7 +254,7 @@ export default function SubscriptionPage() {
                 loadSubscriptionHistory()
               }
             }}
-            className="flex items-center gap-2 border-blue-300 bg-white text-black hover:bg-blue-50"
+            className="flex items-center gap-2 border-blue-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-black dark:text-white hover:bg-blue-50 dark:hover:bg-gray-700"
           >
             <History className="w-4 h-4" />
             {showHistory ? t("subscription.hideHistory") : t("subscription.viewHistory")}
@@ -263,22 +263,22 @@ export default function SubscriptionPage() {
 
         {/* Free Trial Status */}
         {subscription && (subscription.status === "free_trial" || subscription.status === "FREE_TRIAL" || subscription.isFreeTrial) && !isExpired(subscription) && (
-          <Card className="shadow-2xl border-2 border-blue-300 bg-white">
+          <Card className="shadow-2xl border-2 border-blue-300 dark:border-blue-600 bg-white dark:bg-gray-900">
             <CardContent className="p-6">
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
-                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                    <Calendar className="w-6 h-6 text-blue-600" />
+                  <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
+                    <Calendar className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                   </div>
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xl font-bold text-blue-600 mb-2">
+                  <h3 className="text-xl font-bold text-blue-600 dark:text-blue-400 mb-2">
                     {t("subscription.freePlan")} - {getDaysUntilExpiration(subscription) >= 0 ? `${getDaysUntilExpiration(subscription)} ${t("subscription.days")}` : `${Math.abs(getDaysUntilExpiration(subscription))} ${t("subscription.days")}`}
                   </h3>
-                  <p className="text-black mb-2">
+                  <p className="text-black dark:text-gray-300 mb-2">
                     {t("subscription.freeTrialMessage")} {getSubscriptionEndDate(subscription).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}.
                   </p>
-                  <p className="text-sm text-black">
+                  <p className="text-sm text-black dark:text-gray-300">
                     {t("subscription.afterTrial")}
                   </p>
                   {/* Show selected plan if available */}
@@ -295,20 +295,20 @@ export default function SubscriptionPage() {
 
         {/* Pending Payment Status */}
         {subscription && subscription.status === "pending" && (
-          <Card className="shadow-2xl border-2 border-yellow-300 bg-white">
+          <Card className="shadow-2xl border-2 border-yellow-300 dark:border-yellow-600 bg-white dark:bg-gray-900">
             <CardContent className="p-6">
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
-                  <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
-                    <Clock className="w-6 h-6 text-yellow-600" />
+                  <div className="w-12 h-12 bg-yellow-100 dark:bg-yellow-900/30 rounded-full flex items-center justify-center">
+                    <Clock className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
                   </div>
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xl font-bold text-yellow-600 mb-2">{t("subscription.paymentPending")}</h3>
-                  <p className="text-black mb-2">
+                  <h3 className="text-xl font-bold text-yellow-600 dark:text-yellow-400 mb-2">{t("subscription.paymentPending")}</h3>
+                  <p className="text-black dark:text-gray-300 mb-2">
                     {t("subscription.paymentPendingMessage")}
                   </p>
-                  <p className="text-sm text-blue-600">
+                  <p className="text-sm text-blue-600 dark:text-blue-400">
                     {t("subscription.paymentPendingInfo")}
                   </p>
                 </div>
@@ -319,20 +319,20 @@ export default function SubscriptionPage() {
 
         {/* Not Started Subscription */}
         {subscription && isNotStarted(subscription) && (
-          <Card className="shadow-2xl border-2 border-gray-300 bg-white">
+          <Card className="shadow-2xl border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900">
             <CardContent className="p-6">
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
-                  <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
-                    <Clock className="w-6 h-6 text-gray-600" />
+                  <div className="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
+                    <Clock className="w-6 h-6 text-gray-600 dark:text-gray-400" />
                   </div>
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xl font-bold text-gray-600 mb-2">{t("subscription.notStarted")}</h3>
-                  <p className="text-black mb-2">
+                  <h3 className="text-xl font-bold text-gray-600 dark:text-gray-300 mb-2">{t("subscription.notStarted")}</h3>
+                  <p className="text-black dark:text-gray-300 mb-2">
                     {t("subscription.notStartedMessage")} <strong>{new Date(subscription.startDate).toLocaleDateString()}</strong>.
                   </p>
-                  <p className="text-sm text-black">
+                  <p className="text-sm text-black dark:text-gray-300">
                     {t("subscription.notStartedInfo")}
                   </p>
                 </div>
@@ -343,26 +343,26 @@ export default function SubscriptionPage() {
 
         {/* Expired Subscription Warning */}
         {subscription && isExpired(subscription) && !isNotStarted(subscription) && (
-          <Card className="shadow-2xl border-2 border-red-300 bg-white">
+          <Card className="shadow-2xl border-2 border-red-300 dark:border-red-600 bg-white dark:bg-gray-900">
             <CardContent className="p-6">
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
-                  <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                    <AlertCircle className="w-6 h-6 text-red-600" />
+                  <div className="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
+                    <AlertCircle className="w-6 h-6 text-red-600 dark:text-red-400" />
                   </div>
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xl font-bold text-red-600 mb-2">
+                  <h3 className="text-xl font-bold text-red-600 dark:text-red-400 mb-2">
                     {subscription.isFreeTrial || subscription.status === "FREE_TRIAL" || subscription.status === "free_trial"
                       ? "Subscription Expired"
                       : "Subscription Expired"}
                   </h3>
-                  <p className="text-black mb-4">
+                  <p className="text-black dark:text-gray-300 mb-4">
                     {subscription.isFreeTrial || subscription.status === "FREE_TRIAL" || subscription.status === "free_trial"
                       ? `Your free trial ended on ${getSubscriptionEndDate(subscription).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}. Subscribe from below then you can use your panel.`
                       : `Your subscription ended on ${getSubscriptionEndDate(subscription).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}. Please subscribe to continue using the admin panel.`}
                   </p>
-                  <p className="text-sm text-black mb-4">
+                  <p className="text-sm text-black dark:text-gray-300 mb-4">
                     {subscription.isFreeTrial || subscription.status === "FREE_TRIAL" || subscription.status === "free_trial"
                       ? "Select a subscription plan below to continue accessing all features."
                       : "Select a subscription plan below to continue accessing all features."}
@@ -387,12 +387,12 @@ export default function SubscriptionPage() {
 
         {/* Current Subscription Status */}
         {subscription && (
-          <Card className="shadow-xl border border-blue-200 bg-white">
-            <CardHeader className="bg-blue-50 border-b border-blue-200">
+          <Card className="shadow-xl border border-blue-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+            <CardHeader className="bg-blue-50 dark:bg-gray-800 border-b border-blue-200 dark:border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle className="text-xl text-black">{t("subscription.current")}</CardTitle>
-                  <CardDescription className="text-black">
+                  <CardTitle className="text-xl text-black dark:text-white">{t("subscription.current")}</CardTitle>
+                  <CardDescription className="text-black dark:text-gray-300">
                     {(() => {
                       const planKey = subscription.plan === "MONTHLY" ? "monthly" :
                                     subscription.plan === "THREE_MONTH" ? "starter" :
@@ -419,22 +419,22 @@ export default function SubscriptionPage() {
             <CardContent className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-1">
-                  <p className="text-xs text-black">{t("subscription.startDate")}</p>
-                  <p className="text-sm text-black flex items-center gap-2">
+                  <p className="text-xs text-black dark:text-gray-300">{t("subscription.startDate")}</p>
+                  <p className="text-sm text-black dark:text-white flex items-center gap-2">
                     <Calendar className="w-4 h-4" />
                     {new Date(subscription.startDate).toLocaleDateString()}
                   </p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-xs text-black">{t("subscription.endDate")}</p>
-                  <p className="text-sm text-black flex items-center gap-2">
+                  <p className="text-xs text-black dark:text-gray-300">{t("subscription.endDate")}</p>
+                  <p className="text-sm text-black dark:text-white flex items-center gap-2">
                     <Calendar className="w-4 h-4" />
                     {getSubscriptionEndDate(subscription).toLocaleDateString()}
                   </p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-xs text-black">{t("subscription.plan")}</p>
-                  <p className="text-sm text-black">
+                  <p className="text-xs text-black dark:text-gray-300">{t("subscription.plan")}</p>
+                  <p className="text-sm text-black dark:text-white">
                     {(() => {
                       const planKey = subscription.plan === "MONTHLY" ? "monthly" :
                                     subscription.plan === "THREE_MONTH" ? "starter" :
@@ -445,22 +445,22 @@ export default function SubscriptionPage() {
                   </p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-xs text-black">{t("subscription.price")}</p>
-                  <p className="text-sm text-black font-semibold">€{PLAN_PRICING[subscription.plan]?.price || 0}</p>
+                  <p className="text-xs text-black dark:text-gray-300">{t("subscription.price")}</p>
+                  <p className="text-sm text-black dark:text-white font-semibold">€{PLAN_PRICING[subscription.plan]?.price || 0}</p>
                 </div>
               </div>
 
               {isExpiringSoon(subscription, 7) && !isExpired(subscription) && (
-                <div className="mt-4 p-4 bg-yellow-50 border border-yellow-300 rounded-lg">
+                <div className="mt-4 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-300 dark:border-yellow-700 rounded-lg">
                   <div className="flex items-start gap-3">
-                    <AlertCircle className="w-5 h-5 text-yellow-600 mt-0.5" />
+                    <AlertCircle className="w-5 h-5 text-yellow-600 dark:text-yellow-400 mt-0.5" />
                     <div className="flex-1">
-                      <p className="text-sm font-semibold text-yellow-700 mb-1">
+                      <p className="text-sm font-semibold text-yellow-700 dark:text-yellow-400 mb-1">
                         {subscription.isFreeTrial || subscription.status === "FREE_TRIAL" || subscription.status === "free_trial"
                           ? "Free Trial Expiring Soon"
                           : "Subscription Expiring Soon"}
                       </p>
-                      <p className="text-xs text-black">
+                      <p className="text-xs text-black dark:text-gray-300">
                         {subscription.isFreeTrial || subscription.status === "FREE_TRIAL" || subscription.status === "free_trial"
                           ? `Your free trial will end on ${getSubscriptionEndDate(subscription).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}. Subscribe now to continue using your admin panel.`
                           : `Your subscription will expire on ${getSubscriptionEndDate(subscription).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}. Renew now to continue accessing all features.`}
@@ -471,14 +471,14 @@ export default function SubscriptionPage() {
               )}
 
               {isNotStarted(subscription) && (
-                <div className="mt-4 p-4 bg-gray-50 border border-gray-300 rounded-lg">
+                <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg">
                   <div className="flex items-start gap-3">
-                    <Clock className="w-5 h-5 text-gray-600 mt-0.5" />
+                    <Clock className="w-5 h-5 text-gray-600 dark:text-gray-400 mt-0.5" />
                     <div className="flex-1">
-                      <p className="text-sm font-semibold text-gray-700 mb-1">
+                      <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
                         {t("subscription.notStarted")}
                       </p>
-                      <p className="text-xs text-black">
+                      <p className="text-xs text-black dark:text-gray-300">
                         {t("subscription.notStartedMessage")} {new Date(subscription.startDate).toLocaleDateString()}.
                       </p>
                     </div>
@@ -487,14 +487,14 @@ export default function SubscriptionPage() {
               )}
 
               {isExpired(subscription) && !isNotStarted(subscription) && (
-                <div className="mt-4 p-4 bg-red-50 border border-red-300 rounded-lg">
+                <div className="mt-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-300 dark:border-red-700 rounded-lg">
                   <div className="flex items-start gap-3">
-                    <AlertCircle className="w-5 h-5 text-red-600 mt-0.5" />
+                    <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5" />
                     <div className="flex-1">
-                      <p className="text-sm font-semibold text-red-700 mb-1">
+                      <p className="text-sm font-semibold text-red-700 dark:text-red-400 mb-1">
                         {t("subscription.expired")}
                       </p>
-                      <p className="text-xs text-black">
+                      <p className="text-xs text-black dark:text-gray-300">
                         {t("subscription.expiredMessage")}
                       </p>
                     </div>
@@ -515,10 +515,10 @@ export default function SubscriptionPage() {
         )}
 
         {!subscription && (
-          <Card className="shadow-xl border border-blue-200 bg-white">
-            <CardHeader className="bg-blue-50 border-b border-blue-200">
-              <CardTitle className="text-xl text-black">{t("subscription.noActive")}</CardTitle>
-              <CardDescription className="text-black">
+          <Card className="shadow-xl border border-blue-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+            <CardHeader className="bg-blue-50 dark:bg-gray-800 border-b border-blue-200 dark:border-gray-700">
+              <CardTitle className="text-xl text-black dark:text-white">{t("subscription.noActive")}</CardTitle>
+              <CardDescription className="text-black dark:text-gray-300">
                 {t("subscription.noActiveMessage")}
               </CardDescription>
             </CardHeader>
@@ -527,7 +527,7 @@ export default function SubscriptionPage() {
 
         {/* Available Plans */}
         <div id="subscription-plans">
-          <h2 className="text-xl font-semibold mb-4 text-black">
+          <h2 className="text-xl font-semibold mb-4 text-black dark:text-white">
             {subscription ? t("subscription.upgradeOrChange") : t("subscription.choosePlan")}
           </h2>
           <div className="grid md:grid-cols-3 gap-6">
@@ -536,8 +536,8 @@ export default function SubscriptionPage() {
                 key={plan.id}
                 className={`relative border-2 transition-all duration-300 hover:shadow-2xl ${
                   plan.popular
-                    ? "border-blue-500 shadow-xl scale-105 bg-white"
-                    : "border-blue-200 hover:border-blue-300 bg-white"
+                    ? "border-blue-500 dark:border-blue-600 shadow-xl scale-105 bg-white dark:bg-gray-900"
+                    : "border-blue-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-gray-600 bg-white dark:bg-gray-900"
                 }`}
               >
                 {plan.popular && (
@@ -547,19 +547,19 @@ export default function SubscriptionPage() {
                     </div>
                   </div>
                 )}
-                <CardHeader className="pb-4 bg-blue-50 border-b border-blue-200">
-                  <CardTitle className="text-xl text-black">
+                <CardHeader className="pb-4 bg-blue-50 dark:bg-gray-800 border-b border-blue-200 dark:border-gray-700">
+                  <CardTitle className="text-xl text-black dark:text-white">
                     {plan.id === "SIX_MONTH" ? t("plan.sixMonthsName") : plan.id === "TWELVE_MONTH" ? t("plan.twelveMonthsName") : plan.name}
                   </CardTitle>
-                  <CardDescription className="text-gray-600">
+                  <CardDescription className="text-gray-600 dark:text-gray-400">
                     {plan.id === "SIX_MONTH" ? t("subscription.sixMonths") : plan.id === "TWELVE_MONTH" ? t("subscription.twelveMonths") : ""}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <span className="text-4xl font-bold text-black">€{plan.price}</span>
+                    <span className="text-4xl font-bold text-black dark:text-white">€{plan.price}</span>
                   </div>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
                     {plan.id === "SIX_MONTH" ? t("plan.sixMonthsDescription") : plan.id === "TWELVE_MONTH" ? t("plan.twelveMonthsDescription") : PLAN_PRICING[plan.id]?.description || ""}
                   </p>
                   <ul className="space-y-2">
@@ -572,8 +572,8 @@ export default function SubscriptionPage() {
                                         feature === "Email support" ? "feature.emailSupport" : null
                       return (
                         <li key={feature} className="flex items-start gap-2">
-                          <Check className="w-4 h-4 text-orange-500 mt-0.5 shrink-0" />
-                          <span className="text-sm text-black">{featureKey ? t(featureKey) : feature}</span>
+                          <Check className="w-4 h-4 text-orange-500 dark:text-orange-400 mt-0.5 shrink-0" />
+                          <span className="text-sm text-black dark:text-gray-300">{featureKey ? t(featureKey) : feature}</span>
                         </li>
                       )
                     })}
@@ -621,23 +621,23 @@ export default function SubscriptionPage() {
         {/* Subscription History */}
         {showHistory && (
           <div>
-            <h2 className="text-xl font-semibold mb-4 text-black">{t("subscription.history")}</h2>
-            <Card className="shadow-xl border border-blue-200 bg-white">
+            <h2 className="text-xl font-semibold mb-4 text-black dark:text-white">{t("subscription.history")}</h2>
+            <Card className="shadow-xl border border-blue-200 dark:border-gray-700 bg-white dark:bg-gray-900">
               <CardContent className="p-6">
                 {loadingHistory ? (
-                  <p className="text-black text-center py-8">Loading history...</p>
+                  <p className="text-black dark:text-gray-300 text-center py-8">Loading history...</p>
                 ) : subscriptionHistory.length === 0 ? (
-                  <p className="text-black text-center py-8">{t("subscription.noHistory")}</p>
+                  <p className="text-black dark:text-gray-300 text-center py-8">{t("subscription.noHistory")}</p>
                 ) : (
                   <div className="space-y-4">
                     {subscriptionHistory.map((historyItem: any, index: number) => (
                     <div
                       key={`${historyItem.id}_${index}`}
-                      className="p-4 bg-blue-50 rounded-lg border border-blue-200 hover:border-blue-300 transition-colors"
+                      className="p-4 bg-blue-50 dark:bg-gray-800 rounded-lg border border-blue-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-gray-600 transition-colors"
                     >
                       <div className="flex items-center justify-between mb-3">
                         <div>
-                          <p className="text-black font-semibold">
+                          <p className="text-black dark:text-white font-semibold">
                             {(() => {
                               const planKey = historyItem.plan === "MONTHLY" ? "monthly" :
                                             historyItem.plan === "THREE_MONTH" ? "starter" :
@@ -646,21 +646,21 @@ export default function SubscriptionPage() {
                               return planKey ? t(`plan.${planKey}`) : (PLAN_PRICING[historyItem.plan as SubscriptionPlan]?.name || historyItem.plan);
                             })()}
                           </p>
-                          <p className="text-xs text-black">
+                          <p className="text-xs text-black dark:text-gray-300">
                             {new Date(historyItem.createdAt || historyItem.startDate).toLocaleDateString()}
                           </p>
                         </div>
                         <Badge
                           className={
                             historyItem.status === "ACTIVE" || historyItem.status === "active"
-                              ? "bg-green-100 text-green-700 border-green-300"
+                              ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border-green-300 dark:border-green-700"
                               : historyItem.status === "pending" || historyItem.status === "PENDING"
-                              ? "bg-yellow-100 text-yellow-700 border-yellow-300"
+                              ? "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 border-yellow-300 dark:border-yellow-700"
                               : historyItem.paymentStatus === "REJECTED" || historyItem.paymentStatus === "rejected"
-                              ? "bg-red-100 text-red-700 border-red-300"
+                              ? "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border-red-300 dark:border-red-700"
                               : historyItem.isFreeTrial || historyItem.status === "FREE_TRIAL" || historyItem.status === "free_trial"
-                              ? "bg-blue-100 text-blue-700 border-blue-300"
-                              : "bg-gray-100 text-gray-700 border-gray-300"
+                              ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border-blue-300 dark:border-blue-700"
+                              : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-700"
                           }
                         >
                           {historyItem.isFreeTrial || historyItem.status === "FREE_TRIAL" || historyItem.status === "free_trial"
@@ -678,35 +678,35 @@ export default function SubscriptionPage() {
                       </div>
                       <div className="grid grid-cols-2 gap-4 text-sm">
                         <div>
-                          <p className="text-black text-xs">{t("subscription.startDate")}</p>
-                          <p className="text-black">
+                          <p className="text-black dark:text-gray-300 text-xs">{t("subscription.startDate")}</p>
+                          <p className="text-black dark:text-white">
                             {new Date(historyItem.startDate).toLocaleDateString()}
                             {isNotStarted(historyItem) && (
-                              <span className="ml-2 text-xs text-black">{t("subscription.scheduled")}</span>
+                              <span className="ml-2 text-xs text-black dark:text-gray-300">{t("subscription.scheduled")}</span>
                             )}
                           </p>
                         </div>
                         <div>
-                          <p className="text-black text-xs">{t("subscription.endDate")}</p>
-                          <p className="text-black">
+                          <p className="text-black dark:text-gray-300 text-xs">{t("subscription.endDate")}</p>
+                          <p className="text-black dark:text-white">
                             {getSubscriptionEndDate(historyItem).toLocaleDateString()}
                           </p>
                         </div>
                         <div>
-                          <p className="text-black text-xs">{t("subscription.price")}</p>
-                          <p className="text-black font-semibold">
+                          <p className="text-black dark:text-gray-300 text-xs">{t("subscription.price")}</p>
+                          <p className="text-black dark:text-white font-semibold">
                             €{PLAN_PRICING[historyItem.plan as SubscriptionPlan]?.price || historyItem.price || 0}
                           </p>
                         </div>
                         <div>
-                          <p className="text-black text-xs">{t("subscription.duration")}</p>
-                          <p className="text-black">
+                          <p className="text-black dark:text-gray-300 text-xs">{t("subscription.duration")}</p>
+                          <p className="text-black dark:text-white">
                             {PLAN_PRICING[historyItem.plan as SubscriptionPlan]?.months || 0} {t("subscription.months")}
                           </p>
                         </div>
                       </div>
                       {isNotStarted(historyItem) && (
-                        <div className="mt-3 p-2 bg-blue-50 border border-blue-300 rounded text-xs text-blue-700">
+                        <div className="mt-3 p-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-300 dark:border-blue-700 rounded text-xs text-blue-700 dark:text-blue-400">
                           {t("subscription.scheduledMessage").replace("{date}", new Date(historyItem.startDate).toLocaleDateString())}
                         </div>
                       )}
@@ -720,15 +720,15 @@ export default function SubscriptionPage() {
         )}
 
         {/* Email Notification Info */}
-        <Card className="shadow-xl border border-blue-200 bg-white">
-          <CardHeader className="bg-blue-50 border-b border-blue-200">
-            <CardTitle className="text-lg text-black flex items-center gap-2">
+        <Card className="shadow-xl border border-blue-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+          <CardHeader className="bg-blue-50 dark:bg-gray-800 border-b border-blue-200 dark:border-gray-700">
+            <CardTitle className="text-lg text-black dark:text-white flex items-center gap-2">
               <Mail className="w-5 h-5" />
               {t("subscription.emailNotifications")}
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-black">
+            <p className="text-sm text-black dark:text-gray-300">
               {t("subscription.emailNotificationMessage").replace("{email}", user?.email || "")}
             </p>
           </CardContent>

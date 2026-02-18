@@ -9,12 +9,12 @@ export default function TicketsPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-4 sm:space-y-6 text-black">
+      <div className="space-y-4 sm:space-y-6 text-black dark:text-white">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-balance text-black">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-balance text-black dark:text-white">
             {t("page.tickets.title")}
           </h1>
-          <p className="text-black text-balance text-sm sm:text-base">
+          <p className="text-black dark:text-gray-300 text-balance text-sm sm:text-base">
             {t("page.tickets.subtitle")}
           </p>
         </div>
