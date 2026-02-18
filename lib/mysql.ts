@@ -79,10 +79,10 @@ if (!process.env.DB_HOST || !process.env.DB_USER || !process.env.DB_PASSWORD || 
 
 // Connection pool configuration - increased limit to handle high concurrency
 // Most MySQL servers have a default max_connections of 151
-// Set to 50 by default, can be increased via DB_CONNECTION_LIMIT environment variable
-// For unlimited-like behavior, set DB_CONNECTION_LIMIT to a high value (e.g., 100)
-const connectionLimit = parseInt(process.env.DB_CONNECTION_LIMIT || "50")
-const queueLimit = parseInt(process.env.DB_QUEUE_LIMIT || "100")
+// Set to 100 by default, can be increased via DB_CONNECTION_LIMIT environment variable
+// For unlimited-like behavior, set DB_CONNECTION_LIMIT to a high value (e.g., 150)
+const connectionLimit = parseInt(process.env.DB_CONNECTION_LIMIT || "100")
+const queueLimit = parseInt(process.env.DB_QUEUE_LIMIT || "200")
 
 const pool = mysql.createPool({
   host: process.env.DB_HOST || "localhost",
@@ -103,7 +103,7 @@ const pool = mysql.createPool({
   supportBigNumbers: true,
   bigNumberStrings: false,
   // Connection pool options to prevent leaks
-  acquireTimeout: 60000, // Wait up to 60s for a connection from pool
+  acquireTimeout: 120000, // Wait up to 120s for a connection from pool (increased for busy periods)
   timeout: 60000, // Connection timeout
   // Auto-reconnect options
   reconnect: true,
@@ -229,12 +229,23 @@ export async function query(sql: string, params?: any[], retries = 2): Promise<a
         
         console.warn(`[MySQL] Connection error (attempt ${attempt + 1}/${retries + 1}), retrying...`, error?.code || error?.message)
         
-        // For "too many connections", use longer backoff to allow connections to free up
-        const backoffDelay = isTooManyConnections 
-          ? Math.min(Math.pow(2, attempt) * 2000, 10000) // 2s, 4s, 8s, max 10s
-          : Math.pow(2, attempt) * 1000 // Standard exponential backoff
-        
-        await new Promise(resolve => setTimeout(resolve, backoffDelay))
+        // For "too many connections", use longer backoff with jitter to allow connections to free up
+        if (isTooManyConnections) {
+          const stats = getPoolStats()
+          console.warn(`[MySQL] Pool stats: active=${stats.totalConnections - stats.freeConnections}, free=${stats.freeConnections}, limit=${stats.connectionLimit}, queue=${stats.queueLength}`)
+          
+          // Exponential backoff with jitter: 3s, 6s, 12s, max 15s
+          const baseDelay = Math.min(Math.pow(2, attempt) * 3000, 15000)
+          const jitter = Math.random() * 1000 // Add 0-1s random jitter to prevent thundering herd
+          const backoffDelay = baseDelay + jitter
+          
+          console.warn(`[MySQL] Waiting ${Math.round(backoffDelay / 1000)}s before retry (too many connections)`)
+          await new Promise(resolve => setTimeout(resolve, backoffDelay))
+        } else {
+          // Standard exponential backoff for other connection errors
+          const backoffDelay = Math.pow(2, attempt) * 1000
+          await new Promise(resolve => setTimeout(resolve, backoffDelay))
+        }
         continue
       }
       

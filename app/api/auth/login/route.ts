@@ -58,10 +58,11 @@ export async function POST(request: NextRequest) {
     try {
       // Use queryOne with built-in retry logic (default 2 retries)
       // This will automatically retry on connection errors with exponential backoff
+      // Increased retries to 5 for login (critical operation)
       user = await queryOne(
         `SELECT * FROM users WHERE LOWER(email) = LOWER(?)`,
         [email.trim()],
-        3 // 3 retries total (initial + 3 retries = 4 attempts)
+        5 // 5 retries total (initial + 5 retries = 6 attempts) for critical login operation
       )
     } catch (dbError: any) {
       // Log the error for debugging
