@@ -104,6 +104,10 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
     
     const trimmedService = serviceName.trim()
     const lowerServiceName = trimmedService.toLowerCase()
+    // Check if "OK" suffix is present (preserve it)
+    const hasOkSuffix = /\s+ok\s*$/i.test(trimmedService)
+    // Remove "OK" suffix if present (for matching purposes)
+    const withoutOk = lowerServiceName.replace(/\s+ok\s*$/, "").trim()
     
     // Map common service names to translation keys (expanded with variations)
     const serviceMap: Record<string, string> = {
@@ -172,36 +176,39 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
       "camera pana": "service.camera",
     }
     
-    // Try exact match first
-    const translationKey = serviceMap[trimmedService] || serviceMap[lowerServiceName]
+    // Try exact match first (with and without "OK")
+    const translationKey = serviceMap[trimmedService] || serviceMap[lowerServiceName] || serviceMap[withoutOk]
     if (translationKey) {
       const translated = t(translationKey)
       if (translated && translated !== translationKey) {
-        return translated
+        // Preserve "OK" suffix if it was in the original
+        return hasOkSuffix ? `${translated} OK` : translated
       }
     }
     
     // Try case-insensitive match
     for (const [key, value] of Object.entries(serviceMap)) {
-      if (key.toLowerCase() === lowerServiceName) {
+      if (key.toLowerCase() === lowerServiceName || key.toLowerCase() === withoutOk) {
         const translated = t(value)
         if (translated && translated !== value) {
-          return translated
+          // Preserve "OK" suffix if it was in the original
+          return hasOkSuffix ? `${translated} OK` : translated
         }
       }
     }
     
     // Try partial match for service names that might contain the service
     for (const [key, value] of Object.entries(serviceMap)) {
-      if (lowerServiceName.includes(key.toLowerCase()) || key.toLowerCase().includes(lowerServiceName)) {
+      if (lowerServiceName.includes(key.toLowerCase()) || key.toLowerCase().includes(withoutOk) || withoutOk.includes(key.toLowerCase())) {
         const translated = t(value)
         if (translated && translated !== value) {
-          return translated
+          // Preserve "OK" suffix if it was in the original
+          return hasOkSuffix ? `${translated} OK` : translated
         }
       }
     }
     
-    // If no translation found, return original
+    // If no translation found, return original (which already includes "OK" if present)
     return trimmedService
   }
 
@@ -1265,18 +1272,18 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                         </td>
                         <td className="border-r border-blue-300 dark:border-gray-700 px-1 py-1.5 text-[11px] text-black dark:text-gray-300 break-words">
                           {(() => {
-                            // Show Phone Issue - phoneIssue field (display as-is, no translation)
+                            // Show Phone Issue - translate phoneIssue field
                             const phoneIssue = ticket.phoneIssue || ""
                             if (phoneIssue && phoneIssue.trim() !== "") {
-                              return phoneIssue.trim()
+                              return translateProblem(phoneIssue)
                             }
                             // Fallback to equipmentObs for backward compatibility (old devices)
                             const mobileCondition = ticket.equipmentObs || ticket.equipmentObservations || ticket.condition || ""
                             if (mobileCondition && mobileCondition.trim() !== "") {
-                              return mobileCondition.trim()
+                              return translateProblem(mobileCondition)
                             }
                             // Fallback to problem if no condition is available (for backward compatibility)
-                            return ticket.problem && ticket.problem.trim() !== "" ? ticket.problem.trim() : "-"
+                            return ticket.problem && ticket.problem.trim() !== "" ? translateProblem(ticket.problem) : "-"
                           })()}
                         </td>
                         <td className="border-r border-blue-300 dark:border-gray-700 px-1 py-1.5 text-[11px] text-black dark:text-gray-300 break-words">
@@ -1285,8 +1292,8 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                             let services: string | string[] | null = null
                             
                             if (ticket.repairObs) {
-                              // If repairObs exists, use it (it might already be translated or formatted)
-                              return ticket.repairObs
+                              // If repairObs exists, translate it
+                              return translateServices(ticket.repairObs)
                             }
                             
                             if (ticket.selectedServices) {
