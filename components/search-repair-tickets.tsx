@@ -244,9 +244,9 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
     const lowerProblem = problemText.toLowerCase()
     
     // Map common problem descriptions to translation keys
-    // Expanded list with more variations
+    // Expanded list with more variations (including uppercase)
     const problemMap: Record<string, string> = {
-      // Screen issues
+      // Screen issues (lowercase)
       "screen broken": "problem.screenBroken",
       "broken screen": "problem.screenBroken",
       "cracked screen": "problem.crackedScreen",
@@ -262,8 +262,26 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
       "lcd": "problem.screenBroken",
       "screen change": "problem.screenBroken",
       "lcd pani": "problem.screenBroken",
+      // Screen issues (uppercase)
+      "SCREEN BROKEN": "problem.screenBroken",
+      "BROKEN SCREEN": "problem.screenBroken",
+      "CRACKED SCREEN": "problem.crackedScreen",
+      "SCREEN CRACKED": "problem.crackedScreen",
+      "SCREEN NOT WORKING": "problem.screenNotWorking",
+      "DISPLAY NOT WORKING": "problem.displayNotWorking",
+      "TOUCH NOT WORKING": "problem.touchNotWorking",
+      "TOUCHSCREEN NOT WORKING": "problem.touchNotWorking",
+      "TOUCH PROBLEM": "problem.touchNotWorking",
+      "TOUCH": "problem.touchNotWorking",
+      "LCD NOT WORK": "problem.screenNotWorking",
+      "LCD BROKIN": "problem.screenBroken",
+      "LCD BROKEN": "problem.screenBroken",
+      "LCD": "problem.screenBroken",
+      "LCD BLINKING": "problem.screenNotWorking",
+      "LOGO STUCK": "problem.screenNotWorking",
+      "SCREEN CHANGE": "problem.screenBroken",
       
-      // Charging issues
+      // Charging issues (lowercase)
       "battery not charging": "problem.batteryNotCharging",
       "charging issue": "problem.chargingIssue",
       "not charging": "problem.notCharging",
@@ -271,6 +289,14 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
       "charging problem": "problem.chargingIssue",
       "no charge": "problem.notCharging",
       "battery problem": "problem.batteryNotCharging",
+      // Charging issues (uppercase)
+      "BATTERY NOT CHARGING": "problem.batteryNotCharging",
+      "CHARGING ISSUE": "problem.chargingIssue",
+      "NOT CHARGING": "problem.notCharging",
+      "CHARGER NOT WORKING": "problem.chargingIssue",
+      "CHARGING PROBLEM": "problem.chargingIssue",
+      "NO CHARGE": "problem.notCharging",
+      "BATTERY PROBLEM": "problem.batteryNotCharging",
       
       // Water damage
       "water damage": "problem.waterDamage",
@@ -302,13 +328,20 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
       "power button not working": "problem.powerButtonNotWorking",
       "home button not working": "problem.homeButtonNotWorking",
       
-      // Combined issues
+      // Combined issues (lowercase)
       "touch+lcd": "problem.touchNotWorking",
       "touch +lcd": "problem.touchNotWorking",
       "touch+lcd inside broken": "problem.touchNotWorking",
       "touch+lcd problem": "problem.touchNotWorking",
       "touch+lcd+tampa broken": "problem.touchNotWorking",
       "only lcd problem": "problem.screenNotWorking",
+      // Combined issues (uppercase)
+      "TOUCH+LCD": "problem.touchNotWorking",
+      "TOUCH +LCD": "problem.touchNotWorking",
+      "TOUCH+LCD INSIDE BROKEN": "problem.touchNotWorking",
+      "TOUCH+LCD PROBLEM": "problem.touchNotWorking",
+      "TOUCH+LCD+TAMPA BROKEN": "problem.touchNotWorking",
+      "ONLY LCD PROBLEM": "problem.screenNotWorking",
     }
     
     // Try exact match first (case-insensitive)

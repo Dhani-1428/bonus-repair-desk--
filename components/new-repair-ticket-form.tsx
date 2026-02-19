@@ -2150,7 +2150,7 @@ function translateProblemForReceipt(problem: string | null | undefined, lang: Re
   
   // Map common problem descriptions to translation keys (multilingual support)
   const problemMap: Record<string, string> = {
-    // English variations
+    // English variations (lowercase)
     "battery problem": "problem.batteryNotCharging",
     "touch problem": "problem.touchNotWorking",
     "lcd not work": "problem.screenNotWorking",
@@ -2172,6 +2172,21 @@ function translateProblemForReceipt(problem: string | null | undefined, lang: Re
     "does not charge": "problem.notCharging",
     "won't charge": "problem.notCharging",
     "wont charge": "problem.notCharging",
+    // Uppercase variations
+    "TOUCH": "problem.touchNotWorking",
+    "LCD": "problem.screenBroken",
+    "LCD BROKEN": "problem.screenBroken",
+    "LCD BLINKING": "problem.screenNotWorking",
+    "LOGO STUCK": "problem.screenNotWorking",
+    "TOUCH+LCD": "problem.touchNotWorking",
+    "TOUCH+LCD": "problem.touchNotWorking",
+    "NO CHARGE": "problem.notCharging",
+    "NOT CHARGING": "problem.notCharging",
+    "BATTERY PROBLEM": "problem.batteryNotCharging",
+    "CHARGING PROBLEM": "problem.chargingIssue",
+    "WATER DAMAGE": "problem.waterDamage",
+    "SCREEN BROKEN": "problem.screenBroken",
+    "SCREEN NOT WORKING": "problem.screenNotWorking",
     // Portuguese variations
     "não carrega": "problem.notCharging",
     "nao carrega": "problem.notCharging",
@@ -2194,9 +2209,25 @@ function translateProblemForReceipt(problem: string | null | undefined, lang: Re
   
   // Try exact match first (case-insensitive)
   for (const [key, translationKey] of Object.entries(problemMap)) {
-    if (lowerProblem === key.toLowerCase() || lowerProblem.includes(key.toLowerCase())) {
+    const lowerKey = key.toLowerCase()
+    // Check exact match
+    if (lowerProblem === lowerKey) {
       const translated = t[translationKey]
       if (translated && translated !== translationKey) {
+        return translated
+      }
+    }
+    // Check if problem contains the key (for phrases like "LOGO STUCK AND LCD BLINKING")
+    if (lowerKey.length >= 3 && lowerProblem.includes(lowerKey)) {
+      const translated = t[translationKey]
+      if (translated && translated !== translationKey) {
+        // For partial matches, try to replace the matched part with translation
+        // This handles cases like "LOGO STUCK AND LCD BLINKING" -> translate "lcd blinking" part
+        const regex = new RegExp(key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi')
+        if (regex.test(problemText)) {
+          // Replace the matched part with translation
+          return problemText.replace(regex, translated)
+        }
         return translated
       }
     }
@@ -2231,6 +2262,9 @@ function translateServicesForReceipt(services: string | string[] | null | undefi
     "new battery": "service.battery",
     "bateria": "service.battery",
     "bateria nova": "service.battery",
+    "BATTERY": "service.battery",
+    "BATTERY NEW": "service.battery",
+    "NEW BATTERY": "service.battery",
     
     // LCD/Touch services - handle all variations including typos
     "change touch+lcd": "service.lcd",
@@ -2244,6 +2278,18 @@ function translateServicesForReceipt(services: string | string[] | null | undefi
     "lcd ok": "service.lcd",
     "change lcd": "service.lcd",
     "lcd": "service.lcd",
+    // Uppercase variations
+    "LCD": "service.lcd",
+    "LCD OK": "service.lcd",
+    "LCD CHANGE": "service.lcd",
+    "LCD NEW": "service.lcd",
+    "CHANGE LCD": "service.lcd",
+    "CHANGE TOUCH+LCD": "service.lcd",
+    "CHANGE TOUCH+LCD OK": "service.lcd",
+    "TOUCH+LCD CHANGE": "service.lcd",
+    "TOUCH+LCD CHANGE OK": "service.lcd",
+    "THOUCH+LCD CHANGE": "service.lcd",
+    "THOUCH+LCD CHANGE OK": "service.lcd",
     
     // Back cover services
     "back glass ok": "service.backCover",
@@ -2284,11 +2330,17 @@ function translateServicesForReceipt(services: string | string[] | null | undefi
     "estimate": "service.software",
     "estimation": "service.software",
     "conta": "service.software", // Portuguese for "account" or "bill"
+    "ORSAMENT": "service.software", // Uppercase variation
+    "ORÇAMENTO": "service.software",
+    "ORCAMENTO": "service.software",
+    "ESTIMATE": "service.software",
+    "CONTA": "service.software",
     
     // Generic "CHANGE" - map to LCD as it's most common
     "change": "service.lcd",
     "trocar": "service.lcd", // Portuguese for "change"
     "troca": "service.lcd",
+    "CHANGE": "service.lcd",
   }
   
   // Translate each service
