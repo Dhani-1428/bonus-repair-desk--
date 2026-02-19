@@ -2987,6 +2987,7 @@ export async function printReceiptWithLanguageSelection(
         document.body.removeChild(dialog)
       }
       if (lang) {
+        console.log(`[printReceiptWithLanguageSelection] Selected language: ${lang}`)
         await printReceiptForTickets(tickets, preferredPrinter, lang, finalPrinterType)
       }
     })
@@ -3125,7 +3126,15 @@ export async function printReceiptForTickets(
   }
 
   // Get translations for the selected language
-  const t = getReceiptTranslations(language)
+  console.log(`[printReceiptForTickets] Using language: ${language}`)
+  let t = getReceiptTranslations(language)
+  console.log(`[printReceiptForTickets] Sample translation check - receipt.clientId: ${t["receipt.clientId"]}, receipt.name: ${t["receipt.name"]}`)
+  
+  // Verify language is being used correctly - ensure we have valid translations
+  if (!t || Object.keys(t).length === 0) {
+    console.error(`[printReceiptForTickets] No translations found for language: ${language}, falling back to English`)
+    t = getReceiptTranslations("en")
+  }
   
   // Adjust font sizes and layout based on detected printer type
   const baseFontSize = finalPrinterType === "thermal" ? "14px" : "12px"
