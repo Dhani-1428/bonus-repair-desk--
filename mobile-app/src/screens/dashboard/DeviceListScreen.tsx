@@ -83,18 +83,17 @@ export default function DeviceListScreen({ route, navigation }: any) {
             const status = (t.status || '').toLowerCase();
             return status === 'pending' || status === 'in_progress';
           });
+        } else if (filterValue === 'not_ok') {
+          tickets = tickets.filter((t: any) => {
+            const status = (t.status || '').toLowerCase();
+            return status === 'not_ok' || status === 'cannot_repaired';
+          });
         } else {
           tickets = tickets.filter((t: any) => {
             const status = (t.status || '').toLowerCase();
             return status === filterValue?.toLowerCase();
           });
         }
-      } else if (filterType === 'revenue') {
-        // Show completed devices (those that generated revenue)
-        tickets = tickets.filter((t: any) => {
-          const status = (t.status || '').toLowerCase();
-          return status === 'completed';
-        });
       } else if (filterType === 'all') {
         // Show all devices
         tickets = tickets;

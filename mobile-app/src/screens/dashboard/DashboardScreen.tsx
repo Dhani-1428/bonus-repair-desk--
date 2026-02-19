@@ -53,9 +53,8 @@ export default function DashboardScreen({ navigation }: any) {
     totalTickets: 0,
     pendingTickets: 0,
     completedTickets: 0,
-    cannotRepairedTickets: 0,
+    notOkTickets: 0,
     outTickets: 0,
-    totalRevenue: 0,
   });
   const [recentTickets, setRecentTickets] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -99,37 +98,29 @@ export default function DashboardScreen({ navigation }: any) {
         const status = (t.status || '').toLowerCase();
         return status === 'completed';
       }).length;
-      const cannotRepairedTickets = tickets.filter((t: any) => {
+      const notOkTickets = tickets.filter((t: any) => {
         const status = (t.status || '').toLowerCase();
-        return status === 'cannot_repaired';
+        return status === 'not_ok' || status === 'cannot_repaired';
       }).length;
       const outTickets = tickets.filter((t: any) => {
         const status = (t.status || '').toLowerCase();
         return status === 'out';
       }).length;
-      const totalRevenue = tickets
-        .filter((t: any) => {
-          const status = (t.status || '').toLowerCase();
-          return status === 'completed';
-        })
-        .reduce((sum: number, t: any) => sum + (parseFloat(t.price) || 0), 0);
 
       console.log('[DashboardScreen] Calculated stats:', {
         totalTickets,
         pendingTickets,
         completedTickets,
-        cannotRepairedTickets,
+        notOkTickets,
         outTickets,
-        totalRevenue,
       });
 
       setStats({
         totalTickets,
         pendingTickets,
         completedTickets,
-        cannotRepairedTickets,
+        notOkTickets,
         outTickets,
-        totalRevenue,
       });
 
       // Get recent tickets (last 5)
@@ -244,8 +235,8 @@ export default function DashboardScreen({ navigation }: any) {
             style={styles.statCardWrapper}
             onPress={() => navigation.navigate('DeviceList', {
               filterType: 'status',
-              filterValue: 'cannot_repaired',
-              title: t('dashboard.cannotRepaired'),
+              filterValue: 'not_ok',
+              title: t('dashboard.notOk') || 'Not Ok',
             })}
             activeOpacity={0.7}
           >
@@ -253,8 +244,8 @@ export default function DashboardScreen({ navigation }: any) {
               <View style={[styles.statIconContainer, { backgroundColor: theme.colors.error + '20' }]}>
                 <Ionicons name="close-circle" size={28} color={theme.colors.error} />
               </View>
-              <Text style={styles.statValue}>{stats.cannotRepairedTickets || 0}</Text>
-              <Text style={styles.statLabel}>{t('dashboard.cannotRepaired')}</Text>
+              <Text style={styles.statValue}>{stats.notOkTickets || 0}</Text>
+              <Text style={styles.statLabel}>{t('dashboard.notOk') || 'Not Ok'}</Text>
             </BlurView>
           </TouchableOpacity>
 
@@ -273,23 +264,6 @@ export default function DashboardScreen({ navigation }: any) {
               </View>
               <Text style={styles.statValue}>{stats.outTickets || 0}</Text>
               <Text style={styles.statLabel}>{t('dashboard.out')}</Text>
-            </BlurView>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.statCardWrapper}
-            onPress={() => navigation.navigate('DeviceList', {
-              filterType: 'revenue',
-              title: t('dashboard.revenue'),
-            })}
-            activeOpacity={0.7}
-          >
-            <BlurView intensity={60} tint="dark" style={styles.statCard}>
-              <View style={[styles.statIconContainer, { backgroundColor: theme.colors.primary + '20' }]}>
-                <Ionicons name="cash" size={28} color={theme.colors.primary} />
-              </View>
-              <Text style={styles.statValue}>€{stats.totalRevenue.toFixed(2)}</Text>
-              <Text style={styles.statLabel}>{t('dashboard.revenue')}</Text>
             </BlurView>
           </TouchableOpacity>
         </View>
