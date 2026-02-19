@@ -2321,7 +2321,16 @@ function translateServicesForReceipt(services: string | string[] | null | undefi
     "network jeck": "service.network",
     "network flex jeck": "service.network",
     "network": "service.network",
+    "network ok": "service.network",
     "rede": "service.network",
+    "rede ok": "service.network",
+    // Uppercase network variations
+    "NETWORK": "service.network",
+    "NETWORK OK": "service.network",
+    "NETWORK JECK": "service.network",
+    "NETWORK FLEX JECK": "service.network",
+    "REDE": "service.network",
+    "REDE OK": "service.network",
     
     // Camera services
     "camera pana": "service.camera",
