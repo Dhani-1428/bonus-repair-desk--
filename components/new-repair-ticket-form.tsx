@@ -2318,9 +2318,17 @@ function translateServicesForReceipt(services: string | string[] | null | undefi
     
     // Software services
     "only clean water": "service.software",
+    "only cleaning": "service.software",
     "clean": "service.software",
+    "cleaning": "service.software",
     "software": "service.software",
     "limpeza": "service.software",
+    // Uppercase variations for cleaning/software
+    "ONLY CLEAN WATER": "service.software",
+    "ONLY CLEANING": "service.software",
+    "CLEAN": "service.software",
+    "CLEANING": "service.software",
+    "SOFTWARE": "service.software",
     
     // Budget/Estimate services (common Portuguese terms)
     "orsament": "service.software", // Common typo for "orçamento"
@@ -2346,16 +2354,23 @@ function translateServicesForReceipt(services: string | string[] | null | undefi
   const translated = servicesArray.map(service => {
     if (!service || service.trim() === "") return service
     
+    const trimmedService = service.trim()
     // Normalize: remove extra spaces, convert to lowercase for matching
-    const normalized = service.trim().toLowerCase()
+    const normalized = trimmedService.toLowerCase()
     // Check if "OK" suffix is present (preserve it)
-    const hasOkSuffix = /\s+ok\s*$/i.test(service.trim())
+    const hasOkSuffix = /\s+ok\s*$/i.test(trimmedService)
     // Remove "OK" suffix if present (for matching purposes)
     const withoutOk = normalized.replace(/\s+ok\s*$/, "").trim()
+    const originalWithoutOk = trimmedService.replace(/\s+ok\s*$/i, "").trim()
     
-    // Try exact match first (with and without "OK")
+    // Try exact match first (check original uppercase, normalized lowercase, with and without "OK")
     for (const [key, translationKey] of Object.entries(serviceMap)) {
-      if (normalized === key || withoutOk === key) {
+      const lowerKey = key.toLowerCase()
+      // Check exact matches: original text, normalized, without OK versions
+      if (trimmedService === key || normalized === key || 
+          originalWithoutOk === key || withoutOk === key ||
+          trimmedService === key.toUpperCase() || normalized === lowerKey ||
+          originalWithoutOk === key.toUpperCase() || withoutOk === lowerKey) {
         const translated = t[translationKey]
         if (translated && translated !== translationKey) {
           // Preserve "OK" suffix if it was in the original

@@ -172,6 +172,12 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
       "change lcd+tampa": "service.lcd",
       "ONLY CLEAN WATER": "service.software",
       "only clean water": "service.software",
+      "ONLY CLEANING": "service.software",
+      "only cleaning": "service.software",
+      "CLEANING": "service.software",
+      "cleaning": "service.software",
+      "CLEAN": "service.software",
+      "clean": "service.software",
       "CAMERA PANA": "service.camera",
       "camera pana": "service.camera",
     }
