@@ -2217,6 +2217,8 @@ function translateServicesForReceipt(services: string | string[] | null | undefi
     
     // Normalize: remove extra spaces, convert to lowercase for matching
     const normalized = service.trim().toLowerCase()
+    // Check if "OK" suffix is present (preserve it)
+    const hasOkSuffix = /\s+ok\s*$/i.test(service.trim())
     // Remove "OK" suffix if present (for matching purposes)
     const withoutOk = normalized.replace(/\s+ok\s*$/, "").trim()
     
@@ -2225,7 +2227,8 @@ function translateServicesForReceipt(services: string | string[] | null | undefi
       if (normalized === key || withoutOk === key) {
         const translated = t[translationKey]
         if (translated && translated !== translationKey) {
-          return translated
+          // Preserve "OK" suffix if it was in the original
+          return hasOkSuffix ? `${translated} OK` : translated
         }
       }
     }
@@ -2237,13 +2240,14 @@ function translateServicesForReceipt(services: string | string[] | null | undefi
         if (normalized.includes(key) || withoutOk.includes(key) || key.includes(withoutOk)) {
           const translated = t[translationKey]
           if (translated && translated !== translationKey) {
-            return translated
+            // Preserve "OK" suffix if it was in the original
+            return hasOkSuffix ? `${translated} OK` : translated
           }
         }
       }
     }
     
-    // If no match found, return original
+    // If no match found, return original (which already includes "OK" if present)
     return service
   })
   
