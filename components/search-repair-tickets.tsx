@@ -995,11 +995,11 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
 
   return (
     <div className="space-y-6">
-      <Card className="shadow-xl border border-blue-200 bg-white">
-        <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-100 border-b-2 border-blue-300 rounded-t-lg p-4 sm:p-6 shadow-sm">
+      <Card className="shadow-xl border border-blue-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+        <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-gray-800 dark:to-gray-800 border-b-2 border-blue-300 dark:border-gray-700 rounded-t-lg p-4 sm:p-6 shadow-sm">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <CardTitle className="text-xl sm:text-2xl font-bold text-black flex items-center gap-2 sm:gap-3">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center ring-2 ring-blue-200 shadow-lg">
+            <CardTitle className="text-xl sm:text-2xl font-bold text-black dark:text-white flex items-center gap-2 sm:gap-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center ring-2 ring-blue-200 dark:ring-gray-700 shadow-lg">
                 <svg className="w-4 h-4 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
@@ -1078,7 +1078,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
             </div>
           </div>
         </CardHeader>
-        <CardContent className="p-4 sm:p-6 text-black">
+        <CardContent className="p-4 sm:p-6 text-black dark:text-white">
           <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             <div className="space-y-2">
               <Label htmlFor="search" className="font-medium text-black dark:text-white">{t("search.searchLabel")}</Label>
