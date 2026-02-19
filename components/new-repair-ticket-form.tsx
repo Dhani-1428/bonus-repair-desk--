@@ -3513,9 +3513,9 @@ export async function printReceiptForTickets(
   let ticketsHTML = ""
   
   if (finalPrinterType === "a4") {
-    // LARGE PRINTER (A4 or larger): Generate split-page format
-    // Both Admin and Client copies on ONE page (top/bottom split)
-    console.log("[printReceiptForTickets] 🟢 LARGE PRINTER: Generating split-page format (Admin top, Client bottom on same page)")
+    // LARGE PRINTER (A4 or larger): Generate separate pages
+    // Admin and Client copies on separate pages
+    console.log("[printReceiptForTickets] 🟢 LARGE PRINTER: Generating separate pages (Admin on one page, Client on another)")
     
     ticketsHTML = Object.values(finalGroupedTickets).map(ticketGroup => {
       console.log(`[printReceiptForTickets] Processing group with ${ticketGroup.length} ticket(s)`)
@@ -3539,23 +3539,21 @@ export async function printReceiptForTickets(
         clientReceipt = generateReceiptHTML(ticket, 'CLIENT')
       }
       
-      // A4 Split-page: Top half = Admin, Bottom half = Client
+      // A4 Separate pages: Admin on first page, Client on second page
       return `
-        <div class="a4-split-page" style="width: 100%; height: 100vh; display: flex; flex-direction: column; page-break-inside: avoid;">
-          <!-- ADMIN COPY - Top Half -->
-          <div class="admin-copy" style="flex: 1; height: 50%; border-bottom: 2px dashed #000; padding: 10px; box-sizing: border-box; overflow: hidden;">
-            <div style="text-align: center; font-weight: bold; font-size: 14pt; margin-bottom: 8px; border: 2px solid #000; padding: 4px; background-color: #f0f0f0;">
-              ADMIN COPY
-            </div>
-            ${adminReceipt}
+        <!-- ADMIN COPY - First Page -->
+        <div class="a4-receipt admin-copy" style="page-break-after: always !important; page-break-inside: avoid !important; break-after: page !important; padding: 20px; box-sizing: border-box;">
+          <div style="text-align: center; font-weight: bold; font-size: 14pt; margin-bottom: 8px; border: 2px solid #000; padding: 4px; background-color: #f0f0f0;">
+            ADMIN COPY
           </div>
-          <!-- CLIENT COPY - Bottom Half -->
-          <div class="client-copy" style="flex: 1; height: 50%; padding: 10px; box-sizing: border-box; overflow: hidden;">
-            <div style="text-align: center; font-weight: bold; font-size: 14pt; margin-bottom: 8px; border: 2px solid #000; padding: 4px; background-color: #f0f0f0;">
-              CLIENT COPY
-            </div>
-            ${clientReceipt}
+          ${adminReceipt}
+        </div>
+        <!-- CLIENT COPY - Second Page -->
+        <div class="a4-receipt client-copy" style="page-break-after: avoid !important; page-break-inside: avoid !important; break-after: avoid !important; padding: 20px; box-sizing: border-box;">
+          <div style="text-align: center; font-weight: bold; font-size: 14pt; margin-bottom: 8px; border: 2px solid #000; padding: 4px; background-color: #f0f0f0;">
+            CLIENT COPY
           </div>
+          ${clientReceipt}
         </div>
       `
     }).join("")
@@ -3654,20 +3652,19 @@ export async function printReceiptForTickets(
                 max-width: ${maxWidth};
               }
               ${finalPrinterType === "a4" ? `
-              /* LARGE PRINTER (A4+): Split-page layout - both copies on one page */
-              .a4-split-page {
-                height: 100vh !important;
+              /* LARGE PRINTER (A4+): Separate pages - Admin and Client on different pages */
+              .a4-receipt {
+                width: 100% !important;
+                min-height: 100vh !important;
                 page-break-inside: avoid !important;
               }
-              .admin-copy {
-                height: 50% !important;
-                max-height: 50vh !important;
-                flex: 1 !important;
+              .a4-receipt.admin-copy {
+                page-break-after: always !important;
+                break-after: page !important;
               }
-              .client-copy {
-                height: 50% !important;
-                max-height: 50vh !important;
-                flex: 1 !important;
+              .a4-receipt.client-copy {
+                page-break-after: avoid !important;
+                break-after: avoid !important;
               }
               ` : `
               /* SMALL PRINTER (Thermal): Separate receipts with page breaks */
