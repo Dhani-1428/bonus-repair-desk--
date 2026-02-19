@@ -2179,7 +2179,6 @@ function translateProblemForReceipt(problem: string | null | undefined, lang: Re
     "LCD BLINKING": "problem.screenNotWorking",
     "LOGO STUCK": "problem.screenNotWorking",
     "TOUCH+LCD": "problem.touchNotWorking",
-    "TOUCH+LCD": "problem.touchNotWorking",
     "NO CHARGE": "problem.notCharging",
     "NOT CHARGING": "problem.notCharging",
     "BATTERY PROBLEM": "problem.batteryNotCharging",
