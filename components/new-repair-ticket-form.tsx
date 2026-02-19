@@ -3519,9 +3519,9 @@ export async function printReceiptForTickets(
         receipt = generateReceiptHTML(ticket, 'CLIENT')
       }
       
-      // A4 Single receipt - full width
+      // A4 Single receipt - full width, no margins
       return `
-        <div class="a4-receipt" style="width: 100% !important; page-break-inside: avoid !important; padding: 20px; box-sizing: border-box;">
+        <div class="a4-receipt" style="width: 100% !important; page-break-inside: avoid !important; padding: 0 !important; margin: 0 !important; box-sizing: border-box;">
           ${receipt}
         </div>
       `
@@ -3547,9 +3547,9 @@ export async function printReceiptForTickets(
         receipt = generateReceiptHTML(ticket, 'CLIENT')
       }
       
-      // Thermal: Single receipt - full width
+      // Thermal: Single receipt - full width, no margins
       return `
-        <div class="thermal-receipt" style="width: 100% !important; page-break-inside: avoid !important; margin: 0; padding: 10px; box-sizing: border-box;">
+        <div class="thermal-receipt" style="width: 100% !important; page-break-inside: avoid !important; margin: 0 !important; padding: 0 !important; box-sizing: border-box;">
           ${receipt}
         </div>
       `
@@ -3567,8 +3567,8 @@ export async function printReceiptForTickets(
   
   // Determine page size and formatting based on detected printer type
   const pageSize = finalPrinterType === "thermal" ? "80mm" : "A4"
-  const pageMargin = finalPrinterType === "thermal" ? "0" : "5mm"
-  const bodyPadding = finalPrinterType === "thermal" ? "0 2mm" : "0"
+  const pageMargin = "0"
+  const bodyPadding = "0"
   const maxWidth = finalPrinterType === "thermal" ? "80mm" : "100%"
   const fontSize = finalPrinterType === "thermal" ? "8pt" : "9pt"
   
@@ -3600,22 +3600,22 @@ export async function printReceiptForTickets(
                 max-width: ${maxWidth};
               }
               ${finalPrinterType === "a4" ? `
-              /* LARGE PRINTER (A4+): Single receipt - full width */
+              /* LARGE PRINTER (A4+): Single receipt - full width, no margins */
               .a4-receipt {
                 width: 100% !important;
                 min-height: 100vh !important;
                 page-break-inside: avoid !important;
                 margin: 0 !important;
-                padding: 20px !important;
+                padding: 0 !important;
                 box-sizing: border-box !important;
               }
               ` : `
-              /* SMALL PRINTER (Thermal): Single receipt - full width */
+              /* SMALL PRINTER (Thermal): Single receipt - full width, no margins */
               .thermal-receipt {
                 width: 100% !important;
                 max-width: 100% !important;
                 margin: 0 !important;
-                padding: 10px !important;
+                padding: 0 !important;
                 box-sizing: border-box !important;
               }
               `}
