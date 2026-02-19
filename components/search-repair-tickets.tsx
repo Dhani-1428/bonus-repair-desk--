@@ -1238,9 +1238,9 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                       >
                         <td className="border-r border-blue-300 dark:border-gray-700 px-1 py-1.5 text-[11px] text-black dark:text-white">
                           <div className="flex flex-col gap-0.5">
-                            <div className="text-black leading-tight">{new Date(ticket.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}</div>
+                            <div className="text-black dark:text-white leading-tight">{new Date(ticket.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}</div>
                             {(ticket.status === "DELIVERED" || ticket.status === "delivered") && ticket.deliveredDate && (
-                              <div className="text-[9px] text-blue-600 font-semibold leading-tight">
+                              <div className="text-[9px] text-blue-600 dark:text-white font-semibold leading-tight">
                                 Out: {new Date(ticket.deliveredDate).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                               </div>
                             )}
