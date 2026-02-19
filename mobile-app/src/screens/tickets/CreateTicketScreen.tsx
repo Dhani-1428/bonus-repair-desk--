@@ -408,10 +408,10 @@ export default function CreateTicketScreen({ navigation }: any) {
           maxLength={15}
         />
         <FormInput
-          label={t('form.laptopSerialNumber') || 'Serial Number'}
+          label="Laptop Serial Number"
           value={formData.serialNo}
           onChangeText={(text) => setFormData({ ...formData, serialNo: text })}
-          placeholder={t('form.laptopSerialNumberPlaceholder') || 'Enter serial number'}
+          placeholder="Laptop Serial Number"
         />
         <FormInput
           label="Mobile Conditions (On Arrival)"
@@ -490,16 +490,6 @@ export default function CreateTicketScreen({ navigation }: any) {
             </View>
           </View>
         </View>
-        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.md }}>
-          <Switch
-            value={formData.warrantyUntil30Days}
-            onValueChange={(value) => setFormData({ ...formData, warrantyUntil30Days: value })}
-            trackColor={{ false: '#767577', true: theme.colors.primary }}
-          />
-          <Text style={{ fontSize: 16, color: theme.colors.text, marginLeft: theme.spacing.sm }}>
-            {t('form.warrantyUntil30Days')}
-          </Text>
-        </View>
       </View>
 
       <View style={styles.section}>
@@ -539,6 +529,16 @@ export default function CreateTicketScreen({ navigation }: any) {
           value={formData.loanEquipment}
           onValueChange={(value) => setFormData({ ...formData, loanEquipment: value })}
         />
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.md }}>
+          <Switch
+            value={formData.warrantyUntil30Days}
+            onValueChange={(value) => setFormData({ ...formData, warrantyUntil30Days: value })}
+            trackColor={{ false: '#767577', true: theme.colors.primary }}
+          />
+          <Text style={{ fontSize: 16, color: theme.colors.text, marginLeft: theme.spacing.sm }}>
+            Warranty
+          </Text>
+        </View>
       </View>
 
 
