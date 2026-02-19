@@ -2148,8 +2148,9 @@ function translateProblemForReceipt(problem: string | null | undefined, lang: Re
   const lowerProblem = problemText.toLowerCase()
   const t = getReceiptTranslations(lang)
   
-  // Map common problem descriptions to translation keys
+  // Map common problem descriptions to translation keys (multilingual support)
   const problemMap: Record<string, string> = {
+    // English variations
     "battery problem": "problem.batteryNotCharging",
     "touch problem": "problem.touchNotWorking",
     "lcd not work": "problem.screenNotWorking",
@@ -2159,10 +2160,36 @@ function translateProblemForReceipt(problem: string | null | undefined, lang: Re
     "touch+lcd": "problem.touchNotWorking",
     "charging problem": "problem.chargingIssue",
     "no charge": "problem.notCharging",
+    "not charging": "problem.notCharging",
     "water damage": "problem.waterDamage",
     "network flex jeck broken": "problem.networkIssue",
     "lcd partido": "problem.screenBroken",
     "camera pana": "problem.cameraNotWorking",
+    "screen broken": "problem.screenBroken",
+    "screen not working": "problem.screenNotWorking",
+    "touch not working": "problem.touchNotWorking",
+    "battery not charging": "problem.batteryNotCharging",
+    "does not charge": "problem.notCharging",
+    "won't charge": "problem.notCharging",
+    "wont charge": "problem.notCharging",
+    // Portuguese variations
+    "não carrega": "problem.notCharging",
+    "nao carrega": "problem.notCharging",
+    "não funciona": "problem.screenNotWorking",
+    "nao funciona": "problem.screenNotWorking",
+    "ecrã partido": "problem.screenBroken",
+    "ecra partido": "problem.screenBroken",
+    "táctil não funciona": "problem.touchNotWorking",
+    "tactil nao funciona": "problem.touchNotWorking",
+    "bateria não carrega": "problem.batteryNotCharging",
+    "bateria nao carrega": "problem.batteryNotCharging",
+    "problema de carregamento": "problem.chargingIssue",
+    "danos por água": "problem.waterDamage",
+    "danificado por água": "problem.waterDamaged",
+    "telefone não liga": "problem.phoneNotTurningOn",
+    "telefone nao liga": "problem.phoneNotTurningOn",
+    "não liga": "problem.wontTurnOn",
+    "nao liga": "problem.wontTurnOn",
   }
   
   // Try exact match first (case-insensitive)
@@ -2196,12 +2223,14 @@ function translateServicesForReceipt(services: string | string[] | null | undefi
   
   if (servicesArray.length === 0) return "-"
   
-  // Map common service names to translation keys (expanded with all variations)
+  // Map common service names to translation keys (expanded with all variations - multilingual support)
   const serviceMap: Record<string, string> = {
     // Battery services
     "battery new": "service.battery",
     "battery": "service.battery",
     "new battery": "service.battery",
+    "bateria": "service.battery",
+    "bateria nova": "service.battery",
     
     // LCD/Touch services - handle all variations including typos
     "change touch+lcd": "service.lcd",
@@ -2220,27 +2249,46 @@ function translateServicesForReceipt(services: string | string[] | null | undefi
     "back glass ok": "service.backCover",
     "back glass": "service.backCover",
     "back cover": "service.backCover",
+    "tampa traseira": "service.backCover",
+    "vidro traseiro": "service.backCover",
     
     // Charging services
     "charging board change": "service.chargingPort",
     "charging board": "service.chargingPort",
     "charging port": "service.chargingPort",
+    "porta de carregamento": "service.chargingPort",
+    "placa de carregamento": "service.chargingPort",
     
     // Network services
     "network jeck": "service.network",
     "network flex jeck": "service.network",
     "network": "service.network",
+    "rede": "service.network",
     
     // Camera services
     "camera pana": "service.camera",
     "camera": "service.camera",
+    "câmera": "service.camera",
+    "camara": "service.camera",
     
     // Software services
     "only clean water": "service.software",
     "clean": "service.software",
+    "software": "service.software",
+    "limpeza": "service.software",
+    
+    // Budget/Estimate services (common Portuguese terms)
+    "orsament": "service.software", // Common typo for "orçamento"
+    "orçamento": "service.software",
+    "orcamento": "service.software",
+    "estimate": "service.software",
+    "estimation": "service.software",
+    "conta": "service.software", // Portuguese for "account" or "bill"
     
     // Generic "CHANGE" - map to LCD as it's most common
     "change": "service.lcd",
+    "trocar": "service.lcd", // Portuguese for "change"
+    "troca": "service.lcd",
   }
   
   // Translate each service
