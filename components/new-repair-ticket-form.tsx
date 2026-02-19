@@ -3384,7 +3384,7 @@ export async function printReceiptForTickets(
     // Thermal printer style layout
     if (finalPrinterType === "thermal") {
       return `
-      <div style="font-family: 'OCR-B', 'Courier New', monospace; width: 58mm; max-width: 58mm; margin: 0 auto; padding: 2mm 0; background: white; color: black; font-size: 14px; line-height: 1.3; letter-spacing: 0.5px; page-break-inside: avoid !important; page-break-after: avoid !important; page-break-before: avoid !important; break-inside: avoid !important; break-after: avoid !important; break-before: avoid !important;">
+      <div style="font-family: 'OCR-B', 'Courier New', monospace; width: 58mm; max-width: 58mm; margin: 0 auto; padding: 2mm 0; background: white; color: black; font-size: 14px; line-height: 1.3; letter-spacing: 0.5px; page-break-inside: avoid !important; page-break-after: avoid !important; page-break-before: avoid !important; break-inside: avoid !important; break-after: avoid !important; break-before: avoid !important; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility;">
         <!-- Shop Name Centered -->
         <div style="text-align: center; font-weight: bold; font-size: 18px; margin-bottom: 3px; padding: 0;">${shopName}</div>
         
@@ -3504,7 +3504,7 @@ Chg:${ticketCharger.padEnd(4)} Bat:${ticketBattery.padEnd(4)} Water:${ticketWate
     
     // A4 style layout with OCR-B font
     return `
-      <div style="font-family: 'OCR-B', 'Courier New', monospace; width: 100% !important; font-size: ${baseFontSize}; line-height: ${lineHeight}; page-break-inside: avoid !important; page-break-after: avoid !important; page-break-before: avoid !important; break-inside: avoid !important; break-after: avoid !important; break-before: avoid !important; margin: 0; padding: 0;">
+      <div style="font-family: 'OCR-B', 'Courier New', monospace; width: 100% !important; font-size: ${baseFontSize}; line-height: ${lineHeight}; page-break-inside: avoid !important; page-break-after: avoid !important; page-break-before: avoid !important; break-inside: avoid !important; break-after: avoid !important; break-before: avoid !important; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility;">
         <div style="display: table; width: 100% !important; margin: 0 0 4px 0; border-bottom: 1.5px solid #000; padding: 0 0 2px 0;">
           <div style="display: table-row;">
             <div style="display: ${cellLayout}; width: ${cellWidth}; vertical-align: top; padding-right: 6px; margin-bottom: 0;">
@@ -3720,6 +3720,15 @@ Chg:${ticketCharger.padEnd(4)} Bat:${ticketBattery.padEnd(4)} Water:${ticketWate
                 overflow: ${finalPrinterType === "thermal" ? "hidden" : "visible"};
                 display: block;
                 max-width: ${maxWidth};
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+                text-rendering: optimizeLegibility;
+                font-smooth: always;
+              }
+              * {
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+                text-rendering: optimizeLegibility;
               }
               ${finalPrinterType === "a4" ? `
               /* LARGE PRINTER (A4+): Single receipt - full width, no margins */
@@ -3730,6 +3739,9 @@ Chg:${ticketCharger.padEnd(4)} Bat:${ticketBattery.padEnd(4)} Water:${ticketWate
                 margin: 0 !important;
                 padding: 0 !important;
                 box-sizing: border-box !important;
+                -webkit-font-smoothing: antialiased !important;
+                -moz-osx-font-smoothing: grayscale !important;
+                text-rendering: optimizeLegibility !important;
               }
               ` : `
               /* SMALL PRINTER (Thermal): Thermal POS printer style - 58mm width, monospaced font */
@@ -3745,6 +3757,9 @@ Chg:${ticketCharger.padEnd(4)} Bat:${ticketBattery.padEnd(4)} Water:${ticketWate
                 letter-spacing: 0.5px !important;
                 background: white !important;
                 color: black !important;
+                -webkit-font-smoothing: antialiased !important;
+                -moz-osx-font-smoothing: grayscale !important;
+                text-rendering: optimizeLegibility !important;
               }
               body {
                 font-family: 'OCR-B', 'Courier New', monospace !important;
@@ -3810,6 +3825,10 @@ Chg:${ticketCharger.padEnd(4)} Bat:${ticketBattery.padEnd(4)} Water:${ticketWate
               box-sizing: border-box;
               display: block;
               ${finalPrinterType === "a4" ? "min-height: 100vh;" : ""}
+              -webkit-font-smoothing: antialiased;
+              -moz-osx-font-smoothing: grayscale;
+              text-rendering: optimizeLegibility;
+              font-smooth: always;
             }
             .ticket-container {
               width: 100%;
