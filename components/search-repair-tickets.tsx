@@ -1420,26 +1420,26 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
       </Card>
 
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="max-w-[95vw] sm:max-w-3xl max-h-[90vh] overflow-y-auto bg-white border-blue-200 text-black" style={{ backgroundColor: 'white' }}>
-          <DialogHeader>
-            <DialogTitle className="text-black text-xl sm:text-2xl font-bold">{t("ticket.edit")}</DialogTitle>
+        <DialogContent className="max-w-[95vw] sm:max-w-3xl max-h-[90vh] overflow-y-auto bg-white dark:bg-gray-900 border-blue-200 dark:border-gray-700 text-black dark:text-white">
+          <DialogHeader className="pt-4 pb-2">
+            <DialogTitle className="text-black dark:text-white text-xl sm:text-2xl font-bold">{t("ticket.edit")}</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleEditSubmit} className="space-y-4">
             <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="edit-customerName" className="text-black">{t("form.clientName")}</Label>
-                <Input id="edit-customerName" value={editFormData.customerName || ""} onChange={(e) => setEditFormData({ ...editFormData, customerName: e.target.value })} className="bg-white border-blue-300 text-black" />
+                <Label htmlFor="edit-customerName" className="text-black dark:text-white">{t("form.clientName")}</Label>
+                <Input id="edit-customerName" value={editFormData.customerName || ""} onChange={(e) => setEditFormData({ ...editFormData, customerName: e.target.value })} className="bg-white dark:bg-gray-800 border-blue-300 dark:border-gray-700 text-black dark:text-white" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="edit-contact" className="text-black">{t("table.contact")}</Label>
-                <Input id="edit-contact" value={editFormData.contact || ""} onChange={(e) => setEditFormData({ ...editFormData, contact: e.target.value })} className="bg-white border-blue-300 text-black" />
+                <Label htmlFor="edit-contact" className="text-black dark:text-white">{t("table.contact")}</Label>
+                <Input id="edit-contact" value={editFormData.contact || ""} onChange={(e) => setEditFormData({ ...editFormData, contact: e.target.value })} className="bg-white dark:bg-gray-800 border-blue-300 dark:border-gray-700 text-black dark:text-white" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="edit-receivedBy" className="text-black">{t("form.receivedBy")}</Label>
-                <Input id="edit-receivedBy" value={editFormData.receivedBy || ""} onChange={(e) => setEditFormData({ ...editFormData, receivedBy: e.target.value })} className="bg-white border-blue-300 text-black" />
+                <Label htmlFor="edit-receivedBy" className="text-black dark:text-white">{t("form.receivedBy")}</Label>
+                <Input id="edit-receivedBy" value={editFormData.receivedBy || ""} onChange={(e) => setEditFormData({ ...editFormData, receivedBy: e.target.value })} className="bg-white dark:bg-gray-800 border-blue-300 dark:border-gray-700 text-black dark:text-white" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="edit-imeiNo" className="text-black">{t("form.imei")}</Label>
+                <Label htmlFor="edit-imeiNo" className="text-black dark:text-white">{t("form.imei")}</Label>
                 <Input 
                   id="edit-imeiNo" 
                   value={editFormData.imeiNo || ""} 
@@ -1450,26 +1450,26 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                     }
                   }}
                   maxLength={15}
-                  className="bg-white border-blue-300 text-black" 
+                  className="bg-white dark:bg-gray-800 border-blue-300 dark:border-gray-700 text-black dark:text-white" 
                 />
                 {editFormData.imeiNo && editFormData.imeiNo.length !== 15 && (
-                  <p className="text-xs text-red-600">{t("error.imei.exact") || "IMEI Number must be exactly 15 digits"}</p>
+                  <p className="text-xs text-red-600 dark:text-red-400">{t("error.imei.exact") || "IMEI Number must be exactly 15 digits"}</p>
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="edit-brand" className="text-black">{t("form.brand")}</Label>
-                <Input id="edit-brand" value={editFormData.brand || ""} onChange={(e) => setEditFormData({ ...editFormData, brand: e.target.value })} className="bg-white border-blue-300 text-black" />
+                <Label htmlFor="edit-brand" className="text-black dark:text-white">{t("form.brand")}</Label>
+                <Input id="edit-brand" value={editFormData.brand || ""} onChange={(e) => setEditFormData({ ...editFormData, brand: e.target.value })} className="bg-white dark:bg-gray-800 border-blue-300 dark:border-gray-700 text-black dark:text-white" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="edit-model" className="text-black">{t("form.model")}</Label>
-                <Input id="edit-model" value={editFormData.model || ""} onChange={(e) => setEditFormData({ ...editFormData, model: e.target.value })} className="bg-white border-blue-300 text-black" />
+                <Label htmlFor="edit-model" className="text-black dark:text-white">{t("form.model")}</Label>
+                <Input id="edit-model" value={editFormData.model || ""} onChange={(e) => setEditFormData({ ...editFormData, model: e.target.value })} className="bg-white dark:bg-gray-800 border-blue-300 dark:border-gray-700 text-black dark:text-white" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="edit-serialNo" className="text-black">{t("form.laptopSerialNumber")}</Label>
-                <Input id="edit-serialNo" value={editFormData.serialNo || ""} onChange={(e) => setEditFormData({ ...editFormData, serialNo: e.target.value })} className="bg-white border-blue-300 text-black" />
+                <Label htmlFor="edit-serialNo" className="text-black dark:text-white">{t("form.laptopSerialNumber")}</Label>
+                <Input id="edit-serialNo" value={editFormData.serialNo || ""} onChange={(e) => setEditFormData({ ...editFormData, serialNo: e.target.value })} className="bg-white dark:bg-gray-800 border-blue-300 dark:border-gray-700 text-black dark:text-white" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="edit-budget" className="text-black">{t("form.budget")} / {t("form.price")}</Label>
+                <Label htmlFor="edit-budget" className="text-black dark:text-white">{t("form.budget")} / {t("form.price")}</Label>
                 <div className="flex gap-2">
                   <Select
                     value={editFormData.priceType || "budget"}
@@ -1477,12 +1477,12 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                       setEditFormData({ ...editFormData, priceType: value })
                     }}
                   >
-                    <SelectTrigger className="w-[120px] bg-white border-blue-300 text-black">
+                    <SelectTrigger className="w-[120px] bg-white dark:bg-gray-800 border-blue-300 dark:border-gray-700 text-black dark:text-white">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-white border-blue-200">
-                      <SelectItem value="budget" className="text-black">{t("form.budget")}</SelectItem>
-                      <SelectItem value="price" className="text-black">{t("form.price")}</SelectItem>
+                    <SelectContent className="bg-white dark:bg-gray-800 border-blue-200 dark:border-gray-700">
+                      <SelectItem value="budget" className="text-black dark:text-white">{t("form.budget")}</SelectItem>
+                      <SelectItem value="price" className="text-black dark:text-white">{t("form.price")}</SelectItem>
                     </SelectContent>
                   </Select>
                   <Input
@@ -1497,17 +1497,17 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                         setEditFormData({ ...editFormData, budget: e.target.value })
                       }
                     }}
-                    className="flex-1 bg-white border-blue-300 text-black"
+                    className="flex-1 bg-white dark:bg-gray-800 border-blue-300 dark:border-gray-700 text-black dark:text-white"
                   />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="edit-warranty" className="text-black">{t("form.warranty")}</Label>
-                <label className="flex items-center gap-2 text-sm text-black hover:text-black cursor-pointer">
+                <Label htmlFor="edit-warranty" className="text-black dark:text-white">{t("form.warranty")}</Label>
+                <label className="flex items-center gap-2 text-sm text-black dark:text-white hover:text-black dark:hover:text-white cursor-pointer">
                   <input
                     type="checkbox"
                     id="edit-warranty"
-                    className="h-4 w-4 cursor-pointer bg-white border-blue-200 text-blue-600 focus:ring-blue-500 rounded"
+                    className="h-4 w-4 cursor-pointer bg-white dark:bg-gray-800 border-blue-200 dark:border-gray-700 text-blue-600 dark:text-blue-400 focus:ring-blue-500 dark:focus:ring-blue-400 rounded"
                     checked={(() => {
                       const warranty = editFormData.warranty || ""
                       return warranty.toLowerCase().includes("warranty") && warranty.toLowerCase().includes("30")
@@ -1524,53 +1524,53 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                 </label>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="edit-status" className="text-black">{t("table.status")}</Label>
+                <Label htmlFor="edit-status" className="text-black dark:text-white">{t("table.status")}</Label>
                 <Select value={editFormData.status || "pending"} onValueChange={(value) => setEditFormData({ ...editFormData, status: value })}>
-                  <SelectTrigger id="edit-status" className="bg-white border-blue-300 text-black">
+                  <SelectTrigger id="edit-status" className="bg-white dark:bg-gray-800 border-blue-300 dark:border-gray-700 text-black dark:text-white">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-white border-blue-200" side="bottom" sideOffset={4}>
-                    <SelectItem value="pending" className="text-black">{t("status.pending")}</SelectItem>
-                    <SelectItem value="not_ok" className="text-black">{t("status.notOk") || "Not OK"}</SelectItem>
-                    <SelectItem value="completed" className="text-black">{t("status.completed")}</SelectItem>
-                    <SelectItem value="delivered" className="text-black">{t("status.delivered")}</SelectItem>
+                  <SelectContent className="bg-white dark:bg-gray-800 border-blue-200 dark:border-gray-700" side="bottom" sideOffset={4}>
+                    <SelectItem value="pending" className="text-black dark:text-white">{t("status.pending")}</SelectItem>
+                    <SelectItem value="not_ok" className="text-black dark:text-white">{t("status.notOk") || "Not OK"}</SelectItem>
+                    <SelectItem value="completed" className="text-black dark:text-white">{t("status.completed")}</SelectItem>
+                    <SelectItem value="delivered" className="text-black dark:text-white">{t("status.delivered")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="edit-equipmentObs" className="text-black">Mobile Conditions (On Arrival)</Label>
+              <Label htmlFor="edit-equipmentObs" className="text-black dark:text-white">Mobile Conditions (On Arrival)</Label>
               <Textarea 
                 id="edit-equipmentObs" 
                 value={editFormData.equipmentObs || ""} 
                 onChange={(e) => setEditFormData({ ...editFormData, equipmentObs: e.target.value })} 
-                className="bg-white border-blue-300 text-black min-h-[80px]" 
+                className="bg-white dark:bg-gray-800 border-blue-300 dark:border-gray-700 text-black dark:text-white min-h-[80px]" 
                 placeholder="Enter mobile conditions on arrival"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-phoneIssue" className="text-black">{t("table.phoneIssue") || "Phone Issue"}</Label>
+              <Label htmlFor="edit-phoneIssue" className="text-black dark:text-white">{t("table.phoneIssue") || "Phone Issue"}</Label>
               <Textarea 
                 id="edit-phoneIssue" 
                 value={editFormData.phoneIssue || ""} 
                 onChange={(e) => setEditFormData({ ...editFormData, phoneIssue: e.target.value })} 
-                className="bg-white border-blue-300 text-black min-h-[80px]" 
+                className="bg-white dark:bg-gray-800 border-blue-300 dark:border-gray-700 text-black dark:text-white min-h-[80px]" 
                 placeholder="Enter phone issue details"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-repairObs" className="text-black">{t("form.repairObservations")}</Label>
+              <Label htmlFor="edit-repairObs" className="text-black dark:text-white">{t("form.repairObservations")}</Label>
               <Textarea 
                 id="edit-repairObs" 
                 value={editFormData.repairObs || ""} 
                 onChange={(e) => setEditFormData({ ...editFormData, repairObs: e.target.value })} 
-                className="bg-white border-blue-300 text-black min-h-[80px]" 
+                className="bg-white dark:bg-gray-800 border-blue-300 dark:border-gray-700 text-black dark:text-white min-h-[80px]" 
                 placeholder="Enter repair observations"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-selectedServices" className="text-black">{t("table.serviceDone")}</Label>
+              <Label htmlFor="edit-selectedServices" className="text-black dark:text-white">{t("table.serviceDone")}</Label>
               <Textarea 
                 id="edit-selectedServices" 
                 value={(() => {
@@ -1588,7 +1588,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                   // This will be saved to repairObs when form is submitted
                   setEditFormData({ ...editFormData, selectedServices: value })
                 }} 
-                className="bg-white border-blue-300 text-black min-h-[120px] resize-y w-full" 
+                className="bg-white dark:bg-gray-800 border-blue-300 dark:border-gray-700 text-black dark:text-white min-h-[120px] resize-y w-full" 
                 placeholder="Enter services or repair observations (comma-separated or multiple lines)"
                 disabled={false}
                 readOnly={false}
@@ -1597,36 +1597,36 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
 
             {/* Equipment Check */}
             <div className="space-y-2">
-              <Label className="text-black">{t("form.equipmentCheck")}</Label>
+              <Label className="text-black dark:text-white">{t("form.equipmentCheck")}</Label>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                <label className="flex items-center gap-2 p-2 bg-white rounded border border-blue-200 hover:border-blue-500 cursor-pointer">
+                <label className="flex items-center gap-2 p-2 bg-white dark:bg-gray-800 rounded border border-blue-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-400 cursor-pointer">
                   <input type="checkbox" checked={editFormData.simCard} onChange={(e) => setEditFormData({ ...editFormData, simCard: e.target.checked })} className="h-4 w-4" />
-                  <span className="text-sm text-black">{t("form.simCard")}</span>
+                  <span className="text-sm text-black dark:text-white">{t("form.simCard")}</span>
                 </label>
-                <label className="flex items-center gap-2 p-2 bg-white rounded border border-blue-200 hover:border-blue-500 cursor-pointer">
+                <label className="flex items-center gap-2 p-2 bg-white dark:bg-gray-800 rounded border border-blue-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-400 cursor-pointer">
                   <input type="checkbox" checked={editFormData.simTray} onChange={(e) => setEditFormData({ ...editFormData, simTray: e.target.checked })} className="h-4 w-4" />
-                  <span className="text-sm text-black">{t("form.simTray")}</span>
+                  <span className="text-sm text-black dark:text-white">{t("form.simTray")}</span>
                 </label>
-                <label className="flex items-center gap-2 p-2 bg-white rounded border border-blue-200 hover:border-blue-500 cursor-pointer">
+                <label className="flex items-center gap-2 p-2 bg-white dark:bg-gray-800 rounded border border-blue-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-400 cursor-pointer">
                   <input type="checkbox" checked={editFormData.memoryCard} onChange={(e) => setEditFormData({ ...editFormData, memoryCard: e.target.checked })} className="h-4 w-4" />
-                  <span className="text-sm text-black">{t("form.memoryCard")}</span>
+                  <span className="text-sm text-black dark:text-white">{t("form.memoryCard")}</span>
                 </label>
-                <label className="flex items-center gap-2 p-2 bg-white rounded border border-blue-200 hover:border-blue-500 cursor-pointer">
+                <label className="flex items-center gap-2 p-2 bg-white dark:bg-gray-800 rounded border border-blue-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-400 cursor-pointer">
                   <input type="checkbox" checked={editFormData.charger} onChange={(e) => setEditFormData({ ...editFormData, charger: e.target.checked })} className="h-4 w-4" />
-                  <span className="text-sm text-black">{t("form.charger")}</span>
+                  <span className="text-sm text-black dark:text-white">{t("form.charger")}</span>
                 </label>
-                <label className="flex items-center gap-2 p-2 bg-white rounded border border-blue-200 hover:border-blue-500 cursor-pointer">
+                <label className="flex items-center gap-2 p-2 bg-white dark:bg-gray-800 rounded border border-blue-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-400 cursor-pointer">
                   <input type="checkbox" checked={editFormData.battery} onChange={(e) => setEditFormData({ ...editFormData, battery: e.target.checked })} className="h-4 w-4" />
-                  <span className="text-sm text-black">{t("form.battery")}</span>
+                  <span className="text-sm text-black dark:text-white">{t("form.battery")}</span>
                 </label>
-                <label className="flex items-center gap-2 p-2 bg-white rounded border border-red-200 hover:border-red-500 cursor-pointer">
+                <label className="flex items-center gap-2 p-2 bg-white dark:bg-gray-800 rounded border border-red-200 dark:border-red-700 hover:border-red-500 dark:hover:border-red-400 cursor-pointer">
                   <input type="checkbox" checked={editFormData.waterDamaged} onChange={(e) => setEditFormData({ ...editFormData, waterDamaged: e.target.checked })} className="h-4 w-4" />
-                  <span className="text-sm text-black">{t("form.waterDamaged")}</span>
+                  <span className="text-sm text-black dark:text-white">{t("form.waterDamaged")}</span>
                 </label>
               </div>
             </div>
             <div className="flex justify-end gap-2 pt-4">
-              <Button type="button" variant="outline" onClick={() => { setIsEditDialogOpen(false); setEditingTicket(null) }} className="border-blue-300 bg-white text-black hover:bg-blue-50">{t("form.cancel")}</Button>
+              <Button type="button" variant="outline" onClick={() => { setIsEditDialogOpen(false); setEditingTicket(null) }} className="border-blue-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-black dark:text-white hover:bg-blue-50 dark:hover:bg-gray-700">{t("form.cancel")}</Button>
               <Button type="submit" className="bg-blue-500 hover:bg-blue-600 text-white shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300">{t("common.saveChanges")}</Button>
             </div>
           </form>
