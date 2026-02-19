@@ -3431,11 +3431,6 @@ export async function printReceiptForTickets(
         <!-- Serial Number -->
         ${ticketSerialNo !== "-" ? `<div style="font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["receipt.laptopSerialN"]}:</span> <span style="font-weight: normal; color: #000;">${ticketSerialNo}</span></div>` : ""}
         
-        <!-- Warranty -->
-        <div style="font-size: 13px; margin-bottom: 3px; padding: 0;">
-          <span style="font-weight: bold;">${t["receipt.warranty"]}:</span> <span style="font-weight: normal; color: #000;">${ticketWarrantyText}</span>
-        </div>
-        
         <!-- Divider Line -->
         <div style="text-align: center; margin: 3px 0; padding: 0;">${"-".repeat(32)}</div>
         
@@ -3469,6 +3464,11 @@ Chg:${ticketCharger.padEnd(4)} Bat:${ticketBattery.padEnd(4)} Water:${ticketWate
           const priceLabel = priceType === "price" ? (t["form.price"] || "Price") : (t["form.budget"] || "Budget")
           return `<div style="font-size: 15px; margin-top: 3px; margin-bottom: 3px; padding: 0;"><span style="font-weight: bold;">${priceLabel}:</span> <span style="font-weight: normal; color: #000;">€${amount.toFixed(2)}</span></div>`
         })()}
+        
+        <!-- Warranty -->
+        <div style="font-size: 13px; margin-bottom: 3px; padding: 0;">
+          <span style="font-weight: bold;">${t["receipt.warranty"]}:</span> <span style="font-weight: normal; color: #000;">${ticketWarrantyText}</span>
+        </div>
         
         <!-- Divider Line -->
         <div style="text-align: center; margin: 4px 0; padding: 0;">${"-".repeat(32)}</div>
@@ -3521,7 +3521,6 @@ Chg:${ticketCharger.padEnd(4)} Bat:${ticketBattery.padEnd(4)} Water:${ticketWate
           <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.imei"]}:</span> <span style="font-weight: normal; color: #000;">${ticketImeiNo}</span></div>
           <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.brandModel"]}:</span> <span style="font-weight: normal; color: #000;">${ticketBrand} - ${ticketModel}</span></div>
           <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.laptopSerialN"]}:</span> <span style="font-weight: normal; color: #000;">${ticketSerialNo}</span></div>
-          <div style="margin: 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.warranty"]}:</span> <span style="font-weight: normal; color: #000;">${ticketWarrantyText}</span></div>
         </div>
         
         <div style="margin: 6px 0;">
@@ -3538,6 +3537,7 @@ Chg:${ticketCharger.padEnd(4)} Bat:${ticketBattery.padEnd(4)} Water:${ticketWate
             const priceLabel = priceType === "price" ? (t["form.price"] || "Price") : (t["form.budget"] || "Budget")
             return `<div style="margin: 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${priceLabel}:</span> <span style="font-weight: normal; color: #000;">€${amount.toFixed(2)}</span></div>`
           })()}
+          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.warranty"]}:</span> <span style="font-weight: normal; color: #000;">${ticketWarrantyText}</span></div>
         </div>
         
         <!-- Gap between device information and footer -->
