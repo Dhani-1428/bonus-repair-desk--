@@ -3134,10 +3134,10 @@ export async function printReceiptForTickets(
   const t = getReceiptTranslations(language)
   
   // Adjust font sizes and layout based on detected printer type
-  const baseFontSize = finalPrinterType === "thermal" ? "9pt" : "11pt"
-  const titleFontSize = finalPrinterType === "thermal" ? "10pt" : "14pt"
-  const smallFontSize = finalPrinterType === "thermal" ? "8pt" : "10pt"
-  const headerFontSize = finalPrinterType === "thermal" ? "9pt" : "12pt"
+  const baseFontSize = finalPrinterType === "thermal" ? "11pt" : "11pt"
+  const titleFontSize = finalPrinterType === "thermal" ? "13pt" : "14pt"
+  const smallFontSize = finalPrinterType === "thermal" ? "10pt" : "10pt"
+  const headerFontSize = finalPrinterType === "thermal" ? "12pt" : "12pt"
   const cellWidth = finalPrinterType === "thermal" ? "100%" : "50%"
   const cellLayout = finalPrinterType === "thermal" ? "block" : "table-cell"
   const lineHeight = finalPrinterType === "thermal" ? "1.6" : "1.8"
@@ -3547,9 +3547,9 @@ export async function printReceiptForTickets(
         receipt = generateReceiptHTML(ticket, 'CLIENT')
       }
       
-      // Thermal: Single receipt - 75mm × 210mm
+      // Thermal: Single receipt - full width, full height
       return `
-        <div class="thermal-receipt" style="width: 75mm !important; height: 210mm !important; page-break-inside: avoid !important; margin: 0 auto !important; padding: 3mm !important; box-sizing: border-box !important;">
+        <div class="thermal-receipt" style="width: 100% !important; height: 100% !important; min-height: 210mm !important; page-break-inside: avoid !important; margin: 0 !important; padding: 3mm !important; box-sizing: border-box !important;">
           ${receipt}
         </div>
       `
@@ -3566,12 +3566,12 @@ export async function printReceiptForTickets(
   console.log(`[printReceiptForTickets] Generated HTML content length: ${ticketsHTML.length} characters`)
   
   // Determine page size and formatting based on detected printer type
-  // A4: Full page (210mm × 297mm), Thermal: 75mm × 210mm
-  const pageSize = finalPrinterType === "thermal" ? "75mm 210mm" : "A4"
+  // A4: Full page (210mm × 297mm), Thermal: Full width × 210mm
+  const pageSize = finalPrinterType === "thermal" ? "80mm 210mm" : "A4"
   const pageMargin = finalPrinterType === "thermal" ? "0" : "0"
   const bodyPadding = finalPrinterType === "thermal" ? "0" : "0"
-  const maxWidth = finalPrinterType === "thermal" ? "75mm" : "100%"
-  const fontSize = finalPrinterType === "thermal" ? "9pt" : "11pt"
+  const maxWidth = finalPrinterType === "thermal" ? "100%" : "100%"
+  const fontSize = finalPrinterType === "thermal" ? "11pt" : "11pt"
   
   console.log(`[printReceiptForTickets] 📐 Page formatting: size=${pageSize}, margin=${pageMargin}, width=${maxWidth}`)
   
@@ -3636,12 +3636,13 @@ export async function printReceiptForTickets(
                 min-height: 297mm !important;
               }
               ` : `
-              /* SMALL PRINTER (Thermal): Single receipt - 75mm × 210mm with auto scaling */
+              /* SMALL PRINTER (Thermal): Single receipt - Full width with auto scaling */
               .thermal-receipt {
-                width: 75mm !important;
-                height: 210mm !important;
-                max-width: 75mm !important;
-                margin: 0 auto !important;
+                width: 100% !important;
+                height: 100% !important;
+                min-height: 210mm !important;
+                max-width: 100% !important;
+                margin: 0 !important;
                 padding: 3mm !important;
                 box-sizing: border-box !important;
                 transform: scale(1) !important;
@@ -3650,9 +3651,9 @@ export async function printReceiptForTickets(
               body {
                 margin: 0 !important;
                 padding: 0 !important;
-                display: flex !important;
-                justify-content: center !important;
-                align-items: flex-start !important;
+                width: 100% !important;
+                height: 100% !important;
+                min-height: 210mm !important;
               }
               `}
               .no-print {
@@ -3779,11 +3780,12 @@ export async function printReceiptForTickets(
                   receipt.style.minHeight = '297mm';
                 }
                 ` : `
-                // For thermal, maintain 75mm width
+                // For thermal, ensure full width coverage
                 var receipt = document.querySelector('.thermal-receipt');
                 if (receipt) {
-                  receipt.style.width = '75mm';
-                  receipt.style.height = '210mm';
+                  receipt.style.width = '100%';
+                  receipt.style.height = '100%';
+                  receipt.style.minHeight = '210mm';
                 }
                 `}
               }, 100);
