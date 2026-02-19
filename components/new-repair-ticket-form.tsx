@@ -3134,10 +3134,10 @@ export async function printReceiptForTickets(
   const t = getReceiptTranslations(language)
   
   // Adjust font sizes and layout based on detected printer type
-  const baseFontSize = finalPrinterType === "thermal" ? "9pt" : "6.5pt"
-  const titleFontSize = finalPrinterType === "thermal" ? "10pt" : "8pt"
-  const smallFontSize = finalPrinterType === "thermal" ? "8pt" : "6.5pt"
-  const headerFontSize = finalPrinterType === "thermal" ? "9pt" : "7pt"
+  const baseFontSize = finalPrinterType === "thermal" ? "14px" : "12px"
+  const titleFontSize = finalPrinterType === "thermal" ? "16px" : "14px"
+  const smallFontSize = finalPrinterType === "thermal" ? "12px" : "11px"
+  const headerFontSize = finalPrinterType === "thermal" ? "15px" : "13px"
   const cellWidth = finalPrinterType === "thermal" ? "100%" : "50%"
   const cellLayout = finalPrinterType === "thermal" ? "block" : "table-cell"
   const lineHeight = finalPrinterType === "thermal" ? "1.6" : "1.8"
@@ -3192,7 +3192,7 @@ export async function printReceiptForTickets(
     console.log(`[generateReceiptHTMLForMultipleDevices] Generated HTML for ${tickets.length} device(s)`)
     
     return `
-      <div style="font-family: Arial, sans-serif; width: 100% !important; font-size: ${baseFontSize}; line-height: ${lineHeight}; page-break-inside: avoid !important; page-break-after: avoid !important; page-break-before: avoid !important; break-inside: avoid !important; break-after: avoid !important; break-before: avoid !important; margin: 0; padding: 0;">
+      <div style="font-family: 'OCR-B', 'Courier New', monospace; width: 100% !important; font-size: ${baseFontSize}; line-height: ${lineHeight}; page-break-inside: avoid !important; page-break-after: avoid !important; page-break-before: avoid !important; break-inside: avoid !important; break-after: avoid !important; break-before: avoid !important; margin: 0; padding: 0;">
         <div style="display: ${finalPrinterType === "thermal" ? "block" : "table"}; width: 100% !important; margin: 0 0 4px 0; border-bottom: 1.5px solid #000; padding: 0 0 2px 0; page-break-inside: avoid;">
           <div style="display: ${finalPrinterType === "thermal" ? "block" : "table-row"};">
             <div style="display: ${cellLayout}; width: ${cellWidth}; vertical-align: top; padding-right: ${finalPrinterType === "thermal" ? "0" : "6px"}; margin-bottom: ${finalPrinterType === "thermal" ? "4px" : "0"};">
@@ -3384,92 +3384,92 @@ export async function printReceiptForTickets(
     // Thermal printer style layout
     if (finalPrinterType === "thermal") {
       return `
-      <div style="font-family: 'OCR-B', 'Courier New', monospace; width: 58mm; max-width: 58mm; margin: 0 auto; padding: 2mm 0; background: white; color: black; font-size: 12px; line-height: 1.3; letter-spacing: 0.5px; page-break-inside: avoid !important; page-break-after: avoid !important; page-break-before: avoid !important; break-inside: avoid !important; break-after: avoid !important; break-before: avoid !important;">
+      <div style="font-family: 'OCR-B', 'Courier New', monospace; width: 58mm; max-width: 58mm; margin: 0 auto; padding: 2mm 0; background: white; color: black; font-size: 14px; line-height: 1.3; letter-spacing: 0.5px; page-break-inside: avoid !important; page-break-after: avoid !important; page-break-before: avoid !important; break-inside: avoid !important; break-after: avoid !important; break-before: avoid !important;">
         <!-- Shop Name Centered -->
-        <div style="text-align: center; font-weight: bold; font-size: 14px; margin-bottom: 3px; padding: 0;">${shopName}</div>
+        <div style="text-align: center; font-weight: bold; font-size: 18px; margin-bottom: 3px; padding: 0;">${shopName}</div>
         
         <!-- Company Address Centered -->
-        ${companyAddress ? `<div style="text-align: center; font-size: 11px; margin-bottom: 2px; padding: 0;">${companyAddress}</div>` : ""}
-        ${companyPhone1 && companyPhone1 !== "N/A" ? `<div style="text-align: center; font-size: 11px; margin-bottom: 3px; padding: 0;">${companyPhone1}</div>` : ""}
-        ${companyEmail ? `<div style="text-align: center; font-size: 10px; margin-bottom: 2px; padding: 0;">${companyEmail}</div>` : ""}
-        ${companyWebsite ? `<div style="text-align: center; font-size: 10px; margin-bottom: 3px; padding: 0;">${companyWebsite}</div>` : ""}
+        ${companyAddress ? `<div style="text-align: center; font-size: 13px; font-weight: normal; margin-bottom: 2px; padding: 0;">${companyAddress}</div>` : ""}
+        ${companyPhone1 && companyPhone1 !== "N/A" ? `<div style="text-align: center; font-size: 13px; font-weight: normal; margin-bottom: 3px; padding: 0;">${companyPhone1}</div>` : ""}
+        ${companyEmail ? `<div style="text-align: center; font-size: 12px; font-weight: normal; margin-bottom: 2px; padding: 0;">${companyEmail}</div>` : ""}
+        ${companyWebsite ? `<div style="text-align: center; font-size: 12px; font-weight: normal; margin-bottom: 3px; padding: 0;">${companyWebsite}</div>` : ""}
         
         <!-- Divider Line -->
         <div style="text-align: center; margin: 3px 0; padding: 0;">${"-".repeat(32)}</div>
         
         <!-- Client Info Right Aligned -->
-        <div style="text-align: right; font-size: 11px; margin-bottom: 2px; padding: 0;">
-          <span style="font-weight: bold;">${t["receipt.clientId"]}:</span> ${ticketClientId}
+        <div style="text-align: right; font-size: 13px; margin-bottom: 2px; padding: 0;">
+          <span style="font-weight: bold;">${t["receipt.clientId"]}:</span> <span style="font-weight: normal;">${ticketClientId}</span>
         </div>
-        <div style="text-align: right; font-size: 11px; margin-bottom: 2px; padding: 0;">
-          <span style="font-weight: bold;">${t["receipt.name"]}:</span> ${ticketCustomerName}
+        <div style="text-align: right; font-size: 13px; margin-bottom: 2px; padding: 0;">
+          <span style="font-weight: bold;">${t["receipt.name"]}:</span> <span style="font-weight: normal;">${ticketCustomerName}</span>
         </div>
-        ${ticketContact !== "N/A" ? `<div style="text-align: right; font-size: 11px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["receipt.clientContact"] || "Contact"}:</span> ${ticketContact}</div>` : ""}
-        <div style="text-align: right; font-size: 11px; margin-bottom: 3px; padding: 0;">
-          <span style="font-weight: bold;">${t["receipt.receivedBy"] || "Received By"}:</span> ${ticketReceivedBy}
+        ${ticketContact !== "N/A" ? `<div style="text-align: right; font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["receipt.clientContact"] || "Contact"}:</span> <span style="font-weight: normal;">${ticketContact}</span></div>` : ""}
+        <div style="text-align: right; font-size: 13px; margin-bottom: 3px; padding: 0;">
+          <span style="font-weight: bold;">${t["receipt.receivedBy"] || "Received By"}:</span> <span style="font-weight: normal;">${ticketReceivedBy}</span>
         </div>
         
         <!-- Divider Line -->
         <div style="text-align: center; margin: 3px 0; padding: 0;">${"-".repeat(32)}</div>
         
         <!-- Entry Date -->
-        <div style="font-size: 11px; margin-bottom: 2px; padding: 0;">
-          <span style="font-weight: bold;">${t["receipt.entryDate"]}:</span> ${formattedDate} ${formattedTime}
+        <div style="font-size: 13px; margin-bottom: 2px; padding: 0;">
+          <span style="font-weight: bold;">${t["receipt.entryDate"]}:</span> <span style="font-weight: normal;">${formattedDate} ${formattedTime}</span>
         </div>
-        ${outDateDisplay ? `<div style="font-size: 11px; margin-bottom: 2px; padding: 0;">${outDateDisplay.replace(/<[^>]*>/g, '').replace('font-weight: bold;', '').replace('strong', 'span')}</div>` : ""}
+        ${outDateDisplay ? `<div style="font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["receipt.outDate"] || "Out Date"}:</span> <span style="font-weight: normal;">${(() => { const outDate = new Date(ticket.deliveredDate); return outDate.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' + outDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }); })()}</span></div>` : ""}
         
         <!-- Repair Number -->
-        <div style="font-size: 11px; margin-bottom: 2px; padding: 0;">
-          <span style="font-weight: bold;">${t["receipt.repairN"]}:</span> ${ticketRepairNumber}
+        <div style="font-size: 13px; margin-bottom: 2px; padding: 0;">
+          <span style="font-weight: bold;">${t["receipt.repairN"]}:</span> <span style="font-weight: normal;">${ticketRepairNumber}</span>
         </div>
         
         <!-- IMEI -->
-        <div style="font-size: 11px; margin-bottom: 2px; padding: 0;">
-          <span style="font-weight: bold;">${t["receipt.imei"]}:</span> ${ticketImeiNo}
+        <div style="font-size: 13px; margin-bottom: 2px; padding: 0;">
+          <span style="font-weight: bold;">${t["receipt.imei"]}:</span> <span style="font-weight: normal;">${ticketImeiNo}</span>
         </div>
         
         <!-- Brand & Model -->
-        <div style="font-size: 11px; margin-bottom: 2px; padding: 0;">
-          <span style="font-weight: bold;">${t["receipt.brandModel"]}:</span> ${ticketBrand} - ${ticketModel}
+        <div style="font-size: 13px; margin-bottom: 2px; padding: 0;">
+          <span style="font-weight: bold;">${t["receipt.brandModel"]}:</span> <span style="font-weight: normal;">${ticketBrand} - ${ticketModel}</span>
         </div>
         
         <!-- Serial Number -->
-        ${ticketSerialNo !== "-" ? `<div style="font-size: 11px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["receipt.laptopSerialN"]}:</span> ${ticketSerialNo}</div>` : ""}
+        ${ticketSerialNo !== "-" ? `<div style="font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["receipt.laptopSerialN"]}:</span> <span style="font-weight: normal;">${ticketSerialNo}</span></div>` : ""}
         
         <!-- Warranty -->
-        <div style="font-size: 11px; margin-bottom: 3px; padding: 0;">
-          <span style="font-weight: bold;">${t["receipt.warranty"]}:</span> ${ticketWarrantyText}
+        <div style="font-size: 13px; margin-bottom: 3px; padding: 0;">
+          <span style="font-weight: bold;">${t["receipt.warranty"]}:</span> <span style="font-weight: normal;">${ticketWarrantyText}</span>
         </div>
         
         <!-- Divider Line -->
         <div style="text-align: center; margin: 3px 0; padding: 0;">${"-".repeat(32)}</div>
         
-        <!-- Device Condition (Bold) -->
-        <div style="font-size: 11px; margin-bottom: 2px; padding: 0;">
+        <!-- Device Condition -->
+        <div style="font-size: 13px; margin-bottom: 2px; padding: 0;">
           <span style="font-weight: bold;">${t["receipt.mobileCondition"] || "Condition"}:</span><br/>
-          <span style="font-weight: bold;">${ticketEquipmentObs}</span>
+          <span style="font-weight: normal;">${ticketEquipmentObs}</span>
         </div>
         
         <!-- Phone Issue -->
-        ${ticketPhoneIssue !== "-" ? `<div style="font-size: 11px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["table.phoneIssue"] || "Issue"}:</span> ${ticketPhoneIssue}</div>` : ""}
+        ${ticketPhoneIssue !== "-" ? `<div style="font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["table.phoneIssue"] || "Issue"}:</span> <span style="font-weight: normal;">${ticketPhoneIssue}</span></div>` : ""}
         
         <!-- Repair Observation -->
-        ${ticketRepairObs !== "-" ? `<div style="font-size: 11px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["receipt.repairObs"]}:</span> ${ticketRepairObs}</div>` : ""}
+        ${ticketRepairObs !== "-" ? `<div style="font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["receipt.repairObs"]}:</span> <span style="font-weight: normal;">${ticketRepairObs}</span></div>` : ""}
         
         <!-- Equipment Check (Fixed Width) -->
-        <div style="font-size: 11px; margin-top: 3px; margin-bottom: 2px; padding: 0;">
+        <div style="font-size: 13px; margin-top: 3px; margin-bottom: 2px; padding: 0;">
           <span style="font-weight: bold;">${t["receipt.equipmentCheck"]}:</span>
         </div>
-        <div style="font-size: 10px; font-family: 'Courier New', monospace; margin-bottom: 2px; padding: 0; white-space: pre;">
+        <div style="font-size: 12px; font-family: 'OCR-B', 'Courier New', monospace; margin-bottom: 2px; padding: 0; white-space: pre; font-weight: normal;">
 SIM:${ticketSimCard.padEnd(4)} Tray:${ticketSimTray.padEnd(4)} Card:${ticketMemoryCard.padEnd(4)}
 Chg:${ticketCharger.padEnd(4)} Bat:${ticketBattery.padEnd(4)} Water:${ticketWaterDamaged}
         </div>
         
         <!-- Services -->
-        ${services !== "N/A" && services !== "-" ? `<div style="font-size: 11px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["receipt.services"]}:</span> ${services}</div>` : ""}
+        ${services !== "N/A" && services !== "-" ? `<div style="font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["receipt.services"]}:</span> <span style="font-weight: normal;">${services}</span></div>` : ""}
         
         <!-- Problem -->
-        ${ticketProblem !== "-" ? `<div style="font-size: 11px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["receipt.problem"]}:</span> ${ticketProblem}</div>` : ""}
+        ${ticketProblem !== "-" ? `<div style="font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["receipt.problem"]}:</span> <span style="font-weight: normal;">${ticketProblem}</span></div>` : ""}
         
         <!-- Budget/Price -->
         ${(() => {
@@ -3478,19 +3478,19 @@ Chg:${ticketCharger.padEnd(4)} Bat:${ticketBattery.padEnd(4)} Water:${ticketWate
             ? Number.parseFloat(ticket.price || 0)
             : Number.parseFloat(ticket.budget || ticket.price || 0)
           const priceLabel = priceType === "price" ? (t["form.price"] || "Price") : (t["form.budget"] || "Budget")
-          return `<div style="font-size: 12px; margin-top: 3px; margin-bottom: 3px; padding: 0; font-weight: bold;">${priceLabel}: €${amount.toFixed(2)}</div>`
+          return `<div style="font-size: 15px; margin-top: 3px; margin-bottom: 3px; padding: 0;"><span style="font-weight: bold;">${priceLabel}:</span> <span style="font-weight: normal;">€${amount.toFixed(2)}</span></div>`
         })()}
         
         <!-- Divider Line -->
         <div style="text-align: center; margin: 4px 0; padding: 0;">${"-".repeat(32)}</div>
         
         <!-- Disclaimer Title -->
-        <div style="text-align: center; font-weight: bold; font-size: 11px; margin-bottom: 2px; padding: 0;">
+        <div style="text-align: center; font-weight: bold; font-size: 13px; margin-bottom: 2px; padding: 0;">
           ${t["receipt.storageTitle"]}
         </div>
         
         <!-- Disclaimer Text -->
-        <div style="font-size: 9px; line-height: 1.4; margin-top: 2px; padding: 0; text-align: left;">
+        <div style="font-size: 11px; line-height: 1.4; margin-top: 2px; padding: 0; text-align: left; font-weight: normal;">
           ${t["receipt.storageText1"]}<br/>
           ${t["receipt.storageText2"]}<br/>
           ${t["receipt.storageText3"]}
@@ -3502,9 +3502,9 @@ Chg:${ticketCharger.padEnd(4)} Bat:${ticketBattery.padEnd(4)} Water:${ticketWate
       `
     }
     
-    // A4 style layout (original)
+    // A4 style layout with OCR-B font
     return `
-      <div style="font-family: Arial, sans-serif; width: 100% !important; font-size: ${baseFontSize}; line-height: ${lineHeight}; page-break-inside: avoid !important; page-break-after: avoid !important; page-break-before: avoid !important; break-inside: avoid !important; break-after: avoid !important; break-before: avoid !important; margin: 0; padding: 0;">
+      <div style="font-family: 'OCR-B', 'Courier New', monospace; width: 100% !important; font-size: ${baseFontSize}; line-height: ${lineHeight}; page-break-inside: avoid !important; page-break-after: avoid !important; page-break-before: avoid !important; break-inside: avoid !important; break-after: avoid !important; break-before: avoid !important; margin: 0; padding: 0;">
         <div style="display: table; width: 100% !important; margin: 0 0 4px 0; border-bottom: 1.5px solid #000; padding: 0 0 2px 0;">
           <div style="display: table-row;">
             <div style="display: ${cellLayout}; width: ${cellWidth}; vertical-align: top; padding-right: 6px; margin-bottom: 0;">
@@ -3526,30 +3526,30 @@ Chg:${ticketCharger.padEnd(4)} Bat:${ticketBattery.padEnd(4)} Water:${ticketWate
         </div>
         
         <div style="margin: 6px 0;">
-          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight}; font-weight: bold;"><span style="font-weight: bold;">${t["receipt.entryDate"]}:</span> <strong>${formattedDate} ${formattedTime}</strong></div>
-          ${outDateDisplay}
-          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight}; font-weight: bold;"><span style="font-weight: bold;">${t["receipt.repairN"]}:</span> <strong>${ticketRepairNumber}</strong></div>
-          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight}; font-weight: bold;"><span style="font-weight: bold;">${t["receipt.imei"]}:</span> <strong>${ticketImeiNo}</strong></div>
-          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight}; font-weight: bold;"><span style="font-weight: bold;">${t["receipt.brandModel"]}:</span> <strong>${ticketBrand} - ${ticketModel}</strong></div>
-          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight}; font-weight: bold;"><span style="font-weight: bold;">${t["receipt.laptopSerialN"]}:</span> <strong>${ticketSerialNo}</strong></div>
-          <div style="margin: 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight}; font-weight: bold;"><span style="font-weight: bold;">${t["receipt.warranty"]}:</span> <strong>${ticketWarrantyText}</strong></div>
+          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.entryDate"]}:</span> <span style="font-weight: normal;">${formattedDate} ${formattedTime}</span></div>
+          ${outDateDisplay ? `<div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.outDate"] || "Out Date"}:</span> <span style="font-weight: normal;">${(() => { const outDate = new Date(ticket.deliveredDate); return outDate.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' + outDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }); })()}</span></div>` : ""}
+          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.repairN"]}:</span> <span style="font-weight: normal;">${ticketRepairNumber}</span></div>
+          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.imei"]}:</span> <span style="font-weight: normal;">${ticketImeiNo}</span></div>
+          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.brandModel"]}:</span> <span style="font-weight: normal;">${ticketBrand} - ${ticketModel}</span></div>
+          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.laptopSerialN"]}:</span> <span style="font-weight: normal;">${ticketSerialNo}</span></div>
+          <div style="margin: 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.warranty"]}:</span> <span style="font-weight: normal;">${ticketWarrantyText}</span></div>
         </div>
         
         <div style="margin: 6px 0;">
-          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight}; font-weight: bold;"><span style="font-weight: bold;">${t["receipt.mobileCondition"] || "Mobile Condition (On Arrival)"}:</span> <strong>${ticketEquipmentObs}</strong></div>
-          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight}; font-weight: bold;"><span style="font-weight: bold;">${t["table.phoneIssue"] || "Phone Issue"}:</span> <strong>${ticketPhoneIssue}</strong></div>
-          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight}; font-weight: bold;"><span style="font-weight: bold;">${t["receipt.repairObs"]}:</span> <strong>${ticketRepairObs}</strong></div>
+          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.mobileCondition"] || "Mobile Condition (On Arrival)"}:</span> <span style="font-weight: normal;">${ticketEquipmentObs}</span></div>
+          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["table.phoneIssue"] || "Phone Issue"}:</span> <span style="font-weight: normal;">${ticketPhoneIssue}</span></div>
+          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.repairObs"]}:</span> <span style="font-weight: normal;">${ticketRepairObs}</span></div>
           <div style="font-weight: bold; margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};">${t["receipt.equipmentCheck"]}:</div>
-          <div style="margin: 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight}; font-weight: bold;"><span style="font-weight: bold;">${t["form.simCard"]}:</span> <strong>${ticketSimCard}</strong> | <span style="font-weight: bold;">${t["form.simTray"]}:</span> <strong>${ticketSimTray}</strong> | <span style="font-weight: bold;">${t["form.memoryCard"]}:</span> <strong>${ticketMemoryCard}</strong> | <span style="font-weight: bold;">${t["form.charger"]}:</span> <strong>${ticketCharger}</strong> | <span style="font-weight: bold;">${t["form.battery"]}:</span> <strong>${ticketBattery}</strong> | <span style="font-weight: bold;">${t["form.waterDamaged"]}:</span> <strong>${ticketWaterDamaged}</strong></div>
-          <div style="margin: 4px 0 0 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight}; font-weight: bold;"><span style="font-weight: bold;">${t["receipt.services"]}:</span> <strong>${services}</strong></div>
-          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight}; font-weight: bold;"><span style="font-weight: bold;">${t["receipt.problem"]}:</span> <strong>${ticketProblem}</strong></div>
+          <div style="margin: 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight}; font-weight: normal;"><span style="font-weight: bold;">${t["form.simCard"]}:</span> ${ticketSimCard} | <span style="font-weight: bold;">${t["form.simTray"]}:</span> ${ticketSimTray} | <span style="font-weight: bold;">${t["form.memoryCard"]}:</span> ${ticketMemoryCard} | <span style="font-weight: bold;">${t["form.charger"]}:</span> ${ticketCharger} | <span style="font-weight: bold;">${t["form.battery"]}:</span> ${ticketBattery} | <span style="font-weight: bold;">${t["form.waterDamaged"]}:</span> ${ticketWaterDamaged}</div>
+          <div style="margin: 4px 0 0 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.services"]}:</span> <span style="font-weight: normal;">${services}</span></div>
+          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.problem"]}:</span> <span style="font-weight: normal;">${ticketProblem}</span></div>
           ${(() => {
             const priceType = ticket.priceType || "budget"
             const amount = priceType === "price" 
               ? Number.parseFloat(ticket.price || 0)
               : Number.parseFloat(ticket.budget || ticket.price || 0)
             const priceLabel = priceType === "price" ? (t["form.price"] || "Price") : (t["form.budget"] || "Budget")
-            return `<div style="margin: 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight}; font-weight: bold;"><span style="font-weight: bold;">${priceLabel}:</span> <strong>€${amount.toFixed(2)}</strong></div>`
+            return `<div style="margin: 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${priceLabel}:</span> <span style="font-weight: normal;">€${amount.toFixed(2)}</span></div>`
           })()}
         </div>
         
@@ -3560,15 +3560,15 @@ Chg:${ticketCharger.padEnd(4)} Bat:${ticketBattery.padEnd(4)} Water:${ticketWate
           <strong>${t["receipt.storageTitle"]}</strong>
         </div>
         
-        <div style="margin-top: 6px; padding: 6px; background-color: #f9f9f9; font-size: ${smallFontSize}; line-height: 1.5; border: 1px solid #ddd; font-weight: bold;">
-          <div style="text-align: justify; margin-bottom: 4px; font-size: ${smallFontSize}; font-weight: bold;">
-            <strong>${t["receipt.storageText1"]}</strong>
+        <div style="margin-top: 6px; padding: 6px; background-color: #f9f9f9; font-size: ${smallFontSize}; line-height: 1.5; border: 1px solid #ddd; font-weight: normal;">
+          <div style="text-align: justify; margin-bottom: 4px; font-size: ${smallFontSize}; font-weight: normal;">
+            ${t["receipt.storageText1"]}
           </div>
-          <div style="text-align: justify; margin-bottom: 4px; font-size: ${smallFontSize}; font-weight: bold;">
-            <strong>${t["receipt.storageText2"]}</strong>
+          <div style="text-align: justify; margin-bottom: 4px; font-size: ${smallFontSize}; font-weight: normal;">
+            ${t["receipt.storageText2"]}
           </div>
-          <div style="text-align: justify; margin-bottom: 4px; font-size: ${smallFontSize}; font-weight: bold;">
-            <strong>${t["receipt.storageText3"]}</strong>
+          <div style="text-align: justify; margin-bottom: 4px; font-size: ${smallFontSize}; font-weight: normal;">
+            ${t["receipt.storageText3"]}
           </div>
         </div>
       </div>
@@ -3799,7 +3799,7 @@ Chg:${ticketCharger.padEnd(4)} Bat:${ticketBattery.padEnd(4)} Water:${ticketWate
               }
             }
             body {
-              font-family: Arial, sans-serif;
+              font-family: 'OCR-B', 'Courier New', monospace !important;
               font-size: ${fontSize};
               line-height: ${finalPrinterType === "thermal" ? "1.5" : "1.4"};
               margin: 0;
