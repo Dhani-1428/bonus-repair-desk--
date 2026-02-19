@@ -529,16 +529,11 @@ export default function CreateTicketScreen({ navigation }: any) {
           value={formData.loanEquipment}
           onValueChange={(value) => setFormData({ ...formData, loanEquipment: value })}
         />
-        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.md }}>
-          <Switch
-            value={formData.warrantyUntil30Days}
-            onValueChange={(value) => setFormData({ ...formData, warrantyUntil30Days: value })}
-            trackColor={{ false: '#767577', true: theme.colors.primary }}
-          />
-          <Text style={{ fontSize: 16, color: theme.colors.text, marginLeft: theme.spacing.sm }}>
-            Warranty
-          </Text>
-        </View>
+        <SwitchRow
+          label="Warranty"
+          value={formData.warrantyUntil30Days}
+          onValueChange={(value) => setFormData({ ...formData, warrantyUntil30Days: value })}
+        />
       </View>
 
 
