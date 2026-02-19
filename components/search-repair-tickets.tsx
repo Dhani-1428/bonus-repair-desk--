@@ -1265,18 +1265,18 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                         </td>
                         <td className="border-r border-blue-300 dark:border-gray-700 px-1 py-1.5 text-[11px] text-black dark:text-gray-300 break-words">
                           {(() => {
-                            // Show Phone Issue - phoneIssue field
+                            // Show Phone Issue - phoneIssue field (display as-is, no translation)
                             const phoneIssue = ticket.phoneIssue || ""
                             if (phoneIssue && phoneIssue.trim() !== "") {
-                              return translateProblem(phoneIssue.trim())
+                              return phoneIssue.trim()
                             }
-                            // Fallback to equipmentObs for backward compatibility
+                            // Fallback to equipmentObs for backward compatibility (old devices)
                             const mobileCondition = ticket.equipmentObs || ticket.equipmentObservations || ticket.condition || ""
                             if (mobileCondition && mobileCondition.trim() !== "") {
-                              return translateProblem(mobileCondition.trim())
+                              return mobileCondition.trim()
                             }
                             // Fallback to problem if no condition is available (for backward compatibility)
-                            return translateProblem(ticket.problem)
+                            return ticket.problem && ticket.problem.trim() !== "" ? ticket.problem.trim() : "-"
                           })()}
                         </td>
                         <td className="border-r border-blue-300 dark:border-gray-700 px-1 py-1.5 text-[11px] text-black dark:text-gray-300 break-words">

@@ -3346,7 +3346,8 @@ export async function printReceiptForTickets(
     const ticketWaterDamaged = ticket.waterDamaged ? t["common.yes"] : t["common.no"]
     // Translate equipment observations, phone issue, repair observations, and problem
     const ticketEquipmentObs = translateProblemForReceipt(ticket.equipmentObs || ticket.phoneIssue, language) || "-"
-    const ticketPhoneIssue = translateProblemForReceipt(ticket.phoneIssue, language) || "-"
+    // Display phoneIssue as-is (no translation) - show actual value entered by user
+    const ticketPhoneIssue = ticket.phoneIssue && ticket.phoneIssue.trim() !== "" ? ticket.phoneIssue.trim() : "-"
     const ticketRepairObs = translateServicesForReceipt(ticket.repairObs || ticket.selectedServices || ticket.serviceName, language) || "-"
     const ticketProblem = translateProblemForReceipt(ticket.problem, language) || "-"
     const ticketPrice = Number.parseFloat(ticket.price || 0).toFixed(2)
