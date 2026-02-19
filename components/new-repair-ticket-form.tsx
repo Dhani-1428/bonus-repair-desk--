@@ -2222,31 +2222,40 @@ function translateProblemForReceipt(problem: string | null | undefined, lang: Re
   // Try exact match first (case-insensitive)
   for (const [key, translationKey] of Object.entries(problemMap)) {
     const lowerKey = key.toLowerCase()
-    // Check exact match
-    if (lowerProblem === lowerKey) {
+    // Check exact match (exact phrase match)
+    if (lowerProblem === lowerKey || problemText === key || problemText === key.toUpperCase()) {
       const translated = t[translationKey]
       if (translated && translated !== translationKey) {
-        return translated
-      }
-    }
-    // Check if problem contains the key (for phrases like "LOGO STUCK AND LCD BLINKING")
-    if (lowerKey.length >= 3 && lowerProblem.includes(lowerKey)) {
-      const translated = t[translationKey]
-      if (translated && translated !== translationKey) {
-        // For partial matches, try to replace the matched part with translation
-        // This handles cases like "LOGO STUCK AND LCD BLINKING" -> translate "lcd blinking" part
-        const regex = new RegExp(key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi')
-        if (regex.test(problemText)) {
-          // Replace the matched part with translation
-          return problemText.replace(regex, translated)
-        }
         return translated
       }
     }
   }
   
-  // If no translation found, return original
-  return problemText
+  // Try partial match - replace parts of the phrase (for multi-word phrases like "Problema de Rede BOTH SIDE")
+  let result = problemText
+  let hasTranslation = false
+  
+  // Sort by key length (longest first) to match longer phrases first
+  const sortedEntries = Object.entries(problemMap).sort((a, b) => b[0].length - a[0].length)
+  
+  for (const [key, translationKey] of sortedEntries) {
+    const lowerKey = key.toLowerCase()
+    // Only try to match if key is at least 3 characters
+    if (lowerKey.length >= 3 && lowerProblem.includes(lowerKey)) {
+      const translated = t[translationKey]
+      if (translated && translated !== translationKey) {
+        // Replace the matched part with translation (case-insensitive, word boundary aware)
+        const regex = new RegExp('\\b' + key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'gi')
+        if (regex.test(result)) {
+          result = result.replace(regex, translated)
+          hasTranslation = true
+        }
+      }
+    }
+  }
+  
+  // If we made any translations, return the result; otherwise return original
+  return hasTranslation ? result : problemText
 }
 
 // Helper function to translate service names for receipts
