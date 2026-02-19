@@ -3214,9 +3214,9 @@ export async function printReceiptForTickets(
         </div>
         
         <div style="margin: 6px 0; page-break-inside: avoid;">
-          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.entryDate"]}:</span> <span style="font-weight: bold; color: #333;">${formattedDate} ${formattedTime}</span></div>
-          ${outDateDisplay ? `<div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.outDate"] || "Out Date"}:</span> <span style="font-weight: bold; color: #333;">${(() => { const outDate = new Date(tickets.find(t => t.deliveredDate)?.deliveredDate || Date.now()); return outDate.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' + outDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }); })()}</span></div>` : ""}
-          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">Number of Devices:</span> <span style="font-weight: bold; color: #333;">${tickets.length}</span></div>
+          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.entryDate"]}:</span> <span style="font-weight: bold; color: #000;">${formattedDate} ${formattedTime}</span></div>
+          ${outDateDisplay ? `<div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.outDate"] || "Out Date"}:</span> <span style="font-weight: bold; color: #000;">${(() => { const outDate = new Date(tickets.find(t => t.deliveredDate)?.deliveredDate || Date.now()); return outDate.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' + outDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }); })()}</span></div>` : ""}
+          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">Number of Devices:</span> <span style="font-weight: bold; color: #000;">${tickets.length}</span></div>
         </div>
         
         <div style="margin: 6px 0; page-break-inside: avoid;">
@@ -3280,12 +3280,12 @@ export async function printReceiptForTickets(
               return `
                 <div style="margin: 6px 0; padding: 5px 0; border-bottom: 1.5px solid #ccc; background-color: #f5f5f5; page-break-inside: avoid;">
                   <div style="font-weight: bold; margin: 0 0 4px 0; padding: 3px 6px; font-size: ${headerFontSize}; line-height: ${lineHeight}; color: #000; background-color: #d0d0d0; border-left: 3px solid #0066cc;">Device 1:</div>
-                  <div style="margin: 2px 0; padding: 1px 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.repairN"]}:</span> <span style="font-weight: bold; color: #333;">${ticketRepairNumber}</span></div>
-                  <div style="margin: 2px 0; padding: 1px 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.imei"]}:</span> <span style="font-weight: bold; color: #333;">${ticketImeiNo}</span></div>
-                  <div style="margin: 2px 0; padding: 1px 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.brandModel"]}:</span> <span style="font-weight: bold; color: #333;">${ticketBrand} - ${ticketModel}</span></div>
-                  <div style="margin: 2px 0; padding: 1px 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.laptopSerialN"]}:</span> <span style="font-weight: bold; color: #333;">${ticketSerialNo}</span></div>
-                  <div style="margin: 2px 0; padding: 1px 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.warranty"]}:</span> <span style="font-weight: bold; color: #333;">${ticketWarrantyText}</span></div>
-                  <div style="margin: 2px 0; padding: 1px 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${priceLabel}:</span> <span style="font-weight: bold; color: #333;">€${ticketPrice}</span></div>
+                  <div style="margin: 2px 0; padding: 1px 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.repairN"]}:</span> <span style="font-weight: bold; color: #000;">${ticketRepairNumber}</span></div>
+                  <div style="margin: 2px 0; padding: 1px 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.imei"]}:</span> <span style="font-weight: bold; color: #000;">${ticketImeiNo}</span></div>
+                  <div style="margin: 2px 0; padding: 1px 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.brandModel"]}:</span> <span style="font-weight: bold; color: #000;">${ticketBrand} - ${ticketModel}</span></div>
+                  <div style="margin: 2px 0; padding: 1px 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.laptopSerialN"]}:</span> <span style="font-weight: bold; color: #000;">${ticketSerialNo}</span></div>
+                  <div style="margin: 2px 0; padding: 1px 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.warranty"]}:</span> <span style="font-weight: bold; color: #000;">${ticketWarrantyText}</span></div>
+                  <div style="margin: 2px 0; padding: 1px 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${priceLabel}:</span> <span style="font-weight: bold; color: #000;">€${ticketPrice}</span></div>
                 </div>
               `
             }
@@ -3293,7 +3293,7 @@ export async function printReceiptForTickets(
         </div>
         
         <div style="margin: 8px 0; padding: 6px; background-color: #f0f0f0; text-align: center; font-weight: bold; font-size: ${headerFontSize}; border: 1px solid #ddd; page-break-inside: avoid;">
-          <div style="font-size: ${headerFontSize}; font-weight: bold;">${totalLabel}: <span style="font-weight: bold; color: #333;">€${totalPrice.toFixed(2)}</span></div>
+          <div style="font-size: ${headerFontSize}; font-weight: bold;">${totalLabel}: <span style="font-weight: bold; color: #000;">€${totalPrice.toFixed(2)}</span></div>
         </div>
         
         <!-- Gap between device information and footer -->
@@ -3303,14 +3303,14 @@ export async function printReceiptForTickets(
           ${t["receipt.storageTitle"]}
         </div>
         
-        <div style="margin-top: 6px; padding: 6px; background-color: #f9f9f9; font-size: ${smallFontSize}; line-height: 1.5; border: 1px solid #ddd; page-break-inside: avoid; font-weight: bold; color: #333;">
-          <div style="text-align: justify; margin-bottom: 4px; font-size: ${smallFontSize}; font-weight: bold; color: #333;">
+        <div style="margin-top: 6px; padding: 6px; background-color: #f9f9f9; font-size: ${smallFontSize}; line-height: 1.5; border: 1px solid #ddd; page-break-inside: avoid; font-weight: bold; color: #000;">
+          <div style="text-align: justify; margin-bottom: 4px; font-size: ${smallFontSize}; font-weight: bold; color: #000;">
             ${t["receipt.storageText1"]}
           </div>
-          <div style="text-align: justify; margin-bottom: 4px; font-size: ${smallFontSize}; font-weight: bold; color: #333;">
+          <div style="text-align: justify; margin-bottom: 4px; font-size: ${smallFontSize}; font-weight: bold; color: #000;">
             ${t["receipt.storageText2"]}
           </div>
-          <div style="text-align: justify; margin-bottom: 4px; font-size: ${smallFontSize}; font-weight: bold; color: #333;">
+          <div style="text-align: justify; margin-bottom: 4px; font-size: ${smallFontSize}; font-weight: bold; color: #000;">
             ${t["receipt.storageText3"]}
           </div>
         </div>
@@ -3389,24 +3389,24 @@ export async function printReceiptForTickets(
         <div style="text-align: center; font-weight: bold; font-size: 18px; margin-bottom: 3px; padding: 0;">${shopName}</div>
         
         <!-- Company Address Centered -->
-        ${companyAddress ? `<div style="text-align: center; font-size: 13px; font-weight: bold; color: #333; margin-bottom: 2px; padding: 0;">${companyAddress}</div>` : ""}
-        ${companyPhone1 && companyPhone1 !== "N/A" ? `<div style="text-align: center; font-size: 13px; font-weight: bold; color: #333; margin-bottom: 3px; padding: 0;">${companyPhone1}</div>` : ""}
-        ${companyEmail ? `<div style="text-align: center; font-size: 12px; font-weight: bold; color: #333; margin-bottom: 2px; padding: 0;">${companyEmail}</div>` : ""}
-        ${companyWebsite ? `<div style="text-align: center; font-size: 12px; font-weight: bold; color: #333; margin-bottom: 3px; padding: 0;">${companyWebsite}</div>` : ""}
+        ${companyAddress ? `<div style="text-align: center; font-size: 13px; font-weight: bold; color: #000; margin-bottom: 2px; padding: 0;">${companyAddress}</div>` : ""}
+        ${companyPhone1 && companyPhone1 !== "N/A" ? `<div style="text-align: center; font-size: 13px; font-weight: bold; color: #000; margin-bottom: 3px; padding: 0;">${companyPhone1}</div>` : ""}
+        ${companyEmail ? `<div style="text-align: center; font-size: 12px; font-weight: bold; color: #000; margin-bottom: 2px; padding: 0;">${companyEmail}</div>` : ""}
+        ${companyWebsite ? `<div style="text-align: center; font-size: 12px; font-weight: bold; color: #000; margin-bottom: 3px; padding: 0;">${companyWebsite}</div>` : ""}
         
         <!-- Divider Line -->
         <div style="text-align: center; margin: 3px 0; padding: 0;">${"-".repeat(32)}</div>
         
         <!-- Client Info Right Aligned -->
         <div style="text-align: right; font-size: 13px; margin-bottom: 2px; padding: 0;">
-          <span style="font-weight: bold;">${t["receipt.clientId"]}:</span> <span style="font-weight: bold; color: #333;">${ticketClientId}</span>
+          <span style="font-weight: bold;">${t["receipt.clientId"]}:</span> <span style="font-weight: bold; color: #000;">${ticketClientId}</span>
         </div>
         <div style="text-align: right; font-size: 13px; margin-bottom: 2px; padding: 0;">
-          <span style="font-weight: bold;">${t["receipt.name"]}:</span> <span style="font-weight: bold; color: #333;">${ticketCustomerName}</span>
+          <span style="font-weight: bold;">${t["receipt.name"]}:</span> <span style="font-weight: bold; color: #000;">${ticketCustomerName}</span>
         </div>
-        ${ticketContact !== "N/A" ? `<div style="text-align: right; font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["receipt.clientContact"] || "Contact"}:</span> <span style="font-weight: bold; color: #333;">${ticketContact}</span></div>` : ""}
+        ${ticketContact !== "N/A" ? `<div style="text-align: right; font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["receipt.clientContact"] || "Contact"}:</span> <span style="font-weight: bold; color: #000;">${ticketContact}</span></div>` : ""}
         <div style="text-align: right; font-size: 13px; margin-bottom: 3px; padding: 0;">
-          <span style="font-weight: bold;">${t["receipt.receivedBy"] || "Received By"}:</span> <span style="font-weight: bold; color: #333;">${ticketReceivedBy}</span>
+          <span style="font-weight: bold;">${t["receipt.receivedBy"] || "Received By"}:</span> <span style="font-weight: bold; color: #000;">${ticketReceivedBy}</span>
         </div>
         
         <!-- Divider Line -->
@@ -3414,31 +3414,31 @@ export async function printReceiptForTickets(
         
         <!-- Entry Date -->
         <div style="font-size: 13px; margin-bottom: 2px; padding: 0;">
-          <span style="font-weight: bold;">${t["receipt.entryDate"]}:</span> <span style="font-weight: bold; color: #333;">${formattedDate} ${formattedTime}</span>
+          <span style="font-weight: bold;">${t["receipt.entryDate"]}:</span> <span style="font-weight: bold; color: #000;">${formattedDate} ${formattedTime}</span>
         </div>
-        ${outDateDisplay ? `<div style="font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["receipt.outDate"] || "Out Date"}:</span> <span style="font-weight: bold; color: #333;">${(() => { const outDate = new Date(ticket.deliveredDate); return outDate.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' + outDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }); })()}</span></div>` : ""}
+        ${outDateDisplay ? `<div style="font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["receipt.outDate"] || "Out Date"}:</span> <span style="font-weight: bold; color: #000;">${(() => { const outDate = new Date(ticket.deliveredDate); return outDate.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' + outDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }); })()}</span></div>` : ""}
         
         <!-- Repair Number -->
         <div style="font-size: 13px; margin-bottom: 2px; padding: 0;">
-          <span style="font-weight: bold;">${t["receipt.repairN"]}:</span> <span style="font-weight: bold; color: #333;">${ticketRepairNumber}</span>
+          <span style="font-weight: bold;">${t["receipt.repairN"]}:</span> <span style="font-weight: bold; color: #000;">${ticketRepairNumber}</span>
         </div>
         
         <!-- IMEI -->
         <div style="font-size: 13px; margin-bottom: 2px; padding: 0;">
-          <span style="font-weight: bold;">${t["receipt.imei"]}:</span> <span style="font-weight: bold; color: #333;">${ticketImeiNo}</span>
+          <span style="font-weight: bold;">${t["receipt.imei"]}:</span> <span style="font-weight: bold; color: #000;">${ticketImeiNo}</span>
         </div>
         
         <!-- Brand & Model -->
         <div style="font-size: 13px; margin-bottom: 2px; padding: 0;">
-          <span style="font-weight: bold;">${t["receipt.brandModel"]}:</span> <span style="font-weight: bold; color: #333;">${ticketBrand} - ${ticketModel}</span>
+          <span style="font-weight: bold;">${t["receipt.brandModel"]}:</span> <span style="font-weight: bold; color: #000;">${ticketBrand} - ${ticketModel}</span>
         </div>
         
         <!-- Serial Number -->
-        ${ticketSerialNo !== "-" ? `<div style="font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["receipt.laptopSerialN"]}:</span> <span style="font-weight: bold; color: #333;">${ticketSerialNo}</span></div>` : ""}
+        ${ticketSerialNo !== "-" ? `<div style="font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["receipt.laptopSerialN"]}:</span> <span style="font-weight: bold; color: #000;">${ticketSerialNo}</span></div>` : ""}
         
         <!-- Warranty -->
         <div style="font-size: 13px; margin-bottom: 3px; padding: 0;">
-          <span style="font-weight: bold;">${t["receipt.warranty"]}:</span> <span style="font-weight: bold; color: #333;">${ticketWarrantyText}</span>
+          <span style="font-weight: bold;">${t["receipt.warranty"]}:</span> <span style="font-weight: bold; color: #000;">${ticketWarrantyText}</span>
         </div>
         
         <!-- Divider Line -->
@@ -3447,29 +3447,29 @@ export async function printReceiptForTickets(
         <!-- Device Condition -->
         <div style="font-size: 13px; margin-bottom: 2px; padding: 0;">
           <span style="font-weight: bold;">${t["receipt.mobileCondition"] || "Condition"}:</span><br/>
-          <span style="font-weight: bold; color: #333;">${ticketEquipmentObs}</span>
+          <span style="font-weight: bold; color: #000;">${ticketEquipmentObs}</span>
         </div>
         
         <!-- Phone Issue -->
-        ${ticketPhoneIssue !== "-" ? `<div style="font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["table.phoneIssue"] || "Issue"}:</span> <span style="font-weight: bold; color: #333;">${ticketPhoneIssue}</span></div>` : ""}
+        ${ticketPhoneIssue !== "-" ? `<div style="font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["table.phoneIssue"] || "Issue"}:</span> <span style="font-weight: bold; color: #000;">${ticketPhoneIssue}</span></div>` : ""}
         
         <!-- Repair Observation -->
-        ${ticketRepairObs !== "-" ? `<div style="font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["receipt.repairObs"]}:</span> <span style="font-weight: bold; color: #333;">${ticketRepairObs}</span></div>` : ""}
+        ${ticketRepairObs !== "-" ? `<div style="font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["receipt.repairObs"]}:</span> <span style="font-weight: bold; color: #000;">${ticketRepairObs}</span></div>` : ""}
         
         <!-- Equipment Check (Fixed Width) -->
         <div style="font-size: 13px; margin-top: 3px; margin-bottom: 2px; padding: 0;">
           <span style="font-weight: bold;">${t["receipt.equipmentCheck"]}:</span>
         </div>
-        <div style="font-size: 12px; font-family: 'OCR-B', 'Courier New', monospace; margin-bottom: 2px; padding: 0; white-space: pre; font-weight: bold; color: #333;">
+        <div style="font-size: 12px; font-family: 'OCR-B', 'Courier New', monospace; margin-bottom: 2px; padding: 0; white-space: pre; font-weight: bold; color: #000;">
 SIM:${ticketSimCard.padEnd(4)} Tray:${ticketSimTray.padEnd(4)} Card:${ticketMemoryCard.padEnd(4)}
 Chg:${ticketCharger.padEnd(4)} Bat:${ticketBattery.padEnd(4)} Water:${ticketWaterDamaged}
         </div>
         
         <!-- Services -->
-        ${services !== "N/A" && services !== "-" ? `<div style="font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["receipt.services"]}:</span> <span style="font-weight: bold; color: #333;">${services}</span></div>` : ""}
+        ${services !== "N/A" && services !== "-" ? `<div style="font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["receipt.services"]}:</span> <span style="font-weight: bold; color: #000;">${services}</span></div>` : ""}
         
         <!-- Problem -->
-        ${ticketProblem !== "-" ? `<div style="font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["receipt.problem"]}:</span> <span style="font-weight: bold; color: #333;">${ticketProblem}</span></div>` : ""}
+        ${ticketProblem !== "-" ? `<div style="font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["receipt.problem"]}:</span> <span style="font-weight: bold; color: #000;">${ticketProblem}</span></div>` : ""}
         
         <!-- Budget/Price -->
         ${(() => {
@@ -3478,7 +3478,7 @@ Chg:${ticketCharger.padEnd(4)} Bat:${ticketBattery.padEnd(4)} Water:${ticketWate
             ? Number.parseFloat(ticket.price || 0)
             : Number.parseFloat(ticket.budget || ticket.price || 0)
           const priceLabel = priceType === "price" ? (t["form.price"] || "Price") : (t["form.budget"] || "Budget")
-          return `<div style="font-size: 15px; margin-top: 3px; margin-bottom: 3px; padding: 0;"><span style="font-weight: bold;">${priceLabel}:</span> <span style="font-weight: bold; color: #333;">€${amount.toFixed(2)}</span></div>`
+          return `<div style="font-size: 15px; margin-top: 3px; margin-bottom: 3px; padding: 0;"><span style="font-weight: bold;">${priceLabel}:</span> <span style="font-weight: bold; color: #000;">€${amount.toFixed(2)}</span></div>`
         })()}
         
         <!-- Divider Line -->
@@ -3490,7 +3490,7 @@ Chg:${ticketCharger.padEnd(4)} Bat:${ticketBattery.padEnd(4)} Water:${ticketWate
         </div>
         
         <!-- Disclaimer Text -->
-        <div style="font-size: 11px; line-height: 1.4; margin-top: 2px; padding: 0; text-align: left; font-weight: bold; color: #333;">
+        <div style="font-size: 11px; line-height: 1.4; margin-top: 2px; padding: 0; text-align: left; font-weight: bold; color: #000;">
           ${t["receipt.storageText1"]}<br/>
           ${t["receipt.storageText2"]}<br/>
           ${t["receipt.storageText3"]}
@@ -3526,30 +3526,30 @@ Chg:${ticketCharger.padEnd(4)} Bat:${ticketBattery.padEnd(4)} Water:${ticketWate
         </div>
         
         <div style="margin: 6px 0;">
-          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.entryDate"]}:</span> <span style="font-weight: bold; color: #333;">${formattedDate} ${formattedTime}</span></div>
-          ${outDateDisplay ? `<div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.outDate"] || "Out Date"}:</span> <span style="font-weight: bold; color: #333;">${(() => { const outDate = new Date(ticket.deliveredDate); return outDate.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' + outDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }); })()}</span></div>` : ""}
-          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.repairN"]}:</span> <span style="font-weight: bold; color: #333;">${ticketRepairNumber}</span></div>
-          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.imei"]}:</span> <span style="font-weight: bold; color: #333;">${ticketImeiNo}</span></div>
-          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.brandModel"]}:</span> <span style="font-weight: bold; color: #333;">${ticketBrand} - ${ticketModel}</span></div>
-          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.laptopSerialN"]}:</span> <span style="font-weight: bold; color: #333;">${ticketSerialNo}</span></div>
-          <div style="margin: 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.warranty"]}:</span> <span style="font-weight: bold; color: #333;">${ticketWarrantyText}</span></div>
+          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.entryDate"]}:</span> <span style="font-weight: bold; color: #000;">${formattedDate} ${formattedTime}</span></div>
+          ${outDateDisplay ? `<div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.outDate"] || "Out Date"}:</span> <span style="font-weight: bold; color: #000;">${(() => { const outDate = new Date(ticket.deliveredDate); return outDate.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' + outDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }); })()}</span></div>` : ""}
+          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.repairN"]}:</span> <span style="font-weight: bold; color: #000;">${ticketRepairNumber}</span></div>
+          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.imei"]}:</span> <span style="font-weight: bold; color: #000;">${ticketImeiNo}</span></div>
+          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.brandModel"]}:</span> <span style="font-weight: bold; color: #000;">${ticketBrand} - ${ticketModel}</span></div>
+          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.laptopSerialN"]}:</span> <span style="font-weight: bold; color: #000;">${ticketSerialNo}</span></div>
+          <div style="margin: 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.warranty"]}:</span> <span style="font-weight: bold; color: #000;">${ticketWarrantyText}</span></div>
         </div>
         
         <div style="margin: 6px 0;">
-          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.mobileCondition"] || "Mobile Condition (On Arrival)"}:</span> <span style="font-weight: bold; color: #333;">${ticketEquipmentObs}</span></div>
-          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["table.phoneIssue"] || "Phone Issue"}:</span> <span style="font-weight: bold; color: #333;">${ticketPhoneIssue}</span></div>
-          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.repairObs"]}:</span> <span style="font-weight: bold; color: #333;">${ticketRepairObs}</span></div>
+          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.mobileCondition"] || "Mobile Condition (On Arrival)"}:</span> <span style="font-weight: bold; color: #000;">${ticketEquipmentObs}</span></div>
+          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["table.phoneIssue"] || "Phone Issue"}:</span> <span style="font-weight: bold; color: #000;">${ticketPhoneIssue}</span></div>
+          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.repairObs"]}:</span> <span style="font-weight: bold; color: #000;">${ticketRepairObs}</span></div>
           <div style="font-weight: bold; margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};">${t["receipt.equipmentCheck"]}:</div>
-          <div style="margin: 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight}; font-weight: bold; color: #333;"><span style="font-weight: bold;">${t["form.simCard"]}:</span> ${ticketSimCard} | <span style="font-weight: bold;">${t["form.simTray"]}:</span> ${ticketSimTray} | <span style="font-weight: bold;">${t["form.memoryCard"]}:</span> ${ticketMemoryCard} | <span style="font-weight: bold;">${t["form.charger"]}:</span> ${ticketCharger} | <span style="font-weight: bold;">${t["form.battery"]}:</span> ${ticketBattery} | <span style="font-weight: bold;">${t["form.waterDamaged"]}:</span> ${ticketWaterDamaged}</div>
-          <div style="margin: 4px 0 0 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.services"]}:</span> <span style="font-weight: bold; color: #333;">${services}</span></div>
-          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.problem"]}:</span> <span style="font-weight: bold; color: #333;">${ticketProblem}</span></div>
+          <div style="margin: 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight}; font-weight: bold; color: #000;"><span style="font-weight: bold;">${t["form.simCard"]}:</span> ${ticketSimCard} | <span style="font-weight: bold;">${t["form.simTray"]}:</span> ${ticketSimTray} | <span style="font-weight: bold;">${t["form.memoryCard"]}:</span> ${ticketMemoryCard} | <span style="font-weight: bold;">${t["form.charger"]}:</span> ${ticketCharger} | <span style="font-weight: bold;">${t["form.battery"]}:</span> ${ticketBattery} | <span style="font-weight: bold;">${t["form.waterDamaged"]}:</span> ${ticketWaterDamaged}</div>
+          <div style="margin: 4px 0 0 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.services"]}:</span> <span style="font-weight: bold; color: #000;">${services}</span></div>
+          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.problem"]}:</span> <span style="font-weight: bold; color: #000;">${ticketProblem}</span></div>
           ${(() => {
             const priceType = ticket.priceType || "budget"
             const amount = priceType === "price" 
               ? Number.parseFloat(ticket.price || 0)
               : Number.parseFloat(ticket.budget || ticket.price || 0)
             const priceLabel = priceType === "price" ? (t["form.price"] || "Price") : (t["form.budget"] || "Budget")
-            return `<div style="margin: 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${priceLabel}:</span> <span style="font-weight: bold; color: #333;">€${amount.toFixed(2)}</span></div>`
+            return `<div style="margin: 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${priceLabel}:</span> <span style="font-weight: bold; color: #000;">€${amount.toFixed(2)}</span></div>`
           })()}
         </div>
         
@@ -3560,14 +3560,14 @@ Chg:${ticketCharger.padEnd(4)} Bat:${ticketBattery.padEnd(4)} Water:${ticketWate
           <strong>${t["receipt.storageTitle"]}</strong>
         </div>
         
-        <div style="margin-top: 6px; padding: 6px; background-color: #f9f9f9; font-size: ${smallFontSize}; line-height: 1.5; border: 1px solid #ddd; font-weight: bold; color: #333;">
-          <div style="text-align: justify; margin-bottom: 4px; font-size: ${smallFontSize}; font-weight: bold; color: #333;">
+        <div style="margin-top: 6px; padding: 6px; background-color: #f9f9f9; font-size: ${smallFontSize}; line-height: 1.5; border: 1px solid #ddd; font-weight: bold; color: #000;">
+          <div style="text-align: justify; margin-bottom: 4px; font-size: ${smallFontSize}; font-weight: bold; color: #000;">
             ${t["receipt.storageText1"]}
           </div>
-          <div style="text-align: justify; margin-bottom: 4px; font-size: ${smallFontSize}; font-weight: bold; color: #333;">
+          <div style="text-align: justify; margin-bottom: 4px; font-size: ${smallFontSize}; font-weight: bold; color: #000;">
             ${t["receipt.storageText2"]}
           </div>
-          <div style="text-align: justify; margin-bottom: 4px; font-size: ${smallFontSize}; font-weight: bold; color: #333;">
+          <div style="text-align: justify; margin-bottom: 4px; font-size: ${smallFontSize}; font-weight: bold; color: #000;">
             ${t["receipt.storageText3"]}
           </div>
         </div>
