@@ -1887,7 +1887,39 @@ export function NewRepairTicketForm() {
 
 // Helper function to translate warranty value to selected language
 function translateWarrantyValue(storedValue: string | null | undefined, targetLang: ReceiptLanguage): string {
-  if (!storedValue) return "Without Warranty"
+  if (!storedValue) {
+    // Return translated "Without Warranty" based on target language
+    const defaults: Record<ReceiptLanguage, string> = {
+      en: "Without Warranty",
+      es: "Sin Garantía",
+      pt: "Sem Garantia",
+      de: "Ohne Garantie",
+      fr: "Sans garantie",
+      it: "Senza garanzia",
+      nl: "Zonder garantie",
+      pl: "Bez gwarancji",
+      ro: "Fără garanție",
+      el: "Χωρίς εγγύηση",
+      cs: "Bez záruky",
+      hu: "Garancia nélkül",
+      sv: "Utan garanti",
+      fi: "Ilman takuuta",
+      da: "Uden garanti",
+      bg: "Без гаранция",
+      hr: "Bez garancije",
+      sk: "Bez záruky",
+      sl: "Brez garancije",
+      lt: "Be garantijos",
+      lv: "Bez garantijas",
+      et: "Ilma garantii",
+      ga: "Gan bharánta",
+      mt: "Bla garanzija",
+      ur: "بغیر گارنٹی",
+      pa: "ਵਾਰੰਟੀ ਤੋਂ ਬਿਨਾਂ",
+      hi: "वारंटी के बिना"
+    }
+    return defaults[targetLang] || defaults.en
+  }
   
   // All possible warranty translations across all languages
   const warrantyTranslations: Record<string, Record<ReceiptLanguage, string>> = {
