@@ -182,8 +182,11 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
       "camera pana": "service.camera",
     }
     
-    // Try exact match first (with and without "OK")
-    const translationKey = serviceMap[trimmedService] || serviceMap[lowerServiceName] || serviceMap[withoutOk]
+    // Try exact match first (check original uppercase, normalized lowercase, with and without "OK")
+    const originalWithoutOk = trimmedService.replace(/\s+ok\s*$/i, "").trim()
+    const translationKey = serviceMap[trimmedService] || serviceMap[trimmedService.toUpperCase()] || 
+                          serviceMap[lowerServiceName] || serviceMap[withoutOk] ||
+                          serviceMap[originalWithoutOk] || serviceMap[originalWithoutOk.toUpperCase()]
     if (translationKey) {
       const translated = t(translationKey)
       if (translated && translated !== translationKey) {
@@ -192,9 +195,12 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
       }
     }
     
-    // Try case-insensitive match
+    // Try case-insensitive match (check both lowercase and uppercase variations)
     for (const [key, value] of Object.entries(serviceMap)) {
-      if (key.toLowerCase() === lowerServiceName || key.toLowerCase() === withoutOk) {
+      const lowerKey = key.toLowerCase()
+      if (key === trimmedService || key === trimmedService.toUpperCase() ||
+          lowerKey === lowerServiceName || lowerKey === withoutOk ||
+          key.toLowerCase() === lowerServiceName || key.toLowerCase() === withoutOk) {
         const translated = t(value)
         if (translated && translated !== value) {
           // Preserve "OK" suffix if it was in the original
