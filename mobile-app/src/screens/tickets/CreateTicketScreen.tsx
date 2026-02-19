@@ -129,12 +129,11 @@ export default function CreateTicketScreen({ navigation }: any) {
     model: '',
     imeiNo: '',
     serialNo: '',
-    softwareVersion: '',
-    problem: '',
-    condition: '',
+    phoneIssue: '',
     price: '',
     budget: '',
-    warranty: 'Without Warranty',
+    priceType: 'budget' as 'budget' | 'price',
+    warrantyUntil30Days: false,
     battery: false,
     charger: false,
     simCard: false,
@@ -143,8 +142,6 @@ export default function CreateTicketScreen({ navigation }: any) {
     waterDamaged: false,
     loanEquipment: false,
     equipmentObs: '',
-    repairObs: '',
-    serviceName: '',
   });
 
   useEffect(() => {
@@ -207,6 +204,18 @@ export default function CreateTicketScreen({ navigation }: any) {
         model: formData.model,
       });
 
+      const translate = (key: string) => {
+        try {
+          return t(key);
+        } catch (error) {
+          const fallbacks: Record<string, string> = {
+            "form.warrantyUntil30Days": "Warranty Until 30 Days",
+            "form.withoutWarranty": "Without Warranty"
+          };
+          return fallbacks[key] || key;
+        }
+      };
+
       const ticketData = {
         userId: user?.id,
         clientId: formData.clientId || null, // Will be auto-generated on server if null
@@ -217,22 +226,23 @@ export default function CreateTicketScreen({ navigation }: any) {
         brand: formData.brand || null,
         model: formData.model || null,
         serialNo: formData.serialNo || null,
-        softwareVersion: formData.softwareVersion || null,
-        warranty: formData.warranty,
+        warranty: formData.warrantyUntil30Days ? translate("form.warrantyUntil30Days") : translate("form.withoutWarranty"),
         simCard: formData.simCard,
         simTray: formData.simTray,
         memoryCard: formData.memoryCard,
         charger: formData.charger,
         battery: formData.battery,
         waterDamaged: formData.waterDamaged,
-        loanEquipment: formData.loanEquipment,
+        loanEquipment: false,
         equipmentObs: formData.equipmentObs || null,
-        repairObs: formData.repairObs || null,
-        selectedServices: formData.serviceName ? [formData.serviceName] : [],
-        condition: formData.condition || null,
-        problem: formData.problem || null,
+        phoneIssue: formData.phoneIssue || null,
+        repairObs: null,
+        selectedServices: [],
+        condition: null,
+        problem: null,
         price: parseFloat(formData.price) || 0,
         budget: formData.budget ? parseFloat(formData.budget) : null,
+        priceType: formData.priceType || "budget",
         status: 'PENDING',
       };
 
@@ -398,88 +408,97 @@ export default function CreateTicketScreen({ navigation }: any) {
           maxLength={15}
         />
         <FormInput
-          label={t('form.serialNumber')}
+          label={t('form.laptopSerialNumber') || 'Serial Number'}
           value={formData.serialNo}
           onChangeText={(text) => setFormData({ ...formData, serialNo: text })}
-          placeholder={t('placeholder.serialNumber')}
+          placeholder={t('form.laptopSerialNumberPlaceholder') || 'Enter serial number'}
         />
         <FormInput
-          label={t('form.softwareVersion')}
-          value={formData.softwareVersion}
-          onChangeText={(text) => setFormData({ ...formData, softwareVersion: text })}
-          placeholder={t('placeholder.softwareVersion')}
-        />
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>{t('form.repairDetails')}</Text>
-        <FormInput
-          label={t('form.problemDescription')}
-          value={formData.problem}
-          onChangeText={(text) => setFormData({ ...formData, problem: text })}
-          placeholder={t('placeholder.problemDescription')}
+          label="Mobile Conditions (On Arrival)"
+          value={formData.equipmentObs}
+          onChangeText={(text) => setFormData({ ...formData, equipmentObs: text })}
+          placeholder={t('placeholder.equipmentObservations') || 'Enter equipment observations'}
           multiline
           numberOfLines={3}
         />
         <FormInput
-          label={t('form.condition')}
-          value={formData.condition}
-          onChangeText={(text) => setFormData({ ...formData, condition: text })}
-          placeholder={t('placeholder.condition')}
-        />
-        <FormInput
-          label={t('form.serviceName')}
-          value={formData.serviceName}
-          onChangeText={(text) => setFormData({ ...formData, serviceName: text })}
-          placeholder={t('placeholder.serviceName')}
+          label="Phone Issue"
+          value={formData.phoneIssue}
+          onChangeText={(text) => setFormData({ ...formData, phoneIssue: text })}
+          placeholder="Enter phone issue"
+          multiline
+          numberOfLines={3}
         />
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>{t('form.pricing')}</Text>
-        <FormInput
-          label={t('form.budget')}
-          value={formData.budget}
-          onChangeText={(text) => setFormData({ ...formData, budget: text })}
-          placeholder={t('placeholder.budget')}
-          keyboardType="decimal-pad"
-        />
-        <View style={styles.warrantyContainer}>
-          <Text style={styles.warrantyLabel}>{t('form.warranty')}</Text>
-          <View style={styles.warrantyButtons}>
+        <Text style={styles.sectionTitle}>{t('form.pricing') || 'Pricing'}</Text>
+        <View style={{ marginBottom: theme.spacing.md }}>
+          <Text style={{ fontSize: 14, color: theme.colors.textSecondary, marginBottom: theme.spacing.xs }}>
+            {t('form.budget')} / {t('form.price')}
+          </Text>
+          <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
             <TouchableOpacity
               style={[
-                styles.warrantyButton,
-                formData.warranty === 'Without Warranty' && styles.warrantyButtonActive,
+                styles.priceTypeButton,
+                formData.priceType === 'budget' && styles.priceTypeButtonActive,
               ]}
-              onPress={() => setFormData({ ...formData, warranty: 'Without Warranty' })}
+              onPress={() => setFormData({ ...formData, priceType: 'budget' })}
             >
               <Text
                 style={[
-                  styles.warrantyButtonText,
-                  formData.warranty === 'Without Warranty' && styles.warrantyButtonTextActive,
+                  styles.priceTypeButtonText,
+                  formData.priceType === 'budget' && styles.priceTypeButtonTextActive,
                 ]}
               >
-                {t('form.withoutWarranty')}
+                {t('form.budget')}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[
-                styles.warrantyButton,
-                formData.warranty === 'Warranty Until 30 days' && styles.warrantyButtonActive,
+                styles.priceTypeButton,
+                formData.priceType === 'price' && styles.priceTypeButtonActive,
               ]}
-              onPress={() => setFormData({ ...formData, warranty: 'Warranty Until 30 days' })}
+              onPress={() => setFormData({ ...formData, priceType: 'price' })}
             >
               <Text
                 style={[
-                  styles.warrantyButtonText,
-                  formData.warranty === 'Warranty Until 30 days' && styles.warrantyButtonTextActive,
+                  styles.priceTypeButtonText,
+                  formData.priceType === 'price' && styles.priceTypeButtonTextActive,
                 ]}
               >
-                {t('form.warranty30Days')}
+                {t('form.price')}
               </Text>
             </TouchableOpacity>
+            <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={{ fontSize: 18, color: theme.colors.text, marginRight: 4 }}>€</Text>
+              <TextInput
+                style={[styles.textInput, { flex: 1 }]}
+                value={formData.priceType === 'price' ? formData.price : formData.budget}
+                onChangeText={(text) => {
+                  const value = text.replace(/[^0-9.]/g, '');
+                  if (formData.priceType === 'price') {
+                    setFormData({ ...formData, price: value });
+                  } else {
+                    setFormData({ ...formData, budget: value });
+                  }
+                }}
+                placeholder="0.00"
+                placeholderTextColor={theme.colors.textSecondary}
+                keyboardType="decimal-pad"
+              />
+            </View>
           </View>
+        </View>
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.md }}>
+          <Switch
+            value={formData.warrantyUntil30Days}
+            onValueChange={(value) => setFormData({ ...formData, warrantyUntil30Days: value })}
+            trackColor={{ false: '#767577', true: theme.colors.primary }}
+          />
+          <Text style={{ fontSize: 16, color: theme.colors.text, marginLeft: theme.spacing.sm }}>
+            {t('form.warrantyUntil30Days')}
+          </Text>
         </View>
       </View>
 
@@ -522,25 +541,6 @@ export default function CreateTicketScreen({ navigation }: any) {
         />
       </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>{t('form.observations')}</Text>
-        <FormInput
-          label={t('form.equipmentObs')}
-          value={formData.equipmentObs}
-          onChangeText={(text) => setFormData({ ...formData, equipmentObs: text })}
-          placeholder={t('placeholder.equipmentObservations')}
-          multiline
-          numberOfLines={3}
-        />
-        <FormInput
-          label={t('form.repairObs')}
-          value={formData.repairObs}
-          onChangeText={(text) => setFormData({ ...formData, repairObs: text })}
-          placeholder={t('placeholder.repairObservations')}
-          multiline
-          numberOfLines={3}
-        />
-      </View>
 
       <TouchableOpacity
         style={[styles.submitButton, loading && styles.submitButtonDisabled]}
@@ -922,5 +922,28 @@ const createStyles = (theme: any) =>
       fontSize: 16,
       color: theme.colors.textSecondary,
       textAlign: 'center',
+    },
+    priceTypeButton: {
+      paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.md,
+      borderRadius: theme.borderRadius.md,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      backgroundColor: theme.colors.surface,
+      minWidth: 80,
+      alignItems: 'center',
+    },
+    priceTypeButtonActive: {
+      backgroundColor: theme.colors.primary,
+      borderColor: theme.colors.primary,
+    },
+    priceTypeButtonText: {
+      color: theme.colors.text,
+      fontSize: 14,
+      fontWeight: '500',
+    },
+    priceTypeButtonTextActive: {
+      color: '#ffffff',
+      fontWeight: '600',
     },
   });
