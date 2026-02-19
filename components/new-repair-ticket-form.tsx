@@ -1431,16 +1431,6 @@ export function NewRepairTicketForm() {
                     />
                   </div>
 
-                  <div className="space-y-2 md:col-span-2">
-                    <Label className="text-black dark:text-white">{t("form.repairObservations")}</Label>
-                    <Textarea
-                      value={device.repairObs}
-                      onChange={(e) => updateDevice(deviceIndex, "repairObs", e.target.value)}
-                      rows={2}
-                      className="!bg-white dark:!bg-zinc-800 border-2 border-blue-200 dark:border-zinc-700 text-black dark:text-white placeholder:text-black dark:placeholder:text-zinc-400 focus:border-blue-500 dark:focus:border-blue-600"
-                    />
-                  </div>
-
                   {/* Equipment Check - All 6 blocks in one line */}
                   <div className="space-y-2 md:col-span-2">
                     <Label className="text-black dark:text-white text-sm font-semibold mb-2 block">{t("form.equipmentCheck")}</Label>
@@ -3280,7 +3270,7 @@ export async function printReceiptForTickets(
               return `
                 <div style="margin: 6px 0; padding: 5px 0; border-bottom: 1.5px solid #ccc; background-color: #f5f5f5; page-break-inside: avoid;">
                   <div style="font-weight: bold; margin: 0 0 4px 0; padding: 3px 6px; font-size: ${headerFontSize}; line-height: ${lineHeight}; color: #000; background-color: #d0d0d0; border-left: 3px solid #0066cc;">Device 1:</div>
-                  <div style="margin: 2px 0; padding: 1px 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.repairN"]}:</span> <span style="font-weight: normal; color: #000;">${ticketRepairNumber}</span></div>
+                  <div style="margin: 2px 0; padding: 1px 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.repairN"]}:</span> <span style="font-weight: bold; color: #000;">${ticketRepairNumber}</span></div>
                   <div style="margin: 2px 0; padding: 1px 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.imei"]}:</span> <span style="font-weight: normal; color: #000;">${ticketImeiNo}</span></div>
                   <div style="margin: 2px 0; padding: 1px 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.brandModel"]}:</span> <span style="font-weight: normal; color: #000;">${ticketBrand} - ${ticketModel}</span></div>
                   <div style="margin: 2px 0; padding: 1px 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.laptopSerialN"]}:</span> <span style="font-weight: normal; color: #000;">${ticketSerialNo}</span></div>
@@ -3348,26 +3338,30 @@ export async function printReceiptForTickets(
     const ticketEquipmentObs = translateProblemForReceipt(ticket.equipmentObs || ticket.phoneIssue, language) || "-"
     // Display phoneIssue as-is (no translation) - show actual value entered by user
     const ticketPhoneIssue = ticket.phoneIssue && ticket.phoneIssue.trim() !== "" ? ticket.phoneIssue.trim() : "-"
-    const ticketRepairObs = translateServicesForReceipt(ticket.repairObs || ticket.selectedServices || ticket.serviceName, language) || "-"
     const ticketProblem = translateProblemForReceipt(ticket.problem, language) || "-"
     const ticketPrice = Number.parseFloat(ticket.price || 0).toFixed(2)
     
-    // Parse selectedServices if it's a string (from database JSON)
-    let servicesArray = ticket.selectedServices
-    if (typeof servicesArray === 'string') {
+    // Get services from Services Done column (repairObs/selectedServices/serviceName) - same as what's shown in all devices page
+    let servicesValue: string | string[] | null = null
+    if (ticket.repairObs && ticket.repairObs.trim() !== "") {
+      // If repairObs exists, use it (it's what's shown in Services Done column)
+      servicesValue = ticket.repairObs
+    } else if (ticket.selectedServices) {
+      // Parse selectedServices if it's a string (from database JSON)
       try {
-        servicesArray = JSON.parse(servicesArray)
+        servicesValue = typeof ticket.selectedServices === 'string' 
+          ? JSON.parse(ticket.selectedServices) 
+          : ticket.selectedServices
       } catch (e) {
-        console.error("[printReceiptForTickets] Error parsing selectedServices:", e)
-        servicesArray = []
+        // If parsing fails, use as string
+        servicesValue = ticket.selectedServices
       }
+    } else if (ticket.serviceName) {
+      servicesValue = ticket.serviceName
     }
     
-    // Translate services
-    const services = translateServicesForReceipt(
-      Array.isArray(servicesArray) ? servicesArray : (servicesArray || ticket.serviceName || ticket.repairObs),
-      language
-    ) || (t["common.notAvailable"] || "N/A")
+    // Translate services for receipt
+    const services = translateServicesForReceipt(servicesValue, language) || (t["common.notAvailable"] || "N/A")
     
     const entryDate = new Date(ticket?.createdAt || Date.now())
     const formattedDate = entryDate.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })
@@ -3421,7 +3415,7 @@ export async function printReceiptForTickets(
         
         <!-- Repair Number -->
         <div style="font-size: 13px; margin-bottom: 2px; padding: 0;">
-          <span style="font-weight: bold;">${t["receipt.repairN"]}:</span> <span style="font-weight: normal; color: #000;">${ticketRepairNumber}</span>
+          <span style="font-weight: bold;">${t["receipt.repairN"]}:</span> <span style="font-weight: bold; color: #000;">${ticketRepairNumber}</span>
         </div>
         
         <!-- IMEI -->
@@ -3454,9 +3448,6 @@ export async function printReceiptForTickets(
         <!-- Phone Issue -->
         ${ticketPhoneIssue !== "-" ? `<div style="font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["table.phoneIssue"] || "Issue"}:</span> <span style="font-weight: normal; color: #000;">${ticketPhoneIssue}</span></div>` : ""}
         
-        <!-- Repair Observation -->
-        ${ticketRepairObs !== "-" ? `<div style="font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["receipt.repairObs"]}:</span> <span style="font-weight: normal; color: #000;">${ticketRepairObs}</span></div>` : ""}
-        
         <!-- Equipment Check (Fixed Width) -->
         <div style="font-size: 13px; margin-top: 3px; margin-bottom: 2px; padding: 0;">
           <span style="font-weight: bold;">${t["receipt.equipmentCheck"]}:</span>
@@ -3466,11 +3457,8 @@ SIM:${ticketSimCard.padEnd(4)} Tray:${ticketSimTray.padEnd(4)} Card:${ticketMemo
 Chg:${ticketCharger.padEnd(4)} Bat:${ticketBattery.padEnd(4)} Water:${ticketWaterDamaged}
         </div>
         
-        <!-- Services -->
-        ${services !== "N/A" && services !== "-" ? `<div style="font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["receipt.services"]}:</span> <span style="font-weight: normal; color: #000;">${services}</span></div>` : ""}
-        
-        <!-- Problem -->
-        ${ticketProblem !== "-" ? `<div style="font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["receipt.problem"]}:</span> <span style="font-weight: normal; color: #000;">${ticketProblem}</span></div>` : ""}
+        <!-- Services (from Services Done column) -->
+        ${services !== "N/A" && services !== "-" ? `<div style="font-size: 13px; margin-top: 3px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["receipt.services"]}:</span> <span style="font-weight: normal; color: #000;">${services}</span></div>` : ""}
         
         <!-- Budget/Price -->
         ${(() => {
@@ -3539,11 +3527,9 @@ Chg:${ticketCharger.padEnd(4)} Bat:${ticketBattery.padEnd(4)} Water:${ticketWate
         <div style="margin: 6px 0;">
           <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.mobileCondition"] || "Mobile Condition (On Arrival)"}:</span> <span style="font-weight: normal; color: #000;">${ticketEquipmentObs}</span></div>
           <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["table.phoneIssue"] || "Phone Issue"}:</span> <span style="font-weight: normal; color: #000;">${ticketPhoneIssue}</span></div>
-          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.repairObs"]}:</span> <span style="font-weight: normal; color: #000;">${ticketRepairObs}</span></div>
           <div style="font-weight: bold; margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};">${t["receipt.equipmentCheck"]}:</div>
           <div style="margin: 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight}; font-weight: normal; color: #000;"><span style="font-weight: bold;">${t["form.simCard"]}:</span> ${ticketSimCard} | <span style="font-weight: bold;">${t["form.simTray"]}:</span> ${ticketSimTray} | <span style="font-weight: bold;">${t["form.memoryCard"]}:</span> ${ticketMemoryCard} | <span style="font-weight: bold;">${t["form.charger"]}:</span> ${ticketCharger} | <span style="font-weight: bold;">${t["form.battery"]}:</span> ${ticketBattery} | <span style="font-weight: bold;">${t["form.waterDamaged"]}:</span> ${ticketWaterDamaged}</div>
           <div style="margin: 4px 0 0 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.services"]}:</span> <span style="font-weight: normal; color: #000;">${services}</span></div>
-          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.problem"]}:</span> <span style="font-weight: normal; color: #000;">${ticketProblem}</span></div>
           ${(() => {
             const priceType = ticket.priceType || "budget"
             const amount = priceType === "price" 

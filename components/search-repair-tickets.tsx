@@ -1560,16 +1560,6 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-repairObs" className="text-black dark:text-white">{t("form.repairObservations")}</Label>
-              <Textarea 
-                id="edit-repairObs" 
-                value={editFormData.repairObs || ""} 
-                onChange={(e) => setEditFormData({ ...editFormData, repairObs: e.target.value })} 
-                className="bg-white dark:bg-gray-800 border-blue-300 dark:border-gray-700 text-black dark:text-white min-h-[80px]" 
-                placeholder="Enter repair observations"
-              />
-            </div>
-            <div className="space-y-2">
               <Label htmlFor="edit-selectedServices" className="text-black dark:text-white">{t("table.serviceDone")}</Label>
               <Textarea 
                 id="edit-selectedServices" 
