@@ -3519,9 +3519,9 @@ export async function printReceiptForTickets(
         receipt = generateReceiptHTML(ticket, 'CLIENT')
       }
       
-      // A4 Single receipt - 75mm × 210mm
+      // A4 Single receipt - full A4 page (210mm × 297mm)
       return `
-        <div class="a4-receipt" style="width: 75mm !important; height: 210mm !important; page-break-inside: avoid !important; padding: 3mm !important; margin: 0 auto !important; box-sizing: border-box !important;">
+        <div class="a4-receipt" style="width: 100% !important; height: 100% !important; min-height: 297mm !important; page-break-inside: avoid !important; padding: 5mm !important; margin: 0 !important; box-sizing: border-box !important;">
           ${receipt}
         </div>
       `
@@ -3566,11 +3566,11 @@ export async function printReceiptForTickets(
   console.log(`[printReceiptForTickets] Generated HTML content length: ${ticketsHTML.length} characters`)
   
   // Determine page size and formatting based on detected printer type
-  // Both A4 and thermal use 75mm × 210mm receipt size
+  // A4: Full page (210mm × 297mm), Thermal: 75mm × 210mm
   const pageSize = finalPrinterType === "thermal" ? "75mm 210mm" : "A4"
   const pageMargin = finalPrinterType === "thermal" ? "0" : "0"
   const bodyPadding = finalPrinterType === "thermal" ? "0" : "0"
-  const maxWidth = finalPrinterType === "thermal" ? "75mm" : "75mm"
+  const maxWidth = finalPrinterType === "thermal" ? "75mm" : "100%"
   const fontSize = finalPrinterType === "thermal" ? "9pt" : "11pt"
   
   console.log(`[printReceiptForTickets] 📐 Page formatting: size=${pageSize}, margin=${pageMargin}, width=${maxWidth}`)
@@ -3580,6 +3580,8 @@ export async function printReceiptForTickets(
     <html>
       <head>
         <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <title>Repair Ticket Receipt</title>
           <style>
             @page {
@@ -3591,35 +3593,50 @@ export async function printReceiptForTickets(
                 size: ${pageSize};
                 margin: ${pageMargin};
               }
+              * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+              }
+              html {
+                width: 100%;
+                height: 100%;
+              }
               body {
-                margin: 0;
-                padding: ${bodyPadding};
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
+                margin: 0 !important;
+                padding: ${bodyPadding} !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
                 overflow: ${finalPrinterType === "thermal" ? "hidden" : "visible"};
                 display: block;
-                max-width: ${maxWidth};
+                width: 100% !important;
+                max-width: ${maxWidth} !important;
+                ${finalPrinterType === "a4" ? "height: 100vh !important; min-height: 297mm !important;" : ""}
+                transform-origin: top left;
+                -webkit-transform-origin: top left;
               }
               ${finalPrinterType === "a4" ? `
-              /* LARGE PRINTER (A4+): Single receipt - 75mm × 210mm */
+              /* LARGE PRINTER (A4+): Single receipt - Full A4 page with auto scaling */
               .a4-receipt {
-                width: 75mm !important;
-                height: 210mm !important;
-                max-width: 75mm !important;
+                width: 100% !important;
+                height: 100% !important;
+                min-height: 297mm !important;
+                max-width: 100% !important;
                 page-break-inside: avoid !important;
-                margin: 0 auto !important;
-                padding: 3mm !important;
+                margin: 0 !important;
+                padding: 5mm !important;
                 box-sizing: border-box !important;
+                transform: scale(1) !important;
+                -webkit-transform: scale(1) !important;
               }
               body {
                 margin: 0 !important;
                 padding: 0 !important;
-                display: flex !important;
-                justify-content: center !important;
-                align-items: flex-start !important;
+                width: 100% !important;
+                height: 100% !important;
+                min-height: 297mm !important;
               }
               ` : `
-              /* SMALL PRINTER (Thermal): Single receipt - 75mm × 210mm */
+              /* SMALL PRINTER (Thermal): Single receipt - 75mm × 210mm with auto scaling */
               .thermal-receipt {
                 width: 75mm !important;
                 height: 210mm !important;
@@ -3627,6 +3644,8 @@ export async function printReceiptForTickets(
                 margin: 0 auto !important;
                 padding: 3mm !important;
                 box-sizing: border-box !important;
+                transform: scale(1) !important;
+                -webkit-transform: scale(1) !important;
               }
               body {
                 margin: 0 !important;
@@ -3693,7 +3712,7 @@ export async function printReceiptForTickets(
               max-width: ${maxWidth};
               box-sizing: border-box;
               display: block;
-              ${finalPrinterType === "a4" ? "min-height: 100vh;" : ""}
+              ${finalPrinterType === "a4" ? "min-height: 297mm; height: 100vh;" : ""}
             }
             .ticket-container {
               width: 100%;
@@ -3734,6 +3753,10 @@ export async function printReceiptForTickets(
                 link.style.textDecoration = 'none';
                 link.style.color = 'inherit';
               });
+              
+              // Ensure proper scaling for print
+              document.body.style.transform = 'scale(1)';
+              document.body.style.webkitTransform = 'scale(1)';
             };
             
             // Also check after load
@@ -3745,6 +3768,24 @@ export async function printReceiptForTickets(
                   link.style.textDecoration = 'none';
                   link.style.color = 'inherit';
                 });
+                
+                // Set up automatic scaling
+                ${finalPrinterType === "a4" ? `
+                // For A4, ensure full page coverage
+                var receipt = document.querySelector('.a4-receipt');
+                if (receipt) {
+                  receipt.style.width = '100%';
+                  receipt.style.height = '100%';
+                  receipt.style.minHeight = '297mm';
+                }
+                ` : `
+                // For thermal, maintain 75mm width
+                var receipt = document.querySelector('.thermal-receipt');
+                if (receipt) {
+                  receipt.style.width = '75mm';
+                  receipt.style.height = '210mm';
+                }
+                `}
               }, 100);
             };
           </script>
