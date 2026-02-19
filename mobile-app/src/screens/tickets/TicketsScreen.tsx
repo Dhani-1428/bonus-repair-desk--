@@ -100,6 +100,8 @@ export default function TicketsScreen() {
 
         if (filterStatusLower === 'pending') {
           return ticketStatus === 'pending' || ticketStatus === 'in_progress';
+        } else if (filterStatusLower === 'not_ok') {
+          return ticketStatus === 'not_ok' || ticketStatus === 'cannot_repaired';
         }
         return ticketStatus === filterStatusLower;
       });
@@ -209,11 +211,11 @@ export default function TicketsScreen() {
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.filterButton, filterStatus === 'in_progress' && styles.filterButtonActive]}
-          onPress={() => setFilterStatus('in_progress')}
+          style={[styles.filterButton, filterStatus === 'not_ok' && styles.filterButtonActive]}
+          onPress={() => setFilterStatus('not_ok')}
         >
-          <Text style={[styles.filterText, filterStatus === 'in_progress' && styles.filterTextActive]}>
-            {getStatusTranslation('in_progress')}
+          <Text style={[styles.filterText, filterStatus === 'not_ok' && styles.filterTextActive]}>
+            {getStatusTranslation('not_ok')}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -225,43 +227,11 @@ export default function TicketsScreen() {
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.filterButton, filterStatus === 'cannot_repaired' && styles.filterButtonActive]}
-          onPress={() => setFilterStatus('cannot_repaired')}
-        >
-          <Text style={[styles.filterText, filterStatus === 'cannot_repaired' && styles.filterTextActive]}>
-            {getStatusTranslation('cannot_repaired')}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
           style={[styles.filterButton, filterStatus === 'out' && styles.filterButtonActive]}
           onPress={() => setFilterStatus('out')}
         >
           <Text style={[styles.filterText, filterStatus === 'out' && styles.filterTextActive]}>
             {getStatusTranslation('out')}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.filterButton, filterStatus === 'delivered' && styles.filterButtonActive]}
-          onPress={() => setFilterStatus('delivered')}
-        >
-          <Text style={[styles.filterText, filterStatus === 'delivered' && styles.filterTextActive]}>
-            {getStatusTranslation('delivered')}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.filterButton, filterStatus === 'cancelled' && styles.filterButtonActive]}
-          onPress={() => setFilterStatus('cancelled')}
-        >
-          <Text style={[styles.filterText, filterStatus === 'cancelled' && styles.filterTextActive]}>
-            {getStatusTranslation('cancelled')}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.filterButton, filterStatus === 'not_ok' && styles.filterButtonActive]}
-          onPress={() => setFilterStatus('not_ok')}
-        >
-          <Text style={[styles.filterText, filterStatus === 'not_ok' && styles.filterTextActive]}>
-            {getStatusTranslation('not_ok')}
           </Text>
         </TouchableOpacity>
       </View>
