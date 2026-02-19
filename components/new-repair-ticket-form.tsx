@@ -2656,7 +2656,9 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
     },
   }
   // For languages not yet translated, fall back to English
-  return translations[lang] || translations.en
+  const result = translations[lang] || translations.en
+  console.log(`[getReceiptTranslations] Language: ${lang}, Found: ${!!translations[lang]}, Using: ${translations[lang] ? lang : 'en'}`)
+  return result
 }
 
 // Language selection dialog component
