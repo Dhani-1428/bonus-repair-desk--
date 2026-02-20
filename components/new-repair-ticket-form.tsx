@@ -3335,6 +3335,9 @@ export async function printReceiptForTickets(
   const generateReceiptHTMLForMultipleDevices = (tickets: any[], copyType: 'CLIENT' | 'ADMIN' = 'CLIENT') => {
     if (tickets.length === 0) return ''
     
+    // Get translations for the current language (ensure we always use the correct language)
+    const t = getReceiptTranslations(language)
+    
     // Use the most recent ticket's client information, or the first one if all have same clientId
     // Sort by createdAt descending to get most recent first
     const sortedByDate = [...tickets].sort((a, b) => {
