@@ -2551,6 +2551,7 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "form.waterDamaged": "Danificado por Água",
       "form.price": "Preço",
       "form.budget": "Orçamento",
+      "receipt.withoutIVA": "Sem IVA",
     },
     de: {
       "receipt.clientCopy": "KUNDENKOPIE",
@@ -2591,6 +2592,7 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "form.waterDamaged": "Wasserschaden",
       "form.price": "Preis",
       "form.budget": "Budget",
+      "receipt.withoutIVA": "Ohne MwSt",
     },
     fr: {
       "receipt.clientCopy": "COPIE CLIENT",
@@ -2631,6 +2633,7 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "form.waterDamaged": "Endommagé par l'eau",
       "form.price": "Prix",
       "form.budget": "Budget",
+      "receipt.withoutIVA": "Sans TVA",
     },
     ur: {
       "receipt.clientCopy": "کلائنٹ کاپی",
@@ -2670,6 +2673,7 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "form.waterDamaged": "پانی سے خراب",
       "form.price": "قیمت",
       "form.budget": "بجٹ",
+      "receipt.withoutIVA": "بغیر VAT",
     },
     pa: {
       "receipt.clientCopy": "ਕਲਾਇੰਟ ਕਾਪੀ",
@@ -2712,6 +2716,7 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "form.waterDamaged": "ਪਾਣੀ ਨਾਲ ਖਰਾਬ",
       "form.price": "ਕੀਮਤ",
       "form.budget": "ਬਜਟ",
+      "receipt.withoutIVA": "VAT ਤੋਂ ਬਿਨਾਂ",
     },
     hi: {
       "receipt.clientCopy": "क्लाइंट कॉपी",
@@ -2754,6 +2759,7 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "form.waterDamaged": "पानी से क्षतिग्रस्त",
       "form.price": "कीमत",
       "form.budget": "बजट",
+      "receipt.withoutIVA": "VAT के बिना",
     },
     es: {
       "receipt.clientCopy": "COPIA DEL CLIENTE",
