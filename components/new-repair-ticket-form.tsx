@@ -3515,6 +3515,9 @@ export async function printReceiptForTickets(
       return '<div>Error: Invalid ticket data</div>'
     }
     
+    // Get translations for the current language (ensure we always use the correct language)
+    const t = getReceiptTranslations(language)
+    
     // Extract all ticket properties upfront to avoid accessing ticket in template string
     const ticketClientId = ticket.clientId || "N/A"
     const ticketCustomerName = ticket.customerName || "N/A"
