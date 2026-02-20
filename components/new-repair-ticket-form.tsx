@@ -2473,6 +2473,7 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "form.waterDamaged": "Water Damaged",
       "form.price": "Price",
       "form.budget": "Budget",
+      "receipt.withoutIVA": "Without IVA",
     },
     pt: {
       "receipt.clientCopy": "CÓPIA DO CLIENTE",
@@ -3541,7 +3542,7 @@ export async function printReceiptForTickets(
       // If repairObs exists, use it (it's what's shown in Services Done column)
       servicesValue = ticket.repairObs
     } else if (ticket.selectedServices) {
-      // Parse selectedServices if it's a string (from database JSON)
+    // Parse selectedServices if it's a string (from database JSON)
       try {
         servicesValue = typeof ticket.selectedServices === 'string' 
           ? JSON.parse(ticket.selectedServices) 
@@ -3656,7 +3657,8 @@ Chg:${ticketCharger.padEnd(4)} Bat:${ticketBattery.padEnd(4)} Water:${ticketWate
             ? Number.parseFloat(ticket.price || 0)
             : Number.parseFloat(ticket.budget || ticket.price || 0)
           const priceLabel = priceType === "price" ? (t["form.price"] || "Price") : (t["form.budget"] || "Budget")
-          return `<div style="font-size: 15px; margin-top: 3px; margin-bottom: 3px; padding: 0;"><span style="font-weight: bold;">${priceLabel}:</span> <span style="font-weight: normal; color: #000;">€${amount.toFixed(2)}</span></div>`
+          return `<div style="font-size: 15px; margin-top: 3px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${priceLabel}:</span> <span style="font-weight: normal; color: #000;">€${amount.toFixed(2)}</span></div>
+          <div style="font-size: 12px; margin-bottom: 3px; padding: 0; font-weight: normal; color: #000;">${t["receipt.withoutIVA"] || "Without IVA"}</div>`
         })()}
         
         <!-- Warranty -->
@@ -3729,7 +3731,8 @@ Chg:${ticketCharger.padEnd(4)} Bat:${ticketBattery.padEnd(4)} Water:${ticketWate
               ? Number.parseFloat(ticket.price || 0)
               : Number.parseFloat(ticket.budget || ticket.price || 0)
             const priceLabel = priceType === "price" ? (t["form.price"] || "Price") : (t["form.budget"] || "Budget")
-            return `<div style="margin: 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${priceLabel}:</span> <span style="font-weight: normal; color: #000;">€${amount.toFixed(2)}</span></div>`
+            return `<div style="margin: 0 0 2px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${priceLabel}:</span> <span style="font-weight: normal; color: #000;">€${amount.toFixed(2)}</span></div>
+            <div style="margin: 0 0 4px 0; padding: 0; font-size: ${smallFontSize}; line-height: ${lineHeight}; font-weight: normal; color: #000;">${t["receipt.withoutIVA"] || "Without IVA"}</div>`
           })()}
           <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.warranty"]}:</span> <span style="font-weight: normal; color: #000;">${ticketWarrantyText}</span></div>
         </div>
