@@ -2158,6 +2158,9 @@ function translateProblemForReceipt(problem: string | null | undefined, lang: Re
     "lcd broken": "problem.screenBroken",
     "back glass": "problem.screenBroken",
     "touch+lcd": "problem.touchNotWorking",
+    "touch+lcd broken": "problem.touchNotWorking",
+    "thouch+lcd broken": "problem.touchNotWorking", // Typo variant
+    "thouch+lcd": "problem.touchNotWorking", // Typo variant
     "charging problem": "problem.chargingIssue",
     "no charge": "problem.notCharging",
     "not charging": "problem.notCharging",
@@ -2190,6 +2193,9 @@ function translateProblemForReceipt(problem: string | null | undefined, lang: Re
     "LCD BLINKING": "problem.screenNotWorking",
     "LOGO STUCK": "problem.screenNotWorking",
     "TOUCH+LCD": "problem.touchNotWorking",
+    "TOUCH+LCD BROKEN": "problem.touchNotWorking",
+    "THOUCH+LCD": "problem.touchNotWorking", // Typo variant
+    "THOUCH+LCD BROKEN": "problem.touchNotWorking", // Typo variant
     "NO CHARGE": "problem.notCharging",
     "NOT CHARGING": "problem.notCharging",
     "BATTERY PROBLEM": "problem.batteryNotCharging",
@@ -2271,9 +2277,13 @@ function translateProblemForReceipt(problem: string | null | undefined, lang: Re
       if (translated && translated !== translationKey) {
         // For multi-word phrases, use a more flexible regex that matches the entire phrase
         // Escape special regex characters
-        const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-        // Use word boundaries, but also allow matching at start/end of string
-        const regex = new RegExp(`(^|\\s)${escapedKey}(\\s|$)`, 'gi')
+        let escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+        // Handle "touch" vs "thouch" typo
+        escapedKey = escapedKey.replace(/\\btouch\\b/gi, '\\b(?:touch|thouch)\\b')
+        // For phrases with "+", use a more flexible pattern
+        escapedKey = escapedKey.replace(/\\\+/g, '[+]?')
+        // Use word boundaries, but also allow matching at start/end of string or after/before special chars
+        const regex = new RegExp(`(^|\\s|[+])${escapedKey}(\\s|$|[+])`, 'gi')
         if (regex.test(result)) {
           result = result.replace(regex, (match, before, after) => {
             // Preserve the whitespace before and after
@@ -2323,8 +2333,14 @@ function translateServicesForReceipt(services: string | string[] | null | undefi
     "change touch+lcd ok": "service.lcd",
     "touch+lcd change": "service.lcd",
     "touch+lcd change ok": "service.lcd",
+    "touch+lcd incell": "service.lcd",
+    "touch+lcd incell ok": "service.lcd",
+    "touch+lcd incell lcd": "service.lcd",
+    "touch+lcd incell lcd ok": "service.lcd",
     "thouch+lcd change": "service.lcd", // Handle typo "THOUCH"
     "thouch+lcd change ok": "service.lcd",
+    "thouch+lcd incell": "service.lcd", // Typo variant
+    "thouch+lcd incell ok": "service.lcd", // Typo variant
     "lcd change": "service.lcd",
     "lcd new": "service.lcd",
     "lcd ok": "service.lcd",
@@ -2343,8 +2359,14 @@ function translateServicesForReceipt(services: string | string[] | null | undefi
     "CHANGE TOUCH+LCD OK": "service.lcd",
     "TOUCH+LCD CHANGE": "service.lcd",
     "TOUCH+LCD CHANGE OK": "service.lcd",
+    "TOUCH+LCD INCELL": "service.lcd",
+    "TOUCH+LCD INCELL OK": "service.lcd",
+    "TOUCH+LCD INCELL LCD": "service.lcd",
+    "TOUCH+LCD INCELL LCD OK": "service.lcd",
     "THOUCH+LCD CHANGE": "service.lcd",
     "THOUCH+LCD CHANGE OK": "service.lcd",
+    "THOUCH+LCD INCELL": "service.lcd", // Typo variant
+    "THOUCH+LCD INCELL OK": "service.lcd", // Typo variant
     
     // Back cover services
     "back glass ok": "service.backCover",
@@ -2468,8 +2490,8 @@ function translateServicesForReceipt(services: string | string[] | null | undefi
     }
     
     // Normalize common typos before matching
-    const normalizedService = withoutOk.replace(/\biss\b/gi, 'is').replace(/\bfix\b(?!\w)/gi, 'fixed')
-    const normalizedResult = service.replace(/\biss\b/gi, 'is').replace(/\bfix\b(?!\w)/gi, 'fixed')
+    const normalizedService = withoutOk.replace(/\biss\b/gi, 'is').replace(/\bfix\b(?!\w)/gi, 'fixed').replace(/\bthouch\b/gi, 'touch')
+    const normalizedResult = service.replace(/\biss\b/gi, 'is').replace(/\bfix\b(?!\w)/gi, 'fixed').replace(/\bthouch\b/gi, 'touch')
     
     // Try phrase translation - translate parts of longer descriptive text
     // Sort by key length (longest first) to match longer phrases first
@@ -2485,9 +2507,14 @@ function translateServicesForReceipt(services: string | string[] | null | undefi
         // Escape special regex characters
         const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
         // Create regex that also matches common typos
-        const flexibleKey = escapedKey.replace(/\\bis\\b/gi, '\\b(?:is|iss)\\b').replace(/\\bfixed\\b/gi, '\\b(?:fixed|fix)\\b')
-        // Use word boundaries, but also allow matching at start/end of string
-        const regex = new RegExp(`(^|\\s)${flexibleKey}(\\s|$)`, 'gi')
+        // Handle "+" in phrases like "TOUCH+LCD" - escape it properly
+        let flexibleKey = escapedKey.replace(/\\bis\\b/gi, '\\b(?:is|iss)\\b').replace(/\\bfixed\\b/gi, '\\b(?:fixed|fix)\\b')
+        // Handle "touch" vs "thouch" typo
+        flexibleKey = flexibleKey.replace(/\\btouch\\b/gi, '\\b(?:touch|thouch)\\b')
+        // For phrases with "+", use a more flexible pattern
+        flexibleKey = flexibleKey.replace(/\\\+/g, '[+]?')
+        // Use word boundaries, but also allow matching at start/end of string or after/before special chars
+        const regex = new RegExp(`(^|\\s|[+])${flexibleKey}(\\s|$|[+])`, 'gi')
         if (regex.test(normalizedService) || regex.test(withoutOk)) {
           const translated = t[translationKey]
           if (translated && translated !== translationKey) {
