@@ -2569,7 +2569,6 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "receipt.clientId": "Client ID",
       "receipt.name": "Name",
       "receipt.clientPhone": "Client Phone",
-      "receipt.clientContact": "Contact",
       "receipt.receivedBy": "Device Received By",
       "receipt.entryDate": "Entry Date",
       "receipt.outDate": "Out Date",
@@ -2605,13 +2604,6 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "form.price": "Price",
       "form.budget": "Budget",
       "receipt.withoutIVA": "Without IVA",
-      "receipt.sim": "SIM",
-      "receipt.tray": "Tray",
-      "receipt.card": "Card",
-      "receipt.chg": "Chg",
-      "receipt.bat": "Bat",
-      "receipt.water": "Water",
-      "table.phoneIssue": "Phone Issue",
     },
     pt: {
       "receipt.clientCopy": "CÓPIA DO CLIENTE",
@@ -2619,7 +2611,6 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "receipt.clientId": "ID do Cliente",
       "receipt.name": "Nome",
       "receipt.clientPhone": "Telefone do Cliente",
-      "receipt.clientContact": "Contacto",
       "receipt.receivedBy": "Dispositivo Recebido Por",
       "receipt.entryDate": "Data de Entrada",
       "receipt.outDate": "Data de Saída",
@@ -2691,13 +2682,6 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "form.price": "Preço",
       "form.budget": "Orçamento",
       "receipt.withoutIVA": "Sem IVA",
-      "receipt.sim": "SIM",
-      "receipt.tray": "Tabuleiro",
-      "receipt.card": "Cartão",
-      "receipt.chg": "Carregador",
-      "receipt.bat": "Bateria",
-      "receipt.water": "Água",
-      "table.phoneIssue": "Problema do Telefone",
     },
     de: {
       "receipt.clientCopy": "KUNDENKOPIE",
@@ -2705,7 +2689,6 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "receipt.clientId": "Kunden-ID",
       "receipt.name": "Name",
       "receipt.clientPhone": "Kundentelefon",
-      "receipt.clientContact": "Kontakt",
       "receipt.receivedBy": "Gerät erhalten von",
       "receipt.entryDate": "Eingangsdatum",
       "receipt.outDate": "Ausgangsdatum",
@@ -2777,13 +2760,6 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "form.price": "Preis",
       "form.budget": "Budget",
       "receipt.withoutIVA": "Ohne MwSt",
-      "receipt.sim": "SIM",
-      "receipt.tray": "Schublade",
-      "receipt.card": "Karte",
-      "receipt.chg": "Ladegerät",
-      "receipt.bat": "Batterie",
-      "receipt.water": "Wasser",
-      "table.phoneIssue": "Telefonproblem",
     },
     fr: {
       "receipt.clientCopy": "COPIE CLIENT",
@@ -2791,7 +2767,6 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "receipt.clientId": "ID Client",
       "receipt.name": "Nom",
       "receipt.clientPhone": "Téléphone client",
-      "receipt.clientContact": "Contact",
       "receipt.receivedBy": "Appareil reçu par",
       "receipt.entryDate": "Date d'entrée",
       "receipt.outDate": "Date de sortie",
@@ -2863,13 +2838,6 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "form.price": "Prix",
       "form.budget": "Budget",
       "receipt.withoutIVA": "Sans TVA",
-      "receipt.sim": "SIM",
-      "receipt.tray": "Tiroir",
-      "receipt.card": "Carte",
-      "receipt.chg": "Chargeur",
-      "receipt.bat": "Batterie",
-      "receipt.water": "Eau",
-      "table.phoneIssue": "Problème de téléphone",
     },
     ur: {
       "receipt.clientCopy": "کلائنٹ کاپی",
@@ -3911,12 +3879,7 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
     },
   }
   // For languages not yet translated, fall back to English
-  const langTranslations = translations[lang] || translations.en
-  const enTranslations = translations.en
-  
-  // Merge with English to ensure all keys exist (English as base, then override with language-specific)
-  const result: Record<string, string> = { ...enTranslations, ...langTranslations }
-  
+  const result = translations[lang] || translations.en
   console.log(`[getReceiptTranslations] Language: ${lang}, Found: ${!!translations[lang]}, Using: ${translations[lang] ? lang : 'en'}`)
   return result
 }
@@ -4682,7 +4645,7 @@ export async function printReceiptForTickets(
         <div style="text-align: right; font-size: 13px; margin-bottom: 2px; padding: 0;">
           <span style="font-weight: bold;">${t["receipt.name"]}:</span> <span style="font-weight: normal; color: #000;">${ticketCustomerName}</span>
         </div>
-        ${ticketContact !== "N/A" ? `<div style="text-align: right; font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["receipt.clientContact"] || t["receipt.clientPhone"] || "Contact"}:</span> <span style="font-weight: normal; color: #000;">${ticketContact}</span></div>` : ""}
+        ${ticketContact !== "N/A" ? `<div style="text-align: right; font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["receipt.clientContact"] || "Contact"}:</span> <span style="font-weight: normal; color: #000;">${ticketContact}</span></div>` : ""}
         <div style="text-align: right; font-size: 13px; margin-bottom: 3px; padding: 0;">
           <span style="font-weight: bold;">${t["receipt.receivedBy"] || "Received By"}:</span> <span style="font-weight: normal; color: #000;">${ticketReceivedBy}</span>
         </div>
@@ -4694,7 +4657,7 @@ export async function printReceiptForTickets(
         <div style="font-size: 13px; margin-bottom: 2px; padding: 0;">
           <span style="font-weight: bold;">${t["receipt.entryDate"]}:</span> <span style="font-weight: normal; color: #000;">${formattedDate} ${formattedTime}</span>
         </div>
-        ${outDateDisplay ? `<div style="font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["receipt.outDate"]}:</span> <span style="font-weight: normal; color: #000;">${(() => { const outDate = new Date(ticket.deliveredDate); return outDate.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' + outDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }); })()}</span></div>` : ""}
+        ${outDateDisplay ? `<div style="font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["receipt.outDate"] || "Out Date"}:</span> <span style="font-weight: normal; color: #000;">${(() => { const outDate = new Date(ticket.deliveredDate); return outDate.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' + outDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }); })()}</span></div>` : ""}
         
         <!-- Repair Number -->
         <div style="font-size: 13px; margin-bottom: 2px; padding: 0;">
@@ -4719,12 +4682,12 @@ export async function printReceiptForTickets(
         
         <!-- Device Condition -->
         <div style="font-size: 13px; margin-bottom: 2px; padding: 0;">
-          <span style="font-weight: bold;">${t["receipt.mobileCondition"]}:</span><br/>
+          <span style="font-weight: bold;">${t["receipt.mobileCondition"] || "Condition"}:</span><br/>
           <span style="font-weight: normal; color: #000;">${ticketEquipmentObs}</span>
         </div>
         
         <!-- Phone Issue -->
-        ${ticketPhoneIssue !== "-" ? `<div style="font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["table.phoneIssue"] || t["receipt.problem"] || "Phone Issue"}:</span> <span style="font-weight: normal; color: #000;">${ticketPhoneIssue}</span></div>` : ""}
+        ${ticketPhoneIssue !== "-" ? `<div style="font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["table.phoneIssue"] || "Issue"}:</span> <span style="font-weight: normal; color: #000;">${ticketPhoneIssue}</span></div>` : ""}
         
         <!-- Services (from Services Done column) -->
         ${services !== "N/A" && services !== "-" ? `<div style="font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["receipt.services"]}:</span> <span style="font-weight: normal; color: #000;">${services}</span></div>` : ""}
@@ -4734,8 +4697,8 @@ export async function printReceiptForTickets(
           <span style="font-weight: bold;">${t["receipt.equipmentCheck"]}:</span>
         </div>
         <div style="font-size: 12px; font-family: Arial, sans-serif; margin-bottom: 2px; padding: 0; white-space: pre; font-weight: normal; color: #000;">
-${t["receipt.sim"] || "SIM"}:${ticketSimCard.padEnd(4)} ${t["receipt.tray"] || "Tray"}:${ticketSimTray.padEnd(4)} ${t["receipt.card"] || "Card"}:${ticketMemoryCard.padEnd(4)}
-${t["receipt.chg"] || "Chg"}:${ticketCharger.padEnd(4)} ${t["receipt.bat"] || "Bat"}:${ticketBattery.padEnd(4)} ${t["receipt.water"] || "Water"}:${ticketWaterDamaged}
+SIM:${ticketSimCard.padEnd(4)} Tray:${ticketSimTray.padEnd(4)} Card:${ticketMemoryCard.padEnd(4)}
+Chg:${ticketCharger.padEnd(4)} Bat:${ticketBattery.padEnd(4)} Water:${ticketWaterDamaged}
         </div>
         
         <!-- Budget/Price -->
@@ -4744,8 +4707,8 @@ ${t["receipt.chg"] || "Chg"}:${ticketCharger.padEnd(4)} ${t["receipt.bat"] || "B
           const amount = priceType === "price" 
             ? Number.parseFloat(ticket.price || 0)
             : Number.parseFloat(ticket.budget || ticket.price || 0)
-          const priceLabel = priceType === "price" ? t["form.price"] : t["form.budget"]
-          return `<div style="font-size: 15px; margin-top: 3px; margin-bottom: 3px; padding: 0;"><span style="font-weight: bold;">${priceLabel}:</span> <span style="font-weight: normal; color: #000;">€${amount.toFixed(2)}</span> <span style="font-weight: normal; color: #000; font-size: 12px;">${t["receipt.withoutIVA"]}</span></div>`
+          const priceLabel = priceType === "price" ? (t["form.price"] || "Price") : (t["form.budget"] || "Budget")
+          return `<div style="font-size: 15px; margin-top: 3px; margin-bottom: 3px; padding: 0;"><span style="font-weight: bold;">${priceLabel}:</span> <span style="font-weight: normal; color: #000;">€${amount.toFixed(2)}</span> <span style="font-weight: normal; color: #000; font-size: 12px;">${t["receipt.withoutIVA"] || "Without IVA"}</span></div>`
         })()}
         
         <!-- Warranty -->
@@ -4791,15 +4754,15 @@ ${t["receipt.chg"] || "Chg"}:${ticketCharger.padEnd(4)} ${t["receipt.bat"] || "B
             <div style="display: ${cellLayout}; width: ${cellWidth}; vertical-align: top; padding-left: ${finalPrinterType === "thermal" ? "0" : "6px"}; margin-top: ${finalPrinterType === "thermal" ? "4px" : "0"}; border-top: ${finalPrinterType === "thermal" ? "1px solid #ccc" : "none"}; padding-top: ${finalPrinterType === "thermal" ? "4px" : "0"};">
               <div style="font-weight: bold; font-size: ${headerFontSize}; margin: 0 0 2px 0; padding: 0; color: #000; line-height: ${lineHeight};">${t["receipt.clientId"]}: ${ticketClientId}</div>
               <div style="margin: 0 0 2px 0; padding: 0; font-size: ${baseFontSize}; color: #000; line-height: ${lineHeight}; font-weight: bold;"><strong>${t["receipt.name"]}:</strong> <strong>${ticketCustomerName}</strong></div>
-              <div style="margin: 0 0 2px 0; padding: 0; font-size: ${baseFontSize}; color: #000; line-height: ${lineHeight}; font-weight: bold;"><strong>${t["receipt.clientContact"] || t["receipt.clientPhone"]}:</strong> <strong>${ticketContact}</strong></div>
-              <div style="margin: 0; padding: 0; font-size: ${baseFontSize}; color: #000; line-height: ${lineHeight}; font-weight: bold;"><strong>${t["receipt.receivedBy"]}:</strong> <strong>${ticketReceivedBy}</strong></div>
+              <div style="margin: 0 0 2px 0; padding: 0; font-size: ${baseFontSize}; color: #000; line-height: ${lineHeight}; font-weight: bold;"><strong>${t["receipt.clientContact"] || "Client Contact"}:</strong> <strong>${ticketContact}</strong></div>
+              <div style="margin: 0; padding: 0; font-size: ${baseFontSize}; color: #000; line-height: ${lineHeight}; font-weight: bold;"><strong>${t["receipt.receivedBy"] || "Device Received By"}:</strong> <strong>${ticketReceivedBy}</strong></div>
             </div>
           </div>
         </div>
         
         <div style="margin: 6px 0;">
           <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.entryDate"]}:</span> <span style="font-weight: normal; color: #000;">${formattedDate} ${formattedTime}</span></div>
-          ${outDateDisplay ? `<div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.outDate"]}:</span> <span style="font-weight: normal; color: #000;">${(() => { const outDate = new Date(ticket.deliveredDate); return outDate.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' + outDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }); })()}</span></div>` : ""}
+          ${outDateDisplay ? `<div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.outDate"] || "Out Date"}:</span> <span style="font-weight: normal; color: #000;">${(() => { const outDate = new Date(ticket.deliveredDate); return outDate.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' + outDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }); })()}</span></div>` : ""}
           <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.repairN"]}:</span> <span style="font-weight: bold; color: #000;">${ticketRepairNumber}</span></div>
           <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.imei"]}:</span> <span style="font-weight: normal; color: #000;">${ticketImeiNo}</span></div>
           <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.brandModel"]}:</span> <span style="font-weight: normal; color: #000;">${ticketBrand} - ${ticketModel}</span></div>
@@ -4807,8 +4770,8 @@ ${t["receipt.chg"] || "Chg"}:${ticketCharger.padEnd(4)} ${t["receipt.bat"] || "B
         </div>
         
         <div style="margin: 6px 0;">
-          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.mobileCondition"]}:</span> <span style="font-weight: normal; color: #000;">${ticketEquipmentObs}</span></div>
-          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["table.phoneIssue"] || t["receipt.problem"]}:</span> <span style="font-weight: normal; color: #000;">${ticketPhoneIssue}</span></div>
+          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.mobileCondition"] || "Mobile Condition (On Arrival)"}:</span> <span style="font-weight: normal; color: #000;">${ticketEquipmentObs}</span></div>
+          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["table.phoneIssue"] || "Phone Issue"}:</span> <span style="font-weight: normal; color: #000;">${ticketPhoneIssue}</span></div>
           <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.services"]}:</span> <span style="font-weight: normal; color: #000;">${services}</span></div>
           <div style="font-weight: bold; margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};">${t["receipt.equipmentCheck"]}:</div>
           <div style="margin: 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight}; font-weight: normal; color: #000;"><span style="font-weight: bold;">${t["form.simCard"]}:</span> ${ticketSimCard} | <span style="font-weight: bold;">${t["form.simTray"]}:</span> ${ticketSimTray} | <span style="font-weight: bold;">${t["form.memoryCard"]}:</span> ${ticketMemoryCard} | <span style="font-weight: bold;">${t["form.charger"]}:</span> ${ticketCharger} | <span style="font-weight: bold;">${t["form.battery"]}:</span> ${ticketBattery} | <span style="font-weight: bold;">${t["form.waterDamaged"]}:</span> ${ticketWaterDamaged}</div>
@@ -4817,8 +4780,8 @@ ${t["receipt.chg"] || "Chg"}:${ticketCharger.padEnd(4)} ${t["receipt.bat"] || "B
             const amount = priceType === "price" 
               ? Number.parseFloat(ticket.price || 0)
               : Number.parseFloat(ticket.budget || ticket.price || 0)
-            const priceLabel = priceType === "price" ? t["form.price"] : t["form.budget"]
-            return `<div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${priceLabel}:</span> <span style="font-weight: normal; color: #000;">€${amount.toFixed(2)}</span> <span style="font-weight: normal; color: #000; font-size: ${smallFontSize};">${t["receipt.withoutIVA"]}</span></div>`
+            const priceLabel = priceType === "price" ? (t["form.price"] || "Price") : (t["form.budget"] || "Budget")
+            return `<div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${priceLabel}:</span> <span style="font-weight: normal; color: #000;">€${amount.toFixed(2)}</span> <span style="font-weight: normal; color: #000; font-size: ${smallFontSize};">${t["receipt.withoutIVA"] || "Without IVA"}</span></div>`
           })()}
           <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.warranty"]}:</span> <span style="font-weight: normal; color: #000;">${ticketWarrantyText}</span></div>
         </div>
