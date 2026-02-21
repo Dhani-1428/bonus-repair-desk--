@@ -222,19 +222,23 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
       const lowerKey = key.toLowerCase()
       // Only match if the key phrase is at least 3 characters
       if (lowerKey.length >= 3) {
-        // Use word boundaries for better matching
-        const regex = new RegExp(`\\b${lowerKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi')
+        // For multi-word phrases, use a more flexible regex that matches the entire phrase
+        // Escape special regex characters
+        const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+        // Use word boundaries, but also allow matching at start/end of string
+        const regex = new RegExp(`(^|\\s)${escapedKey}(\\s|$)`, 'gi')
         if (regex.test(withoutOk)) {
           const translated = t(value)
           if (translated && translated !== value) {
-            result = result.replace(regex, (match) => {
-              // Preserve original case pattern
-              if (match === match.toUpperCase()) {
-                return translated.toUpperCase()
-              } else if (match[0] === match[0].toUpperCase()) {
-                return translated.charAt(0).toUpperCase() + translated.slice(1).toLowerCase()
+            result = result.replace(regex, (match, before, after) => {
+              // Preserve original case pattern and whitespace
+              let translatedText = translated
+              if (match.trim() === match.trim().toUpperCase()) {
+                translatedText = translated.toUpperCase()
+              } else if (match.trim()[0] === match.trim()[0].toUpperCase()) {
+                translatedText = translated.charAt(0).toUpperCase() + translated.slice(1).toLowerCase()
               }
-              return translated
+              return (before || '') + translatedText + (after || '')
             })
             hasTranslation = true
           }
@@ -419,12 +423,18 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
       const lowerKey = key.toLowerCase()
       // Only match if the key phrase is at least 3 characters
       if (lowerKey.length >= 3) {
-        // Use word boundaries for better matching
-        const regex = new RegExp(`\\b${lowerKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi')
-        if (regex.test(lowerProblem)) {
+        // For multi-word phrases, use a more flexible regex that matches the entire phrase
+        // Escape special regex characters
+        const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+        // Use word boundaries, but also allow matching at start/end of string
+        const regex = new RegExp(`(^|\\s)${escapedKey}(\\s|$)`, 'gi')
+        if (regex.test(problemText)) {
           const translated = t(translationKey)
           if (translated && translated !== translationKey) {
-            result = result.replace(regex, translated)
+            result = result.replace(regex, (match, before, after) => {
+              // Preserve whitespace before and after
+              return (before || '') + translated + (after || '')
+            })
             hasTranslation = true
           }
         }
