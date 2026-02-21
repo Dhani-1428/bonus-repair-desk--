@@ -2229,6 +2229,28 @@ function translateProblemForReceipt(problem: string | null | undefined, lang: Re
     "telefone nao liga": "problem.phoneNotTurningOn",
     "não liga": "problem.wontTurnOn",
     "nao liga": "problem.wontTurnOn",
+    // Additional common phone issue variations
+    "não carrega": "problem.notCharging",
+    "nao carrega": "problem.notCharging",
+    "não funciona": "problem.screenNotWorking",
+    "nao funciona": "problem.screenNotWorking",
+    "ecrã partido": "problem.screenBroken",
+    "ecra partido": "problem.screenBroken",
+    "táctil não funciona": "problem.touchNotWorking",
+    "tactil nao funciona": "problem.touchNotWorking",
+    "bateria não carrega": "problem.batteryNotCharging",
+    "bateria nao carrega": "problem.batteryNotCharging",
+    // Uppercase Portuguese variations
+    "NÃO CARREGA": "problem.notCharging",
+    "NAO CARREGA": "problem.notCharging",
+    "NÃO FUNCIONA": "problem.screenNotWorking",
+    "NAO FUNCIONA": "problem.screenNotWorking",
+    "ECRÃ PARTIDO": "problem.screenBroken",
+    "ECRA PARTIDO": "problem.screenBroken",
+    "TÁCTIL NÃO FUNCIONA": "problem.touchNotWorking",
+    "TACTIL NAO FUNCIONA": "problem.touchNotWorking",
+    "BATERIA NÃO CARREGA": "problem.batteryNotCharging",
+    "BATERIA NAO CARREGA": "problem.batteryNotCharging",
   }
   
   // Try exact match first (case-insensitive)
