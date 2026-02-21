@@ -2167,6 +2167,7 @@ function translateProblemForReceipt(problem: string | null | undefined, lang: Re
     "camera pana": "problem.cameraNotWorking",
     "screen broken": "problem.screenBroken",
     "screen not working": "problem.screenNotWorking",
+    "display not working": "problem.displayNotWorking",
     "touch not working": "problem.touchNotWorking",
     "battery not charging": "problem.batteryNotCharging",
     "does not charge": "problem.notCharging",
@@ -2196,6 +2197,7 @@ function translateProblemForReceipt(problem: string | null | undefined, lang: Re
     "WATER DAMAGE": "problem.waterDamage",
     "SCREEN BROKEN": "problem.screenBroken",
     "SCREEN NOT WORKING": "problem.screenNotWorking",
+    "DISPLAY NOT WORKING": "problem.displayNotWorking",
     "NETWORK PROBLEM": "problem.networkIssue",
     "NETWORK ISSUE": "problem.networkIssue",
     "BOTH SIDE": "problem.networkIssue",
@@ -2322,8 +2324,11 @@ function translateServicesForReceipt(services: string | string[] | null | undefi
     "lcd ok": "service.lcd",
     "change lcd": "service.lcd",
     "lcd": "service.lcd",
+    "display": "service.lcd",
+    "Display": "service.lcd",
     // Uppercase variations
     "LCD": "service.lcd",
+    "DISPLAY": "service.lcd",
     "LCD OK": "service.lcd",
     "LCD CHANGE": "service.lcd",
     "LCD NEW": "service.lcd",
@@ -2450,30 +2455,38 @@ function translateServicesForReceipt(services: string | string[] | null | undefi
       }
     }
     
-    // Try partial match ONLY for very short service names (1-2 words max)
-    // Don't translate longer descriptive text like "Display and back glass was changed"
-    // Only translate if the input is a short, standalone service name
-    const wordCount = trimmedService.split(/\s+/).length
-    if (wordCount <= 2) {
-      // Only do partial matching for very short inputs (1-2 words)
-      for (const [key, translationKey] of Object.entries(serviceMap)) {
-        const lowerKey = key.toLowerCase()
-        // Only match if input is very similar to the key (exact match already handled above)
-        // For partial match, only if the key length is at least 70% of input length
-        // This prevents matching "back glass" in "Display and back glass was changed"
-        if (key.length >= withoutOk.length * 0.7 && withoutOk.includes(lowerKey)) {
+    // Try phrase translation - translate parts of longer descriptive text
+    // Sort by key length (longest first) to match longer phrases first
+    const sortedEntries = Object.entries(serviceMap).sort((a, b) => b[0].length - a[0].length)
+    let result = service
+    let hasTranslation = false
+    
+    for (const [key, translationKey] of sortedEntries) {
+      const lowerKey = key.toLowerCase()
+      // Only match if the key phrase is at least 3 characters
+      if (lowerKey.length >= 3) {
+        // Use word boundaries for better matching
+        const regex = new RegExp(`\\b${lowerKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi')
+        if (regex.test(withoutOk)) {
           const translated = t[translationKey]
           if (translated && translated !== translationKey) {
-            // Preserve "OK" suffix if it was in the original
-            return hasOkSuffix ? `${translated} OK` : translated
+            result = result.replace(regex, (match) => {
+              // Preserve original case pattern
+              if (match === match.toUpperCase()) {
+                return translated.toUpperCase()
+              } else if (match[0] === match[0].toUpperCase()) {
+                return translated.charAt(0).toUpperCase() + translated.slice(1).toLowerCase()
+              }
+              return translated
+            })
+            hasTranslation = true
           }
         }
       }
     }
     
-    // If no match found, return original (which already includes "OK" if present)
-    // This preserves custom descriptive text like "Display and back glass was changed"
-    return service
+    // Return translated result with "OK" suffix if it was in the original, otherwise return original
+    return hasTranslation ? (hasOkSuffix ? `${result} OK` : result) : service
   })
   
   return translated.join(", ")

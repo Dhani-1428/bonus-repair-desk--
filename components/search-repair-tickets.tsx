@@ -113,6 +113,9 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
     const serviceMap: Record<string, string> = {
       "LCD": "service.lcd",
       "lcd": "service.lcd",
+      "Display": "service.lcd",
+      "display": "service.lcd",
+      "DISPLAY": "service.lcd",
       "Battery": "service.battery",
       "battery": "service.battery",
       "BATTERY NEW": "service.battery",
@@ -209,34 +212,38 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
       }
     }
     
-    // Try partial match ONLY for very short service names (1-2 words max)
-    // Don't translate longer descriptive text like "Display and back glass was changed"
-    // Only translate if the input is a short, standalone service name
-    const wordCount = trimmedService.split(/\s+/).length
-    if (wordCount <= 2) {
-      // Only do partial matching for very short inputs (1-2 words)
-      for (const [key, value] of Object.entries(serviceMap)) {
-        const lowerKey = key.toLowerCase()
-        // Only match if input is very similar to the key (exact match or key is most of the input)
-        if (lowerKey === withoutOk || withoutOk === lowerKey) {
-          // Already handled in exact match above, skip
-          continue
-        }
-        // For partial match, only if the key length is at least 70% of input length
-        // This prevents matching "back glass" in "Display and back glass was changed"
-        if (key.length >= withoutOk.length * 0.7 && withoutOk.includes(lowerKey)) {
+    // Try phrase translation - translate parts of longer descriptive text
+    // Sort by key length (longest first) to match longer phrases first
+    const sortedEntries = Object.entries(serviceMap).sort((a, b) => b[0].length - a[0].length)
+    let result = trimmedService
+    let hasTranslation = false
+    
+    for (const [key, value] of sortedEntries) {
+      const lowerKey = key.toLowerCase()
+      // Only match if the key phrase is at least 3 characters
+      if (lowerKey.length >= 3) {
+        // Use word boundaries for better matching
+        const regex = new RegExp(`\\b${lowerKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi')
+        if (regex.test(withoutOk)) {
           const translated = t(value)
           if (translated && translated !== value) {
-            // Preserve "OK" suffix if it was in the original
-            return hasOkSuffix ? `${translated} OK` : translated
+            result = result.replace(regex, (match) => {
+              // Preserve original case pattern
+              if (match === match.toUpperCase()) {
+                return translated.toUpperCase()
+              } else if (match[0] === match[0].toUpperCase()) {
+                return translated.charAt(0).toUpperCase() + translated.slice(1).toLowerCase()
+              }
+              return translated
+            })
+            hasTranslation = true
           }
         }
       }
     }
     
-    // If no translation found, return original (which already includes "OK" if present)
-    // This preserves custom descriptive text like "Display and back glass was changed"
-    return trimmedService
+    // Return translated result with "OK" suffix if it was in the original, otherwise return original
+    return hasTranslation ? (hasOkSuffix ? `${result} OK` : result) : trimmedService
   }
 
   // Helper function to translate multiple services (comma-separated or array)
@@ -373,21 +380,8 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
     
     // Try exact match first (case-insensitive)
     for (const [key, translationKey] of Object.entries(problemMap)) {
-      if (lowerProblem === key.toLowerCase()) {
-        const translated = t(translationKey)
-        if (translated && translated !== translationKey) {
-          return translated
-        }
-      }
-    }
-    
-    // Try partial match - only if the key is a significant part of the problem
-    // This prevents short words like "repair" from matching "dead repair"
-    for (const [key, translationKey] of Object.entries(problemMap)) {
       const lowerKey = key.toLowerCase()
-      // Only match if the key phrase is at least 3 characters and is contained in the problem
-      // OR if the problem is contained in the key (for exact phrases)
-      if (lowerKey.length >= 3 && lowerProblem.includes(lowerKey)) {
+      if (lowerProblem === lowerKey || problemText === key || problemText === key.toUpperCase()) {
         const translated = t(translationKey)
         if (translated && translated !== translationKey) {
           return translated
@@ -395,8 +389,30 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
       }
     }
     
-    // ALWAYS return original text if no translation found - this ensures old data is displayed
-    return problemText
+    // Try phrase translation - translate parts of longer descriptive text
+    // Sort by key length (longest first) to match longer phrases first
+    const sortedEntries = Object.entries(problemMap).sort((a, b) => b[0].length - a[0].length)
+    let result = problemText
+    let hasTranslation = false
+    
+    for (const [key, translationKey] of sortedEntries) {
+      const lowerKey = key.toLowerCase()
+      // Only match if the key phrase is at least 3 characters
+      if (lowerKey.length >= 3) {
+        // Use word boundaries for better matching
+        const regex = new RegExp(`\\b${lowerKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi')
+        if (regex.test(lowerProblem)) {
+          const translated = t(translationKey)
+          if (translated && translated !== translationKey) {
+            result = result.replace(regex, translated)
+            hasTranslation = true
+          }
+        }
+      }
+    }
+    
+    // Return translated result if any translation was found, otherwise return original
+    return hasTranslation ? result : problemText
   }
 
   // Helper function to sort tickets by clientId (CLI-0001, CLI-0002, etc.) then by createdAt
