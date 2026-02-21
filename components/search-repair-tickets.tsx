@@ -1616,7 +1616,12 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
               <Textarea 
                 id="edit-selectedServices" 
                 value={(() => {
-                  // Get value - handle both string and array formats
+                  // Priority: repairObs > selectedServices
+                  // If repairObs exists, use it (this is what's shown in Services Done column)
+                  if (editFormData.repairObs && editFormData.repairObs.trim() !== "") {
+                    return editFormData.repairObs
+                  }
+                  // Otherwise, get value from selectedServices - handle both string and array formats
                   if (typeof editFormData.selectedServices === 'string') {
                     return editFormData.selectedServices
                   } else if (Array.isArray(editFormData.selectedServices)) {
@@ -1627,8 +1632,9 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                 onChange={(e) => {
                   const value = e.target.value
                   // Store as string to allow unlimited text input with formatting preserved
-                  // This will be saved to repairObs when form is submitted
-                  setEditFormData({ ...editFormData, selectedServices: value })
+                  // Update both repairObs and selectedServices to keep them in sync
+                  // This ensures the Services Done column shows the updated value
+                  setEditFormData({ ...editFormData, repairObs: value, selectedServices: value })
                 }} 
                 className="bg-white dark:bg-gray-800 border-blue-300 dark:border-gray-700 text-black dark:text-white min-h-[120px] resize-y w-full" 
                 placeholder="Enter services or repair observations (comma-separated or multiple lines)"
