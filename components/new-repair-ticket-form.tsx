@@ -2485,6 +2485,26 @@ function translateServicesForReceipt(services: string | string[] | null | undefi
       }
     }
     
+    // Translate common English phrases in service descriptions
+    const commonPhrases: Record<string, string> = {
+      "and": lang === "pt" ? "e" : lang === "de" ? "und" : lang === "fr" ? "et" : lang === "es" ? "y" : "and",
+      "was changed": lang === "pt" ? "foi trocado" : lang === "de" ? "wurde geändert" : lang === "fr" ? "a été changé" : lang === "es" ? "fue cambiado" : "was changed",
+      "was replaced": lang === "pt" ? "foi substituído" : lang === "de" ? "wurde ersetzt" : lang === "fr" ? "a été remplacé" : lang === "es" ? "fue reemplazado" : "was replaced",
+      "was fixed": lang === "pt" ? "foi reparado" : lang === "de" ? "wurde repariert" : lang === "fr" ? "a été réparé" : lang === "es" ? "fue reparado" : "was fixed",
+      "was repaired": lang === "pt" ? "foi reparado" : lang === "de" ? "wurde repariert" : lang === "fr" ? "a été réparé" : lang === "es" ? "fue reparado" : "was repaired",
+    }
+    
+    // Apply common phrase translations
+    for (const [englishPhrase, translatedPhrase] of Object.entries(commonPhrases)) {
+      if (englishPhrase !== translatedPhrase) {
+        const regex = new RegExp(`\\b${englishPhrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi')
+        if (regex.test(result)) {
+          result = result.replace(regex, translatedPhrase)
+          hasTranslation = true
+        }
+      }
+    }
+    
     // Return translated result with "OK" suffix if it was in the original, otherwise return original
     return hasTranslation ? (hasOkSuffix ? `${result} OK` : result) : service
   })

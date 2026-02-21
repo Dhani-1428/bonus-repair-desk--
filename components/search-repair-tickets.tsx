@@ -35,7 +35,7 @@ type SearchRepairTicketsProps = {
 export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTicketsProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { t } = useTranslation()
+  const { t, language } = useTranslation()
   const [tickets, setTickets] = useState<any[]>([])
   const [filteredTickets, setFilteredTickets] = useState<any[]>([])
   const [searchTerm, setSearchTerm] = useState("")
@@ -238,6 +238,26 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
             })
             hasTranslation = true
           }
+        }
+      }
+    }
+    
+    // Translate common English phrases in service descriptions
+    const commonPhrases: Record<string, string> = {
+      "and": language === "pt" ? "e" : language === "de" ? "und" : language === "fr" ? "et" : language === "es" ? "y" : language === "it" ? "e" : language === "nl" ? "en" : "and",
+      "was changed": language === "pt" ? "foi trocado" : language === "de" ? "wurde geändert" : language === "fr" ? "a été changé" : language === "es" ? "fue cambiado" : language === "it" ? "è stato cambiato" : language === "nl" ? "werd gewijzigd" : "was changed",
+      "was replaced": language === "pt" ? "foi substituído" : language === "de" ? "wurde ersetzt" : language === "fr" ? "a été remplacé" : language === "es" ? "fue reemplazado" : language === "it" ? "è stato sostituito" : language === "nl" ? "werd vervangen" : "was replaced",
+      "was fixed": language === "pt" ? "foi reparado" : language === "de" ? "wurde repariert" : language === "fr" ? "a été réparé" : language === "es" ? "fue reparado" : language === "it" ? "è stato riparato" : language === "nl" ? "werd gerepareerd" : "was fixed",
+      "was repaired": language === "pt" ? "foi reparado" : language === "de" ? "wurde repariert" : language === "fr" ? "a été réparé" : language === "es" ? "fue reparado" : language === "it" ? "è stato riparato" : language === "nl" ? "werd gerepareerd" : "was repaired",
+    }
+    
+    // Apply common phrase translations
+    for (const [englishPhrase, translatedPhrase] of Object.entries(commonPhrases)) {
+      if (englishPhrase !== translatedPhrase) {
+        const regex = new RegExp(`\\b${englishPhrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi')
+        if (regex.test(result)) {
+          result = result.replace(regex, translatedPhrase)
+          hasTranslation = true
         }
       }
     }
