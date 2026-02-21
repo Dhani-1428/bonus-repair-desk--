@@ -2450,11 +2450,18 @@ function translateServicesForReceipt(services: string | string[] | null | undefi
       }
     }
     
-    // Try partial match - check if service contains key or key contains service
-    for (const [key, translationKey] of Object.entries(serviceMap)) {
-      // Match if the key is a significant part of the service (at least 3 chars)
-      if (key.length >= 3) {
-        if (normalized.includes(key) || withoutOk.includes(key) || key.includes(withoutOk)) {
+    // Try partial match ONLY for very short service names (1-2 words max)
+    // Don't translate longer descriptive text like "Display and back glass was changed"
+    // Only translate if the input is a short, standalone service name
+    const wordCount = trimmedService.split(/\s+/).length
+    if (wordCount <= 2) {
+      // Only do partial matching for very short inputs (1-2 words)
+      for (const [key, translationKey] of Object.entries(serviceMap)) {
+        const lowerKey = key.toLowerCase()
+        // Only match if input is very similar to the key (exact match already handled above)
+        // For partial match, only if the key length is at least 70% of input length
+        // This prevents matching "back glass" in "Display and back glass was changed"
+        if (key.length >= withoutOk.length * 0.7 && withoutOk.includes(lowerKey)) {
           const translated = t[translationKey]
           if (translated && translated !== translationKey) {
             // Preserve "OK" suffix if it was in the original
@@ -2465,6 +2472,7 @@ function translateServicesForReceipt(services: string | string[] | null | undefi
     }
     
     // If no match found, return original (which already includes "OK" if present)
+    // This preserves custom descriptive text like "Display and back glass was changed"
     return service
   })
   

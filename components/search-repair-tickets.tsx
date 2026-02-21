@@ -209,18 +209,33 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
       }
     }
     
-    // Try partial match for service names that might contain the service
-    for (const [key, value] of Object.entries(serviceMap)) {
-      if (lowerServiceName.includes(key.toLowerCase()) || key.toLowerCase().includes(withoutOk) || withoutOk.includes(key.toLowerCase())) {
-        const translated = t(value)
-        if (translated && translated !== value) {
-          // Preserve "OK" suffix if it was in the original
-          return hasOkSuffix ? `${translated} OK` : translated
+    // Try partial match ONLY for very short service names (1-2 words max)
+    // Don't translate longer descriptive text like "Display and back glass was changed"
+    // Only translate if the input is a short, standalone service name
+    const wordCount = trimmedService.split(/\s+/).length
+    if (wordCount <= 2) {
+      // Only do partial matching for very short inputs (1-2 words)
+      for (const [key, value] of Object.entries(serviceMap)) {
+        const lowerKey = key.toLowerCase()
+        // Only match if input is very similar to the key (exact match or key is most of the input)
+        if (lowerKey === withoutOk || withoutOk === lowerKey) {
+          // Already handled in exact match above, skip
+          continue
+        }
+        // For partial match, only if the key length is at least 70% of input length
+        // This prevents matching "back glass" in "Display and back glass was changed"
+        if (key.length >= withoutOk.length * 0.7 && withoutOk.includes(lowerKey)) {
+          const translated = t(value)
+          if (translated && translated !== value) {
+            // Preserve "OK" suffix if it was in the original
+            return hasOkSuffix ? `${translated} OK` : translated
+          }
         }
       }
     }
     
     // If no translation found, return original (which already includes "OK" if present)
+    // This preserves custom descriptive text like "Display and back glass was changed"
     return trimmedService
   }
 
