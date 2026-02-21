@@ -2604,6 +2604,15 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "form.price": "Price",
       "form.budget": "Budget",
       "receipt.withoutIVA": "Without IVA",
+      "receipt.clientContact": "Contact",
+      "table.phoneIssue": "Phone Issue",
+      "common.notAvailable": "N/A",
+      "receipt.equipmentCheck.sim": "SIM",
+      "receipt.equipmentCheck.tray": "Tray",
+      "receipt.equipmentCheck.card": "Card",
+      "receipt.equipmentCheck.chg": "Chg",
+      "receipt.equipmentCheck.bat": "Bat",
+      "receipt.equipmentCheck.water": "Water",
     },
     pt: {
       "receipt.clientCopy": "CÓPIA DO CLIENTE",
@@ -2682,6 +2691,15 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "form.price": "Preço",
       "form.budget": "Orçamento",
       "receipt.withoutIVA": "Sem IVA",
+      "receipt.clientContact": "Contacto",
+      "table.phoneIssue": "Problema do Telefone",
+      "common.notAvailable": "N/A",
+      "receipt.equipmentCheck.sim": "SIM",
+      "receipt.equipmentCheck.tray": "Bandeja",
+      "receipt.equipmentCheck.card": "Cartão",
+      "receipt.equipmentCheck.chg": "Carreg",
+      "receipt.equipmentCheck.bat": "Bat",
+      "receipt.equipmentCheck.water": "Água",
     },
     de: {
       "receipt.clientCopy": "KUNDENKOPIE",
@@ -2760,6 +2778,15 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "form.price": "Preis",
       "form.budget": "Budget",
       "receipt.withoutIVA": "Ohne MwSt",
+      "receipt.clientContact": "Kontakt",
+      "table.phoneIssue": "Telefonproblem",
+      "common.notAvailable": "N/V",
+      "receipt.equipmentCheck.sim": "SIM",
+      "receipt.equipmentCheck.tray": "Schublade",
+      "receipt.equipmentCheck.card": "Karte",
+      "receipt.equipmentCheck.chg": "Ladegerät",
+      "receipt.equipmentCheck.bat": "Batterie",
+      "receipt.equipmentCheck.water": "Wasser",
     },
     fr: {
       "receipt.clientCopy": "COPIE CLIENT",
@@ -2838,6 +2865,15 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "form.price": "Prix",
       "form.budget": "Budget",
       "receipt.withoutIVA": "Sans TVA",
+      "receipt.clientContact": "Contact",
+      "table.phoneIssue": "Problème de téléphone",
+      "common.notAvailable": "N/D",
+      "receipt.equipmentCheck.sim": "SIM",
+      "receipt.equipmentCheck.tray": "Bac",
+      "receipt.equipmentCheck.card": "Carte",
+      "receipt.equipmentCheck.chg": "Chargeur",
+      "receipt.equipmentCheck.bat": "Batterie",
+      "receipt.equipmentCheck.water": "Eau",
     },
     ur: {
       "receipt.clientCopy": "کلائنٹ کاپی",
@@ -2878,6 +2914,15 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "form.price": "قیمت",
       "form.budget": "بجٹ",
       "receipt.withoutIVA": "بغیر VAT",
+      "receipt.clientContact": "رابطہ",
+      "table.phoneIssue": "فون کا مسئلہ",
+      "common.notAvailable": "N/A",
+      "receipt.equipmentCheck.sim": "سیم",
+      "receipt.equipmentCheck.tray": "ٹرے",
+      "receipt.equipmentCheck.card": "کارڈ",
+      "receipt.equipmentCheck.chg": "چارجر",
+      "receipt.equipmentCheck.bat": "بیٹری",
+      "receipt.equipmentCheck.water": "پانی",
       // Service names
       "service.lcd": "LCD",
       "service.battery": "بیٹری",
@@ -3000,6 +3045,15 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "form.price": "कीमत",
       "form.budget": "बजट",
       "receipt.withoutIVA": "VAT के बिना",
+      "receipt.clientContact": "संपर्क",
+      "table.phoneIssue": "फोन समस्या",
+      "common.notAvailable": "N/A",
+      "receipt.equipmentCheck.sim": "SIM",
+      "receipt.equipmentCheck.tray": "ट्रे",
+      "receipt.equipmentCheck.card": "कार्ड",
+      "receipt.equipmentCheck.chg": "चार्जर",
+      "receipt.equipmentCheck.bat": "बैटरी",
+      "receipt.equipmentCheck.water": "पानी",
     },
     es: {
       "receipt.clientCopy": "COPIA DEL CLIENTE",
@@ -3078,6 +3132,15 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "form.price": "Precio",
       "form.budget": "Presupuesto",
       "receipt.withoutIVA": "Sin IVA",
+      "receipt.clientContact": "Contacto",
+      "table.phoneIssue": "Problema del Teléfono",
+      "common.notAvailable": "N/D",
+      "receipt.equipmentCheck.sim": "SIM",
+      "receipt.equipmentCheck.tray": "Bandeja",
+      "receipt.equipmentCheck.card": "Tarjeta",
+      "receipt.equipmentCheck.chg": "Cargador",
+      "receipt.equipmentCheck.bat": "Batería",
+      "receipt.equipmentCheck.water": "Agua",
     },
     it: {
       "receipt.clientCopy": "COPIA CLIENTE",
@@ -3120,6 +3183,15 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "form.price": "Prezzo",
       "form.budget": "Preventivo",
       "receipt.withoutIVA": "Senza IVA",
+      "receipt.clientContact": "Contatto",
+      "table.phoneIssue": "Problema del Telefono",
+      "common.notAvailable": "N/D",
+      "receipt.equipmentCheck.sim": "SIM",
+      "receipt.equipmentCheck.tray": "Vassoio",
+      "receipt.equipmentCheck.card": "Scheda",
+      "receipt.equipmentCheck.chg": "Caricatore",
+      "receipt.equipmentCheck.bat": "Batteria",
+      "receipt.equipmentCheck.water": "Acqua",
     },
     nl: {
       "receipt.clientCopy": "KLANTENKOPIE",
@@ -3162,6 +3234,15 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "form.price": "Prijs",
       "form.budget": "Begroting",
       "receipt.withoutIVA": "Zonder BTW",
+      "receipt.clientContact": "Contact",
+      "table.phoneIssue": "Telefoonprobleem",
+      "common.notAvailable": "N/B",
+      "receipt.equipmentCheck.sim": "SIM",
+      "receipt.equipmentCheck.tray": "Lade",
+      "receipt.equipmentCheck.card": "Kaart",
+      "receipt.equipmentCheck.chg": "Oplader",
+      "receipt.equipmentCheck.bat": "Batterij",
+      "receipt.equipmentCheck.water": "Water",
     },
     pl: {
       "receipt.clientCopy": "KOPIA KLIENTA",
@@ -3204,6 +3285,15 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "form.price": "Cena",
       "form.budget": "Budżet",
       "receipt.withoutIVA": "Bez VAT",
+      "receipt.clientContact": "Kontakt",
+      "table.phoneIssue": "Problem z Telefonem",
+      "common.notAvailable": "N/D",
+      "receipt.equipmentCheck.sim": "SIM",
+      "receipt.equipmentCheck.tray": "Szafka",
+      "receipt.equipmentCheck.card": "Karta",
+      "receipt.equipmentCheck.chg": "Ładowarka",
+      "receipt.equipmentCheck.bat": "Bateria",
+      "receipt.equipmentCheck.water": "Woda",
     },
     ro: {
       "receipt.clientCopy": "COPIE CLIENT",
@@ -3246,6 +3336,15 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "form.price": "Preț",
       "form.budget": "Buget",
       "receipt.withoutIVA": "Fără TVA",
+      "receipt.clientContact": "Contact",
+      "table.phoneIssue": "Problema Telefonului",
+      "common.notAvailable": "N/D",
+      "receipt.equipmentCheck.sim": "SIM",
+      "receipt.equipmentCheck.tray": "Tava",
+      "receipt.equipmentCheck.card": "Card",
+      "receipt.equipmentCheck.chg": "Încărcător",
+      "receipt.equipmentCheck.bat": "Baterie",
+      "receipt.equipmentCheck.water": "Apă",
     },
     el: {
       "receipt.clientCopy": "ΑΝΤΙΓΡΑΦΟ ΠΕΛΑΤΗ",
@@ -3288,6 +3387,15 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "form.price": "Τιμή",
       "form.budget": "Προϋπολογισμός",
       "receipt.withoutIVA": "Χωρίς ΦΠΑ",
+      "receipt.clientContact": "Επικοινωνία",
+      "table.phoneIssue": "Πρόβλημα Τηλεφώνου",
+      "common.notAvailable": "Δ/Υ",
+      "receipt.equipmentCheck.sim": "SIM",
+      "receipt.equipmentCheck.tray": "Δίσκος",
+      "receipt.equipmentCheck.card": "Κάρτα",
+      "receipt.equipmentCheck.chg": "Φορτιστής",
+      "receipt.equipmentCheck.bat": "Μπαταρία",
+      "receipt.equipmentCheck.water": "Νερό",
     },
     cs: {
       "receipt.clientCopy": "KOPIE KLIENTA",
@@ -3330,6 +3438,15 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "form.price": "Cena",
       "form.budget": "Rozpočet",
       "receipt.withoutIVA": "Bez DPH",
+      "receipt.clientContact": "Kontakt",
+      "table.phoneIssue": "Problém Telefonu",
+      "common.notAvailable": "N/D",
+      "receipt.equipmentCheck.sim": "SIM",
+      "receipt.equipmentCheck.tray": "Přihrádka",
+      "receipt.equipmentCheck.card": "Karta",
+      "receipt.equipmentCheck.chg": "Nabíječka",
+      "receipt.equipmentCheck.bat": "Baterie",
+      "receipt.equipmentCheck.water": "Voda",
     },
     hu: {
       "receipt.clientCopy": "ÜGYFÉL MÁSOLAT",
@@ -3372,6 +3489,15 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "form.price": "Ár",
       "form.budget": "Költségvetés",
       "receipt.withoutIVA": "ÁFA Nélkül",
+      "receipt.clientContact": "Kapcsolat",
+      "table.phoneIssue": "Telefon Probléma",
+      "common.notAvailable": "N/A",
+      "receipt.equipmentCheck.sim": "SIM",
+      "receipt.equipmentCheck.tray": "Tálca",
+      "receipt.equipmentCheck.card": "Kártya",
+      "receipt.equipmentCheck.chg": "Töltő",
+      "receipt.equipmentCheck.bat": "Akkumulátor",
+      "receipt.equipmentCheck.water": "Víz",
     },
     sv: {
       "receipt.clientCopy": "KUNDKOPIA",
@@ -3414,6 +3540,15 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "form.price": "Pris",
       "form.budget": "Budget",
       "receipt.withoutIVA": "Utan Moms",
+      "receipt.clientContact": "Kontakt",
+      "table.phoneIssue": "Telefonproblem",
+      "common.notAvailable": "Saknas",
+      "receipt.equipmentCheck.sim": "SIM",
+      "receipt.equipmentCheck.tray": "Fack",
+      "receipt.equipmentCheck.card": "Kort",
+      "receipt.equipmentCheck.chg": "Laddare",
+      "receipt.equipmentCheck.bat": "Batteri",
+      "receipt.equipmentCheck.water": "Vatten",
     },
     fi: {
       "receipt.clientCopy": "ASIAKASKOPIO",
@@ -3456,6 +3591,15 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "form.price": "Hinta",
       "form.budget": "Budjetti",
       "receipt.withoutIVA": "Ilman ALV",
+      "receipt.clientContact": "Yhteystiedot",
+      "table.phoneIssue": "Puhelinongelma",
+      "common.notAvailable": "Ei saatavilla",
+      "receipt.equipmentCheck.sim": "SIM",
+      "receipt.equipmentCheck.tray": "Lokero",
+      "receipt.equipmentCheck.card": "Kortti",
+      "receipt.equipmentCheck.chg": "Laturi",
+      "receipt.equipmentCheck.bat": "Akku",
+      "receipt.equipmentCheck.water": "Vesi",
     },
     da: {
       "receipt.clientCopy": "KLIENTKOPI",
@@ -3498,6 +3642,15 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "form.price": "Pris",
       "form.budget": "Budget",
       "receipt.withoutIVA": "Uden Moms",
+      "receipt.clientContact": "Kontakt",
+      "table.phoneIssue": "Telefonproblem",
+      "common.notAvailable": "Ikke tilgængelig",
+      "receipt.equipmentCheck.sim": "SIM",
+      "receipt.equipmentCheck.tray": "Skuffe",
+      "receipt.equipmentCheck.card": "Kort",
+      "receipt.equipmentCheck.chg": "Oplader",
+      "receipt.equipmentCheck.bat": "Batteri",
+      "receipt.equipmentCheck.water": "Vand",
     },
     bg: {
       "receipt.clientCopy": "КЛИЕНТСКО КОПИЕ",
@@ -3540,6 +3693,15 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "form.price": "Цена",
       "form.budget": "Бюджет",
       "receipt.withoutIVA": "Без ДДС",
+      "receipt.clientContact": "Контакт",
+      "table.phoneIssue": "Проблем с Телефона",
+      "common.notAvailable": "Н/Д",
+      "receipt.equipmentCheck.sim": "SIM",
+      "receipt.equipmentCheck.tray": "Лоток",
+      "receipt.equipmentCheck.card": "Карта",
+      "receipt.equipmentCheck.chg": "Зарядник",
+      "receipt.equipmentCheck.bat": "Батерия",
+      "receipt.equipmentCheck.water": "Вода",
     },
     hr: {
       "receipt.clientCopy": "KOPIJA KLIJENTA",
@@ -3582,6 +3744,15 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "form.price": "Cijena",
       "form.budget": "Proračun",
       "receipt.withoutIVA": "Bez PDV-a",
+      "receipt.clientContact": "Kontakt",
+      "table.phoneIssue": "Problem s Telefonom",
+      "common.notAvailable": "N/D",
+      "receipt.equipmentCheck.sim": "SIM",
+      "receipt.equipmentCheck.tray": "Ladic",
+      "receipt.equipmentCheck.card": "Kartica",
+      "receipt.equipmentCheck.chg": "Punjač",
+      "receipt.equipmentCheck.bat": "Baterija",
+      "receipt.equipmentCheck.water": "Voda",
     },
     sk: {
       "receipt.clientCopy": "KÓPIA KLIENTA",
@@ -3624,6 +3795,15 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "form.price": "Cena",
       "form.budget": "Rozpočet",
       "receipt.withoutIVA": "Bez DPH",
+      "receipt.clientContact": "Kontakt",
+      "table.phoneIssue": "Problém s Telefónom",
+      "common.notAvailable": "N/D",
+      "receipt.equipmentCheck.sim": "SIM",
+      "receipt.equipmentCheck.tray": "Zásuvka",
+      "receipt.equipmentCheck.card": "Karta",
+      "receipt.equipmentCheck.chg": "Nabíjačka",
+      "receipt.equipmentCheck.bat": "Batéria",
+      "receipt.equipmentCheck.water": "Voda",
     },
     sl: {
       "receipt.clientCopy": "KOPIJA STRANKE",
@@ -3666,6 +3846,15 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "form.price": "Cena",
       "form.budget": "Proračun",
       "receipt.withoutIVA": "Brez DDV",
+      "receipt.clientContact": "Kontakt",
+      "table.phoneIssue": "Težava s Telefonom",
+      "common.notAvailable": "Ni na voljo",
+      "receipt.equipmentCheck.sim": "SIM",
+      "receipt.equipmentCheck.tray": "Predal",
+      "receipt.equipmentCheck.card": "Kartica",
+      "receipt.equipmentCheck.chg": "Polnilec",
+      "receipt.equipmentCheck.bat": "Baterija",
+      "receipt.equipmentCheck.water": "Voda",
     },
     lt: {
       "receipt.clientCopy": "KLIENTO KOPIJA",
@@ -3708,6 +3897,15 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "form.price": "Kaina",
       "form.budget": "Biudžetas",
       "receipt.withoutIVA": "Be PVM",
+      "receipt.clientContact": "Kontaktas",
+      "table.phoneIssue": "Telefono Problema",
+      "common.notAvailable": "Nėra",
+      "receipt.equipmentCheck.sim": "SIM",
+      "receipt.equipmentCheck.tray": "Dėžutė",
+      "receipt.equipmentCheck.card": "Kortelė",
+      "receipt.equipmentCheck.chg": "Įkroviklis",
+      "receipt.equipmentCheck.bat": "Baterija",
+      "receipt.equipmentCheck.water": "Vanduo",
     },
     lv: {
       "receipt.clientCopy": "KLIENTA KOPIJA",
@@ -3750,6 +3948,15 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "form.price": "Cena",
       "form.budget": "Budžets",
       "receipt.withoutIVA": "Bez PVN",
+      "receipt.clientContact": "Kontakti",
+      "table.phoneIssue": "Telefona Problēma",
+      "common.notAvailable": "Nav pieejams",
+      "receipt.equipmentCheck.sim": "SIM",
+      "receipt.equipmentCheck.tray": "Noliktava",
+      "receipt.equipmentCheck.card": "Karte",
+      "receipt.equipmentCheck.chg": "Uzlāde",
+      "receipt.equipmentCheck.bat": "Baterija",
+      "receipt.equipmentCheck.water": "Ūdens",
     },
     et: {
       "receipt.clientCopy": "KLIENDI KOOPIA",
@@ -3792,6 +3999,15 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "form.price": "Hind",
       "form.budget": "Eelarve",
       "receipt.withoutIVA": "Ilma KM-ta",
+      "receipt.clientContact": "Kontakt",
+      "table.phoneIssue": "Telefoni Probleem",
+      "common.notAvailable": "Pole saadaval",
+      "receipt.equipmentCheck.sim": "SIM",
+      "receipt.equipmentCheck.tray": "Kast",
+      "receipt.equipmentCheck.card": "Kaart",
+      "receipt.equipmentCheck.chg": "Laadija",
+      "receipt.equipmentCheck.bat": "Aku",
+      "receipt.equipmentCheck.water": "Vesi",
     },
     ga: {
       "receipt.clientCopy": "CÓIP CHLIENT",
@@ -3834,6 +4050,15 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "form.price": "Praghas",
       "form.budget": "Buiséad",
       "receipt.withoutIVA": "Gan CBL",
+      "receipt.clientContact": "Teagmháil",
+      "table.phoneIssue": "Fadhb Fón",
+      "common.notAvailable": "Níl ar fáil",
+      "receipt.equipmentCheck.sim": "SIM",
+      "receipt.equipmentCheck.tray": "Tráidire",
+      "receipt.equipmentCheck.card": "Cárta",
+      "receipt.equipmentCheck.chg": "Luchtaitheoir",
+      "receipt.equipmentCheck.bat": "Ceallraí",
+      "receipt.equipmentCheck.water": "Uisce",
     },
     mt: {
       "receipt.clientCopy": "KOPJA KLIJENT",
@@ -3876,6 +4101,15 @@ function getReceiptTranslations(lang: ReceiptLanguage = "en") {
       "form.price": "Prezz",
       "form.budget": "Baġit",
       "receipt.withoutIVA": "Bla VAT",
+      "receipt.clientContact": "Kuntatt",
+      "table.phoneIssue": "Problema tat-Telefon",
+      "common.notAvailable": "Mhux disponibbli",
+      "receipt.equipmentCheck.sim": "SIM",
+      "receipt.equipmentCheck.tray": "Tray",
+      "receipt.equipmentCheck.card": "Karta",
+      "receipt.equipmentCheck.chg": "Caricatur",
+      "receipt.equipmentCheck.bat": "Batterija",
+      "receipt.equipmentCheck.water": "Ilma",
     },
   }
   // For languages not yet translated, fall back to English
@@ -4438,15 +4672,15 @@ export async function printReceiptForTickets(
             <div style="display: ${cellLayout}; width: ${cellWidth}; vertical-align: top; padding-left: ${finalPrinterType === "thermal" ? "0" : "6px"}; margin-top: ${finalPrinterType === "thermal" ? "4px" : "0"}; border-top: ${finalPrinterType === "thermal" ? "1px solid #ccc" : "none"}; padding-top: ${finalPrinterType === "thermal" ? "4px" : "0"};">
               <div style="font-weight: bold; font-size: ${headerFontSize}; margin: 0 0 2px 0; padding: 0; color: #000; line-height: ${lineHeight};">${t["receipt.clientId"]}: <span style="font-weight: normal;">${ticketClientId}</span></div>
               <div style="margin: 0 0 2px 0; padding: 0; font-size: ${baseFontSize}; color: #000; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.name"]}:</span> <span style="font-weight: normal;">${ticketCustomerName}</span></div>
-              <div style="margin: 0 0 2px 0; padding: 0; font-size: ${baseFontSize}; color: #000; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.clientContact"] || "Client Contact"}:</span> <span style="font-weight: normal;">${ticketContact}</span></div>
-              <div style="margin: 0; padding: 0; font-size: ${baseFontSize}; color: #000; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.receivedBy"] || "Device Received By"}:</span> <span style="font-weight: normal;">${ticketReceivedBy}</span></div>
+              <div style="margin: 0 0 2px 0; padding: 0; font-size: ${baseFontSize}; color: #000; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.clientContact"]}:</span> <span style="font-weight: normal;">${ticketContact}</span></div>
+              <div style="margin: 0; padding: 0; font-size: ${baseFontSize}; color: #000; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.receivedBy"]}:</span> <span style="font-weight: normal;">${ticketReceivedBy}</span></div>
             </div>
           </div>
         </div>
         
         <div style="margin: 6px 0; page-break-inside: avoid;">
           <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.entryDate"]}:</span> <span style="font-weight: normal; color: #000;">${formattedDate} ${formattedTime}</span></div>
-          ${outDateDisplay ? `<div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.outDate"] || "Out Date"}:</span> <span style="font-weight: normal; color: #000;">${(() => { const outDate = new Date(tickets.find(t => t.deliveredDate)?.deliveredDate || Date.now()); return outDate.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' + outDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }); })()}</span></div>` : ""}
+          ${outDateDisplay ? `<div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.outDate"]}:</span> <span style="font-weight: normal; color: #000;">${(() => { const outDate = new Date(tickets.find(t => t.deliveredDate)?.deliveredDate || Date.now()); return outDate.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' + outDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }); })()}</span></div>` : ""}
           <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">Number of Devices:</span> <span style="font-weight: normal; color: #000;">${tickets.length}</span></div>
         </div>
         
@@ -4506,7 +4740,7 @@ export async function printReceiptForTickets(
                 ? Number.parseFloat(ticket.price || 0)
                 : Number.parseFloat(ticket.budget || ticket.price || 0)
               const ticketPrice = amount.toFixed(2)
-              const priceLabel = priceType === "price" ? (t["form.price"] || "Price") : (t["form.budget"] || "Budget")
+              const priceLabel = priceType === "price" ? t["form.price"] : t["form.budget"]
               
               return `
                 <div style="margin: 6px 0; padding: 5px 0; border-bottom: 1.5px solid #ccc; background-color: #f5f5f5; page-break-inside: avoid;">
@@ -4645,9 +4879,9 @@ export async function printReceiptForTickets(
         <div style="text-align: right; font-size: 13px; margin-bottom: 2px; padding: 0;">
           <span style="font-weight: bold;">${t["receipt.name"]}:</span> <span style="font-weight: normal; color: #000;">${ticketCustomerName}</span>
         </div>
-        ${ticketContact !== "N/A" ? `<div style="text-align: right; font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["receipt.clientContact"] || "Contact"}:</span> <span style="font-weight: normal; color: #000;">${ticketContact}</span></div>` : ""}
+        ${ticketContact !== "N/A" ? `<div style="text-align: right; font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["receipt.clientContact"]}:</span> <span style="font-weight: normal; color: #000;">${ticketContact}</span></div>` : ""}
         <div style="text-align: right; font-size: 13px; margin-bottom: 3px; padding: 0;">
-          <span style="font-weight: bold;">${t["receipt.receivedBy"] || "Received By"}:</span> <span style="font-weight: normal; color: #000;">${ticketReceivedBy}</span>
+          <span style="font-weight: bold;">${t["receipt.receivedBy"]}:</span> <span style="font-weight: normal; color: #000;">${ticketReceivedBy}</span>
         </div>
         
         <!-- Divider Line -->
@@ -4657,7 +4891,7 @@ export async function printReceiptForTickets(
         <div style="font-size: 13px; margin-bottom: 2px; padding: 0;">
           <span style="font-weight: bold;">${t["receipt.entryDate"]}:</span> <span style="font-weight: normal; color: #000;">${formattedDate} ${formattedTime}</span>
         </div>
-        ${outDateDisplay ? `<div style="font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["receipt.outDate"] || "Out Date"}:</span> <span style="font-weight: normal; color: #000;">${(() => { const outDate = new Date(ticket.deliveredDate); return outDate.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' + outDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }); })()}</span></div>` : ""}
+        ${outDateDisplay ? `<div style="font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["receipt.outDate"]}:</span> <span style="font-weight: normal; color: #000;">${(() => { const outDate = new Date(ticket.deliveredDate); return outDate.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' + outDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }); })()}</span></div>` : ""}
         
         <!-- Repair Number -->
         <div style="font-size: 13px; margin-bottom: 2px; padding: 0;">
@@ -4682,12 +4916,12 @@ export async function printReceiptForTickets(
         
         <!-- Device Condition -->
         <div style="font-size: 13px; margin-bottom: 2px; padding: 0;">
-          <span style="font-weight: bold;">${t["receipt.mobileCondition"] || "Condition"}:</span><br/>
+          <span style="font-weight: bold;">${t["receipt.mobileCondition"]}:</span><br/>
           <span style="font-weight: normal; color: #000;">${ticketEquipmentObs}</span>
         </div>
         
         <!-- Phone Issue -->
-        ${ticketPhoneIssue ? `<div style="font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["table.phoneIssue"] || "Issue"}:</span> <span style="font-weight: normal; color: #000;">${ticketPhoneIssue}</span></div>` : ""}
+        ${ticketPhoneIssue ? `<div style="font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["table.phoneIssue"]}:</span> <span style="font-weight: normal; color: #000;">${ticketPhoneIssue}</span></div>` : ""}
         
         <!-- Services (from Services Done column) -->
         ${services !== "N/A" && services !== "-" ? `<div style="font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["receipt.services"]}:</span> <span style="font-weight: normal; color: #000;">${services}</span></div>` : ""}
@@ -4697,8 +4931,8 @@ export async function printReceiptForTickets(
           <span style="font-weight: bold;">${t["receipt.equipmentCheck"]}:</span>
         </div>
         <div style="font-size: 12px; font-family: Arial, sans-serif; margin-bottom: 2px; padding: 0; white-space: pre; font-weight: normal; color: #000;">
-SIM:${ticketSimCard.padEnd(4)} Tray:${ticketSimTray.padEnd(4)} Card:${ticketMemoryCard.padEnd(4)}
-Chg:${ticketCharger.padEnd(4)} Bat:${ticketBattery.padEnd(4)} Water:${ticketWaterDamaged}
+${t["receipt.equipmentCheck.sim"]}:${ticketSimCard.padEnd(4)} ${t["receipt.equipmentCheck.tray"]}:${ticketSimTray.padEnd(4)} ${t["receipt.equipmentCheck.card"]}:${ticketMemoryCard.padEnd(4)}
+${t["receipt.equipmentCheck.chg"]}:${ticketCharger.padEnd(4)} ${t["receipt.equipmentCheck.bat"]}:${ticketBattery.padEnd(4)} ${t["receipt.equipmentCheck.water"]}:${ticketWaterDamaged}
         </div>
         
         <!-- Budget/Price -->
@@ -4707,8 +4941,8 @@ Chg:${ticketCharger.padEnd(4)} Bat:${ticketBattery.padEnd(4)} Water:${ticketWate
           const amount = priceType === "price" 
             ? Number.parseFloat(ticket.price || 0)
             : Number.parseFloat(ticket.budget || ticket.price || 0)
-          const priceLabel = priceType === "price" ? (t["form.price"] || "Price") : (t["form.budget"] || "Budget")
-          return `<div style="font-size: 15px; margin-top: 3px; margin-bottom: 3px; padding: 0;"><span style="font-weight: bold;">${priceLabel}:</span> <span style="font-weight: normal; color: #000;">€${amount.toFixed(2)}</span> <span style="font-weight: normal; color: #000; font-size: 12px;">${t["receipt.withoutIVA"] || "Without IVA"}</span></div>`
+          const priceLabel = priceType === "price" ? t["form.price"] : t["form.budget"]
+          return `<div style="font-size: 15px; margin-top: 3px; margin-bottom: 3px; padding: 0;"><span style="font-weight: bold;">${priceLabel}:</span> <span style="font-weight: normal; color: #000;">€${amount.toFixed(2)}</span> <span style="font-weight: normal; color: #000; font-size: 12px;">${t["receipt.withoutIVA"]}</span></div>`
         })()}
         
         <!-- Warranty -->
@@ -4754,15 +4988,15 @@ Chg:${ticketCharger.padEnd(4)} Bat:${ticketBattery.padEnd(4)} Water:${ticketWate
             <div style="display: ${cellLayout}; width: ${cellWidth}; vertical-align: top; padding-left: ${finalPrinterType === "thermal" ? "0" : "6px"}; margin-top: ${finalPrinterType === "thermal" ? "4px" : "0"}; border-top: ${finalPrinterType === "thermal" ? "1px solid #ccc" : "none"}; padding-top: ${finalPrinterType === "thermal" ? "4px" : "0"};">
               <div style="font-weight: bold; font-size: ${headerFontSize}; margin: 0 0 2px 0; padding: 0; color: #000; line-height: ${lineHeight};">${t["receipt.clientId"]}: ${ticketClientId}</div>
               <div style="margin: 0 0 2px 0; padding: 0; font-size: ${baseFontSize}; color: #000; line-height: ${lineHeight}; font-weight: bold;"><strong>${t["receipt.name"]}:</strong> <strong>${ticketCustomerName}</strong></div>
-              <div style="margin: 0 0 2px 0; padding: 0; font-size: ${baseFontSize}; color: #000; line-height: ${lineHeight}; font-weight: bold;"><strong>${t["receipt.clientContact"] || "Client Contact"}:</strong> <strong>${ticketContact}</strong></div>
-              <div style="margin: 0; padding: 0; font-size: ${baseFontSize}; color: #000; line-height: ${lineHeight}; font-weight: bold;"><strong>${t["receipt.receivedBy"] || "Device Received By"}:</strong> <strong>${ticketReceivedBy}</strong></div>
+              <div style="margin: 0 0 2px 0; padding: 0; font-size: ${baseFontSize}; color: #000; line-height: ${lineHeight}; font-weight: bold;"><strong>${t["receipt.clientContact"]}:</strong> <strong>${ticketContact}</strong></div>
+              <div style="margin: 0; padding: 0; font-size: ${baseFontSize}; color: #000; line-height: ${lineHeight}; font-weight: bold;"><strong>${t["receipt.receivedBy"]}:</strong> <strong>${ticketReceivedBy}</strong></div>
             </div>
           </div>
         </div>
         
         <div style="margin: 6px 0;">
           <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.entryDate"]}:</span> <span style="font-weight: normal; color: #000;">${formattedDate} ${formattedTime}</span></div>
-          ${outDateDisplay ? `<div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.outDate"] || "Out Date"}:</span> <span style="font-weight: normal; color: #000;">${(() => { const outDate = new Date(ticket.deliveredDate); return outDate.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' + outDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }); })()}</span></div>` : ""}
+          ${outDateDisplay ? `<div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.outDate"]}:</span> <span style="font-weight: normal; color: #000;">${(() => { const outDate = new Date(ticket.deliveredDate); return outDate.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' + outDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }); })()}</span></div>` : ""}
           <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.repairN"]}:</span> <span style="font-weight: bold; color: #000;">${ticketRepairNumber}</span></div>
           <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.imei"]}:</span> <span style="font-weight: normal; color: #000;">${ticketImeiNo}</span></div>
           <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.brandModel"]}:</span> <span style="font-weight: normal; color: #000;">${ticketBrand} - ${ticketModel}</span></div>
@@ -4770,8 +5004,8 @@ Chg:${ticketCharger.padEnd(4)} Bat:${ticketBattery.padEnd(4)} Water:${ticketWate
         </div>
         
         <div style="margin: 6px 0;">
-          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.mobileCondition"] || "Mobile Condition (On Arrival)"}:</span> <span style="font-weight: normal; color: #000;">${ticketEquipmentObs}</span></div>
-          ${ticketPhoneIssue ? `<div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["table.phoneIssue"] || "Phone Issue"}:</span> <span style="font-weight: normal; color: #000;">${ticketPhoneIssue}</span></div>` : ""}
+          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.mobileCondition"]}:</span> <span style="font-weight: normal; color: #000;">${ticketEquipmentObs}</span></div>
+          ${ticketPhoneIssue ? `<div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["table.phoneIssue"]}:</span> <span style="font-weight: normal; color: #000;">${ticketPhoneIssue}</span></div>` : ""}
           <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.services"]}:</span> <span style="font-weight: normal; color: #000;">${services}</span></div>
           <div style="font-weight: bold; margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};">${t["receipt.equipmentCheck"]}:</div>
           <div style="margin: 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight}; font-weight: normal; color: #000;"><span style="font-weight: bold;">${t["form.simCard"]}:</span> ${ticketSimCard} | <span style="font-weight: bold;">${t["form.simTray"]}:</span> ${ticketSimTray} | <span style="font-weight: bold;">${t["form.memoryCard"]}:</span> ${ticketMemoryCard} | <span style="font-weight: bold;">${t["form.charger"]}:</span> ${ticketCharger} | <span style="font-weight: bold;">${t["form.battery"]}:</span> ${ticketBattery} | <span style="font-weight: bold;">${t["form.waterDamaged"]}:</span> ${ticketWaterDamaged}</div>
@@ -4780,8 +5014,8 @@ Chg:${ticketCharger.padEnd(4)} Bat:${ticketBattery.padEnd(4)} Water:${ticketWate
             const amount = priceType === "price" 
               ? Number.parseFloat(ticket.price || 0)
               : Number.parseFloat(ticket.budget || ticket.price || 0)
-            const priceLabel = priceType === "price" ? (t["form.price"] || "Price") : (t["form.budget"] || "Budget")
-            return `<div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${priceLabel}:</span> <span style="font-weight: normal; color: #000;">€${amount.toFixed(2)}</span> <span style="font-weight: normal; color: #000; font-size: ${smallFontSize};">${t["receipt.withoutIVA"] || "Without IVA"}</span></div>`
+            const priceLabel = priceType === "price" ? t["form.price"] : t["form.budget"]
+            return `<div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${priceLabel}:</span> <span style="font-weight: normal; color: #000;">€${amount.toFixed(2)}</span> <span style="font-weight: normal; color: #000; font-size: ${smallFontSize};">${t["receipt.withoutIVA"]}</span></div>`
           })()}
           <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.warranty"]}:</span> <span style="font-weight: normal; color: #000;">${ticketWarrantyText}</span></div>
         </div>
