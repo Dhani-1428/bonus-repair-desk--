@@ -4684,10 +4684,8 @@ export async function printReceiptForTickets(
         <div style="font-size: 13px; margin-bottom: 2px; padding: 0;">
           <span style="font-weight: bold;">${t["receipt.mobileCondition"] || "Condition"}:</span><br/>
           <span style="font-weight: normal; color: #000;">${ticketEquipmentObs}</span>
+          ${ticketPhoneIssue ? `<br/><span style="font-weight: bold;">${t["table.phoneIssue"] || "Issue"}:</span> <span style="font-weight: normal; color: #000;">${ticketPhoneIssue}</span>` : ""}
         </div>
-        
-        <!-- Phone Issue -->
-        ${ticketPhoneIssue ? `<div style="font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["table.phoneIssue"] || "Issue"}:</span> <span style="font-weight: normal; color: #000;">${ticketPhoneIssue}</span></div>` : ""}
         
         <!-- Services (from Services Done column) -->
         ${services !== "N/A" && services !== "-" ? `<div style="font-size: 13px; margin-bottom: 2px; padding: 0;"><span style="font-weight: bold;">${t["receipt.services"]}:</span> <span style="font-weight: normal; color: #000;">${services}</span></div>` : ""}
@@ -4770,8 +4768,7 @@ Chg:${ticketCharger.padEnd(4)} Bat:${ticketBattery.padEnd(4)} Water:${ticketWate
         </div>
         
         <div style="margin: 6px 0;">
-          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.mobileCondition"] || "Mobile Condition (On Arrival)"}:</span> <span style="font-weight: normal; color: #000;">${ticketEquipmentObs}</span></div>
-          ${ticketPhoneIssue ? `<div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["table.phoneIssue"] || "Phone Issue"}:</span> <span style="font-weight: normal; color: #000;">${ticketPhoneIssue}</span></div>` : ""}
+          <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.mobileCondition"] || "Mobile Condition (On Arrival)"}:</span> <span style="font-weight: normal; color: #000;">${ticketEquipmentObs}</span>${ticketPhoneIssue ? ` <span style="font-weight: bold;">${t["table.phoneIssue"] || "Phone Issue"}:</span> <span style="font-weight: normal; color: #000;">${ticketPhoneIssue}</span>` : ""}</div>
           <div style="margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};"><span style="font-weight: bold;">${t["receipt.services"]}:</span> <span style="font-weight: normal; color: #000;">${services}</span></div>
           <div style="font-weight: bold; margin: 0 0 4px 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight};">${t["receipt.equipmentCheck"]}:</div>
           <div style="margin: 0; padding: 0; font-size: ${baseFontSize}; line-height: ${lineHeight}; font-weight: normal; color: #000;"><span style="font-weight: bold;">${t["form.simCard"]}:</span> ${ticketSimCard} | <span style="font-weight: bold;">${t["form.simTray"]}:</span> ${ticketSimTray} | <span style="font-weight: bold;">${t["form.memoryCard"]}:</span> ${ticketMemoryCard} | <span style="font-weight: bold;">${t["form.charger"]}:</span> ${ticketCharger} | <span style="font-weight: bold;">${t["form.battery"]}:</span> ${ticketBattery} | <span style="font-weight: bold;">${t["form.waterDamaged"]}:</span> ${ticketWaterDamaged}</div>
