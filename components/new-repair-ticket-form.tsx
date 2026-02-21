@@ -2360,8 +2360,11 @@ function translateServicesForReceipt(services: string | string[] | null | undefi
     "porta de carregamento": "service.chargingPort",
     "placa de carregamento": "service.chargingPort",
     "jack is fixed": "service.chargingPort",
+    "jack iss fixed": "service.chargingPort", // Typo variant
+    "jack is fix": "service.chargingPort", // Typo variant
     "jack fixed": "service.chargingPort",
     "jack is repaired": "service.chargingPort",
+    "jack iss repaired": "service.chargingPort", // Typo variant
     "jack repaired": "service.chargingPort",
     "charging jack fixed": "service.chargingPort",
     "charging jack is fixed": "service.chargingPort",
@@ -2369,8 +2372,11 @@ function translateServicesForReceipt(services: string | string[] | null | undefi
     "charging jack is repaired": "service.chargingPort",
     // Uppercase variations
     "JACK IS FIXED": "service.chargingPort",
+    "JACK ISS FIXED": "service.chargingPort", // Typo variant
+    "JACK IS FIX": "service.chargingPort", // Typo variant
     "JACK FIXED": "service.chargingPort",
     "JACK IS REPAIRED": "service.chargingPort",
+    "JACK ISS REPAIRED": "service.chargingPort", // Typo variant
     "JACK REPAIRED": "service.chargingPort",
     "CHARGING JACK FIXED": "service.chargingPort",
     "CHARGING JACK IS FIXED": "service.chargingPort",
@@ -2461,10 +2467,14 @@ function translateServicesForReceipt(services: string | string[] | null | undefi
       }
     }
     
+    // Normalize common typos before matching
+    const normalizedService = withoutOk.replace(/\biss\b/gi, 'is').replace(/\bfix\b(?!\w)/gi, 'fixed')
+    const normalizedResult = service.replace(/\biss\b/gi, 'is').replace(/\bfix\b(?!\w)/gi, 'fixed')
+    
     // Try phrase translation - translate parts of longer descriptive text
     // Sort by key length (longest first) to match longer phrases first
     const sortedEntries = Object.entries(serviceMap).sort((a, b) => b[0].length - a[0].length)
-    let result = service
+    let finalResult = normalizedResult
     let hasTranslation = false
     
     for (const [key, translationKey] of sortedEntries) {
@@ -2474,12 +2484,14 @@ function translateServicesForReceipt(services: string | string[] | null | undefi
         // For multi-word phrases, use a more flexible regex that matches the entire phrase
         // Escape special regex characters
         const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+        // Create regex that also matches common typos
+        const flexibleKey = escapedKey.replace(/\\bis\\b/gi, '\\b(?:is|iss)\\b').replace(/\\bfixed\\b/gi, '\\b(?:fixed|fix)\\b')
         // Use word boundaries, but also allow matching at start/end of string
-        const regex = new RegExp(`(^|\\s)${escapedKey}(\\s|$)`, 'gi')
-        if (regex.test(withoutOk)) {
+        const regex = new RegExp(`(^|\\s)${flexibleKey}(\\s|$)`, 'gi')
+        if (regex.test(normalizedService) || regex.test(withoutOk)) {
           const translated = t[translationKey]
           if (translated && translated !== translationKey) {
-            result = result.replace(regex, (match, before, after) => {
+            finalResult = finalResult.replace(regex, (match, before, after) => {
               // Preserve original case pattern and whitespace
               let translatedText = translated
               if (match.trim() === match.trim().toUpperCase()) {
@@ -2508,15 +2520,15 @@ function translateServicesForReceipt(services: string | string[] | null | undefi
     for (const [englishPhrase, translatedPhrase] of Object.entries(commonPhrases)) {
       if (englishPhrase !== translatedPhrase) {
         const regex = new RegExp(`\\b${englishPhrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi')
-        if (regex.test(result)) {
-          result = result.replace(regex, translatedPhrase)
+        if (regex.test(finalResult)) {
+          finalResult = finalResult.replace(regex, translatedPhrase)
           hasTranslation = true
         }
       }
     }
     
     // Return translated result with "OK" suffix if it was in the original, otherwise return original
-    return hasTranslation ? (hasOkSuffix ? `${result} OK` : result) : service
+    return hasTranslation ? (hasOkSuffix ? `${finalResult} OK` : finalResult) : service
   })
   
   return translated.join(", ")
