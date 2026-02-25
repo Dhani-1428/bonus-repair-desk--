@@ -510,8 +510,8 @@ export function NewRepairTicketForm() {
       prev.map((device, idx) => {
         if (idx === index) {
           if (field === "imeiNo") {
-            const imeiRegex = /^\d{0,15}$/
-            if (!imeiRegex.test(value)) {
+            // Allow any characters, but limit to 15 characters
+            if (value.length > 15) {
               return device
             }
             const imeiError =

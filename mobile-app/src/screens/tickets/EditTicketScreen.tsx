@@ -198,12 +198,11 @@ export default function EditTicketScreen() {
           label={t('form.imeiNumber')}
           value={formData.imeiNo}
           onChangeText={(text) => {
-            const digitsOnly = text.replace(/\D/g, '');
-            if (digitsOnly.length <= 15) {
-              setFormData({ ...formData, imeiNo: digitsOnly });
+            // Allow any characters, but limit to 15
+            if (text.length <= 15) {
+              setFormData({ ...formData, imeiNo: text });
             }
           }}
-          keyboardType="numeric"
           maxLength={15}
         />
         <FormInput

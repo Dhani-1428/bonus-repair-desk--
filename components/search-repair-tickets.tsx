@@ -1557,7 +1557,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                   id="edit-imeiNo" 
                   value={editFormData.imeiNo || ""} 
                   onChange={(e) => {
-                    const value = e.target.value.replace(/\D/g, '') // Only allow digits
+                    const value = e.target.value // Allow any characters
                     if (value.length <= 15) {
                       setEditFormData({ ...editFormData, imeiNo: value })
                     }
@@ -1566,7 +1566,7 @@ export function SearchRepairTickets({ initialStatusFilter }: SearchRepairTickets
                   className="bg-white dark:bg-gray-800 border-blue-300 dark:border-gray-700 text-black dark:text-white" 
                 />
                 {editFormData.imeiNo && editFormData.imeiNo.length !== 15 && (
-                  <p className="text-xs text-red-600 dark:text-red-400">{t("error.imei.exact") || "IMEI Number must be exactly 15 digits"}</p>
+                  <p className="text-xs text-red-600 dark:text-red-400">{t("error.imei.exact") || "IMEI Number must be exactly 15 characters"}</p>
                 )}
               </div>
               <div className="space-y-2">

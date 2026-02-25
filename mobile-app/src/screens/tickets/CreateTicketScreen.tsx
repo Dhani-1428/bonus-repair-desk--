@@ -188,8 +188,8 @@ export default function CreateTicketScreen({ navigation }: any) {
       return;
     }
 
-    // Validate IMEI if provided (must be exactly 15 digits)
-    if (formData.imeiNo && formData.imeiNo.trim() !== '' && !/^\d{15}$/.test(formData.imeiNo)) {
+    // Validate IMEI if provided (must be exactly 15 characters)
+    if (formData.imeiNo && formData.imeiNo.trim() !== '' && formData.imeiNo.trim().length !== 15) {
       Alert.alert(t('common.error'), t('form.imeiValidation'));
       return;
     }
@@ -398,13 +398,12 @@ export default function CreateTicketScreen({ navigation }: any) {
           label={t('form.imeiNumber')}
           value={formData.imeiNo}
           onChangeText={(text) => {
-            const digitsOnly = text.replace(/\D/g, '');
-            if (digitsOnly.length <= 15) {
-              setFormData({ ...formData, imeiNo: digitsOnly });
+            // Allow any characters, but limit to 15
+            if (text.length <= 15) {
+              setFormData({ ...formData, imeiNo: text });
             }
           }}
           placeholder={t('form.imeiPlaceholder')}
-          keyboardType="numeric"
           maxLength={15}
         />
         <FormInput
