@@ -12,6 +12,10 @@
     "create-tables": "node scripts/create-tables.js",
     "verify-db": "node scripts/verify-and-fix-database.js",
     "add-columns": "node scripts/add-missing-columns.js",
+    "fix-login": "node scripts/fix-user-login.js",
+    "fix-password": "node scripts/check-and-fix-user-password.js",
+    "find-user": "node scripts/find-user-account.js",
+    "list-users": "node scripts/list-all-users.js",
     "fix-admin": "node scripts/fix-super-admin.js"
   },
   "dependencies": {

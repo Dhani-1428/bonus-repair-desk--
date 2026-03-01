@@ -58,19 +58,20 @@ export default function SuperAdminDashboard() {
       const usersResponse = await fetch("/api/users")
       if (usersResponse.ok) {
         const data = await usersResponse.json()
-        allUsers = data.users ? data.users.filter((u: any) => u.role !== "SUPER_ADMIN" && u.role !== "super_admin") : []
+        // Show ALL users including super admins
+        allUsers = data.users || []
         setUsers(allUsers)
       } else {
         // Fallback to API function
         allUsers = await getAllUsers()
-        allUsers = allUsers.filter((u: any) => u.role !== "SUPER_ADMIN" && u.role !== "super_admin")
+        // Show ALL users including super admins
         setUsers(allUsers)
       }
     } catch (error) {
       console.error("Error loading users:", error)
       // Fallback to API function
       allUsers = await getAllUsers()
-      allUsers = allUsers.filter((u: any) => u.role !== "SUPER_ADMIN" && u.role !== "super_admin")
+      // Show ALL users including super admins
       setUsers(allUsers)
     }
     

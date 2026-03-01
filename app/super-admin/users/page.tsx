@@ -108,10 +108,19 @@ export default function UsersInformationPage() {
           sampleUser: data.users?.[0] 
         })
         
-        const allUsers = data.users ? data.users.filter((u: any) => u.role !== "SUPER_ADMIN" && u.role !== "super_admin") : []
-        console.log("[UsersPage] Filtered users count:", allUsers.length)
+        // Show ALL users including super admins
+        const allUsers = data.users || []
+        console.log("[UsersPage] Total users count (including super admins):", allUsers.length)
+        console.log("[UsersPage] Users data:", allUsers)
         setUsers(allUsers)
-        await calculateAnalytics(allUsers)
+        
+        // Always calculate analytics, even if users array is empty
+        if (allUsers.length > 0) {
+          await calculateAnalytics(allUsers)
+        } else {
+          console.warn("[UsersPage] No users found in API response")
+          setUserAnalytics([])
+        }
       } else {
         // Get error message from response
         const errorData = await response.json().catch(() => ({}))
@@ -122,10 +131,10 @@ export default function UsersInformationPage() {
         try {
           console.log("[UsersPage] Trying fallback getAllUsers()...")
           const allUsers = await getAllUsers()
-          const filtered = allUsers.filter((u: any) => u.role !== "SUPER_ADMIN" && u.role !== "super_admin")
-          console.log("[UsersPage] Fallback users count:", filtered.length)
-          setUsers(filtered)
-          await calculateAnalytics(filtered)
+          // Show ALL users including super admins
+          console.log("[UsersPage] Fallback users count:", allUsers.length)
+          setUsers(allUsers)
+          await calculateAnalytics(allUsers)
         } catch (fallbackError) {
           console.error("[UsersPage] Fallback also failed:", fallbackError)
           toast.error("Failed to load users. Please refresh the page.")
