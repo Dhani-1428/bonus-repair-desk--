@@ -169,6 +169,34 @@ export default function SuperAdminDashboard() {
     }
   }
 
+  const runCustomerClientIdsMigration = async () => {
+    try {
+      toast.loading("Fixing customer client IDs...", { id: "customer-migration" })
+      
+      const response = await fetch("/api/migrate/fix-customer-client-ids", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        toast.success(
+          data.message || `Migration completed! ${data.totalCustomers || 0} customers processed, ${data.totalTicketsUpdated || 0} tickets updated.`,
+          { id: "customer-migration", duration: 10000 }
+        )
+        console.log("[SuperAdmin] Customer Client IDs Migration result:", data)
+      } else {
+        toast.error(data.error || "Migration failed", { id: "customer-migration" })
+      }
+    } catch (error: any) {
+      console.error("[SuperAdmin] Customer Client IDs Migration error:", error)
+      toast.error("Failed to run migration: " + (error.message || "Unknown error"), { id: "customer-migration" })
+    }
+  }
+
   if (loading || !user) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
@@ -393,9 +421,31 @@ export default function SuperAdminDashboard() {
               </p>
               <Button 
                 onClick={runUsersTableMigration}
-                className="w-full bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                className="w-full bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 mb-3"
               >
                 Run Users Table Migration
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card className="shadow-xl border border-gray-800/50 bg-gradient-to-br from-gray-900/95 via-black/95 to-gray-900/95 backdrop-blur-sm hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 animate-fade-in-up" style={{ animationDelay: "1.0s" }}>
+            <CardHeader className="bg-gradient-to-r from-blue-600/20 to-cyan-600/20 border-b border-gray-800/50 rounded-t-lg">
+              <CardTitle className="text-xl text-white flex items-center gap-2">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                Fix Customer Client IDs
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <p className="text-gray-300 mb-4">
+                Ensures customers with the same name but different contact numbers get different client IDs. Customers with same name AND contact get the same client ID.
+              </p>
+              <Button 
+                onClick={runCustomerClientIdsMigration}
+                className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+              >
+                Fix Customer Client IDs
               </Button>
             </CardContent>
           </Card>

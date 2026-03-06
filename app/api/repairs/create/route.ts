@@ -177,21 +177,51 @@ export async function POST(request: NextRequest) {
     }
 
     // First, check if this customer already has a client ID (one client = one client ID)
-    const findExistingClientId = async (customerName: string): Promise<string | null> => {
+    // Customers with same name but different contact numbers should have different client IDs
+    const findExistingClientId = async (customerName: string, contact: string | null): Promise<string | null> => {
       try {
         if (!customerName || customerName.trim() === "") return null
         
-        // Search for existing tickets with the same customer name (case-insensitive)
-        const existingTicket = await queryOne(
-          `SELECT clientId FROM ${tableName} WHERE LOWER(TRIM(customerName)) = LOWER(TRIM(?)) AND clientId IS NOT NULL AND clientId != '' ORDER BY createdAt DESC LIMIT 1`,
-          [customerName.trim()]
-        ) as any
+        // Normalize contact number (remove spaces, dashes, etc. for comparison)
+        const normalizeContact = (contact: string | null | undefined): string => {
+          if (!contact) return ""
+          return contact.replace(/[\s\-\(\)]/g, "").trim()
+        }
+        
+        const normalizedContact = normalizeContact(contact)
+        
+        // Search for existing tickets with the same customer name AND contact number (case-insensitive)
+        // If contact is provided, match both name and contact
+        // If contact is not provided, only match by name (for backward compatibility)
+        let existingTicket: any = null
+        
+        if (normalizedContact) {
+          // Match by both name and contact
+          existingTicket = await queryOne(
+            `SELECT clientId FROM ${tableName} 
+             WHERE LOWER(TRIM(customerName)) = LOWER(TRIM(?)) 
+             AND REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(contact, ' ', ''), '-', ''), '(', ''), ')', ''), ' ', '') = ?
+             AND clientId IS NOT NULL AND clientId != '' 
+             ORDER BY createdAt DESC LIMIT 1`,
+            [customerName.trim(), normalizedContact]
+          ) as any
+        } else {
+          // If no contact provided, match only by name (backward compatibility)
+          existingTicket = await queryOne(
+            `SELECT clientId FROM ${tableName} 
+             WHERE LOWER(TRIM(customerName)) = LOWER(TRIM(?)) 
+             AND (contact IS NULL OR contact = '' OR contact = 'null')
+             AND clientId IS NOT NULL AND clientId != '' 
+             ORDER BY createdAt DESC LIMIT 1`,
+            [customerName.trim()]
+          ) as any
+        }
         
         if (existingTicket && existingTicket.clientId) {
           // Validate the client ID format
           const match = existingTicket.clientId.match(/^CLI-(\d{1,4})$/)
           if (match) {
-            console.log(`[API] Found existing client ID ${existingTicket.clientId} for customer: ${customerName}`)
+            console.log(`[API] Found existing client ID ${existingTicket.clientId} for customer: ${customerName} (contact: ${contact || 'N/A'})`)
             return existingTicket.clientId
           }
         }
@@ -241,15 +271,15 @@ export async function POST(request: NextRequest) {
     if (clientId && clientId.trim() !== "") {
       finalClientId = clientId.trim()
     } else {
-      // First try to find existing client ID for this customer
-      const existingClientId = await findExistingClientId(customerName)
+      // First try to find existing client ID for this customer (matching both name and contact)
+      const existingClientId = await findExistingClientId(customerName, contact)
       if (existingClientId) {
         finalClientId = existingClientId
-        console.log(`[API] Reusing existing client ID ${finalClientId} for customer: ${customerName}`)
+        console.log(`[API] Reusing existing client ID ${finalClientId} for customer: ${customerName} (contact: ${contact || 'N/A'})`)
       } else {
-        // Generate new client ID if customer doesn't exist
+        // Generate new client ID if customer doesn't exist (or has different contact)
         finalClientId = await generateClientId()
-        console.log(`[API] Generated new client ID ${finalClientId} for new customer: ${customerName}`)
+        console.log(`[API] Generated new client ID ${finalClientId} for new customer: ${customerName} (contact: ${contact || 'N/A'})`)
       }
     }
 

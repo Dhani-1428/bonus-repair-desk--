@@ -197,6 +197,7 @@ export function NewRepairTicketForm() {
   }
 
   // Handle customer name change - check for existing client
+  // Customers with same name but different contact numbers should have different client IDs
   const handleCustomerNameChange = (value: string) => {
     setCustomerName(value)
     if (value.trim()) {
@@ -205,11 +206,31 @@ export function NewRepairTicketForm() {
         setShowClientSuggestions(true)
         setClientSearchTerm(value)
         
-        // Check if this customer already has a client ID and auto-fill it
+        // Normalize contact for comparison (remove spaces, dashes, etc.)
+        const normalizeContact = (contact: string | null | undefined): string => {
+          if (!contact) return ""
+          return contact.replace(/[\s\-\(\)]/g, "").trim()
+        }
+        
+        const currentContact = normalizeContact(contact)
+        
+        // Check if this customer already has a client ID matching both name AND contact
+        // If contact is provided, match both; otherwise match only by name
         const exactMatch = existingClients.find((client: any) => {
           const clientName = (client.customerName || "").toLowerCase().trim()
           const inputName = value.toLowerCase().trim()
-          return clientName === inputName
+          const nameMatches = clientName === inputName
+          
+          if (!nameMatches) return false
+          
+          // If we have a contact number, also match by contact
+          if (currentContact) {
+            const clientContact = normalizeContact(client.contact)
+            return clientContact === currentContact
+          } else {
+            // If no contact provided, match only by name (but prefer clients without contact)
+            return true
+          }
         })
         
         if (exactMatch && exactMatch.clientId) {
@@ -259,6 +280,37 @@ export function NewRepairTicketForm() {
           setClientId(bestMatch.clientId)
         }
         toast.success(`Auto-filled client information for ${bestMatch.customerName} (${bestMatch.clientId})`)
+      }
+    }
+  }
+
+  // Handle contact change - re-check for existing client with name + contact
+  const handleContactChange = (value: string) => {
+    setContact(value)
+    // If both customer name and contact are provided, check for existing client
+    if (customerName.trim() && value.trim()) {
+      const normalizeContact = (contact: string | null | undefined): string => {
+        if (!contact) return ""
+        return contact.replace(/[\s\-\(\)]/g, "").trim()
+      }
+      
+      const normalizedContact = normalizeContact(value)
+      
+      // Find exact match by name AND contact
+      const exactMatch = existingClients.find((client: any) => {
+        const clientName = (client.customerName || "").toLowerCase().trim()
+        const inputName = customerName.toLowerCase().trim()
+        const nameMatches = clientName === inputName
+        
+        if (!nameMatches) return false
+        
+        const clientContact = normalizeContact(client.contact)
+        return clientContact === normalizedContact
+      })
+      
+      if (exactMatch && exactMatch.clientId) {
+        setClientId(exactMatch.clientId)
+        toast.success(`Found existing client: ${exactMatch.clientId}`)
       }
     }
   }
@@ -1237,7 +1289,7 @@ export function NewRepairTicketForm() {
                     id="contact"
                     type="tel"
                     value={contact}
-                    onChange={(e) => setContact(e.target.value)}
+                    onChange={(e) => handleContactChange(e.target.value)}
                     className="!bg-white dark:!bg-zinc-800 border-2 border-blue-200 dark:border-zinc-700 text-black dark:text-white placeholder:text-black dark:placeholder:text-zinc-400 focus:border-blue-500 dark:focus:border-blue-600 h-12 text-lg"
                   />
                 ) : (
