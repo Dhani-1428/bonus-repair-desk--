@@ -215,7 +215,8 @@ export function NewRepairTicketForm() {
         const currentContact = normalizeContact(contact)
         
         // Check if this customer already has a client ID matching both name AND contact
-        // If contact is provided, match both; otherwise match only by name
+        // IMPORTANT: If contact is provided, ONLY match if BOTH name AND contact match
+        // This ensures customers with same name but different contact get different client IDs
         const exactMatch = existingClients.find((client: any) => {
           const clientName = (client.customerName || "").toLowerCase().trim()
           const inputName = value.toLowerCase().trim()
@@ -223,23 +224,33 @@ export function NewRepairTicketForm() {
           
           if (!nameMatches) return false
           
-          // If we have a contact number, also match by contact
+          // If we have a contact number, MUST match by contact too
           if (currentContact) {
             const clientContact = normalizeContact(client.contact)
+            // Only match if contact also matches exactly
             return clientContact === currentContact
           } else {
-            // If no contact provided, match only by name (but prefer clients without contact)
-            return true
+            // If no contact provided, only match clients that also have no contact
+            const clientContact = normalizeContact(client.contact)
+            return !clientContact || clientContact === ""
           }
         })
         
         if (exactMatch && exactMatch.clientId) {
-          // Auto-fill the existing client ID for this customer
+          // Auto-fill the existing client ID ONLY if both name and contact match
           setClientId(exactMatch.clientId)
           if (exactMatch.contact) {
             setContact(exactMatch.contact)
           }
           toast.success(`Found existing client: ${exactMatch.clientId}`)
+        } else if (currentContact) {
+          // If we have a contact but no match found, clear client ID to generate new one
+          // This ensures different contact = different client ID
+          generateClientId(user?.id).then((newId) => {
+            setClientId(newId)
+          }).catch(() => {
+            // Keep current ID if generation fails
+          })
         }
       } else {
         setShowClientSuggestions(false)
@@ -285,6 +296,7 @@ export function NewRepairTicketForm() {
   }
 
   // Handle contact change - re-check for existing client with name + contact
+  // IMPORTANT: If contact doesn't match, clear client ID so a new one will be generated
   const handleContactChange = (value: string) => {
     setContact(value)
     // If both customer name and contact are provided, check for existing client
@@ -306,6 +318,36 @@ export function NewRepairTicketForm() {
         
         const clientContact = normalizeContact(client.contact)
         return clientContact === normalizedContact
+      })
+      
+      if (exactMatch && exactMatch.clientId) {
+        // Found matching client with same name AND contact
+        setClientId(exactMatch.clientId)
+        toast.success(`Found existing client: ${exactMatch.clientId}`)
+      } else {
+        // No match found - clear client ID so backend will generate a new one
+        // This ensures customers with same name but different contact get different IDs
+        if (clientId && clientId.startsWith("CLI-")) {
+          // Generate a new client ID preview (will be finalized on submit)
+          generateClientId(user?.id).then((newId) => {
+            setClientId(newId)
+          }).catch(() => {
+            // Keep current ID if generation fails
+          })
+        }
+      }
+    } else if (customerName.trim() && !value.trim()) {
+      // Contact cleared - check for match by name only (for customers without contact)
+      const exactMatch = existingClients.find((client: any) => {
+        const clientName = (client.customerName || "").toLowerCase().trim()
+        const inputName = customerName.toLowerCase().trim()
+        const nameMatches = clientName === inputName
+        
+        if (!nameMatches) return false
+        
+        // Only match if client also has no contact
+        const clientContact = normalizeContact(client.contact)
+        return !clientContact || clientContact === ""
       })
       
       if (exactMatch && exactMatch.clientId) {

@@ -196,21 +196,34 @@ export async function POST(request: NextRequest) {
         let existingTicket: any = null
         
         if (normalizedContact) {
-          // Match by both name and contact
+          // Match by both name and contact - IMPORTANT: Only match if BOTH name AND contact match exactly
+          // This ensures customers with same name but different contact get different client IDs
+          // Use COALESCE to handle NULL contacts, then normalize by removing spaces, dashes, parentheses
           existingTicket = await queryOne(
             `SELECT clientId FROM ${tableName} 
              WHERE LOWER(TRIM(customerName)) = LOWER(TRIM(?)) 
-             AND REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(contact, ' ', ''), '-', ''), '(', ''), ')', ''), ' ', '') = ?
+             AND TRIM(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(COALESCE(contact, ''), ' ', ''), '-', ''), '(', ''), ')', ''), ' ', '')) = ?
              AND clientId IS NOT NULL AND clientId != '' 
              ORDER BY createdAt DESC LIMIT 1`,
             [customerName.trim(), normalizedContact]
           ) as any
+          
+          console.log(`[findExistingClientId] Searching for customer: ${customerName}, contact: ${normalizedContact}`)
+          if (existingTicket) {
+            console.log(`[findExistingClientId] Found match: ${existingTicket.clientId}`)
+          } else {
+            console.log(`[findExistingClientId] No match found - will generate new client ID`)
+          }
+          
+          // If no exact match found with contact, return null to generate new client ID
+          // This is critical: same name + different contact = different client ID
         } else {
-          // If no contact provided, match only by name (backward compatibility)
+          // If no contact provided, match only by name AND where contact is also empty/null
+          // This prevents matching customers who have contacts but user didn't provide one
           existingTicket = await queryOne(
             `SELECT clientId FROM ${tableName} 
              WHERE LOWER(TRIM(customerName)) = LOWER(TRIM(?)) 
-             AND (contact IS NULL OR contact = '' OR contact = 'null')
+             AND (contact IS NULL OR contact = '' OR TRIM(contact) = '')
              AND clientId IS NOT NULL AND clientId != '' 
              ORDER BY createdAt DESC LIMIT 1`,
             [customerName.trim()]
@@ -269,17 +282,23 @@ export async function POST(request: NextRequest) {
     // Check if customer already has a client ID, otherwise use provided or generate new one
     let finalClientId: string
     if (clientId && clientId.trim() !== "") {
+      // User provided a client ID manually - use it
       finalClientId = clientId.trim()
+      console.log(`[API] Using manually provided client ID: ${finalClientId}`)
     } else {
-      // First try to find existing client ID for this customer (matching both name and contact)
+      // First try to find existing client ID for this customer (matching both name AND contact)
+      // CRITICAL: Only reuse client ID if BOTH name AND contact match exactly
       const existingClientId = await findExistingClientId(customerName, contact)
       if (existingClientId) {
         finalClientId = existingClientId
-        console.log(`[API] Reusing existing client ID ${finalClientId} for customer: ${customerName} (contact: ${contact || 'N/A'})`)
+        console.log(`[API] ✅ Reusing existing client ID ${finalClientId} for customer: ${customerName} (contact: ${contact || 'N/A'})`)
       } else {
-        // Generate new client ID if customer doesn't exist (or has different contact)
+        // Generate new client ID if:
+        // 1. Customer doesn't exist, OR
+        // 2. Customer has same name but different contact number
         finalClientId = await generateClientId()
-        console.log(`[API] Generated new client ID ${finalClientId} for new customer: ${customerName} (contact: ${contact || 'N/A'})`)
+        console.log(`[API] 🆕 Generated NEW client ID ${finalClientId} for customer: ${customerName} (contact: ${contact || 'N/A'})`)
+        console.log(`[API] Reason: No existing client found with matching name + contact combination`)
       }
     }
 
