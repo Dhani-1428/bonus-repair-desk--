@@ -77,10 +77,31 @@ export async function POST(request: NextRequest) {
         totalCustomers += customerGroups.size
 
         // For each customer group (name + contact combination), assign a unique client ID
-        let nextClientIdNumber = 1
+        // CRITICAL: Each unique name+contact combination MUST get a unique client ID
+        // Even if they currently share the same client ID, they need different ones
+        
+        // First, find the maximum client ID number used across all tickets
+        let maxClientIdNumber = 0
+        for (const tickets of customerGroups.values()) {
+          for (const ticket of tickets) {
+            if (ticket.clientId && typeof ticket.clientId === 'string') {
+              const match = ticket.clientId.match(/^CLI-(\d{1,4})$/i)
+              if (match) {
+                const num = parseInt(match[1], 10)
+                if (!isNaN(num) && num > maxClientIdNumber) {
+                  maxClientIdNumber = num
+                }
+              }
+            }
+          }
+        }
+        
+        let nextClientIdNumber = maxClientIdNumber + 1
         const customerClientIdMap = new Map<string, string>()
+        const usedClientIds = new Set<string>()
 
-        // First pass: find existing valid client IDs and preserve them
+        // First pass: Try to preserve existing client IDs, but only if they're unique
+        // If multiple groups share the same client ID, we need to reassign
         for (const [groupKey, tickets] of customerGroups.entries()) {
           // Sort tickets by creation date (oldest first)
           const sortedTickets = tickets.sort((a: any, b: any) => {
@@ -96,22 +117,21 @@ export async function POST(request: NextRequest) {
               const match = ticket.clientId.match(/^CLI-(\d{1,4})$/i)
               if (match) {
                 existingClientId = ticket.clientId.toUpperCase()
-                // Track the highest number used
-                const num = parseInt(match[1], 10)
-                if (num >= nextClientIdNumber) {
-                  nextClientIdNumber = num + 1
-                }
                 break
               }
             }
           }
 
-          if (existingClientId) {
+          // Only use existing client ID if it's not already assigned to another group
+          // This ensures each name+contact combination gets a unique ID
+          if (existingClientId && !usedClientIds.has(existingClientId)) {
             customerClientIdMap.set(groupKey, existingClientId)
+            usedClientIds.add(existingClientId)
+            console.log(`[Migration] Preserving client ID ${existingClientId} for group: ${groupKey}`)
           }
         }
 
-        // Second pass: assign new client IDs to groups without existing IDs
+        // Second pass: assign new client IDs to groups without unique existing IDs
         for (const [groupKey, tickets] of customerGroups.entries()) {
           if (!customerClientIdMap.has(groupKey)) {
             // Generate new client ID
@@ -125,8 +145,8 @@ export async function POST(request: NextRequest) {
               attempts++
               
               // Check if this ID is already assigned to another group
-              const isDuplicate = Array.from(customerClientIdMap.values()).includes(newClientId)
-              if (!isDuplicate) {
+              if (!usedClientIds.has(newClientId)) {
+                usedClientIds.add(newClientId)
                 break
               }
             } while (attempts < maxAttempts)
@@ -137,6 +157,7 @@ export async function POST(request: NextRequest) {
             }
 
             customerClientIdMap.set(groupKey, newClientId)
+            console.log(`[Migration] Assigning new client ID ${newClientId} to group: ${groupKey}`)
           }
         }
 
